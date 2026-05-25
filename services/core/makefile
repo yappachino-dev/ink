@@ -3,11 +3,15 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
-.PHONY: up down restart status logs
+.PHONY: up build down restart status logs
 
 up:
 	@echo "Spinning up containers..."
 	docker compose up -d
+
+build:
+	@echo "Building up containers..."
+	docker compose up --build -d
 
 down:
 	@echo "Tearing down containers..."
