@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
+import 'package:ink/features/notes/domain/calendar_view_mode.dart';
+import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/i18n/strings.g.dart';
+
+class ViewModeSheet extends ConsumerWidget {
+  const ViewModeSheet({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewMode = ref.watch(calendarViewModeStateProvider);
+
+    return BottomSheetLayout(
+      header: Text(
+        context.t.calendar.view,
+        style: context.textTheme.titleLarge,
+      ),
+      children: [
+        ...CalendarViewMode.values.map(
+          (mode) => ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              mode.icon,
+              color: viewMode == mode
+                  ? context.colorScheme.primary
+                  : context.colorScheme.onSurface,
+            ),
+            title: Text(
+              mode.label(t),
+              style: context.textTheme.titleMedium?.copyWith(
+                color: viewMode == mode
+                    ? context.colorScheme.primary
+                    : context.theme.hintColor,
+              ),
+            ),
+            trailing: viewMode == mode
+                ? Icon(
+                    Icons.check,
+                    color: context.colorScheme.primary,
+                    size: 20,
+                  )
+                : null,
+            onTap: () =>
+                ref.read(calendarViewModeStateProvider.notifier).setMode(mode),
+          ),
+        ),
+      ],
+    );
+  }
+}

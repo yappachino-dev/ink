@@ -1,0 +1,1 @@
+const maxPinLength = 4;

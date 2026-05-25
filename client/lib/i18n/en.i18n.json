@@ -1,0 +1,252 @@
+{
+    "common": {
+        "appName": "Ink",
+        "back": "Back",
+        "next": "Next",
+        "continue": "Continue",
+        "confirm": "Confirm",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "errorTitle": "Error",
+        "loading": "Loading..."
+    },
+    "welcome": {
+        "createLocalStorage": "Create local storage",
+        "haveAccount": "Already have an account?"
+    },
+    "auth": {
+        "tagline": "Your plans under reliable protection",
+        "chooseMethod": "Choose how to use",
+        "login": {
+            "title": "Log In",
+            "action": "Login",
+            "success": "Successfully logged in",
+            "noAccount": "Don't have an account?"
+        },
+        "register": {
+            "title": "Register",
+            "action": "Register",
+            "success": "Successfully registered",
+            "haveAccount": "I already have an account"
+        },
+        "verify": {
+            "title": "Email Verification",
+            "codeSent": "Confirmation code sent to $email",
+            "codeHint": "Enter verification code",
+            "codeError": "Invalid code",
+            "resend": "Resend code"
+        },
+        "form": {
+            "email": "Email",
+            "emailHint": "Email",
+            "emailError": "Email is required",
+            "emailFormatError": "Invalid email format",
+            "password": "Password",
+            "passwordHint": "Password",
+            "passwordError": "Password is required",
+            "passwordLengthError": "Password must be at least 8 characters",
+            "confirmPassword": "Confirm password",
+            "passwordsNotMatch": "Passwords do not match"
+        }
+    },
+    "vault": {
+        "fatal": {
+            "title": "App crashed fatally",
+            "subtitle": "Failed to load keys both locally and remotely"
+        },
+        "methods": {
+            "title": "Security Method",
+            "subtitle": "Choose a quick login method. A secret phrase will be mandatory in the next step.",
+            "pin": {
+                "title": "PIN-code",
+                "subtitle": "Quick access via 4-digit code"
+            },
+            "pattern": {
+                "title": "Pattern Lock",
+                "subtitle": "Protection with a unique gesture"
+            },
+            "seed": {
+                "title": "Recovery Phrase",
+                "subtitle": "Secure 12-words password"
+            },
+            "word": {
+                "title": "Association Word",
+                "subtitle": "Password with a hint for recovery"
+            },
+            "verification": {
+                "title": "Identity Verification",
+                "subtitle": "Choose an unlock method to verify"
+            },
+            "options": {
+                "pin": "Login via PIN-code",
+                "pattern": "Pattern Lock",
+                "word": "Association Word",
+                "seed": "Seed Phrase (Master Key)"
+            }
+        },
+        "setup": {
+            "pin": {
+                "title": "Create PIN-code",
+                "description": "For quick access to your plans"
+            },
+            "pattern": {
+                "title": "Create Pattern Lock",
+                "description": "Connect at least 4 dots",
+                "errorShort": "Pattern too short!"
+            },
+            "word": {
+                "title": "Think of\nan association",
+                "description": "Word must be at least 6 characters (no spaces, digits or signs)"
+            },
+            "seed": {
+                "title": "Your Secret Phrase",
+                "warning": "Write these 12 words on paper and keep them in a safe place. If you lose them, access to your data cannot be restored.",
+                "copy": "Copy to clipboard",
+                "copyDone": "Phrase copied to clipboard",
+                "savedButton": "I have written these words"
+            },
+            "seedVerify": {
+                "title": "Record Verification",
+                "description": "Please enter the specified words from your secret phrase",
+                "inputHint": "Enter word...",
+                "error": "Words do not match. Try again!",
+                "success": "Verification successful"
+            }
+        },
+        "unlock": {
+            "pin": {
+                "title": "Enter PIN-code",
+                "description": "Enter your PIN-code to login"
+            },
+            "pattern": {
+                "title": "Enter Pattern Lock",
+                "description": "Draw your pattern to login",
+                "errorShort": "Pattern too short!"
+            },
+            "word": {
+                "title": "Enter\nassociation",
+                "description": "Enter your association word to login",
+                "hint": "Enter association word"
+            },
+            "seed": {
+                "title": "Enter your\nsecret phrase",
+                "description": "Enter all 12 words in the correct order",
+                "wordHint": "Word...",
+                "verifyTitle": "Record Verification",
+                "verifyError": "Words do not match. Try again!",
+                "verifySuccess": "Verification successful"
+            }
+        }
+    },
+    "home": {
+        "inbox": "Inbox",
+        "today": "Today",
+        "completed": "Completed"
+    },
+    "calendar": {
+        "title": "Calendar",
+        "filter": "Filter",
+        "noNotes": "No notes for this day",
+        "view": "Calendar view",
+        "modes": {
+            "month": "Month",
+            "twoWeeks": "2 weeks",
+            "week": "Week",
+            "day": "Day"
+        },
+        "months": [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ],
+        "timezone": "Choose timezone"
+    },
+    "note": {
+        "title": "Notes",
+        "create": "New note",
+        "edit": "Edit note",
+        "whatToDo": "What needs to be done?",
+        "addDetails": "Add details...",
+        "showDetails": "Show note details",
+        "hideDetails": "Hide note details",
+        "project": "Note's project",
+        "allProjects": "All projects",
+        "delete": {
+            "title": "Delete note?",
+            "tooltip": "Delete note",
+            "message": "This note will be permanently deleted."
+        },
+        "priority": {
+            "select": "Select a priority",
+            "none": "None",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "reminder": {
+            "select": "Select a reminder",
+            "none": "No reminder",
+            "atTime": "Remind at time",
+            "minutes": {
+                "one": "1 minute",
+                "other": "{n} minutes"
+            },
+            "hours": {
+                "one": "1 hour",
+                "other": "{n} hours"
+            },
+            "days": {
+                "one": "1 day",
+                "other": "{n} days"
+            }
+        }
+    },
+    "project": {
+        "title": "My projects",
+        "select": "Select a project",
+        "none": "No project",
+        "create": "Add a project",
+        "edit": "Edit project",
+        "delete": {
+            "title": "Delete project?",
+            "tooltip": "Delete project",
+            "message": "The project will be permanently deleted."
+        },
+        "form": {
+            "name": "Name",
+            "color": "Project color",
+            "icon": "Icon"
+        }
+    },
+    "profile": {
+        "title": "Profile",
+        "personal": {
+            "name": "Name",
+            "email": "Email",
+            "changeName": "Change name",
+            "changePassword": "Change password",
+            "changeEncryption": "Change encryption method",
+            "logout": "Log Out"
+        },
+        "account": {
+            "create": "Create account",
+            "createSubtitle": "Create an account so you don't lose your data",
+            "delete": "Delete account",
+            "deleteSubtitle": "Data will be lost",
+            "deleteConfirm": "Are you sure you want to delete your account?"
+        },
+        "settings": {
+            "personalization": "Personalization",
+            "language": "Language",
+            "appearance": {
+                "title": "Appearance", 
+                "light": "Light",
+                "dark": "Dark",
+                "system": "System"
+            },
+            "timezone": "Choose timezone",
+            "dateTime": "Date and time",
+            "widgets": "Widgets"
+        }
+    }
+}

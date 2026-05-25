@@ -1,0 +1,18 @@
+# Miscellaneous
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+*.iml
+.buildlog/
+.history
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment related files 
+.env
+*.env.local
+client/env/
+services/**/.env
