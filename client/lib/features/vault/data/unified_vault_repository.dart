@@ -1,8 +1,7 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
+import 'package:ink/core/infrastructure/network/network_state_provider.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/features/vault/data/dto/key_slots_dto.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
@@ -21,14 +20,14 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   UnifiedVaultRepository({
     required VaultLocalDataSource local,
     required VaultRemoteDataSource remote,
-    required UserConfig userPrefs,
+    required bool Function() canSync,
   }) : _local = local,
        _remote = remote,
-       _prefs = userPrefs;
+       _canSync = canSync;
 
   final VaultLocalDataSource _local;
   final VaultRemoteDataSource _remote;
-  final UserConfig _prefs;
+  final bool Function() _canSync;
 
   @override
   Future<Result<void, VaultFailure>> saveKeySlot(KeySlot slot) async {
@@ -50,14 +49,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
   @override
   Future<Result<List<KeySlot>, VaultFailure>> getAll() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    final hasAllowedConnection =
-        connectivity.contains(ConnectivityResult.wifi) ||
-        connectivity.contains(ConnectivityResult.mobile);
-
-    final shouldSync = !_prefs.localOnly && hasAllowedConnection;
-
-    if (shouldSync) {
+    if (_canSync()) {
       final syncResult = await syncKeys();
 
       if (syncResult case Failure(error: final e)) {
@@ -181,5 +173,5 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 VaultRepository vaultRepository(Ref ref) => UnifiedVaultRepository(
   local: ref.watch(vaultLocalDataSourceProvider),
   remote: ref.watch(vaultRemoteDataSourceProvider),
-  userPrefs: ref.watch(userPreferencesProvider),
+  canSync: () => ref.read(networkStateProvider).isAllowedToSync,
 );
