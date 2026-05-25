@@ -1,4 +1,4 @@
-module github.com/mad-yappachino/ink/services/core
+module github.com/yappachino-dev/ink/services/core
 
 go 1.26.3
 

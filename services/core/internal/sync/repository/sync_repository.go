@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/mad-yappachino/ink/services/core/internal/models"
+	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 type SyncRepository struct {

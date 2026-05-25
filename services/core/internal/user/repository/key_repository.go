@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mad-yappachino/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/dto"
 )
 
 type KeyRepository struct {

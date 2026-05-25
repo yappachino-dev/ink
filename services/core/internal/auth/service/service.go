@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/repository"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/repository"
 )
 
 type AuthService struct {
