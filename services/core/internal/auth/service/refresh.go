@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/utils"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/utils"
 )
 
 var ErrInvalidRefreshToken = errors.New("invalid refresh token")

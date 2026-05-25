@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/mad-yappachino/ink/services/core/internal/dto"
-	"github.com/mad-yappachino/ink/services/core/internal/user/repository"
+	"github.com/yappachino-dev/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/user/repository"
 )
 
 type KeyService struct {

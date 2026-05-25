@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/service"
-	"github.com/mad-yappachino/ink/services/core/internal/dto"
-	"github.com/mad-yappachino/ink/services/core/internal/email"
-	"github.com/mad-yappachino/ink/services/core/internal/response"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/service"
+	"github.com/yappachino-dev/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/email"
+	"github.com/yappachino-dev/ink/services/core/internal/response"
 	"github.com/gin-gonic/gin"
 )
 

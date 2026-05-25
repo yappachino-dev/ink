@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/mad-yappachino/ink/services/core/internal/models"
+import "github.com/yappachino-dev/ink/services/core/internal/models"
 
 type UserRepository interface {
 	Create(user *models.User) error

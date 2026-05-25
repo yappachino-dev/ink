@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/utils"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/utils"
 )
 
 var ErrInvalidLogoutToken = errors.New("invalid token")

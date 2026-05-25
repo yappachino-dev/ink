@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/mad-yappachino/ink/services/core/internal/dto"
-	"github.com/mad-yappachino/ink/services/core/internal/models"
-	"github.com/mad-yappachino/ink/services/core/internal/sync/repository"
+	"github.com/yappachino-dev/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/models"
+	"github.com/yappachino-dev/ink/services/core/internal/sync/repository"
 	"github.com/google/uuid"
 )
 

@@ -3,8 +3,8 @@ package service
 import (
 	"time"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/utils"
-	"github.com/mad-yappachino/ink/services/core/internal/models"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/utils"
+	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 func (s *AuthService) issueTokens(userID int) (string, string, error) {

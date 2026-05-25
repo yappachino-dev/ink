@@ -6,22 +6,22 @@ import (
 	"net/http"
 	"time"
 
-	authHandler "github.com/mad-yappachino/ink/services/core/internal/auth/handler"
-	authMiddleware "github.com/mad-yappachino/ink/services/core/internal/auth/middleware"
-	authRepository "github.com/mad-yappachino/ink/services/core/internal/auth/repository"
-	authService "github.com/mad-yappachino/ink/services/core/internal/auth/service"
+	authHandler "github.com/yappachino-dev/ink/services/core/internal/auth/handler"
+	authMiddleware "github.com/yappachino-dev/ink/services/core/internal/auth/middleware"
+	authRepository "github.com/yappachino-dev/ink/services/core/internal/auth/repository"
+	authService "github.com/yappachino-dev/ink/services/core/internal/auth/service"
 
-	syncHandler "github.com/mad-yappachino/ink/services/core/internal/sync/handler"
-	syncRepository "github.com/mad-yappachino/ink/services/core/internal/sync/repository"
-	syncService "github.com/mad-yappachino/ink/services/core/internal/sync/service"
+	syncHandler "github.com/yappachino-dev/ink/services/core/internal/sync/handler"
+	syncRepository "github.com/yappachino-dev/ink/services/core/internal/sync/repository"
+	syncService "github.com/yappachino-dev/ink/services/core/internal/sync/service"
 
-	keyHandler "github.com/mad-yappachino/ink/services/core/internal/user/handler"
-	keyRepository "github.com/mad-yappachino/ink/services/core/internal/user/repository"
-	keyService "github.com/mad-yappachino/ink/services/core/internal/user/service"
+	keyHandler "github.com/yappachino-dev/ink/services/core/internal/user/handler"
+	keyRepository "github.com/yappachino-dev/ink/services/core/internal/user/repository"
+	keyService "github.com/yappachino-dev/ink/services/core/internal/user/service"
 
-	"github.com/mad-yappachino/ink/services/core/internal/config"
-	"github.com/mad-yappachino/ink/services/core/internal/database"
-	"github.com/mad-yappachino/ink/services/core/internal/email"
+	"github.com/yappachino-dev/ink/services/core/internal/config"
+	"github.com/yappachino-dev/ink/services/core/internal/database"
+	"github.com/yappachino-dev/ink/services/core/internal/email"
 	"github.com/gin-gonic/gin"
 )
 

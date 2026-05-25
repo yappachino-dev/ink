@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/mad-yappachino/ink/services/core/internal/config"
+	"github.com/yappachino-dev/ink/services/core/internal/config"
 )
 
 type Sender struct {

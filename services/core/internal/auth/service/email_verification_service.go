@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/mad-yappachino/ink/services/core/internal/auth/repository"
-	"github.com/mad-yappachino/ink/services/core/internal/models"
+	"github.com/yappachino-dev/ink/services/core/internal/auth/repository"
+	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 type EmailVerificationService struct {

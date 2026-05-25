@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/mad-yappachino/ink/services/core/internal/dto"
-	"github.com/mad-yappachino/ink/services/core/internal/response"
-	"github.com/mad-yappachino/ink/services/core/internal/user/service"
+	"github.com/yappachino-dev/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/response"
+	"github.com/yappachino-dev/ink/services/core/internal/user/service"
 )
 
 type KeyHandler struct {

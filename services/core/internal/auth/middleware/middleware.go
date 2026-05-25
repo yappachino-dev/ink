@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mad-yappachino/ink/services/core/internal/response"
+	"github.com/yappachino-dev/ink/services/core/internal/response"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
