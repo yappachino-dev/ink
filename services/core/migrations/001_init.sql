@@ -3,26 +3,24 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
 
-    sync_cursor BIGINT NOT NULL DEFAULT 0
+    sync_cursor BIGINT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_keys (
-    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
+    key_type INT NOT NULL,
 
-    key_type TEXT NOT NULL,
     salt BYTEA NOT NULL,
     wrapped_master_key BYTEA NOT NULL,
     updated_at TIMESTAMP NOT NULL,
 
+    PRIMARY KEY (user_id, key_type),
+
     CONSTRAINT fk_user_keys_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-
-    CONSTRAINT unique_user_key_type
-    UNIQUE (user_id, key_type)
 );
 
 CREATE TABLE IF NOT EXISTS projects (
