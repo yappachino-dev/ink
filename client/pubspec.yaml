@@ -23,6 +23,7 @@ dependencies:
   dio: ^5.9.2
   dio_cookie_manager: ^3.4.0
   retrofit: ^4.9.2
+  protobuf: ^6.0.0
 
   # Storage
   flutter_secure_storage: ^10.0.0

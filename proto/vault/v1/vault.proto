@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package vault.v1;
+
+import "google/protobuf/timestamp.proto";
+
+enum KeyType {
+  KEY_TYPE_UNSPECIFIED = 0;
+  KEY_TYPE_PIN = 1;
+  KEY_TYPE_PATTERN = 2;
+  KEY_TYPE_RECOVERY = 3;
+}
+
+message KeySlot {
+  KeyType type = 1;
+  bytes salt = 2;
+  bytes wrapped_master_key = 3;
+  google.protobuf.Timestamp updated_at = 4;
+}
