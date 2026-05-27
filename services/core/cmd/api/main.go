@@ -166,31 +166,33 @@ func setupHTTPRoutes(r *gin.Engine, authH *authHandler.Handler, emailH *authHand
 	})
 
 	v1 := r.Group("/api/v1")
+
+	authGroup := v1.Group("/auth")
 	{
-		authGroup := v1.Group("/auth")
-		authHandler.RegisterRoutes(authGroup, authH)
+		authGroup.POST("/login", authH.Login)
+		authGroup.POST("/refresh", authH.Refresh)
+		authGroup.POST("/logout", authH.Logout)
 		authGroup.POST("/verify-email", emailH.VerifyEmail)
 		authGroup.POST("/confirm-register", emailH.ConfirmRegister)
 	}
 
 	mw := authMiddleware.AuthMiddleware(jwtSecret)
 
-	protected := v1.Group("/protected")
-	protected.Use(mw)
+	protected := v1.Group("/protected").Use(mw)
+	{
+		protected.GET("/me", func(c *gin.Context) {
+			userID, _ := c.Get("user_id")
 
-	protected.GET("/me", func(c *gin.Context) {
-		userID, _ := c.Get("user_id")
-
-		c.JSON(http.StatusOK, gin.H{
-			"user_id": userID,
+			c.JSON(http.StatusOK, gin.H{
+				"user_id": userID,
+			})
 		})
-	})
 
-	protected.GET("/me/keys", keyH.GetKeySlots)
-	protected.POST("/me/keys", keyH.SaveKeySlots)
-	protected.PATCH("/me/keys", keyH.SaveKeySlots)
-
-	protected.POST("/sync", syncH.Sync)
+		protected.GET("/me/keys", keyH.GetKeySlots)
+		protected.POST("/me/keys", keyH.SaveKeySlots)
+		protected.PATCH("/me/keys", keyH.SaveKeySlots)
+		protected.POST("/sync", syncH.Sync)
+	}
 }
 
 func interceptorLogger(l *slog.Logger) logging.Logger {
