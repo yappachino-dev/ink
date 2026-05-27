@@ -142,6 +142,166 @@ func (x *KeySlot) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type GetKeySlotsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetKeySlotsRequest) Reset() {
+	*x = GetKeySlotsRequest{}
+	mi := &file_vault_v1_vault_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetKeySlotsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKeySlotsRequest) ProtoMessage() {}
+
+func (x *GetKeySlotsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_v1_vault_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKeySlotsRequest.ProtoReflect.Descriptor instead.
+func (*GetKeySlotsRequest) Descriptor() ([]byte, []int) {
+	return file_vault_v1_vault_proto_rawDescGZIP(), []int{1}
+}
+
+type GetKeySlotsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	KeySlots      []*KeySlot             `protobuf:"bytes,1,rep,name=key_slots,json=keySlots,proto3" json:"key_slots,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetKeySlotsResponse) Reset() {
+	*x = GetKeySlotsResponse{}
+	mi := &file_vault_v1_vault_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetKeySlotsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKeySlotsResponse) ProtoMessage() {}
+
+func (x *GetKeySlotsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_v1_vault_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKeySlotsResponse.ProtoReflect.Descriptor instead.
+func (*GetKeySlotsResponse) Descriptor() ([]byte, []int) {
+	return file_vault_v1_vault_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetKeySlotsResponse) GetKeySlots() []*KeySlot {
+	if x != nil {
+		return x.KeySlots
+	}
+	return nil
+}
+
+type SaveKeySlotsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	KeySlots      []*KeySlot             `protobuf:"bytes,1,rep,name=key_slots,json=keySlots,proto3" json:"key_slots,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveKeySlotsRequest) Reset() {
+	*x = SaveKeySlotsRequest{}
+	mi := &file_vault_v1_vault_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveKeySlotsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveKeySlotsRequest) ProtoMessage() {}
+
+func (x *SaveKeySlotsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_v1_vault_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveKeySlotsRequest.ProtoReflect.Descriptor instead.
+func (*SaveKeySlotsRequest) Descriptor() ([]byte, []int) {
+	return file_vault_v1_vault_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SaveKeySlotsRequest) GetKeySlots() []*KeySlot {
+	if x != nil {
+		return x.KeySlots
+	}
+	return nil
+}
+
+type SaveKeySlotsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveKeySlotsResponse) Reset() {
+	*x = SaveKeySlotsResponse{}
+	mi := &file_vault_v1_vault_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveKeySlotsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveKeySlotsResponse) ProtoMessage() {}
+
+func (x *SaveKeySlotsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_v1_vault_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveKeySlotsResponse.ProtoReflect.Descriptor instead.
+func (*SaveKeySlotsResponse) Descriptor() ([]byte, []int) {
+	return file_vault_v1_vault_proto_rawDescGZIP(), []int{4}
+}
+
 var File_vault_v1_vault_proto protoreflect.FileDescriptor
 
 const file_vault_v1_vault_proto_rawDesc = "" +
@@ -152,12 +312,21 @@ const file_vault_v1_vault_proto_rawDesc = "" +
 	"\x04salt\x18\x02 \x01(\fR\x04salt\x12,\n" +
 	"\x12wrapped_master_key\x18\x03 \x01(\fR\x10wrappedMasterKey\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt*b\n" +
+	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x14\n" +
+	"\x12GetKeySlotsRequest\"E\n" +
+	"\x13GetKeySlotsResponse\x12.\n" +
+	"\tkey_slots\x18\x01 \x03(\v2\x11.vault.v1.KeySlotR\bkeySlots\"E\n" +
+	"\x13SaveKeySlotsRequest\x12.\n" +
+	"\tkey_slots\x18\x01 \x03(\v2\x11.vault.v1.KeySlotR\bkeySlots\"\x16\n" +
+	"\x14SaveKeySlotsResponse*b\n" +
 	"\aKeyType\x12\x18\n" +
 	"\x14KEY_TYPE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fKEY_TYPE_PIN\x10\x01\x12\x14\n" +
 	"\x10KEY_TYPE_PATTERN\x10\x02\x12\x15\n" +
-	"\x11KEY_TYPE_RECOVERY\x10\x03B\x9b\x01\n" +
+	"\x11KEY_TYPE_RECOVERY\x10\x032\xa9\x01\n" +
+	"\fVaultService\x12J\n" +
+	"\vGetKeySlots\x12\x1c.vault.v1.GetKeySlotsRequest\x1a\x1d.vault.v1.GetKeySlotsResponse\x12M\n" +
+	"\fSaveKeySlots\x12\x1d.vault.v1.SaveKeySlotsRequest\x1a\x1e.vault.v1.SaveKeySlotsResponseB\x9b\x01\n" +
 	"\fcom.vault.v1B\n" +
 	"VaultProtoP\x01Z>github.com/yappachino-dev/ink/services/gen/pb/vault/v1;vaultv1\xa2\x02\x03VXX\xaa\x02\bVault.V1\xca\x02\bVault\\V1\xe2\x02\x14Vault\\V1\\GPBMetadata\xea\x02\tVault::V1b\x06proto3"
 
@@ -174,20 +343,30 @@ func file_vault_v1_vault_proto_rawDescGZIP() []byte {
 }
 
 var file_vault_v1_vault_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_vault_v1_vault_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_vault_v1_vault_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_vault_v1_vault_proto_goTypes = []any{
 	(KeyType)(0),                  // 0: vault.v1.KeyType
 	(*KeySlot)(nil),               // 1: vault.v1.KeySlot
-	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
+	(*GetKeySlotsRequest)(nil),    // 2: vault.v1.GetKeySlotsRequest
+	(*GetKeySlotsResponse)(nil),   // 3: vault.v1.GetKeySlotsResponse
+	(*SaveKeySlotsRequest)(nil),   // 4: vault.v1.SaveKeySlotsRequest
+	(*SaveKeySlotsResponse)(nil),  // 5: vault.v1.SaveKeySlotsResponse
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
 var file_vault_v1_vault_proto_depIdxs = []int32{
 	0, // 0: vault.v1.KeySlot.type:type_name -> vault.v1.KeyType
-	2, // 1: vault.v1.KeySlot.updated_at:type_name -> google.protobuf.Timestamp
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	6, // 1: vault.v1.KeySlot.updated_at:type_name -> google.protobuf.Timestamp
+	1, // 2: vault.v1.GetKeySlotsResponse.key_slots:type_name -> vault.v1.KeySlot
+	1, // 3: vault.v1.SaveKeySlotsRequest.key_slots:type_name -> vault.v1.KeySlot
+	2, // 4: vault.v1.VaultService.GetKeySlots:input_type -> vault.v1.GetKeySlotsRequest
+	4, // 5: vault.v1.VaultService.SaveKeySlots:input_type -> vault.v1.SaveKeySlotsRequest
+	3, // 6: vault.v1.VaultService.GetKeySlots:output_type -> vault.v1.GetKeySlotsResponse
+	5, // 7: vault.v1.VaultService.SaveKeySlots:output_type -> vault.v1.SaveKeySlotsResponse
+	6, // [6:8] is the sub-list for method output_type
+	4, // [4:6] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_vault_v1_vault_proto_init() }
@@ -201,9 +380,9 @@ func file_vault_v1_vault_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_vault_v1_vault_proto_rawDesc), len(file_vault_v1_vault_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   1,
+			NumMessages:   5,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_vault_v1_vault_proto_goTypes,
 		DependencyIndexes: file_vault_v1_vault_proto_depIdxs,

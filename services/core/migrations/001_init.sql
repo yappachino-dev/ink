@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS user_keys (
     PRIMARY KEY (user_id, key_type),
 
     CONSTRAINT fk_user_keys_user
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS projects (

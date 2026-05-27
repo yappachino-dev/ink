@@ -5,7 +5,7 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "lib/generated/**"
-    - "lib/core/infrastructure/api/gen/**"
+    - "lib/core/infrastructure/grpc/gen/**"
 
   language:
     strict-casts: true

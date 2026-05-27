@@ -15,6 +15,6 @@ plugins:
     opt: paths=source_relative
 
   - remote: buf.build/protocolbuffers/dart:v25.0.0
-    out: client/lib/core/infrastructure/api/gen
+    out: client/lib/core/infrastructure/grpc/gen
     opt:
       - grpc

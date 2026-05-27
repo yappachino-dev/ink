@@ -68,3 +68,61 @@ final $typed_data.Uint8List keySlotDescriptor = $convert.base64Decode(
     'QYAiABKAxSBHNhbHQSLAoSd3JhcHBlZF9tYXN0ZXJfa2V5GAMgASgMUhB3cmFwcGVkTWFzdGVy'
     'S2V5EjkKCnVwZGF0ZWRfYXQYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wUgl1cG'
     'RhdGVkQXQ=');
+
+@$core.Deprecated('Use getKeySlotsRequestDescriptor instead')
+const GetKeySlotsRequest$json = {
+  '1': 'GetKeySlotsRequest',
+};
+
+/// Descriptor for `GetKeySlotsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getKeySlotsRequestDescriptor =
+    $convert.base64Decode('ChJHZXRLZXlTbG90c1JlcXVlc3Q=');
+
+@$core.Deprecated('Use getKeySlotsResponseDescriptor instead')
+const GetKeySlotsResponse$json = {
+  '1': 'GetKeySlotsResponse',
+  '2': [
+    {
+      '1': 'key_slots',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.vault.v1.KeySlot',
+      '10': 'keySlots'
+    },
+  ],
+};
+
+/// Descriptor for `GetKeySlotsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getKeySlotsResponseDescriptor = $convert.base64Decode(
+    'ChNHZXRLZXlTbG90c1Jlc3BvbnNlEi4KCWtleV9zbG90cxgBIAMoCzIRLnZhdWx0LnYxLktleV'
+    'Nsb3RSCGtleVNsb3Rz');
+
+@$core.Deprecated('Use saveKeySlotsRequestDescriptor instead')
+const SaveKeySlotsRequest$json = {
+  '1': 'SaveKeySlotsRequest',
+  '2': [
+    {
+      '1': 'key_slots',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.vault.v1.KeySlot',
+      '10': 'keySlots'
+    },
+  ],
+};
+
+/// Descriptor for `SaveKeySlotsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List saveKeySlotsRequestDescriptor = $convert.base64Decode(
+    'ChNTYXZlS2V5U2xvdHNSZXF1ZXN0Ei4KCWtleV9zbG90cxgBIAMoCzIRLnZhdWx0LnYxLktleV'
+    'Nsb3RSCGtleVNsb3Rz');
+
+@$core.Deprecated('Use saveKeySlotsResponseDescriptor instead')
+const SaveKeySlotsResponse$json = {
+  '1': 'SaveKeySlotsResponse',
+};
+
+/// Descriptor for `SaveKeySlotsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List saveKeySlotsResponseDescriptor =
+    $convert.base64Decode('ChRTYXZlS2V5U2xvdHNSZXNwb25zZQ==');
