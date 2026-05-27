@@ -1,6 +1,6 @@
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/infrastructure/api/token_refresher.dart';
+import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/features/auth/data/dto/login_request_dto.dart';
 import 'package:ink/features/auth/data/dto/register_request_dto.dart';
@@ -65,6 +65,18 @@ class UnifiedAuthRepository
 
   @override
   Future<Result<String, CoreFailure>> refreshToken() async {
+    if (_ongoingRefresh != null) return _ongoingRefresh!;
+
+    _ongoingRefresh = _performRefresh().whenComplete(
+      () => _ongoingRefresh = null,
+    );
+
+    return _ongoingRefresh!;
+  }
+
+  Future<Result<String, CoreFailure>>? _ongoingRefresh;
+
+  Future<Result<String, CoreFailure>> _performRefresh() async {
     final result = await remoteRunner(
       call: _remote.refresh,
       mapCore: (core) => core,

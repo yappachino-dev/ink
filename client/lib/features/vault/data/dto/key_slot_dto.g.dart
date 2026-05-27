@@ -26,6 +26,7 @@ Map<String, dynamic> _$KeySlotDtoToJson(_KeySlotDto instance) =>
     };
 
 const _$KeyTypeEnumMap = {
+  KeyType.unknown: 'unknown',
   KeyType.pin: 'pin',
   KeyType.pattern: 'pattern',
   KeyType.recoveryPhrase: 'recoveryPhrase',

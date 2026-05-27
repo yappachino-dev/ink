@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/app/navigation/navigators/overrides.dart';
 import 'package:ink/core/config/user_config.dart';
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
+import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/storage/cookie_jar.dart';
 import 'package:ink/core/infrastructure/storage/shared_prefs.dart';
 import 'package:ink/core/services/sync/sync_orchestrator.dart';

@@ -3,7 +3,6 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/network/network_state_provider.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
-import 'package:ink/features/vault/data/dto/key_slots_dto.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_remote_mapper.dart';
 import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
@@ -49,20 +48,6 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
   @override
   Future<Result<List<KeySlot>, VaultFailure>> getAll() async {
-    if (_canSync()) {
-      final syncResult = await syncKeys();
-
-      if (syncResult case Failure(error: final e)) {
-        switch (e) {
-          case VaultCoreFailure(core: NetworkFailure()):
-          case VaultCoreFailure(core: ApiFailure()):
-            break;
-          default:
-            return Failure(e);
-        }
-      }
-    }
-
     final result = await localRunner(
       call: _local.getAll,
       mapCore: VaultCoreFailure.new,
@@ -94,8 +79,8 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
     final keys = result.unwrap;
 
     return remoteRunner(
-      call: () => _remote.pushKeys(
-        KeySlotsDto(keys: keys.map((m) => m.toDomain().toDto()).toList()),
+      call: () => _remote.saveKeySlots(
+        keys.map((m) => m.toDomain().toProto()).toList(),
       ),
       mapCore: VaultCoreFailure.new,
     );
@@ -104,17 +89,19 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   @override
   Future<Result<void, VaultFailure>> syncKeys() async {
     final remoteResult = await remoteRunner(
-      call: _remote.getKeys,
+      call: _remote.getKeySlots,
       mapCore: VaultCoreFailure.new,
     );
 
     if (remoteResult case Failure(error: final e)) return Failure(e);
-    final remoteKeys = remoteResult.unwrap;
+    final remoteProtos = remoteResult.unwrap;
 
     // LWW update
-    for (final remoteDto in remoteKeys) {
+    for (final remoteProto in remoteProtos) {
+      final remoteKeySlot = remoteProto.toDomain();
+
       final localModelResult = await localRunner(
-        call: () => _local.getKeySlotByType(remoteDto.type),
+        call: () => _local.getKeySlotByType(remoteKeySlot.type),
         mapCore: VaultCoreFailure.new,
       );
 
@@ -122,9 +109,9 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
       final localModel = localModelResult.unwrap;
 
       if (localModel == null ||
-          remoteDto.updatedAt.isAfter(localModel.updatedAt)) {
+          remoteKeySlot.updatedAt.isAfter(localModel.updatedAt)) {
         await localRunner(
-          call: () => _local.saveKeySlot(remoteDto.toDomain().toCompanion()),
+          call: () => _local.saveKeySlot(remoteKeySlot.toCompanion()),
           mapCore: VaultCoreFailure.new,
         );
       }
@@ -139,22 +126,20 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
     final pendingModels = pendingModelsResult.unwrap;
 
     if (pendingModels.isNotEmpty) {
-      final dtosToPush = pendingModels
-          .map((m) => m.toDomain().toDto())
+      final pendingProtos = pendingModels
+          .map((m) => m.toDomain().toProto())
           .toList();
 
-      final pushResult = await remoteRunner(
-        call: () => _remote.pushKeys(KeySlotsDto(keys: dtosToPush)),
+      final saveResult = await remoteRunner(
+        call: () => _remote.saveKeySlots(pendingProtos),
         mapCore: VaultCoreFailure.new,
       );
 
-      if (pushResult is Success) {
+      if (saveResult is Success) {
         final toUpdate = pendingModels
             .map(
-              (m) => m
-                  .toDomain()
-                  .copyWith(syncStatus: SyncStatus.synced)
-                  .toCompanion(),
+              (m) =>
+                  m.copyWith(syncStatus: SyncStatus.synced).toCompanion(true),
             )
             .toList();
 

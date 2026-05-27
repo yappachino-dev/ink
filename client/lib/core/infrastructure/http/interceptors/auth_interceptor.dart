@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
+import 'package:ink/core/infrastructure/auth/token_refresher.dart';
+import 'package:ink/core/infrastructure/http/dio_provider.dart';
 import 'package:ink/core/services/session/session_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

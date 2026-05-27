@@ -12,14 +12,14 @@ part 'vault_notifier.g.dart';
 class VaultNotifier extends _$VaultNotifier {
   @override
   VaultState build() {
-    final hasAccesssToken = ref.watch(isAccessTokenPresentProvider);
+    final hasAccessToken = ref.watch(isAccessTokenPresentProvider);
     final hasMasterKey = ref.watch(isMasterKeyPresentProvider);
 
     if (hasMasterKey) return const VaultUnlocked();
 
     final vaultService = ref.watch(vaultServiceProvider);
 
-    unawaited(_checkInitalizationState(vaultService, hasAccesssToken));
+    unawaited(_checkInitalizationState(vaultService, hasAccessToken));
     return const VaultInitializing();
   }
 

@@ -6,7 +6,9 @@ part 'app_config_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 AppConfig appConfig(Ref ref) => const AppConfig(
-  apiUrl: env.apiUrl,
+  restApiUrl: env.restApiUrl,
+  grpcHost: env.grpcHost,
+  grpcPort: env.grpcPort,
   environment: env.environmentName,
   networkTimeout: Duration(seconds: env.networkSecondsTimeout),
 );

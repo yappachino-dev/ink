@@ -1,7 +1,7 @@
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/infrastructure/api/api_endpoints.dart' as endpoints;
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
+import 'package:ink/core/infrastructure/http/api_endpoints.dart' as endpoints;
+import 'package:ink/core/infrastructure/http/dio_provider.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/logger.dart';
 import 'package:ink/core/services/sync/sync_state.dart';

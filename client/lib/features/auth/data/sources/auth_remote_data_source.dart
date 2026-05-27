@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:ink/core/infrastructure/api/api_endpoints.dart' as endpoints;
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
+import 'package:ink/core/infrastructure/http/api_endpoints.dart' as endpoints;
+import 'package:ink/core/infrastructure/http/dio_provider.dart';
 import 'package:ink/features/auth/data/dto/auth_response_dto.dart';
 import 'package:ink/features/auth/data/dto/login_request_dto.dart';
 import 'package:ink/features/auth/data/dto/register_request_dto.dart';

@@ -2,24 +2,19 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ink/core/config/app_config_provider.dart';
-import 'package:ink/core/infrastructure/api/interceptors/auth_interceptor.dart';
-import 'package:ink/core/infrastructure/api/token_refresher.dart';
+import 'package:ink/core/infrastructure/http/interceptors/auth_interceptor.dart';
 import 'package:ink/core/infrastructure/storage/cookie_jar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dio_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-TokenRefresher tokenRefresher(Ref ref) =>
-    throw UnimplementedError('tokenRefresher must be overriden in main');
-
-@Riverpod(keepAlive: true)
 Dio dio(Ref ref) {
-  final config = ref.read(appConfigProvider);
+  final config = ref.watch(appConfigProvider);
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: config.apiUrl,
+      baseUrl: config.restApiUrl,
       connectTimeout: config.networkTimeout,
       receiveTimeout: config.networkTimeout,
       sendTimeout: config.networkTimeout,
@@ -38,11 +33,11 @@ Dio dio(Ref ref) {
 
 @Riverpod(keepAlive: true)
 Dio refreshDio(Ref ref) {
-  final config = ref.read(appConfigProvider);
+  final config = ref.watch(appConfigProvider);
 
   final refreshDio = Dio(
     BaseOptions(
-      baseUrl: config.apiUrl,
+      baseUrl: config.restApiUrl,
       connectTimeout: config.networkTimeout,
       receiveTimeout: config.networkTimeout,
       sendTimeout: config.networkTimeout,

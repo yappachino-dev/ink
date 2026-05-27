@@ -48,4 +48,4 @@ final class VaultServiceProvider
   }
 }
 
-String _$vaultServiceHash() => r'737cb0e792ddc68502777a185beec642f102a288';
+String _$vaultServiceHash() => r'44054d0f4a6854f9e6d0a41220809368c8f56d67';
