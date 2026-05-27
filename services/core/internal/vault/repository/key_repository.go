@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/yappachino-dev/ink/services/core/internal/dto"
+	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 type KeyRepository struct {
@@ -16,7 +16,7 @@ func NewKeyRepository(db *sql.DB) *KeyRepository {
 	return &KeyRepository{db: db}
 }
 
-func (r *KeyRepository) Upsert(userID int, key dto.KeyDTO) error {
+func (r *KeyRepository) Upsert(userID int, key models.KeySlot) error {
 	query := `
 		INSERT INTO user_keys (user_id, key_type, salt, wrapped_master_key, updated_at)
 		VALUES ($1, $2, $3, $4, $5)
@@ -30,7 +30,7 @@ func (r *KeyRepository) Upsert(userID int, key dto.KeyDTO) error {
 	return err
 }
 
-func (r *KeyRepository) UpsertMany(userID int, keys []dto.KeyDTO) error {
+func (r *KeyRepository) UpsertMany(userID int, keys []models.KeySlot) error {
 	if len(keys) == 0 {
 		return nil
 	}
@@ -59,7 +59,7 @@ func (r *KeyRepository) UpsertMany(userID int, keys []dto.KeyDTO) error {
 	return err
 }
 
-func (r *KeyRepository) GetByUserID(userID int) ([]dto.KeyDTO, error) {
+func (r *KeyRepository) GetByUserID(userID int) ([]models.KeySlot, error) {
 	query := `
 		SELECT key_type, salt, wrapped_master_key, updated_at
 		FROM user_keys WHERE user_id = $1
@@ -71,16 +71,16 @@ func (r *KeyRepository) GetByUserID(userID int) ([]dto.KeyDTO, error) {
 	}
 	defer rows.Close()
 
-	var keys []dto.KeyDTO
+	var keySlots []models.KeySlot
 	for rows.Next() {
-		var k dto.KeyDTO
+		var k models.KeySlot
 
 		if err := rows.Scan(&k.Type, &k.Salt, &k.WrappedMasterKey, &k.UpdatedAt); err != nil {
 			return nil, err
 		}
 
-		keys = append(keys, k)
+		keySlots = append(keySlots, k)
 	}
 
-	return keys, nil
+	return keySlots, nil
 }

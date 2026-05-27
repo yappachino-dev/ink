@@ -27,3 +27,18 @@ status:
 
 logs:
 	docker compose logs -f
+
+.PHONY: apply-schema reset-db users
+
+apply-schema:
+	cat ./migrations/001_init.sql | docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) 
+
+reset-db:
+	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres; GRANT ALL ON SCHEMA public TO public;"
+	$(MAKE) apply-schema
+
+users:
+	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from users;"
+
+user_keys:
+	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from user_keys;"
