@@ -19,6 +19,17 @@ GrpcConnection grpcConnection(Ref ref) {
 
   return (
     channel: channel,
+    options: CallOptions(),
+    interceptors: [],
+  );
+}
+
+@Riverpod(keepAlive: true)
+GrpcConnection grpcAuthConnection(Ref ref) {
+  final channel = ref.watch(clientChannelProvider);
+
+  return (
+    channel: channel,
     options: CallOptions(
       providers: [
         (metadata, uri) async {
@@ -30,9 +41,11 @@ GrpcConnection grpcConnection(Ref ref) {
                 .refreshToken();
 
             token = refreshResult.fold(
-              (newToken) {
-                ref.read(sessionControllerProvider).setAuthToken(newToken);
-                return newToken;
+              (tokens) {
+                ref
+                    .read(sessionControllerProvider)
+                    .setAuthTokens(tokens.accessToken, tokens.refreshToken);
+                return tokens.accessToken;
               },
               (failure) {
                 throw const GrpcError.unauthenticated(

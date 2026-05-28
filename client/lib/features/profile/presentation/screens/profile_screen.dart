@@ -60,7 +60,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onWidgetsTap: _openWidgets,
                 onLogout: () {
                   unawaited(ref.read(cookieJarProvider).deleteAll());
-                  ref.read(sessionControllerProvider).setAuthToken(null);
+                  ref.read(sessionControllerProvider).clearAccessToken();
+                  ref.read(sessionControllerProvider).clearRefreshToken();
                 },
               ),
       ),

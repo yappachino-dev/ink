@@ -31,15 +31,17 @@ class AuthInterceptor extends Interceptor {
           .refreshToken();
 
       return refreshResult.fold(
-        (token) async {
-          _ref.read(sessionControllerProvider).setAuthToken(token);
+        (tokens) async {
+          _ref
+              .read(sessionControllerProvider)
+              .setAuthTokens(tokens.accessToken, tokens.refreshToken);
 
           final opts = Options(
             method: err.requestOptions.method,
             headers: err.requestOptions.headers,
           );
 
-          opts.headers?['Authorization'] = 'Bearer $token';
+          opts.headers?['Authorization'] = 'Bearer ${tokens.accessToken}';
 
           try {
             final retryResponse = await _ref

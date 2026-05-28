@@ -23,9 +23,12 @@ class AuthServiceImpl implements AuthService {
     final result = await _repo.login(email, password);
 
     if (result case Failure(error: final e)) return Failure(e);
-    final accessToken = result.unwrap;
+    final tokens = result.unwrap;
 
-    _sessionManager.setAuthToken(accessToken);
+    await _sessionManager.setAuthTokens(
+      tokens.accessToken,
+      tokens.refreshToken,
+    );
 
     return const Success(null);
   }
@@ -44,9 +47,12 @@ class AuthServiceImpl implements AuthService {
     final result = await _repo.register(email, password, code);
 
     if (result case Failure(error: final e)) return Failure(e);
-    final accessToken = result.unwrap;
+    final tokens = result.unwrap;
 
-    _sessionManager.setAuthToken(accessToken);
+    await _sessionManager.setAuthTokens(
+      tokens.accessToken,
+      tokens.refreshToken,
+    );
 
     return const Success(null);
   }
