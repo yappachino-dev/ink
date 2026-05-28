@@ -55,4 +55,4 @@ final class VaultRemoteDataSourceProvider
 }
 
 String _$vaultRemoteDataSourceHash() =>
-    r'2b44b66c30a79ab3df3f3d0d6bd3a28d68e59362';
+    r'b7d91af5ab5db1f9522401155c7dae5125ae3348';

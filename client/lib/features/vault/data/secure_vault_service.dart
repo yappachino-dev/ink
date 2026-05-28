@@ -105,8 +105,13 @@ class SecureVaultService implements VaultService {
   }
 
   @override
-  Future<Result<void, VaultFailure>> pushKeys() async {
-    return _guard(_repository.pushKeys);
+  Future<Result<void, VaultFailure>> pullKeys() {
+    return _guard(_repository.syncKeys);
+  }
+
+  @override
+  Future<Result<void, VaultFailure>> pushKeys() {
+    return _guard(_repository.syncKeys);
   }
 
   Future<Result<T, VaultFailure>> _guard<T>(

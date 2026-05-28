@@ -1,4 +1,3 @@
-import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/network/network_state_provider.dart';

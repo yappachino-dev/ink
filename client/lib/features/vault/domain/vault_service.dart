@@ -8,5 +8,7 @@ abstract class VaultService {
   );
   Future<Result<List<KeyType>, VaultFailure>> getUnlockMethods();
   Future<Result<void, VaultFailure>> unlock(KeyType type, String secret);
+
+  Future<Result<void, VaultFailure>> pullKeys();
   Future<Result<void, VaultFailure>> pushKeys();
 }

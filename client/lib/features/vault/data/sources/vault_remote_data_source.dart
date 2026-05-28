@@ -1,4 +1,3 @@
-import 'package:ink/core/infrastructure/grpc/gen/vault/v1/vault.pb.dart' as pb;
 import 'package:ink/core/infrastructure/grpc/gen/vault/v1/vault.pbgrpc.dart';
 import 'package:ink/core/infrastructure/grpc/grpc_connection_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,19 +10,19 @@ class VaultRemoteDataSource {
 
   final VaultServiceClient _client;
 
-  Future<List<pb.KeySlot>> getKeySlots() async {
-    final response = await _client.getKeySlots(pb.GetKeySlotsRequest());
+  Future<List<KeySlot>> getKeySlots() async {
+    final response = await _client.getKeySlots(GetKeySlotsRequest());
     return response.keySlots.toList();
   }
 
-  Future<void> saveKeySlots(List<pb.KeySlot> slots) async {
-    await _client.saveKeySlots(pb.SaveKeySlotsRequest(keySlots: slots));
+  Future<void> saveKeySlots(List<KeySlot> slots) async {
+    await _client.saveKeySlots(SaveKeySlotsRequest(keySlots: slots));
   }
 }
 
 @Riverpod(keepAlive: true)
 VaultRemoteDataSource vaultRemoteDataSource(Ref ref) {
-  final connection = ref.watch(grpcConnectionProvider);
+  final connection = ref.watch(grpcAuthConnectionProvider);
 
   return VaultRemoteDataSource(
     client: VaultServiceClient(
