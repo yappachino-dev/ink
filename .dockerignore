@@ -1,0 +1,8 @@
+client/
+
+.git
+.gitignore
+
+services/core/bin/
+**/*.exe
+**/*.test
