@@ -1,5 +1,3 @@
-const String restApiUrl = String.fromEnvironment('REST_API_BASE_URL');
-
 const String grpcHost = String.fromEnvironment('GRPC_HOST');
 const int grpcPort = int.fromEnvironment('GRPC_PORT');
 

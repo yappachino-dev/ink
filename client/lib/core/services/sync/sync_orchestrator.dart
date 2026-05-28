@@ -29,7 +29,6 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
       final syncables = List<Syncable>.from(rawSyncables)
         ..sort((a, b) => b.syncPriority.compareTo(a.syncPriority));
 
-      // final dio = ref.read(dioProvider);
       final syncClient = ref.read(syncClientProvider);
       final syncStorage = ref.read(syncStorageProvider);
       final currentCursor = syncStorage.getSyncCursor() ?? 0;
@@ -38,13 +37,6 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         cursor: currentCursor,
         changes: SyncChanges(),
       );
-
-      // final pushPayload = {
-      //   'cursor': currentCursor,
-      //   'changes': <String, dynamic>{},
-      // };
-      //
-      // final pendingChanges = pushPayload['changes']! as Map<String, dynamic>;
 
       for (final delegate in syncables) {
         final localResult = await delegate.collectLocalChanges(request.changes);
@@ -55,49 +47,17 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         }
       }
 
-      // for (final feature in syncables) {
-      //   final localResult = await feature.getLocalChanges();
-      //
-      //   if (localResult case Failure(error: final e)) {
-      //     state = SyncError(e);
-      //     return;
-      //   }
-      //
-      //   pendingChanges[feature.syncKey] = localResult.unwrap;
-      // }
-
       final syncResult = await remoteRunner(
         call: () => syncClient.sync(request),
         mapCore: (core) => core,
       );
-
-      // final networkResult = await remoteRunner(
-      //   call: () => dio.post<Map<String, dynamic>>(
-      //     endpoints.sync,
-      //     data: pushPayload,
-      //   ),
-      //   mapCore: (core) => core,
-      // );
 
       if (syncResult case Failure(error: final e)) {
         state = SyncError(e);
         return;
       }
 
-      // if (networkResult case Failure(error: final e)) {
-      //   state = SyncError(e);
-      //   return;
-      // }
-
       final syncResponse = syncResult.unwrap;
-      // final responseData = networkResult.unwrap.data;
-
-      // if (responseData == null) {
-      //   state = const SyncError(UnexpectedFailure('Null response data'));
-      //   return;
-      // }
-
-      // final remoteChanges = responseData['changes'] as Map<String, dynamic>;
 
       for (final delegate in syncables) {
         final ackResult = await delegate.acknowledgePush(
@@ -117,35 +77,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         }
       }
 
-      // for (final feature in syncables) {
-      //   if (pendingChanges.containsKey(feature.syncKey)) {
-      //     final acknowledgementResult = await feature.acknowledgePush(
-      //       pendingChanges[feature.syncKey] as List<Map<String, dynamic>>,
-      //     );
-      //
-      //     if (acknowledgementResult case Failure(error: final e)) {
-      //       state = SyncError(e);
-      //       return;
-      //     }
-      //   }
-      //
-      //   if (remoteChanges.containsKey(feature.syncKey)) {
-      //     final applyResult = await feature.applyRemoteChanges(
-      //       remoteChanges[feature.syncKey],
-      //     );
-      //
-      //     if (applyResult case Failure(error: final e)) {
-      //       state = SyncError(e);
-      //       return;
-      //     }
-      //   }
-      // }
-
       await syncStorage.saveSyncCursor(syncResponse.nextCursor);
-
-      // if (responseData.containsKey('nextCursor')) {
-      //   await syncStorage.saveSyncCursor(responseData['nextCursor'] as int);
-      // }
 
       state = const SyncSuccess();
     } catch (e, st) {

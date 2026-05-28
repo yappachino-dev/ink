@@ -5,24 +5,6 @@ import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 
-// extension NoteDtoToEncrypted on NoteDto {
-//   EncryptedNote toDomain() => EncryptedNote(
-//     id: id,
-//     encryptedTitle: encryptedTitle,
-//     encryptedContent: encryptedContent,
-//
-//     localVersion: version,
-//     lastSyncedVersion: version,
-//     syncStatus: SyncStatus.synced,
-//
-//     createdAt: createdAt,
-//     updatedAt: updatedAt,
-//     deletedAt: deletedAt,
-//
-//     projectId: projectId,
-//   );
-// }
-
 extension ProtoNoteToEncrypted on pb.Note {
   EncryptedNote toDomain() => EncryptedNote(
     id: id,
@@ -40,22 +22,6 @@ extension ProtoNoteToEncrypted on pb.Note {
     projectId: hasProjectId() ? projectId : null,
   );
 }
-
-// extension EncryptedNoteToDto on EncryptedNote {
-//   NoteDto toDto() => NoteDto(
-//     id: id,
-//     encryptedTitle: encryptedTitle,
-//     encryptedContent: encryptedContent,
-//
-//     version: lastSyncedVersion,
-//
-//     createdAt: createdAt,
-//     updatedAt: updatedAt,
-//     deletedAt: deletedAt,
-//
-//     projectId: projectId,
-//   );
-// }
 
 extension EncryptedNoteToProto on EncryptedNote {
   pb.Note toProto() => pb.Note(
