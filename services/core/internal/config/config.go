@@ -22,9 +22,7 @@ type SMTP struct {
 }
 
 func Load() (*Config, error) {
-	if err := godotenv.Load(".env"); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %w", err)
-	}
+	_ = godotenv.Load()
 
 	databaseURL := os.Getenv("DATABASE_URL")
 
