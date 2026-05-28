@@ -1,1 +1,1 @@
-typedef SyncAcknowledgement = ({String id, int version, bool isDeleted});
+typedef SyncAck = ({String id, int version, bool isDeleted});

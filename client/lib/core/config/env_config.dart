@@ -1,8 +1,9 @@
-const String apiUrl = String.fromEnvironment('API_BASE_URL');
+const String grpcHost = String.fromEnvironment('GRPC_HOST');
+const int grpcPort = int.fromEnvironment('GRPC_PORT');
 
 const String environmentName = String.fromEnvironment(
   'ENV_NAME',
-  defaultValue: 'development',
+  defaultValue: 'production',
 );
 
 const int networkSecondsTimeout = int.fromEnvironment(

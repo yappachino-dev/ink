@@ -7,7 +7,9 @@ part 'session_state.freezed.dart';
 @freezed
 sealed class SessionState with _$SessionState {
   const factory SessionState({
+    required bool isLoaded,
     Uint8List? masterKey,
     String? accessToken,
+    String? refreshToken,
   }) = _SessionState;
 }

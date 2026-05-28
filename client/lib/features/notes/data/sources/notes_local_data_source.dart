@@ -21,7 +21,7 @@ class NotesLocalDataSource {
   ) => _notesDao.updateWithConflict(note, conflict);
 
   Future<void> acknowledgePushed(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) => _notesDao.acknowledgePushed(acknowledgements);
 
   Future<NoteModel?> get(String id) => _notesDao.getNote(id);

@@ -16,3 +16,7 @@ Thumbs.db
 *.env.local
 client/env/
 services/**/.env
+
+# Local development files
+go.work
+go.work.sum

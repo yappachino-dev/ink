@@ -1,32 +1,67 @@
-import 'package:dio/dio.dart';
-import 'package:ink/core/infrastructure/api/api_endpoints.dart' as endpoints;
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
-import 'package:ink/features/auth/data/dto/auth_response_dto.dart';
-import 'package:ink/features/auth/data/dto/login_request_dto.dart';
-import 'package:ink/features/auth/data/dto/register_request_dto.dart';
-import 'package:ink/features/auth/data/dto/request_verification_dto.dart';
-import 'package:retrofit/retrofit.dart';
+import 'package:ink/core/infrastructure/auth/types.dart';
+import 'package:ink/core/infrastructure/grpc/gen/auth/v1/auth.pbgrpc.dart';
+import 'package:ink/core/infrastructure/grpc/grpc_connection_provider.dart';
+import 'package:ink/features/auth/domain/types.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_remote_data_source.g.dart';
 
-@RestApi()
-abstract class AuthRemoteDataSource {
-  factory AuthRemoteDataSource(Dio dio) = _AuthRemoteDataSource;
+class AuthRemoteDataSource {
+  AuthRemoteDataSource({required AuthServiceClient client}) : _client = client;
 
-  @POST(endpoints.login)
-  Future<AuthResponseDto> login(@Body() LoginRequestDto request);
+  final AuthServiceClient _client;
 
-  @POST(endpoints.requestVerification)
-  Future<void> requestVerification(@Body() RequestVerificationDto request);
+  Future<TokenPayload> login(LoginPayload payload) async {
+    final response = await _client.login(
+      LoginRequest(email: payload.email, password: payload.password),
+    );
 
-  @POST(endpoints.register)
-  Future<AuthResponseDto> register(@Body() RegisterRequestDto request);
+    return (
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
+  }
 
-  @POST(endpoints.refresh)
-  Future<AuthResponseDto> refresh();
+  Future<TokenPayload> register(RegisterPayload payload) async {
+    final response = await _client.register(
+      RegisterRequest(
+        email: payload.email,
+        password: payload.password,
+        code: payload.code,
+      ),
+    );
+
+    return (
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
+  }
+
+  Future<void> requestVerification(VerifyEmailPayload payload) async {
+    await _client.verifyEmail(VerifyEmailRequest(email: payload.email));
+  }
+
+  Future<TokenPayload> refresh(String refreshToken) async {
+    final response = await _client.refreshToken(
+      RefreshTokenRequest(refreshToken: refreshToken),
+    );
+
+    return (
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    );
+  }
 }
 
 @Riverpod(keepAlive: true)
-AuthRemoteDataSource authRemoteDataSource(Ref ref) =>
-    AuthRemoteDataSource(ref.watch(refreshDioProvider));
+AuthRemoteDataSource authRemoteDataSource(Ref ref) {
+  final connection = ref.watch(grpcConnectionProvider);
+
+  return AuthRemoteDataSource(
+    client: AuthServiceClient(
+      connection.channel,
+      options: connection.options,
+      interceptors: connection.interceptors,
+    ),
+  );
+}

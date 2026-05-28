@@ -1,9 +1,9 @@
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/infrastructure/api/api_endpoints.dart' as endpoints;
-import 'package:ink/core/infrastructure/api/dio_provider.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
+import 'package:ink/core/infrastructure/grpc/gen/sync/v1/sync.pbgrpc.dart';
 import 'package:ink/core/infrastructure/logger.dart';
+import 'package:ink/core/services/sync/sync_client.dart';
 import 'package:ink/core/services/sync/sync_state.dart';
 import 'package:ink/core/services/sync/sync_storage.dart';
 import 'package:ink/core/services/sync/syncable.dart';
@@ -29,77 +29,55 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
       final syncables = List<Syncable>.from(rawSyncables)
         ..sort((a, b) => b.syncPriority.compareTo(a.syncPriority));
 
-      final dio = ref.read(dioProvider);
+      final syncClient = ref.read(syncClientProvider);
       final syncStorage = ref.read(syncStorageProvider);
       final currentCursor = syncStorage.getSyncCursor() ?? 0;
 
-      final pushPayload = {
-        'cursor': currentCursor,
-        'changes': <String, dynamic>{},
-      };
+      final request = SyncRequest(
+        cursor: currentCursor,
+        changes: SyncChanges(),
+      );
 
-      final pendingChanges = pushPayload['changes']! as Map<String, dynamic>;
-
-      for (final feature in syncables) {
-        final localResult = await feature.getLocalChanges();
+      for (final delegate in syncables) {
+        final localResult = await delegate.collectLocalChanges(request.changes);
 
         if (localResult case Failure(error: final e)) {
           state = SyncError(e);
           return;
         }
-
-        pendingChanges[feature.syncKey] = localResult.unwrap;
       }
 
-      final networkResult = await remoteRunner(
-        call: () => dio.post<Map<String, dynamic>>(
-          endpoints.sync,
-          data: pushPayload,
-        ),
+      final syncResult = await remoteRunner(
+        call: () => syncClient.sync(request),
         mapCore: (core) => core,
       );
 
-      if (networkResult case Failure(error: final e)) {
+      if (syncResult case Failure(error: final e)) {
         state = SyncError(e);
         return;
       }
 
-      final responseData = networkResult.unwrap.data;
+      final syncResponse = syncResult.unwrap;
 
-      if (responseData == null) {
-        state = const SyncError(UnexpectedFailure('Null response data'));
-        return;
-      }
-
-      final remoteChanges = responseData['changes'] as Map<String, dynamic>;
-
-      for (final feature in syncables) {
-        if (pendingChanges.containsKey(feature.syncKey)) {
-          final acknowledgementResult = await feature.acknowledgePush(
-            pendingChanges[feature.syncKey] as List<Map<String, dynamic>>,
-          );
-
-          if (acknowledgementResult case Failure(error: final e)) {
-            state = SyncError(e);
-            return;
-          }
+      for (final delegate in syncables) {
+        final ackResult = await delegate.acknowledgePush(
+          syncResponse.changes,
+        );
+        if (ackResult case Failure(error: final e)) {
+          state = SyncError(e);
+          return;
         }
 
-        if (remoteChanges.containsKey(feature.syncKey)) {
-          final applyResult = await feature.applyRemoteChanges(
-            remoteChanges[feature.syncKey],
-          );
-
-          if (applyResult case Failure(error: final e)) {
-            state = SyncError(e);
-            return;
-          }
+        final applyResult = await delegate.applyRemoteChanges(
+          syncResponse.changes,
+        );
+        if (applyResult case Failure(error: final e)) {
+          state = SyncError(e);
+          return;
         }
       }
 
-      if (responseData.containsKey('nextCursor')) {
-        await syncStorage.saveSyncCursor(responseData['nextCursor'] as int);
-      }
+      await syncStorage.saveSyncCursor(syncResponse.nextCursor);
 
       state = const SyncSuccess();
     } catch (e, st) {

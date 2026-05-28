@@ -41,7 +41,7 @@ final class SessionManagerProvider
   }
 }
 
-String _$sessionManagerHash() => r'8c251cdc078ac5bab3f12ea39311b59b0699faaa';
+String _$sessionManagerHash() => r'241ca147ee8fe4d06a27f95ab48995a5f609af84';
 
 abstract class _$SessionManager extends $Notifier<SessionState> {
   SessionState build();
@@ -189,6 +189,47 @@ final class SessionControllerProvider
 }
 
 String _$sessionControllerHash() => r'1f991dc89d3785dbf0cd61bb8f83e318e0c894af';
+
+@ProviderFor(isSessionLoaded)
+final isSessionLoadedProvider = IsSessionLoadedProvider._();
+
+final class IsSessionLoadedProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  IsSessionLoadedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isSessionLoadedProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isSessionLoadedHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return isSessionLoaded(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$isSessionLoadedHash() => r'7d65c62b99a20abe935fe417b5237e3919f801fa';
 
 @ProviderFor(isMasterKeyPresent)
 final isMasterKeyPresentProvider = IsMasterKeyPresentProvider._();

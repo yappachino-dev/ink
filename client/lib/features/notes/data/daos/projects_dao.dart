@@ -21,7 +21,7 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
       into(projects).insert(project, mode: InsertMode.insertOrReplace);
 
   Future<void> acknowledgePushed(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) => batch((batch) {
     for (final ack in acknowledgements) {
       if (ack.isDeleted) {

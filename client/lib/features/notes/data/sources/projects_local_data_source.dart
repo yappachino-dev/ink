@@ -18,7 +18,7 @@ class ProjectsLocalDataSource {
   Future<void> save(ProjectsCompanion note) => _projectsDao.updateProject(note);
 
   Future<void> acknowledgePushed(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) => _projectsDao.acknowledgePushed(acknowledgements);
 
   Future<ProjectModel?> get(String id) => _projectsDao.getProject(id);

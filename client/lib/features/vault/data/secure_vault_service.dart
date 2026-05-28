@@ -6,7 +6,6 @@ import 'package:ink/core/infrastructure/crypto/crypto.dart';
 import 'package:ink/core/infrastructure/logger.dart';
 import 'package:ink/core/services/session/session_controller.dart';
 import 'package:ink/core/services/session/session_manager.dart';
-import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/features/vault/data/unified_vault_repository.dart';
 import 'package:ink/features/vault/domain/entities/key_slot.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
@@ -23,20 +22,17 @@ class SecureVaultService implements VaultService {
     required DerivationService derivation,
     required EncryptionService encryption,
     required SessionController sessionController,
-    required SyncOrchestrator sync,
     required VaultRepository repository,
   }) : _random = random,
        _derivation = derivation,
        _encryption = encryption,
        _sessionController = sessionController,
-       _sync = sync,
        _repository = repository;
 
   final RandomService _random;
   final DerivationService _derivation;
   final EncryptionService _encryption;
   final SessionController _sessionController;
-  final SyncOrchestrator _sync;
   final VaultRepository _repository;
 
   @override
@@ -102,15 +98,20 @@ class SecureVaultService implements VaultService {
 
       _sessionController.setMasterKey(masterKey);
 
-      unawaited(_sync.performSync());
+      unawaited(_repository.syncKeys());
 
       return const Success(null);
     });
   }
 
   @override
-  Future<Result<void, VaultFailure>> pushKeys() async {
-    return _guard(_repository.pushKeys);
+  Future<Result<void, VaultFailure>> pullKeys() {
+    return _guard(_repository.syncKeys);
+  }
+
+  @override
+  Future<Result<void, VaultFailure>> pushKeys() {
+    return _guard(_repository.syncKeys);
   }
 
   Future<Result<T, VaultFailure>> _guard<T>(
@@ -135,6 +136,5 @@ VaultService vaultService(Ref ref) => SecureVaultService(
   derivation: ref.watch(derivationServiceProvider),
   encryption: ref.watch(encryptionServiceProvider),
   sessionController: ref.watch(sessionControllerProvider),
-  sync: ref.watch(syncOrchestratorProvider.notifier),
   repository: ref.watch(vaultRepositoryProvider),
 );
