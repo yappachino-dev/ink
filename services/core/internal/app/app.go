@@ -20,6 +20,7 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
+	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
 	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
 	"google.golang.org/grpc"
 )
@@ -74,6 +75,7 @@ func New(cfg *config.Config) *App {
 
 	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, emailVerificationSvc))
 	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(keySvc))
+	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
 	r := gin.Default()
 	setupHTTPRoutes(r, authH, emailVerificationH, keyH, syncH, cfg.JwtSecretKey)

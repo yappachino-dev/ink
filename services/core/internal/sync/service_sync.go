@@ -3,10 +3,20 @@ package sync
 import (
 	"context"
 
-	"github.com/google/uuid"
-	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
+
+type SyncPayload struct {
+	ClientCursor int
+	Projects     []models.Project
+	Notes        []models.Note
+}
+
+type SyncResult struct {
+	NextCursor int
+	Projects   []models.Project
+	Notes      []models.Note
+}
 
 type SyncService struct {
 	repo *SyncRepository
@@ -16,88 +26,15 @@ func NewSyncService(repo *SyncRepository) *SyncService {
 	return &SyncService{repo: repo}
 }
 
-func (s *SyncService) Sync(ctx context.Context, userID int, req dto.SyncRequest) (dto.SyncResponse, error) {
-	var reqNotes []models.Note
-	for _, n := range req.Changes.Notes {
-		id, _ := uuid.Parse(n.ID)
-		var pID *uuid.UUID
-		if n.ProjectID != nil {
-			parsed, _ := uuid.Parse(*n.ProjectID)
-			pID = &parsed
-		}
-		reqNotes = append(reqNotes, models.Note{
-			ID:               id,
-			ProjectID:        pID,
-			EncryptedTitle:   n.EncryptedTitle,
-			EncryptedContent: n.EncryptedContent,
-			Version:          n.Version,
-			CreatedAt:        n.CreatedAt,
-			UpdatedAt:        n.UpdatedAt,
-			DeletedAt:        n.DeletedAt,
-		})
-	}
-
-	var reqProjects []models.Project
-	for _, p := range req.Changes.Projects {
-		id, _ := uuid.Parse(p.ID)
-		reqProjects = append(reqProjects, models.Project{
-			ID:               id,
-			EncryptedContent: p.EncryptedContent,
-			Version:          p.Version,
-			CreatedAt:        p.CreatedAt,
-			UpdatedAt:        p.UpdatedAt,
-			DeletedAt:        p.DeletedAt,
-		})
-	}
-
-	nextCursor, respNotes, respProjects, err := s.repo.SyncData(ctx, userID, reqNotes, reqProjects, req.Cursor)
+func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (SyncResult, error) {
+	nextCursor, respNotes, respProjects, err := s.repo.SyncData(ctx, userID, req.ClientCursor, req.Notes, req.Projects)
 	if err != nil {
-		return dto.SyncResponse{}, err
+		return SyncResult{}, err
 	}
 
-	var dtoNotes []dto.NoteSyncDTO
-	for _, n := range respNotes {
-		var pID *string
-		if n.ProjectID != nil {
-			str := n.ProjectID.String()
-			pID = &str
-		}
-		dtoNotes = append(dtoNotes, dto.NoteSyncDTO{
-			ID:               n.ID.String(),
-			ProjectID:        pID,
-			EncryptedTitle:   n.EncryptedTitle,
-			EncryptedContent: n.EncryptedContent,
-			Version:          n.Version,
-			CreatedAt:        n.CreatedAt,
-			UpdatedAt:        n.UpdatedAt,
-			DeletedAt:        n.DeletedAt,
-		})
-	}
-
-	var dtoProjects []dto.ProjectSyncDTO
-	for _, p := range respProjects {
-		dtoProjects = append(dtoProjects, dto.ProjectSyncDTO{
-			ID:               p.ID.String(),
-			EncryptedContent: p.EncryptedContent,
-			Version:          p.Version,
-			CreatedAt:        p.CreatedAt,
-			UpdatedAt:        p.UpdatedAt,
-			DeletedAt:        p.DeletedAt,
-		})
-	}
-
-	if dtoNotes == nil {
-		dtoNotes = []dto.NoteSyncDTO{}
-	}
-	if dtoProjects == nil {
-		dtoProjects = []dto.ProjectSyncDTO{}
-	}
-
-	return dto.SyncResponse{
+	return SyncResult{
 		NextCursor: nextCursor,
-		Changes: dto.SyncChanges{
-			Notes:    dtoNotes,
-			Projects: dtoProjects,
-		},
+		Notes:      respNotes,
+		Projects:   respProjects,
 	}, nil
 }

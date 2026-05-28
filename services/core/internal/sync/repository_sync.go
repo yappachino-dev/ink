@@ -17,7 +17,7 @@ func NewSyncRepository(db *sql.DB) *SyncRepository {
 	}
 }
 
-func (r *SyncRepository) SyncData(ctx context.Context, userID int, reqNotes []models.Note, reqProjects []models.Project, clientCursor int) (int, []models.Note, []models.Project, error) {
+func (r *SyncRepository) SyncData(ctx context.Context, userID int, clientCursor int, reqNotes []models.Note, reqProjects []models.Project) (int, []models.Note, []models.Project, error) {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, nil, nil, err

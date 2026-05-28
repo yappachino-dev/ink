@@ -39,7 +39,7 @@ func (h *SyncHandler) Sync(c *gin.Context) {
 		return
 	}
 
-	result, err := h.syncService.Sync(c.Request.Context(), userID, req)
+	result, err := h.syncService.Sync(c.Request.Context(), userID, SyncPayload{})
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to sync data")
 		return
