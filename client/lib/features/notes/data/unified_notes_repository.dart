@@ -4,12 +4,8 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
-import 'package:ink/features/notes/data/dto/note_dto.dart';
-import 'package:ink/features/notes/data/dto/project_dto.dart';
 import 'package:ink/features/notes/data/mappers/encrypted_note_local_mapper.dart';
-import 'package:ink/features/notes/data/mappers/encrypted_note_remote_mapper.dart';
 import 'package:ink/features/notes/data/mappers/encrypted_project_local_mapper.dart';
-import 'package:ink/features/notes/data/mappers/encrypted_project_remote_mapper.dart';
 import 'package:ink/features/notes/data/notes_sync_engine.dart';
 import 'package:ink/features/notes/data/projects_sync_engine.dart';
 import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
@@ -151,20 +147,20 @@ class UnifiedNotesRepository
   // --- Notes sync engine interface implementation ---
 
   @override
-  Future<Result<List<NoteDto>, NotesFailure>> getPendingNotes() async {
+  Future<Result<List<EncryptedNote>, NotesFailure>> getPendingNotes() async {
     final result = await localRunner(
       call: _localNotes.getPending,
       mapCore: NotesCoreFailure.new,
     );
 
     return result.map(
-      (models) => models.map((model) => model.toDomain().toDto()).toList(),
+      (models) => models.map((model) => model.toDomain()).toList(),
     );
   }
 
   @override
   Future<Result<void, NotesFailure>> acknowledgePushedNotes(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) async {
     return localRunner(
       call: () => _localNotes.acknowledgePushed(acknowledgements),
@@ -174,10 +170,10 @@ class UnifiedNotesRepository
 
   @override
   Future<Result<void, NotesFailure>> applyRemoteNotes(
-    List<NoteDto> remoteData,
+    List<EncryptedNote> remoteData,
   ) async {
-    for (final dto in remoteData) {
-      final processResult = await _processSingleNoteDelta(dto);
+    for (final note in remoteData) {
+      final processResult = await _processSingleNoteDelta(note);
 
       if (processResult case Failure(error: final e)) return Failure(e);
     }
@@ -188,20 +184,21 @@ class UnifiedNotesRepository
   // --- Projects sync engine interface implementation ---
 
   @override
-  Future<Result<List<ProjectDto>, NotesFailure>> getPendingProjects() async {
+  Future<Result<List<EncryptedProject>, NotesFailure>>
+  getPendingProjects() async {
     final result = await localRunner(
       call: _localProjects.getPending,
       mapCore: NotesCoreFailure.new,
     );
 
     return result.map(
-      (models) => models.map((model) => model.toDomain().toDto()).toList(),
+      (models) => models.map((model) => model.toDomain()).toList(),
     );
   }
 
   @override
   Future<Result<void, NotesFailure>> acknowledgePushedProjects(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) async {
     return localRunner(
       call: () => _localProjects.acknowledgePushed(acknowledgements),
@@ -211,10 +208,10 @@ class UnifiedNotesRepository
 
   @override
   Future<Result<void, NotesFailure>> applyRemoteProjects(
-    List<ProjectDto> remoteData,
+    List<EncryptedProject> remoteData,
   ) async {
-    for (final dto in remoteData) {
-      final processResult = await _processSingleProjectDelta(dto);
+    for (final project in remoteData) {
+      final processResult = await _processSingleProjectDelta(project);
 
       if (processResult case Failure(error: final e)) return Failure(e);
     }
@@ -225,12 +222,10 @@ class UnifiedNotesRepository
   // -- Sync engine logic ---
 
   Future<Result<void, NotesFailure>> _processSingleNoteDelta(
-    NoteDto dto,
+    EncryptedNote note,
   ) async {
-    final serverNote = dto.toDomain();
-
     final getResult = await localRunner(
-      call: () => _localNotes.get(dto.id),
+      call: () => _localNotes.get(note.id),
       mapCore: NotesCoreFailure.new,
     );
 
@@ -240,10 +235,10 @@ class UnifiedNotesRepository
     // Note doesn't exist locally
     if (noteModel == null) {
       // Note doesn't exist on server either => skip
-      if (dto.deletedAt != null) return const Success(null);
+      if (note.deletedAt != null) return const Success(null);
 
       return localRunner(
-        call: () => _localNotes.create(serverNote.toCompanion()),
+        call: () => _localNotes.create(note.toCompanion()),
         mapCore: NotesCoreFailure.new,
       );
     }
@@ -255,50 +250,50 @@ class UnifiedNotesRepository
           noteModel
               .copyWith(syncStatus: SyncStatus.conflicted)
               .toCompanion(true),
-          serverNote.toConflictCompanion(),
+          note.toConflictCompanion(),
         ),
         mapCore: NotesCoreFailure.new,
       );
     }
 
     // Note hasn't been updated on the server
-    if (dto.version <= noteModel.lastSyncedVersion) return const Success(null);
+    if (note.localVersion <= noteModel.lastSyncedVersion) {
+      return const Success(null);
+    }
 
     // Note has been deleted on the server
-    if (dto.deletedAt != null) {
+    if (note.deletedAt != null) {
       // Note has been modified locally and deleted on the server
-      if (noteModel.localVersion > dto.version) {
+      if (noteModel.localVersion > note.localVersion) {
         return localRunner(
           call: () => _localNotes.saveWithConflict(
             noteModel
                 .copyWith(syncStatus: SyncStatus.conflicted)
                 .toCompanion(true),
-            serverNote.toConflictCompanion(),
+            note.toConflictCompanion(),
           ),
           mapCore: NotesCoreFailure.new,
         );
       }
 
       return localRunner(
-        call: () => _localNotes.delete(dto.id),
+        call: () => _localNotes.delete(note.id),
         mapCore: NotesCoreFailure.new,
       );
     }
 
     // No conflict => normal update
     return localRunner(
-      call: () => _localNotes.save(serverNote.toCompanion()),
+      call: () => _localNotes.save(note.toCompanion()),
       mapCore: NotesCoreFailure.new,
     );
   }
 
   Future<Result<void, NotesFailure>> _processSingleProjectDelta(
-    ProjectDto dto,
+    EncryptedProject project,
   ) async {
-    final serverProject = dto.toDomain();
-
     final getResult = await localRunner(
-      call: () => _localProjects.get(dto.id),
+      call: () => _localProjects.get(project.id),
       mapCore: NotesCoreFailure.new,
     );
 
@@ -308,18 +303,18 @@ class UnifiedNotesRepository
     // Project doesn't exist locally
     if (projectModel == null) {
       // Project doesn't exist on server either => skip
-      if (serverProject.deletedAt != null) return const Success(null);
+      if (project.deletedAt != null) return const Success(null);
 
       return localRunner(
-        call: () => _localProjects.create(serverProject.toCompanion()),
+        call: () => _localProjects.create(project.toCompanion()),
         mapCore: NotesCoreFailure.new,
       );
     }
 
     // LLW update
-    if (serverProject.updatedAt.isAfter(projectModel.updatedAt)) {
+    if (project.updatedAt.isAfter(projectModel.updatedAt)) {
       // Project has been deleted on the server => delete locally
-      if (serverProject.deletedAt != null) {
+      if (project.deletedAt != null) {
         return localRunner(
           call: () => _localProjects.delete(projectModel.id),
           mapCore: NotesCoreFailure.new,
@@ -328,7 +323,7 @@ class UnifiedNotesRepository
 
       return localRunner(
         call: () => _localProjects.save(
-          serverProject.toCompanion(),
+          project.toCompanion(),
         ),
         mapCore: NotesCoreFailure.new,
       );

@@ -31,7 +31,7 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
   });
 
   Future<void> acknowledgePushed(
-    List<SyncAcknowledgement> acknowledgements,
+    List<SyncAck> acknowledgements,
   ) => batch((batch) {
     for (final ack in acknowledgements) {
       if (ack.isDeleted) {

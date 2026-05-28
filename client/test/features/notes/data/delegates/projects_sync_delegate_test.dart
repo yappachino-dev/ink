@@ -59,7 +59,7 @@ void main() {
       final captured = verify(
         () => mockRepo.acknowledgePushedProjects(captureAny()),
       ).captured;
-      final acks = captured.first as List<SyncAcknowledgement>;
+      final acks = captured.first as List<SyncAck>;
 
       expect(acks.length, 2);
       expect(acks[0].id, 'ack_1');

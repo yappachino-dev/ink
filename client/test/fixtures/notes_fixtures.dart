@@ -165,7 +165,7 @@ class NotesFixtures {
 
   // --- Value ojbect builders ---
 
-  static SyncAcknowledgement buildAck({
+  static SyncAck buildAck({
     String? id,
     int? version,
     bool? isDeleted,
