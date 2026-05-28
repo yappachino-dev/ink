@@ -1,20 +1,19 @@
-package handler
+package auth
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/yappachino-dev/ink/services/core/internal/auth/service"
 	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/response"
 )
 
 type Handler struct {
-	authService *service.AuthService
+	authService *AuthService
 }
 
-func NewHandler(authService *service.AuthService) *Handler {
+func NewHandler(authService *AuthService) *Handler {
 	return &Handler{
 		authService: authService,
 	}
@@ -30,7 +29,7 @@ func (h *Handler) Register(c *gin.Context) {
 
 	accessToken, refreshToken, err := h.authService.Register(req.Email, req.Password)
 	if err != nil {
-		if err == service.ErrUserAlreadyExists {
+		if err == ErrUserAlreadyExists {
 			response.Error(c, http.StatusConflict, "user already exists")
 			return
 		}
@@ -56,7 +55,7 @@ func (h *Handler) Login(c *gin.Context) {
 
 	accessToken, refreshToken, err := h.authService.Login(req.Email, req.Password)
 	if err != nil {
-		if err == service.ErrInvalidCredentials {
+		if err == ErrInvalidCredentials {
 			response.Error(c, http.StatusUnauthorized, err.Error())
 			return
 		}

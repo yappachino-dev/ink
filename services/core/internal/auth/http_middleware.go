@@ -1,12 +1,12 @@
-package middleware
+package auth
 
 import (
 	"net/http"
 	"strings"
 
-	"github.com/yappachino-dev/ink/services/core/internal/response"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/yappachino-dev/ink/services/core/internal/response"
 )
 
 func AuthMiddleware(secret string) gin.HandlerFunc {
@@ -19,7 +19,6 @@ func AuthMiddleware(secret string) gin.HandlerFunc {
 		}
 
 		parts := strings.Split(authHeader, " ")
-
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			response.Error(c, http.StatusUnauthorized, "invalid authorization header")
 			c.Abort()
@@ -28,38 +27,19 @@ func AuthMiddleware(secret string) gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
+		var claims AccessTokenClaims
+
+		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (any, error) {
 			return []byte(secret), nil
 		})
+
 		if err != nil || !token.Valid {
 			response.Error(c, http.StatusUnauthorized, "invalid token")
 			c.Abort()
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			response.Error(c, http.StatusUnauthorized, "invalid token claims")
-			c.Abort()
-			return
-		}
-
-		userIDValue, exists := claims["user_id"]
-		if !exists {
-			response.Error(c, http.StatusUnauthorized, "user id not found in token")
-			c.Abort()
-			return
-		}
-
-		userIDFloat, ok := userIDValue.(float64)
-		if !ok {
-			response.Error(c, http.StatusUnauthorized, "invalid user id type")
-			c.Abort()
-			return
-		}
-
-		userID := int(userIDFloat)
-		c.Set("user_id", userID)
+		c.Set("user_id", claims.UserID)
 
 		c.Next()
 	}

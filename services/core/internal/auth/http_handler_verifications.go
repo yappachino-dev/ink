@@ -1,24 +1,23 @@
-package handler
+package auth
 
 import (
 	"net/http"
 
-	"github.com/yappachino-dev/ink/services/core/internal/auth/service"
+	"github.com/gin-gonic/gin"
 	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/email"
 	"github.com/yappachino-dev/ink/services/core/internal/response"
-	"github.com/gin-gonic/gin"
 )
 
 type EmailVerificationHandler struct {
-	service     *service.EmailVerificationService
-	authService *service.AuthService
+	service     *EmailVerificationService
+	authService *AuthService
 	emailSender *email.Sender
 }
 
 func NewEmailVerificationHandler(
-	service *service.EmailVerificationService,
-	authService *service.AuthService,
+	service *EmailVerificationService,
+	authService *AuthService,
 	emailSender *email.Sender,
 ) *EmailVerificationHandler {
 	return &EmailVerificationHandler{
@@ -42,10 +41,11 @@ func (h *EmailVerificationHandler) VerifyEmail(c *gin.Context) {
 		return
 	}
 
-	if err := h.emailSender.SendVerificationCode(req.Email, code); err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to send verification email")
-		return
-	}
+	println("verification code", code)
+	// if err := h.emailSender.SendVerificationCode(req.Email, code); err != nil {
+	// 	response.Error(c, http.StatusInternalServerError, "failed to send verification email")
+	// 	return
+	// }
 
 	response.Success(c, http.StatusOK, gin.H{
 		"message": "verification code sent",
@@ -67,7 +67,7 @@ func (h *EmailVerificationHandler) ConfirmRegister(c *gin.Context) {
 
 	accessToken, refreshToken, err := h.authService.Register(req.Email, req.Password)
 	if err != nil {
-		if err == service.ErrUserAlreadyExists {
+		if err == ErrUserAlreadyExists {
 			response.Error(c, http.StatusConflict, "user already exists")
 			return
 		}

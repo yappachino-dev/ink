@@ -1,4 +1,4 @@
-package service
+package auth
 
 import (
 	"context"
@@ -8,15 +8,14 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/yappachino-dev/ink/services/core/internal/auth/repository"
 	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 type EmailVerificationService struct {
-	repo *repository.EmailVerificationRepository
+	repo *EmailVerificationRepository
 }
 
-func NewEmailVerificationService(repo *repository.EmailVerificationRepository) *EmailVerificationService {
+func NewEmailVerificationService(repo *EmailVerificationRepository) *EmailVerificationService {
 	return &EmailVerificationService{repo: repo}
 }
 

@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"crypto/rand"
@@ -17,7 +17,6 @@ type AccessTokenClaims struct {
 }
 
 func GenerateAccessToken(userID int, secret string, ttl time.Duration) (string, error) {
-
 	claims := AccessTokenClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
