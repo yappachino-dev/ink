@@ -1,15 +1,14 @@
-package service
+package vault
 
 import (
 	"github.com/yappachino-dev/ink/services/core/internal/models"
-	"github.com/yappachino-dev/ink/services/core/internal/vault/repository"
 )
 
 type KeyService struct {
-	keyRepo *repository.KeyRepository
+	keyRepo *KeyRepository
 }
 
-func NewKeyService(keyRepo *repository.KeyRepository) *KeyService {
+func NewKeyService(keyRepo *KeyRepository) *KeyService {
 	return &KeyService{keyRepo: keyRepo}
 }
 

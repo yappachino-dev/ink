@@ -1,4 +1,4 @@
-package handler
+package vault
 
 import (
 	"net/http"
@@ -8,14 +8,13 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/models"
 	"github.com/yappachino-dev/ink/services/core/internal/response"
-	"github.com/yappachino-dev/ink/services/core/internal/vault/service"
 )
 
 type KeyHandler struct {
-	keyService *service.KeyService
+	keyService *KeyService
 }
 
-func NewKeyHandler(keyService *service.KeyService) *KeyHandler {
+func NewKeyHandler(keyService *KeyService) *KeyHandler {
 	return &KeyHandler{keyService: keyService}
 }
 

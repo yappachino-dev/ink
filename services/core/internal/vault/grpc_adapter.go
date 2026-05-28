@@ -1,4 +1,4 @@
-package grpc
+package vault
 
 import (
 	"github.com/yappachino-dev/ink/services/core/internal/models"

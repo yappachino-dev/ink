@@ -1,34 +1,28 @@
-package grpc
+package vault
 
 import (
 	"context"
-	"errors"
 
-	"github.com/yappachino-dev/ink/services/core/internal/vault/service"
+	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type contextKey string
-
-const userIDKey contextKey = "user_id"
-
 type Server struct {
 	vaultv1.UnimplementedVaultServiceServer
-	keyService *service.KeyService
+	keyService *KeyService
 }
 
-func NewVaultServer(keyService *service.KeyService) *Server {
+func NewServer(keyService *KeyService) *Server {
 	return &Server{keyService: keyService}
 }
 
 func (s *Server) GetKeySlots(ctx context.Context, req *vaultv1.GetKeySlotsRequest) (*vaultv1.GetKeySlotsResponse, error) {
-	// userID, err := getUserIDFromContext(ctx)
-	// if err != nil {
-	// 	return nil, status.Error(codes.Unauthenticated, err.Error())
-	// }
-	userID := 1
+	userID, ok := appctx.UserIDFromContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "missing or invalid authentication credentials")
+	}
 
 	keys, err := s.keyService.GetKeys(userID)
 	if err != nil {
@@ -39,11 +33,10 @@ func (s *Server) GetKeySlots(ctx context.Context, req *vaultv1.GetKeySlotsReques
 }
 
 func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequest) (*vaultv1.SaveKeySlotsResponse, error) {
-	// userID, err := getUserIDFromContext(ctx)
-	// if err != nil {
-	// 	return nil, status.Error(codes.Unauthenticated, err.Error())
-	// }
-	userID := 1
+	userID, ok := appctx.UserIDFromContext(ctx)
+	if !ok {
+		return nil, status.Error(codes.Unauthenticated, "missing or invalid authentication credentials")
+	}
 
 	if len(req.KeySlots) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "request body must contain key slots")
@@ -56,12 +49,4 @@ func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequ
 	}
 
 	return &vaultv1.SaveKeySlotsResponse{}, nil
-}
-
-func getUserIDFromContext(ctx context.Context) (int, error) {
-	userID, ok := ctx.Value(userIDKey).(int)
-	if !ok {
-		return 0, errors.New("missing or invalid authentication credentials")
-	}
-	return userID, nil
 }
