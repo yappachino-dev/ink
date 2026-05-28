@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SessionState {
 
- Uint8List? get masterKey; String? get accessToken;
+ bool get isLoaded; Uint8List? get masterKey; String? get accessToken; String? get refreshToken;
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SessionStateCopyWith<SessionState> get copyWith => _$SessionStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&(identical(other.isLoaded, isLoaded) || other.isLoaded == isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(masterKey),accessToken);
+int get hashCode => Object.hash(runtimeType,isLoaded,const DeepCollectionEquality().hash(masterKey),accessToken,refreshToken);
 
 @override
 String toString() {
-  return 'SessionState(masterKey: $masterKey, accessToken: $accessToken)';
+  return 'SessionState(isLoaded: $isLoaded, masterKey: $masterKey, accessToken: $accessToken, refreshToken: $refreshToken)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SessionStateCopyWith<$Res>  {
   factory $SessionStateCopyWith(SessionState value, $Res Function(SessionState) _then) = _$SessionStateCopyWithImpl;
 @useResult
 $Res call({
- Uint8List? masterKey, String? accessToken
+ bool isLoaded, Uint8List? masterKey, String? accessToken, String? refreshToken
 });
 
 
@@ -62,10 +62,12 @@ class _$SessionStateCopyWithImpl<$Res>
 
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? masterKey = freezed,Object? accessToken = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoaded = null,Object? masterKey = freezed,Object? accessToken = freezed,Object? refreshToken = freezed,}) {
   return _then(_self.copyWith(
-masterKey: freezed == masterKey ? _self.masterKey : masterKey // ignore: cast_nullable_to_non_nullable
+isLoaded: null == isLoaded ? _self.isLoaded : isLoaded // ignore: cast_nullable_to_non_nullable
+as bool,masterKey: freezed == masterKey ? _self.masterKey : masterKey // ignore: cast_nullable_to_non_nullable
 as Uint8List?,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -148,10 +150,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Uint8List? masterKey,  String? accessToken)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoaded,  Uint8List? masterKey,  String? accessToken,  String? refreshToken)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SessionState() when $default != null:
-return $default(_that.masterKey,_that.accessToken);case _:
+return $default(_that.isLoaded,_that.masterKey,_that.accessToken,_that.refreshToken);case _:
   return orElse();
 
 }
@@ -169,10 +171,10 @@ return $default(_that.masterKey,_that.accessToken);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Uint8List? masterKey,  String? accessToken)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoaded,  Uint8List? masterKey,  String? accessToken,  String? refreshToken)  $default,) {final _that = this;
 switch (_that) {
 case _SessionState():
-return $default(_that.masterKey,_that.accessToken);}
+return $default(_that.isLoaded,_that.masterKey,_that.accessToken,_that.refreshToken);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -186,10 +188,10 @@ return $default(_that.masterKey,_that.accessToken);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Uint8List? masterKey,  String? accessToken)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoaded,  Uint8List? masterKey,  String? accessToken,  String? refreshToken)?  $default,) {final _that = this;
 switch (_that) {
 case _SessionState() when $default != null:
-return $default(_that.masterKey,_that.accessToken);case _:
+return $default(_that.isLoaded,_that.masterKey,_that.accessToken,_that.refreshToken);case _:
   return null;
 
 }
@@ -201,11 +203,13 @@ return $default(_that.masterKey,_that.accessToken);case _:
 
 
 class _SessionState implements SessionState {
-  const _SessionState({this.masterKey, this.accessToken});
+  const _SessionState({required this.isLoaded, this.masterKey, this.accessToken, this.refreshToken});
   
 
+@override final  bool isLoaded;
 @override final  Uint8List? masterKey;
 @override final  String? accessToken;
+@override final  String? refreshToken;
 
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
@@ -217,16 +221,16 @@ _$SessionStateCopyWith<_SessionState> get copyWith => __$SessionStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&(identical(other.isLoaded, isLoaded) || other.isLoaded == isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(masterKey),accessToken);
+int get hashCode => Object.hash(runtimeType,isLoaded,const DeepCollectionEquality().hash(masterKey),accessToken,refreshToken);
 
 @override
 String toString() {
-  return 'SessionState(masterKey: $masterKey, accessToken: $accessToken)';
+  return 'SessionState(isLoaded: $isLoaded, masterKey: $masterKey, accessToken: $accessToken, refreshToken: $refreshToken)';
 }
 
 
@@ -237,7 +241,7 @@ abstract mixin class _$SessionStateCopyWith<$Res> implements $SessionStateCopyWi
   factory _$SessionStateCopyWith(_SessionState value, $Res Function(_SessionState) _then) = __$SessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- Uint8List? masterKey, String? accessToken
+ bool isLoaded, Uint8List? masterKey, String? accessToken, String? refreshToken
 });
 
 
@@ -254,10 +258,12 @@ class __$SessionStateCopyWithImpl<$Res>
 
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? masterKey = freezed,Object? accessToken = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoaded = null,Object? masterKey = freezed,Object? accessToken = freezed,Object? refreshToken = freezed,}) {
   return _then(_SessionState(
-masterKey: freezed == masterKey ? _self.masterKey : masterKey // ignore: cast_nullable_to_non_nullable
+isLoaded: null == isLoaded ? _self.isLoaded : isLoaded // ignore: cast_nullable_to_non_nullable
+as bool,masterKey: freezed == masterKey ? _self.masterKey : masterKey // ignore: cast_nullable_to_non_nullable
 as Uint8List?,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

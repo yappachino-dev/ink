@@ -1,7 +1,10 @@
 import 'dart:typed_data';
 
 abstract interface class SessionController {
-  void setAuthToken(String? token);
+  void setAuthTokens(String accessToken, String refreshToken);
+  void clearAccessToken();
+  void clearRefreshToken();
+
   void setMasterKey(Uint8List key);
-  void clearSession();
+  void clearMasterKey();
 }
