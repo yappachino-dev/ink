@@ -36,9 +36,17 @@ GrpcConnection grpcAuthConnection(Ref ref) {
           var token = ref.read(authSessionProvider).accessToken;
 
           if (token != null && token.isJwtExpired()) {
+            final refreshToken = ref.read(authSessionProvider).refreshToken;
+
+            if (refreshToken == null) {
+              throw const GrpcError.unauthenticated(
+                'No session found',
+              );
+            }
+
             final refreshResult = await ref
                 .read(tokenRefresherProvider)
-                .refreshToken();
+                .refreshTokens(refreshToken);
 
             token = refreshResult.fold(
               (tokens) {
@@ -49,7 +57,7 @@ GrpcConnection grpcAuthConnection(Ref ref) {
               },
               (failure) {
                 throw const GrpcError.unauthenticated(
-                  'Session expired.',
+                  'Session expired',
                 );
               },
             );

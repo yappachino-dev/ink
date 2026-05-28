@@ -26,9 +26,13 @@ class AuthInterceptor extends Interceptor {
     ErrorInterceptorHandler handler,
   ) async {
     if (err.response?.statusCode == 401) {
+      final refreshToken = _ref.read(authSessionProvider).refreshToken;
+
+      if (refreshToken == null) return handler.next(err);
+
       final refreshResult = await _ref
           .read(tokenRefresherProvider)
-          .refreshToken();
+          .refreshTokens(refreshToken);
 
       return refreshResult.fold(
         (tokens) async {

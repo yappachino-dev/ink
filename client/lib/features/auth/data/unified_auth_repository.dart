@@ -55,10 +55,12 @@ class UnifiedAuthRepository
   // --- Token refresher interface implementation ---
 
   @override
-  Future<Result<TokenPayload, CoreFailure>> refreshToken() async {
+  Future<Result<TokenPayload, CoreFailure>> refreshTokens(
+    String refreshToken,
+  ) async {
     if (_ongoingRefresh != null) return _ongoingRefresh!;
 
-    _ongoingRefresh = _performRefresh().whenComplete(
+    _ongoingRefresh = _performRefresh(refreshToken).whenComplete(
       () => _ongoingRefresh = null,
     );
 
@@ -67,9 +69,11 @@ class UnifiedAuthRepository
 
   Future<Result<TokenPayload, CoreFailure>>? _ongoingRefresh;
 
-  Future<Result<TokenPayload, CoreFailure>> _performRefresh() {
+  Future<Result<TokenPayload, CoreFailure>> _performRefresh(
+    String refreshToken,
+  ) {
     return remoteRunner(
-      call: _remote.refresh,
+      call: () => _remote.refresh(refreshToken),
       mapCore: (core) => core,
     );
   }

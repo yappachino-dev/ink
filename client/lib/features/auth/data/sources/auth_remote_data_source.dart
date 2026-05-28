@@ -41,8 +41,10 @@ class AuthRemoteDataSource {
     await _client.verifyEmail(VerifyEmailRequest(email: payload.email));
   }
 
-  Future<TokenPayload> refresh() async {
-    final response = await _client.refreshToken(RefreshTokenRequest());
+  Future<TokenPayload> refresh(String refreshToken) async {
+    final response = await _client.refreshToken(
+      RefreshTokenRequest(refreshToken: refreshToken),
+    );
 
     return (
       accessToken: response.accessToken,
