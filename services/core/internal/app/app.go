@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/lmittmann/tint"
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
@@ -57,12 +58,12 @@ func New(cfg *config.Config) *App {
 	keyH := vault.NewKeyHandler(keySvc)
 	syncH := sync.NewSyncHandler(syncSvc)
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
 		Level: slog.LevelDebug,
 	}))
-	logOpts := []logging.Option{
-		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
-	}
+	logOpts := []logging.Option{logging.WithLogOnEvents(
+		logging.StartCall, logging.FinishCall,
+	)}
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
