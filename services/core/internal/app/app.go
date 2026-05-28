@@ -16,7 +16,6 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
-	"github.com/yappachino-dev/ink/services/core/internal/email"
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
@@ -46,18 +45,8 @@ func New(cfg *config.Config) *App {
 
 	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
 	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
-	emailSender := email.NewSender(cfg.SMTP)
 	keySvc := vault.NewKeyService(keyRepo)
 	syncSvc := sync.NewSyncService(syncRepo)
-
-	authH := auth.NewHandler(authSvc)
-	emailVerificationH := auth.NewEmailVerificationHandler(
-		emailVerificationSvc,
-		authSvc,
-		emailSender,
-	)
-	keyH := vault.NewKeyHandler(keySvc)
-	syncH := sync.NewSyncHandler(syncSvc)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
 		Level: slog.LevelDebug,
@@ -78,7 +67,9 @@ func New(cfg *config.Config) *App {
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
 	r := gin.Default()
-	setupHTTPRoutes(r, authH, emailVerificationH, keyH, syncH, cfg.JwtSecretKey)
+	r.GET("/ping", func(c *gin.Context) {
+		c.String(http.StatusOK, "pong")
+	})
 
 	return &App{
 		httpServer: &http.Server{Addr: ":8080", Handler: r},
@@ -123,49 +114,6 @@ func (a *App) Run(ctx context.Context) error {
 		}
 
 		return nil
-	}
-}
-
-func setupHTTPRoutes(
-	r *gin.Engine,
-	authH *auth.Handler,
-	emailH *auth.EmailVerificationHandler,
-	keyH *vault.KeyHandler,
-	syncH *sync.SyncHandler,
-	jwtSecret string,
-) {
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "active",
-			"service": "Ink API Backbone",
-		})
-	})
-
-	v1 := r.Group("/api/v1")
-
-	authGroup := v1.Group("/auth")
-	{
-		authGroup.POST("/login", authH.Login)
-		authGroup.POST("/refresh", authH.Refresh)
-		authGroup.POST("/logout", authH.Logout)
-		authGroup.POST("/verify-email", emailH.VerifyEmail)
-		authGroup.POST("/confirm-register", emailH.ConfirmRegister)
-	}
-
-	mw := auth.AuthMiddleware(jwtSecret)
-	protected := v1.Group("/protected").Use(mw)
-	{
-		protected.GET("/me", func(c *gin.Context) {
-			userID, _ := c.Get("user_id")
-			c.JSON(http.StatusOK, gin.H{
-				"user_id": userID,
-			})
-		})
-
-		protected.GET("/me/keys", keyH.GetKeySlots)
-		protected.POST("/me/keys", keyH.SaveKeySlots)
-		protected.PATCH("/me/keys", keyH.SaveKeySlots)
-		protected.POST("/sync", syncH.Sync)
 	}
 }
 
