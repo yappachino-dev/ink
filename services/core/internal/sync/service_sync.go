@@ -1,19 +1,18 @@
-package service
+package sync
 
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/models"
-	"github.com/yappachino-dev/ink/services/core/internal/sync/repository"
-	"github.com/google/uuid"
 )
 
 type SyncService struct {
-	repo *repository.SyncRepository
+	repo *SyncRepository
 }
 
-func NewSyncService(repo *repository.SyncRepository) *SyncService {
+func NewSyncService(repo *SyncRepository) *SyncService {
 	return &SyncService{repo: repo}
 }
 

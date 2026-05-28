@@ -16,14 +16,11 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/email"
+	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
 	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
 	"google.golang.org/grpc"
-
-	syncHandler "github.com/yappachino-dev/ink/services/core/internal/sync/handler"
-	syncRepository "github.com/yappachino-dev/ink/services/core/internal/sync/repository"
-	syncService "github.com/yappachino-dev/ink/services/core/internal/sync/service"
 )
 
 type App struct {
@@ -43,13 +40,13 @@ func New(cfg *config.Config) *App {
 	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
 	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
 	keyRepo := vault.NewKeyRepository(db)
-	syncRepo := syncRepository.NewSyncRepository(db)
+	syncRepo := sync.NewSyncRepository(db)
 
 	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
 	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	emailSender := email.NewSender(cfg.SMTP)
 	keySvc := vault.NewKeyService(keyRepo)
-	syncSvc := syncService.NewSyncService(syncRepo)
+	syncSvc := sync.NewSyncService(syncRepo)
 
 	authH := auth.NewHandler(authSvc)
 	emailVerificationH := auth.NewEmailVerificationHandler(
@@ -58,7 +55,7 @@ func New(cfg *config.Config) *App {
 		emailSender,
 	)
 	keyH := vault.NewKeyHandler(keySvc)
-	syncH := syncHandler.NewSyncHandler(syncSvc)
+	syncH := sync.NewSyncHandler(syncSvc)
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
@@ -131,7 +128,7 @@ func setupHTTPRoutes(
 	authH *auth.Handler,
 	emailH *auth.EmailVerificationHandler,
 	keyH *vault.KeyHandler,
-	syncH *syncHandler.SyncHandler,
+	syncH *sync.SyncHandler,
 	jwtSecret string,
 ) {
 	r.GET("/ping", func(c *gin.Context) {

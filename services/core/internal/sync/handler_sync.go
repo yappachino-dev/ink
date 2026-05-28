@@ -1,4 +1,4 @@
-package handler
+package sync
 
 import (
 	"net/http"
@@ -7,14 +7,13 @@ import (
 
 	"github.com/yappachino-dev/ink/services/core/internal/dto"
 	"github.com/yappachino-dev/ink/services/core/internal/response"
-	"github.com/yappachino-dev/ink/services/core/internal/sync/service"
 )
 
 type SyncHandler struct {
-	syncService *service.SyncService
+	syncService *SyncService
 }
 
-func NewSyncHandler(syncService *service.SyncService) *SyncHandler {
+func NewSyncHandler(syncService *SyncService) *SyncHandler {
 	return &SyncHandler{
 		syncService: syncService,
 	}

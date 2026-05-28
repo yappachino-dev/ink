@@ -40,5 +40,5 @@ reset-db:
 users:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from users;"
 
-user_keys:
+user-keys:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from user_keys;"
