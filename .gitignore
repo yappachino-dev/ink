@@ -13,6 +13,7 @@ Thumbs.db
 
 # Environment related files 
 .env
+.env.*
 *.env.local
 client/env/
 services/**/.env
