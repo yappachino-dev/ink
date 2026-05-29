@@ -40,7 +40,7 @@ func (s *Server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	accessToken, refreshToken, err := s.authService.Register(req.GetEmail(), req.GetPassword())
+	accessToken, refreshToken, err := s.authService.Register(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
 		if err == ErrUserAlreadyExists {
 			return nil, status.Error(codes.AlreadyExists, err.Error())
@@ -55,7 +55,7 @@ func (s *Server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 }
 
 func (s *Server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
-	accessToken, refreshToken, err := s.authService.Login(req.GetEmail(), req.GetPassword())
+	accessToken, refreshToken, err := s.authService.Login(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
 		if err == ErrInvalidCredentials {
 			return nil, status.Error(codes.Unauthenticated, err.Error())
@@ -70,7 +70,7 @@ func (s *Server) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.L
 }
 
 func (s *Server) RefreshToken(ctx context.Context, req *authv1.RefreshTokenRequest) (*authv1.RefreshTokenResponse, error) {
-	accessToken, refreshToken, err := s.authService.Refresh(req.GetRefreshToken())
+	accessToken, refreshToken, err := s.authService.Refresh(ctx, req.GetRefreshToken())
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid or expired refresh token")
 	}
@@ -82,7 +82,7 @@ func (s *Server) RefreshToken(ctx context.Context, req *authv1.RefreshTokenReque
 }
 
 func (s *Server) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
-	err := s.authService.Logout(req.GetRefreshToken())
+	err := s.authService.Logout(ctx, req.GetRefreshToken())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "failed to process logout payload")
 	}

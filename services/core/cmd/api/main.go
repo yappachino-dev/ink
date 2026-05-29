@@ -15,7 +15,6 @@ func main() {
 	fmt.Println("System bootstrapping initiated...")
 
 	cfg, err := config.Load()
-	print(cfg.DatabaseURL)
 	if err != nil {
 		panic(fmt.Sprintf("failed to load configurations: %v", err))
 	}

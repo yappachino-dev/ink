@@ -44,14 +44,12 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	db := stdlib.OpenDBFromPool(pool)
 	queries := store.New(pool)
 
-	userRepo := auth.NewUserRepo(db)
-	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
-	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
+	authRepo := auth.NewPostgresAuthRepository(queries)
 	vaultRepo := vault.NewPostgresVaultRepository(queries)
 	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
 
-	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
-	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
+	emailVerificationSvc := auth.NewEmailVerificationService(authRepo)
+	authSvc := auth.NewAuthService(authRepo, authRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	vaultSvc := vault.NewVaultService(vaultRepo)
 	syncSvc := sync.NewSyncService(syncRepo)
 

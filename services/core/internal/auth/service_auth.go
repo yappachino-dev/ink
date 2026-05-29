@@ -1,24 +1,23 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"time"
-
-	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
 type UserRepository interface {
-	Create(user *models.User) error
-	GetByEmail(email string) (*models.User, error)
-	GetByID(id int) (*models.User, error)
+	CreateUser(ctx context.Context, user *User) error
+	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	GetUserByID(ctx context.Context, id int) (*User, error)
 }
 
 type RefreshTokenRepository interface {
-	Create(token *models.RefreshToken) error
-	GetByTokenHash(hash string) (*models.RefreshToken, error)
-	RevokeByTokenHash(hash string) error
-	RevokeAllByUserID(userID int) error
-	Update(token *models.RefreshToken) error
+	CreateRefreshToken(ctx context.Context, token *RefreshToken) error
+	GetRefreshTokenByHash(ctx context.Context, hash string) (*RefreshToken, error)
+	RevokeRefreshTokenByHash(ctx context.Context, hash string) error
+	RevokeAllRefreshTokensByUserID(ctx context.Context, userID int) error
+	UpdateRefreshToken(ctx context.Context, token *RefreshToken) error
 }
 
 type AuthService struct {
@@ -50,12 +49,11 @@ var (
 	ErrUserAlreadyExists  = errors.New("user already exists")
 )
 
-func (s *AuthService) Login(email, password string) (string, string, error) {
-	user, err := s.userRepo.GetByEmail(email)
+func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, error) {
+	user, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
 	}
-
 	if user == nil {
 		return "", "", ErrInvalidCredentials
 	}
@@ -64,15 +62,15 @@ func (s *AuthService) Login(email, password string) (string, string, error) {
 	if err != nil {
 		return "", "", ErrInvalidCredentials
 	}
-	return s.issueTokens(user.ID)
+
+	return s.issueTokens(ctx, user.ID)
 }
 
-func (s *AuthService) Register(email, password string) (string, string, error) {
-	existingUser, err := s.userRepo.GetByEmail(email)
+func (s *AuthService) Register(ctx context.Context, email, password string) (string, string, error) {
+	existingUser, err := s.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
 	}
-
 	if existingUser != nil {
 		return "", "", ErrUserAlreadyExists
 	}
@@ -82,20 +80,20 @@ func (s *AuthService) Register(email, password string) (string, string, error) {
 		return "", "", err
 	}
 
-	user := &models.User{
+	user := &User{
 		Email:        email,
 		PasswordHash: passwordHash,
 	}
 
-	err = s.userRepo.Create(user)
+	err = s.userRepo.CreateUser(ctx, user)
 	if err != nil {
 		return "", "", err
 	}
 
-	return s.issueTokens(user.ID)
+	return s.issueTokens(ctx, user.ID)
 }
 
-func (s *AuthService) issueTokens(userID int) (string, string, error) {
+func (s *AuthService) issueTokens(ctx context.Context, userID int) (string, string, error) {
 	accessToken, err := GenerateAccessToken(userID, s.jwtSecret, s.accessTokenTTL)
 	if err != nil {
 		return "", "", err
@@ -107,19 +105,18 @@ func (s *AuthService) issueTokens(userID int) (string, string, error) {
 	}
 
 	tokenHash := HashToken(refreshToken)
-
-	session := &models.RefreshToken{
+	session := &RefreshToken{
 		UserID:    userID,
 		TokenHash: tokenHash,
-		ExpiresAt: time.Now().Add(s.refreshTokenTTL),
+		ExpiresAt: time.Now().UTC().Add(s.refreshTokenTTL),
 	}
 
-	err = s.refreshTokenRepo.RevokeAllByUserID(userID)
+	err = s.refreshTokenRepo.RevokeAllRefreshTokensByUserID(ctx, userID)
 	if err != nil {
 		return "", "", err
 	}
 
-	err = s.refreshTokenRepo.Create(session)
+	err = s.refreshTokenRepo.CreateRefreshToken(ctx, session)
 	if err != nil {
 		return "", "", err
 	}
@@ -133,51 +130,39 @@ var (
 	ErrRevokedRefreshToken = errors.New("revoked refresh token")
 )
 
-func (s *AuthService) Refresh(refreshToken string) (string, string, error) {
+func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string, string, error) {
 	if refreshToken == "" {
 		return "", "", ErrInvalidRefreshToken
 	}
 
 	tokenHash := HashToken(refreshToken)
-
-	storedToken, err := s.refreshTokenRepo.GetByTokenHash(tokenHash)
+	storedToken, err := s.refreshTokenRepo.GetRefreshTokenByHash(ctx, tokenHash)
 	if err != nil {
 		return "", "", err
 	}
-
-	if storedToken == nil {
+	if storedToken == nil || !storedToken.RevokedAt.IsZero() {
 		return "", "", ErrRevokedRefreshToken
 	}
 
-	if storedToken.RevokedAt != nil {
-		return "", "", ErrRevokedRefreshToken
-	}
-
-	if time.Now().After(storedToken.ExpiresAt) {
+	if time.Now().UTC().After(storedToken.ExpiresAt) {
 		return "", "", ErrExpiredRefreshToken
 	}
 
-	err = s.refreshTokenRepo.RevokeByTokenHash(tokenHash)
+	err = s.refreshTokenRepo.RevokeRefreshTokenByHash(ctx, tokenHash)
 	if err != nil {
 		return "", "", err
 	}
 
-	return s.issueTokens(storedToken.UserID)
+	return s.issueTokens(ctx, storedToken.UserID)
 }
 
 var ErrInvalidLogoutToken = errors.New("invalid token")
 
-func (s *AuthService) Logout(refreshToken string) error {
+func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 	if refreshToken == "" {
 		return ErrInvalidLogoutToken
 	}
 
 	tokenHash := HashToken(refreshToken)
-
-	err := s.refreshTokenRepo.RevokeByTokenHash(tokenHash)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.refreshTokenRepo.RevokeRefreshTokenByHash(ctx, tokenHash)
 }
