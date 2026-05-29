@@ -11,10 +11,10 @@ import (
 
 type Server struct {
 	vaultv1.UnimplementedVaultServiceServer
-	keyService *KeyService
+	keyService *VaultService
 }
 
-func NewServer(keyService *KeyService) *Server {
+func NewServer(keyService *VaultService) *Server {
 	return &Server{keyService: keyService}
 }
 
@@ -42,9 +42,7 @@ func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequ
 		return nil, status.Error(codes.InvalidArgument, "request body must contain key slots")
 	}
 
-	modelKeys := toModelSlice(userID, req.KeySlots)
-
-	if err := s.keyService.SaveKeySlots(ctx, userID, modelKeys); err != nil {
+	if err := s.keyService.SaveKeySlots(ctx, userID, toModelSlice(userID, req.KeySlots)); err != nil {
 		return nil, status.Error(codes.Internal, "failed to save key slots")
 	}
 

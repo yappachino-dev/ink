@@ -47,12 +47,12 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	userRepo := auth.NewUserRepo(db)
 	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
 	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
-	keyRepo := vault.NewPostgresKeyRepository(queries)
+	vaultRepo := vault.NewPostgresVaultRepository(queries)
 	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
 
 	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
 	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
-	keySvc := vault.NewKeyService(keyRepo)
+	vaultSvc := vault.NewVaultService(vaultRepo)
 	syncSvc := sync.NewSyncService(syncRepo)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
@@ -70,7 +70,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	)
 
 	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, emailVerificationSvc))
-	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(keySvc))
+	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(vaultSvc))
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
 	healthServer := health.NewServer()

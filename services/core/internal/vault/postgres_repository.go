@@ -7,15 +7,15 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
-type PostgresKeyRepository struct {
+type PostgresVaultRepository struct {
 	q *store.Queries
 }
 
-func NewPostgresKeyRepository(q *store.Queries) *PostgresKeyRepository {
-	return &PostgresKeyRepository{q: q}
+func NewPostgresVaultRepository(q *store.Queries) *PostgresVaultRepository {
+	return &PostgresVaultRepository{q: q}
 }
 
-func (r *PostgresKeyRepository) GetByUserID(ctx context.Context, userID int) ([]KeySlot, error) {
+func (r *PostgresVaultRepository) GetKeySlotsByUserID(ctx context.Context, userID int) ([]KeySlot, error) {
 	rows, err := r.q.GetKeySlotsByUserID(ctx, int32(userID))
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (r *PostgresKeyRepository) GetByUserID(ctx context.Context, userID int) ([]
 	return keySlots, nil
 }
 
-func (r *PostgresKeyRepository) Upsert(ctx context.Context, userID int, key KeySlot) error {
+func (r *PostgresVaultRepository) Upsert(ctx context.Context, userID int, key KeySlot) error {
 	return r.q.UpsertKeySlot(ctx, store.UpsertKeySlotParams{
 		UserID:           int32(userID),
 		KeyType:          int32(key.Type),
@@ -45,7 +45,7 @@ func (r *PostgresKeyRepository) Upsert(ctx context.Context, userID int, key KeyS
 	})
 }
 
-func (r *PostgresKeyRepository) UpsertMany(ctx context.Context, userID int, keySlots []KeySlot) error {
+func (r *PostgresVaultRepository) UpsertKeySlots(ctx context.Context, userID int, keySlots []KeySlot) error {
 	if len(keySlots) == 0 {
 		return nil
 	}

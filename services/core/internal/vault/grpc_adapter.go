@@ -19,9 +19,9 @@ func toProtoSlice(models []KeySlot) []*vaultv1.KeySlot {
 }
 
 func toModelSlice(userID int, pbKeySlots []*vaultv1.KeySlot) []KeySlot {
-	modelKeys := make([]KeySlot, 0, len(pbKeySlots))
+	keySlots := make([]KeySlot, 0, len(pbKeySlots))
 	for _, k := range pbKeySlots {
-		modelKeys = append(modelKeys, KeySlot{
+		keySlots = append(keySlots, KeySlot{
 			UserID:           userID,
 			Type:             int(k.Type),
 			Salt:             k.Salt,
@@ -29,5 +29,5 @@ func toModelSlice(userID int, pbKeySlots []*vaultv1.KeySlot) []KeySlot {
 			UpdatedAt:        k.UpdatedAt.AsTime(),
 		})
 	}
-	return modelKeys
+	return keySlots
 }
