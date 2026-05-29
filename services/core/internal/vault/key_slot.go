@@ -1,4 +1,4 @@
-package models
+package vault
 
 import "time"
 

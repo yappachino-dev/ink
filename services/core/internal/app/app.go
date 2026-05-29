@@ -12,10 +12,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lmittmann/tint"
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
+	"github.com/yappachino-dev/ink/services/core/internal/store"
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
@@ -33,16 +35,19 @@ type App struct {
 	grpcServer *grpc.Server
 }
 
-func New(cfg *config.Config) *App {
-	db, err := database.Connect(cfg.DatabaseURL)
+func New(ctx context.Context, cfg *config.Config) *App {
+	pool, err := database.Connect(ctx, cfg.DatabaseURL)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect database: %v", err))
 	}
 
+	db := stdlib.OpenDBFromPool(pool)
+	queries := store.New(pool)
+
 	userRepo := auth.NewUserRepo(db)
 	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
 	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
-	keyRepo := vault.NewKeyRepository(db)
+	keyRepo := vault.NewPostgresKeyRepository(queries)
 	syncRepo := sync.NewSyncRepository(db)
 
 	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)

@@ -15,6 +15,7 @@ func main() {
 	fmt.Println("System bootstrapping initiated...")
 
 	cfg, err := config.Load()
+	print(cfg.DatabaseURL)
 	if err != nil {
 		panic(fmt.Sprintf("failed to load configurations: %v", err))
 	}
@@ -22,7 +23,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	application := app.New(cfg)
+	application := app.New(ctx, cfg)
 	if err := application.Run(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "Application runtime system crash error: %v\n", err)
 		os.Exit(1)
