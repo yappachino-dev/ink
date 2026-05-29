@@ -1,99 +1,107 @@
 package sync
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/yappachino-dev/ink/services/core/internal/models"
 	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ProtoToDomain(pbReq *syncv1.SyncRequest) SyncPayload {
+func pbToTime(ts *timestamppb.Timestamp) time.Time {
+	if ts == nil {
+		return time.Time{}
+	}
+	return ts.AsTime()
+}
+
+func toDomain(pbReq *syncv1.SyncRequest) (SyncPayload, error) {
 	if pbReq == nil {
-		return SyncPayload{}
+		return SyncPayload{}, nil
 	}
 
-	payload := SyncPayload{
-		ClientCursor: int(pbReq.Cursor),
-	}
+	changes := SyncChanges{}
 
 	if pbReq.Changes != nil {
+		changes.Projects = make([]Project, 0, len(pbReq.Changes.Projects))
 		for _, p := range pbReq.Changes.Projects {
-			id, _ := uuid.Parse(p.Id)
-			var deletedAt *time.Time
-			if p.DeletedAt != nil {
-				t := p.DeletedAt.AsTime()
-				deletedAt = &t
+			id, err := uuid.Parse(p.Id)
+			if err != nil {
+				return SyncPayload{}, fmt.Errorf("invalid project id %q: %w", p.Id, err)
 			}
-			payload.Projects = append(payload.Projects, models.Project{
+
+			changes.Projects = append(changes.Projects, Project{
 				ID:               id,
 				EncryptedContent: p.EncryptedContent,
 				Version:          int(p.Version),
-				CreatedAt:        p.CreatedAt.AsTime(),
-				UpdatedAt:        p.UpdatedAt.AsTime(),
-				DeletedAt:        deletedAt,
+				CreatedAt:        pbToTime(p.CreatedAt),
+				UpdatedAt:        pbToTime(p.UpdatedAt),
+				DeletedAt:        pbToTime(p.DeletedAt),
 			})
 		}
 
+		changes.Notes = make([]Note, 0, len(pbReq.Changes.Notes))
 		for _, n := range pbReq.Changes.Notes {
-			id, _ := uuid.Parse(n.Id)
+			id, err := uuid.Parse(n.Id)
+			if err != nil {
+				return SyncPayload{}, fmt.Errorf("invalid note id %q: %w", n.Id, err)
+			}
 
-			var pID *uuid.UUID
+			var pID uuid.UUID
 			if n.ProjectId != nil {
-				parsed, _ := uuid.Parse(*n.ProjectId)
-				pID = &parsed
+				var err error
+				pID, err = uuid.Parse(*n.ProjectId)
+				if err != nil {
+					return SyncPayload{}, fmt.Errorf("invalid project_id %q for note %q: %w", *n.ProjectId, n.Id, err)
+				}
 			}
 
-			var deletedAt *time.Time
-			if n.DeletedAt != nil {
-				t := n.DeletedAt.AsTime()
-				deletedAt = &t
-			}
-
-			payload.Notes = append(payload.Notes, models.Note{
+			changes.Notes = append(changes.Notes, Note{
 				ID:               id,
 				ProjectID:        pID,
 				EncryptedTitle:   n.EncryptedTitle,
 				EncryptedContent: n.EncryptedContent,
 				Version:          int(n.Version),
-				CreatedAt:        n.CreatedAt.AsTime(),
-				UpdatedAt:        n.UpdatedAt.AsTime(),
-				DeletedAt:        deletedAt,
+				CreatedAt:        pbToTime(n.CreatedAt),
+				UpdatedAt:        pbToTime(n.UpdatedAt),
+				DeletedAt:        pbToTime(n.DeletedAt),
 			})
 		}
 	}
 
-	return payload
+	payload := SyncPayload{
+		ClientCursor: int(pbReq.Cursor),
+		Changes:      changes,
+	}
+
+	return payload, nil
 }
 
-func DomainToProto(result SyncResult) *syncv1.SyncResponse {
-	var pbProjects []*syncv1.Project
-	for _, p := range result.Projects {
-		var pbDeletedAt *timestamppb.Timestamp
-		if p.DeletedAt != nil {
-			pbDeletedAt = timestamppb.New(*p.DeletedAt)
-		}
+func timeToPb(t time.Time) *timestamppb.Timestamp {
+	if t.IsZero() {
+		return nil
+	}
+	return timestamppb.New(t)
+}
 
+func toProto(result SyncResult) *syncv1.SyncResponse {
+	pbProjects := make([]*syncv1.Project, 0, len(result.Changes.Projects))
+	for _, p := range result.Changes.Projects {
 		pbProjects = append(pbProjects, &syncv1.Project{
 			Id:               p.ID.String(),
 			EncryptedContent: p.EncryptedContent,
 			Version:          int32(p.Version),
-			CreatedAt:        timestamppb.New(p.CreatedAt),
-			UpdatedAt:        timestamppb.New(p.UpdatedAt),
-			DeletedAt:        pbDeletedAt,
+			CreatedAt:        timeToPb(p.CreatedAt),
+			UpdatedAt:        timeToPb(p.UpdatedAt),
+			DeletedAt:        timeToPb(p.DeletedAt),
 		})
 	}
 
-	var pbNotes []*syncv1.Note
-	for _, n := range result.Notes {
-		var pbDeletedAt *timestamppb.Timestamp
-		if n.DeletedAt != nil {
-			pbDeletedAt = timestamppb.New(*n.DeletedAt)
-		}
-
+	pbNotes := make([]*syncv1.Note, 0, len(result.Changes.Notes))
+	for _, n := range result.Changes.Notes {
 		var projectIDStr *string
-		if n.ProjectID != nil {
+		if n.ProjectID != uuid.Nil {
 			str := n.ProjectID.String()
 			projectIDStr = &str
 		}
@@ -104,9 +112,9 @@ func DomainToProto(result SyncResult) *syncv1.SyncResponse {
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
-			CreatedAt:        timestamppb.New(n.CreatedAt),
-			UpdatedAt:        timestamppb.New(n.UpdatedAt),
-			DeletedAt:        pbDeletedAt,
+			CreatedAt:        timeToPb(n.CreatedAt),
+			UpdatedAt:        timeToPb(n.UpdatedAt),
+			DeletedAt:        timeToPb(n.DeletedAt),
 		})
 	}
 

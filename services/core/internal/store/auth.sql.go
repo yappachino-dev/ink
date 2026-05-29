@@ -128,7 +128,7 @@ type GetUserByEmailRow struct {
 	PasswordHash string           `json:"password_hash"`
 	CreatedAt    pgtype.Timestamp `json:"created_at"`
 	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
-	SyncCursor   int64            `json:"sync_cursor"`
+	SyncCursor   int32            `json:"sync_cursor"`
 }
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
@@ -156,7 +156,7 @@ type GetUserByIDRow struct {
 	PasswordHash string           `json:"password_hash"`
 	CreatedAt    pgtype.Timestamp `json:"created_at"`
 	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
-	SyncCursor   int64            `json:"sync_cursor"`
+	SyncCursor   int32            `json:"sync_cursor"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {

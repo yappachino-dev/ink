@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
 
-    sync_cursor BIGINT NOT NULL DEFAULT 0,
+    sync_cursor INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS projects (
     encrypted_content BYTEA NOT NULL,
 
     version INT NOT NULL DEFAULT 1,
-    sync_sequence BIGINT NOT NULL DEFAULT 0,
+    sync_sequence INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS notes (
     encrypted_content BYTEA NOT NULL,
 
     version INT NOT NULL DEFAULT 1,
-    sync_sequence BIGINT NOT NULL DEFAULT 0,
+    sync_sequence INT NOT NULL DEFAULT 0,
 
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,

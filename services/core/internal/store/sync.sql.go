@@ -19,7 +19,7 @@ FROM notes WHERE user_id = $1 AND sync_sequence > $2
 
 type GetNoteChangesParams struct {
 	UserID       int32 `json:"user_id"`
-	SyncSequence int64 `json:"sync_sequence"`
+	SyncSequence int32 `json:"sync_sequence"`
 }
 
 type GetNoteChangesRow struct {
@@ -28,7 +28,7 @@ type GetNoteChangesRow struct {
 	EncryptedTitle   []byte           `json:"encrypted_title"`
 	EncryptedContent []byte           `json:"encrypted_content"`
 	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
+	SyncSequence     int32            `json:"sync_sequence"`
 	CreatedAt        pgtype.Timestamp `json:"created_at"`
 	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
 	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
@@ -71,14 +71,14 @@ FROM projects WHERE user_id = $1 AND sync_sequence > $2
 
 type GetProjectChangesParams struct {
 	UserID       int32 `json:"user_id"`
-	SyncSequence int64 `json:"sync_sequence"`
+	SyncSequence int32 `json:"sync_sequence"`
 }
 
 type GetProjectChangesRow struct {
 	ID               uuid.UUID        `json:"id"`
 	EncryptedContent []byte           `json:"encrypted_content"`
 	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
+	SyncSequence     int32            `json:"sync_sequence"`
 	CreatedAt        pgtype.Timestamp `json:"created_at"`
 	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
 	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
@@ -113,12 +113,12 @@ func (q *Queries) GetProjectChanges(ctx context.Context, arg GetProjectChangesPa
 }
 
 const getUserCursor = `-- name: GetUserCursor :one
-SELECT sync_cursor FROM users WHERE id = $1
+SELECT sync_cursor FROM users WHERE id = $1 FOR UPDATE
 `
 
-func (q *Queries) GetUserCursor(ctx context.Context, id int32) (int64, error) {
+func (q *Queries) GetUserCursor(ctx context.Context, id int32) (int32, error) {
 	row := q.db.QueryRow(ctx, getUserCursor, id)
-	var sync_cursor int64
+	var sync_cursor int32
 	err := row.Scan(&sync_cursor)
 	return sync_cursor, err
 }
@@ -128,89 +128,11 @@ UPDATE users SET sync_cursor = $1 WHERE id = $2
 `
 
 type UpdateUserCursorParams struct {
-	SyncCursor int64 `json:"sync_cursor"`
+	SyncCursor int32 `json:"sync_cursor"`
 	ID         int32 `json:"id"`
 }
 
 func (q *Queries) UpdateUserCursor(ctx context.Context, arg UpdateUserCursorParams) error {
 	_, err := q.db.Exec(ctx, updateUserCursor, arg.SyncCursor, arg.ID)
-	return err
-}
-
-const upsertNote = `-- name: UpsertNote :exec
-INSERT INTO notes (id, user_id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-ON CONFLICT (id) DO UPDATE SET
-    project_id = EXCLUDED.project_id,
-    encrypted_title = EXCLUDED.encrypted_title,
-    encrypted_content = EXCLUDED.encrypted_content,
-    version = EXCLUDED.version,
-    sync_sequence = EXCLUDED.sync_sequence,
-    updated_at = EXCLUDED.updated_at,
-    deleted_at = EXCLUDED.deleted_at
-`
-
-type UpsertNoteParams struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	ProjectID        *uuid.UUID       `json:"project_id"`
-	EncryptedTitle   []byte           `json:"encrypted_title"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
-}
-
-func (q *Queries) UpsertNote(ctx context.Context, arg UpsertNoteParams) error {
-	_, err := q.db.Exec(ctx, upsertNote,
-		arg.ID,
-		arg.UserID,
-		arg.ProjectID,
-		arg.EncryptedTitle,
-		arg.EncryptedContent,
-		arg.Version,
-		arg.SyncSequence,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-		arg.DeletedAt,
-	)
-	return err
-}
-
-const upsertProject = `-- name: UpsertProject :exec
-INSERT INTO projects (id, user_id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-ON CONFLICT (id) DO UPDATE SET
-    encrypted_content = EXCLUDED.encrypted_content,
-    version = EXCLUDED.version,
-    sync_sequence = EXCLUDED.sync_sequence,
-    updated_at = EXCLUDED.updated_at,
-    deleted_at = EXCLUDED.deleted_at
-`
-
-type UpsertProjectParams struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
-}
-
-func (q *Queries) UpsertProject(ctx context.Context, arg UpsertProjectParams) error {
-	_, err := q.db.Exec(ctx, upsertProject,
-		arg.ID,
-		arg.UserID,
-		arg.EncryptedContent,
-		arg.Version,
-		arg.SyncSequence,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-		arg.DeletedAt,
-	)
 	return err
 }

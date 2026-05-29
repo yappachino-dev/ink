@@ -24,10 +24,15 @@ func (s *Server) Sync(ctx context.Context, req *syncv1.SyncRequest) (*syncv1.Syn
 		return nil, status.Error(codes.Unauthenticated, "missing or invalid authentication credentials")
 	}
 
-	result, err := s.syncService.Sync(ctx, userID, ProtoToDomain(req))
+	payload, err := toDomain(req)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "request body malformed: %v", err)
+	}
+
+	result, err := s.syncService.Sync(ctx, userID, payload)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to execute domain sync operations: %v", err)
 	}
 
-	return DomainToProto(result), nil
+	return toProto(result), nil
 }

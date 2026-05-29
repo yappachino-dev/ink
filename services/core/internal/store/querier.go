@@ -19,7 +19,7 @@ type Querier interface {
 	GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error)
-	GetUserCursor(ctx context.Context, id int32) (int64, error)
+	GetUserCursor(ctx context.Context, id int32) (int32, error)
 	MarkAllEmailVerificationsAsUsedByEmail(ctx context.Context, email string) error
 	MarkEmailVerificationAsUsed(ctx context.Context, id int32) error
 	RevokeAllRefreshTokensByUserID(ctx context.Context, userID int32) error
@@ -28,8 +28,8 @@ type Querier interface {
 	UpdateUserCursor(ctx context.Context, arg UpdateUserCursorParams) error
 	UpsertKeySlot(ctx context.Context, arg UpsertKeySlotParams) error
 	UpsertKeySlots(ctx context.Context, arg []UpsertKeySlotsParams) *UpsertKeySlotsBatchResults
-	UpsertNote(ctx context.Context, arg UpsertNoteParams) error
-	UpsertProject(ctx context.Context, arg UpsertProjectParams) error
+	UpsertNotes(ctx context.Context, arg []UpsertNotesParams) *UpsertNotesBatchResults
+	UpsertProjects(ctx context.Context, arg []UpsertProjectsParams) *UpsertProjectsBatchResults
 }
 
 var _ Querier = (*Queries)(nil)

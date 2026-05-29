@@ -25,7 +25,7 @@ type Note struct {
 	EncryptedTitle   []byte           `json:"encrypted_title"`
 	EncryptedContent []byte           `json:"encrypted_content"`
 	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
+	SyncSequence     int32            `json:"sync_sequence"`
 	CreatedAt        pgtype.Timestamp `json:"created_at"`
 	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
 	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
@@ -36,7 +36,7 @@ type Project struct {
 	UserID           int32            `json:"user_id"`
 	EncryptedContent []byte           `json:"encrypted_content"`
 	Version          int32            `json:"version"`
-	SyncSequence     int64            `json:"sync_sequence"`
+	SyncSequence     int32            `json:"sync_sequence"`
 	CreatedAt        pgtype.Timestamp `json:"created_at"`
 	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
 	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
@@ -55,7 +55,7 @@ type User struct {
 	ID           int32            `json:"id"`
 	Email        string           `json:"email"`
 	PasswordHash string           `json:"password_hash"`
-	SyncCursor   int64            `json:"sync_cursor"`
+	SyncCursor   int32            `json:"sync_cursor"`
 	CreatedAt    pgtype.Timestamp `json:"created_at"`
 	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
 }

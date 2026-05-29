@@ -1,10 +1,10 @@
 -- name: GetUserCursor :one
-SELECT sync_cursor FROM users WHERE id = $1;
+SELECT sync_cursor FROM users WHERE id = $1 FOR UPDATE;
 
 -- name: UpdateUserCursor :exec
 UPDATE users SET sync_cursor = $1 WHERE id = $2;
 
--- name: UpsertProject :exec
+-- name: UpsertProjects :batchexec
 INSERT INTO projects (id, user_id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (id) DO UPDATE SET
@@ -18,7 +18,7 @@ ON CONFLICT (id) DO UPDATE SET
 SELECT id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
 FROM projects WHERE user_id = $1 AND sync_sequence > $2;
 
--- name: UpsertNote :exec
+-- name: UpsertNotes :batchexec
 INSERT INTO notes (id, user_id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 ON CONFLICT (id) DO UPDATE SET

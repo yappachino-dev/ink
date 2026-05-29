@@ -48,7 +48,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
 	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
 	keyRepo := vault.NewPostgresKeyRepository(queries)
-	syncRepo := sync.NewSyncRepository(db)
+	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
 
 	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
 	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
