@@ -56,6 +56,9 @@ func isPublicMethod(method string) bool {
 		"/auth.v1.AuthService/Register":     true,
 		"/auth.v1.AuthService/VerifyEmail":  true,
 		"/auth.v1.AuthService/RefreshToken": true,
+
+		"/grpc.health.v1.Health/Check": true,
+		"/grpc.health.v1.Health/Watch": true,
 	}
 	return publicMethods[method]
 }
