@@ -11,10 +11,10 @@ import (
 
 type Server struct {
 	vaultv1.UnimplementedVaultServiceServer
-	keyService *KeyService
+	keyService *VaultService
 }
 
-func NewServer(keyService *KeyService) *Server {
+func NewServer(keyService *VaultService) *Server {
 	return &Server{keyService: keyService}
 }
 
@@ -24,12 +24,12 @@ func (s *Server) GetKeySlots(ctx context.Context, req *vaultv1.GetKeySlotsReques
 		return nil, status.Error(codes.Unauthenticated, "missing or invalid authentication credentials")
 	}
 
-	keys, err := s.keyService.GetKeys(userID)
+	keySlots, err := s.keyService.GetKeys(ctx, userID)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to fetch key slots")
 	}
 
-	return &vaultv1.GetKeySlotsResponse{KeySlots: toProtoSlice(keys)}, nil
+	return &vaultv1.GetKeySlotsResponse{KeySlots: toProtoSlice(keySlots)}, nil
 }
 
 func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequest) (*vaultv1.SaveKeySlotsResponse, error) {
@@ -42,9 +42,7 @@ func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequ
 		return nil, status.Error(codes.InvalidArgument, "request body must contain key slots")
 	}
 
-	modelKeys := toModelSlice(userID, req.KeySlots)
-
-	if err := s.keyService.SaveKeySlots(userID, modelKeys); err != nil {
+	if err := s.keyService.SaveKeySlots(ctx, userID, toModelSlice(userID, req.KeySlots)); err != nil {
 		return nil, status.Error(codes.Internal, "failed to save key slots")
 	}
 

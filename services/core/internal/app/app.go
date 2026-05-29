@@ -12,10 +12,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lmittmann/tint"
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
+	"github.com/yappachino-dev/ink/services/core/internal/store"
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
@@ -33,21 +35,22 @@ type App struct {
 	grpcServer *grpc.Server
 }
 
-func New(cfg *config.Config) *App {
-	db, err := database.Connect(cfg.DatabaseURL)
+func New(ctx context.Context, cfg *config.Config) *App {
+	pool, err := database.Connect(ctx, cfg.DatabaseURL)
 	if err != nil {
 		panic(fmt.Sprintf("failed to connect database: %v", err))
 	}
 
-	userRepo := auth.NewUserRepo(db)
-	refreshTokenRepo := auth.NewRefreshTokenRepo(db)
-	emailVerificationRepo := auth.NewEmailVerificationRepository(db)
-	keyRepo := vault.NewKeyRepository(db)
-	syncRepo := sync.NewSyncRepository(db)
+	db := stdlib.OpenDBFromPool(pool)
+	queries := store.New(pool)
 
-	emailVerificationSvc := auth.NewEmailVerificationService(emailVerificationRepo)
-	authSvc := auth.NewAuthService(userRepo, refreshTokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
-	keySvc := vault.NewKeyService(keyRepo)
+	authRepo := auth.NewPostgresAuthRepository(queries)
+	vaultRepo := vault.NewPostgresVaultRepository(queries)
+	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
+
+	emailVerificationSvc := auth.NewEmailVerificationService(authRepo)
+	authSvc := auth.NewAuthService(authRepo, authRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
+	vaultSvc := vault.NewVaultService(vaultRepo)
 	syncSvc := sync.NewSyncService(syncRepo)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
@@ -65,7 +68,7 @@ func New(cfg *config.Config) *App {
 	)
 
 	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, emailVerificationSvc))
-	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(keySvc))
+	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(vaultSvc))
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
 	healthServer := health.NewServer()

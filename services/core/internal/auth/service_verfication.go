@@ -7,15 +7,20 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-
-	"github.com/yappachino-dev/ink/services/core/internal/models"
 )
 
-type EmailVerificationService struct {
-	repo *EmailVerificationRepository
+type EmailVerificationRepository interface {
+	CreateEmailVerification(ctx context.Context, email string, codeHash string) error
+	GetLatestEmailVerification(ctx context.Context, email string) (*EmailVerification, error)
+	MarkEmailVerificationAsUsed(ctx context.Context, id int) error
+	MarkAllEmailVerificationsAsUsedByEmail(ctx context.Context, email string) error
 }
 
-func NewEmailVerificationService(repo *EmailVerificationRepository) *EmailVerificationService {
+type EmailVerificationService struct {
+	repo EmailVerificationRepository
+}
+
+func NewEmailVerificationService(repo EmailVerificationRepository) *EmailVerificationService {
 	return &EmailVerificationService{repo: repo}
 }
 
@@ -29,7 +34,7 @@ func hashVerificationCode(code string) string {
 }
 
 func (s *EmailVerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
-	err := s.repo.MarkAllAsUsedByEmail(ctx, email)
+	err := s.repo.MarkAllEmailVerificationsAsUsedByEmail(ctx, email)
 	if err != nil {
 		return "", err
 	}
@@ -37,12 +42,7 @@ func (s *EmailVerificationService) CreateVerification(ctx context.Context, email
 	code := generateVerificationCode()
 	codeHash := hashVerificationCode(code)
 
-	verification := &models.EmailVerification{
-		Email:    email,
-		CodeHash: codeHash,
-	}
-
-	err = s.repo.Create(ctx, verification)
+	err = s.repo.CreateEmailVerification(ctx, email, codeHash)
 	if err != nil {
 		return "", err
 	}
@@ -50,16 +50,19 @@ func (s *EmailVerificationService) CreateVerification(ctx context.Context, email
 }
 
 func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string, code string) error {
-	verification, err := s.repo.GetLatestByEmail(ctx, email)
+	verification, err := s.repo.GetLatestEmailVerification(ctx, email)
 	if err != nil {
 		return err
 	}
+	if verification == nil {
+		return fmt.Errorf("no verification record found")
+	}
 
-	if verification.UsedAt.Valid {
+	if !verification.UsedAt.IsZero() {
 		return fmt.Errorf("verification code already used")
 	}
 
-	if time.Now().After(verification.ExpiresAt) {
+	if time.Now().UTC().After(verification.ExpiresAt) {
 		return fmt.Errorf("verification code expired")
 	}
 
@@ -68,5 +71,5 @@ func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string
 		return fmt.Errorf("invalid verification code")
 	}
 
-	return s.repo.MarkAsUsed(ctx, verification.ID)
+	return s.repo.MarkEmailVerificationAsUsed(ctx, verification.ID)
 }

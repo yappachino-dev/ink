@@ -22,7 +22,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	application := app.New(cfg)
+	application := app.New(ctx, cfg)
 	if err := application.Run(ctx); err != nil {
 		fmt.Fprintf(os.Stderr, "Application runtime system crash error: %v\n", err)
 		os.Exit(1)
