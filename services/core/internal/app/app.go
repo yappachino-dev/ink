@@ -22,6 +22,8 @@ import (
 	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
 	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type App struct {
@@ -66,12 +68,26 @@ func New(cfg *config.Config) *App {
 	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(keySvc))
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
+	healthServer := health.NewServer()
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
+	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
+	r.GET("/healthz", func(c *gin.Context) {
+		if err := db.PingContext(c.Request.Context()); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": "unhealthy", "database": "down"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": "healthy", "database": "up"})
+	})
+
 	return &App{
+		cfg:        cfg,
+		db:         db,
 		httpServer: &http.Server{Addr: ":8080", Handler: r},
 		grpcServer: grpcServer,
 	}
