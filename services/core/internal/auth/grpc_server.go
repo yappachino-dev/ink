@@ -10,14 +10,14 @@ import (
 
 type Server struct {
 	authv1.UnimplementedAuthServiceServer
-	authService              *AuthService
-	emailVerificationService *VerificationService
+	authService         *AuthService
+	verificationService *VerificationService
 }
 
 func NewServer(authService *AuthService, emailEmailVerificationService *VerificationService) *Server {
 	return &Server{
-		authService:              authService,
-		emailVerificationService: emailEmailVerificationService,
+		authService:         authService,
+		verificationService: emailEmailVerificationService,
 	}
 }
 
@@ -26,7 +26,7 @@ func (s *Server) VerifyEmail(ctx context.Context, req *authv1.VerifyEmailRequest
 		return nil, status.Error(codes.InvalidArgument, "email is required")
 	}
 
-	code, err := s.emailVerificationService.CreateVerification(ctx, req.GetEmail())
+	code, err := s.verificationService.CreateVerification(ctx, req.GetEmail())
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to generate email verification")
 	}
@@ -36,7 +36,7 @@ func (s *Server) VerifyEmail(ctx context.Context, req *authv1.VerifyEmailRequest
 }
 
 func (s *Server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	if err := s.emailVerificationService.ConfirmCode(ctx, req.GetEmail(), req.GetCode()); err != nil {
+	if err := s.verificationService.ConfirmCode(ctx, req.GetEmail(), req.GetCode()); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
