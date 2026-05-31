@@ -11,9 +11,9 @@ import (
 
 type EmailVerificationRepository interface {
 	CreateEmailVerification(ctx context.Context, email string, codeHash string) error
-	GetLatestEmailVerification(ctx context.Context, email string) (*EmailVerification, error)
-	MarkEmailVerificationAsUsed(ctx context.Context, id int) error
-	MarkAllEmailVerificationsAsUsedByEmail(ctx context.Context, email string) error
+	LatestByEmail(ctx context.Context, email string) (*EmailVerification, error)
+	MarkAsUsed(ctx context.Context, id int) error
+	MarkAllAsUsed(ctx context.Context, email string) error
 }
 
 type EmailVerificationService struct {
@@ -34,7 +34,7 @@ func hashVerificationCode(code string) string {
 }
 
 func (s *EmailVerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
-	err := s.repo.MarkAllEmailVerificationsAsUsedByEmail(ctx, email)
+	err := s.repo.MarkAllAsUsed(ctx, email)
 	if err != nil {
 		return "", err
 	}
@@ -50,7 +50,7 @@ func (s *EmailVerificationService) CreateVerification(ctx context.Context, email
 }
 
 func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string, code string) error {
-	verification, err := s.repo.GetLatestEmailVerification(ctx, email)
+	verification, err := s.repo.LatestByEmail(ctx, email)
 	if err != nil {
 		return err
 	}
@@ -71,5 +71,5 @@ func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string
 		return fmt.Errorf("invalid verification code")
 	}
 
-	return s.repo.MarkEmailVerificationAsUsed(ctx, verification.ID)
+	return s.repo.MarkAsUsed(ctx, verification.ID)
 }
