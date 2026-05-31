@@ -44,12 +44,14 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	db := stdlib.OpenDBFromPool(pool)
 	queries := store.New(pool)
 
-	authRepo := auth.NewPostgresAuthRepository(queries)
+	userRepo := auth.NewPostgresUserRepository(queries)
+	tokenRepo := auth.NewPostgresTokenRepository(queries)
+	verificationRepo := auth.NewPostgresVerificationRepository(queries)
 	vaultRepo := vault.NewPostgresVaultRepository(queries)
 	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
 
-	emailVerificationSvc := auth.NewEmailVerificationService(authRepo)
-	authSvc := auth.NewAuthService(authRepo, authRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
+	verificationSvc := auth.NewVerificationService(verificationRepo)
+	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	vaultSvc := vault.NewVaultService(vaultRepo)
 	syncSvc := sync.NewSyncService(syncRepo)
 
@@ -67,7 +69,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 		),
 	)
 
-	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, emailVerificationSvc))
+	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, verificationSvc))
 	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(vaultSvc))
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 

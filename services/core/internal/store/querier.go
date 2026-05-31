@@ -16,7 +16,7 @@ type Querier interface {
 	GetLatestEmailVerification(ctx context.Context, email string) (EmailVerification, error)
 	GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) ([]GetNoteChangesRow, error)
 	GetProjectChanges(ctx context.Context, arg GetProjectChangesParams) ([]GetProjectChangesRow, error)
-	GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error)
+	GetRefreshTokenByHash(ctx context.Context, hash []byte) (RefreshToken, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error)
 	GetUserCursor(ctx context.Context, id int32) (int32, error)

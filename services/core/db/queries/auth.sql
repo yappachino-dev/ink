@@ -12,23 +12,23 @@ SELECT id, email, password_hash, created_at, updated_at, sync_cursor
 FROM users WHERE id = $1;
 
 -- name: CreateRefreshToken :one
-INSERT INTO refresh_tokens (user_id, token_hash, expires_at, created_at, revoked_at)
+INSERT INTO refresh_tokens (user_id, hash, expires_at, created_at, revoked_at)
 VALUES ($1, $2, $3, NOW(), NULL)
 RETURNING id, created_at, revoked_at;
 
 -- name: GetRefreshTokenByHash :one
-SELECT id, user_id, token_hash, expires_at, created_at, revoked_at
+SELECT id, user_id, hash, expires_at, created_at, revoked_at
 FROM refresh_tokens
-WHERE token_hash = $1;
+WHERE hash = $1;
 
 -- name: RevokeRefreshTokenByHash :exec
 UPDATE refresh_tokens
 SET revoked_at = $1
-WHERE token_hash = $2;
+WHERE hash = $2;
 
 -- name: UpdateRefreshToken :exec
 UPDATE refresh_tokens
-SET token_hash = $1,
+SET hash = $1,
     expires_at = $2,
     revoked_at = $3
 WHERE id = $4;

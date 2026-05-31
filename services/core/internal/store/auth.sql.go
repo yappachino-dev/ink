@@ -18,7 +18,7 @@ VALUES ($1, $2, NOW() + INTERVAL '10 minutes')
 
 type CreateEmailVerificationParams struct {
 	Email    string `json:"email"`
-	CodeHash string `json:"code_hash"`
+	CodeHash []byte `json:"code_hash"`
 }
 
 func (q *Queries) CreateEmailVerification(ctx context.Context, arg CreateEmailVerificationParams) error {
@@ -27,14 +27,14 @@ func (q *Queries) CreateEmailVerification(ctx context.Context, arg CreateEmailVe
 }
 
 const createRefreshToken = `-- name: CreateRefreshToken :one
-INSERT INTO refresh_tokens (user_id, token_hash, expires_at, created_at, revoked_at)
+INSERT INTO refresh_tokens (user_id, hash, expires_at, created_at, revoked_at)
 VALUES ($1, $2, $3, NOW(), NULL)
 RETURNING id, created_at, revoked_at
 `
 
 type CreateRefreshTokenParams struct {
 	UserID    int32            `json:"user_id"`
-	TokenHash string           `json:"token_hash"`
+	Hash      []byte           `json:"hash"`
 	ExpiresAt pgtype.Timestamp `json:"expires_at"`
 }
 
@@ -45,7 +45,7 @@ type CreateRefreshTokenRow struct {
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
-	row := q.db.QueryRow(ctx, createRefreshToken, arg.UserID, arg.TokenHash, arg.ExpiresAt)
+	row := q.db.QueryRow(ctx, createRefreshToken, arg.UserID, arg.Hash, arg.ExpiresAt)
 	var i CreateRefreshTokenRow
 	err := row.Scan(&i.ID, &i.CreatedAt, &i.RevokedAt)
 	return i, err
@@ -98,18 +98,18 @@ func (q *Queries) GetLatestEmailVerification(ctx context.Context, email string) 
 }
 
 const getRefreshTokenByHash = `-- name: GetRefreshTokenByHash :one
-SELECT id, user_id, token_hash, expires_at, created_at, revoked_at
+SELECT id, user_id, hash, expires_at, created_at, revoked_at
 FROM refresh_tokens
-WHERE token_hash = $1
+WHERE hash = $1
 `
 
-func (q *Queries) GetRefreshTokenByHash(ctx context.Context, tokenHash string) (RefreshToken, error) {
-	row := q.db.QueryRow(ctx, getRefreshTokenByHash, tokenHash)
+func (q *Queries) GetRefreshTokenByHash(ctx context.Context, hash []byte) (RefreshToken, error) {
+	row := q.db.QueryRow(ctx, getRefreshTokenByHash, hash)
 	var i RefreshToken
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
-		&i.TokenHash,
+		&i.Hash,
 		&i.ExpiresAt,
 		&i.CreatedAt,
 		&i.RevokedAt,
@@ -209,29 +209,29 @@ func (q *Queries) RevokeAllRefreshTokensByUserID(ctx context.Context, userID int
 const revokeRefreshTokenByHash = `-- name: RevokeRefreshTokenByHash :exec
 UPDATE refresh_tokens
 SET revoked_at = $1
-WHERE token_hash = $2
+WHERE hash = $2
 `
 
 type RevokeRefreshTokenByHashParams struct {
 	RevokedAt pgtype.Timestamp `json:"revoked_at"`
-	TokenHash string           `json:"token_hash"`
+	Hash      []byte           `json:"hash"`
 }
 
 func (q *Queries) RevokeRefreshTokenByHash(ctx context.Context, arg RevokeRefreshTokenByHashParams) error {
-	_, err := q.db.Exec(ctx, revokeRefreshTokenByHash, arg.RevokedAt, arg.TokenHash)
+	_, err := q.db.Exec(ctx, revokeRefreshTokenByHash, arg.RevokedAt, arg.Hash)
 	return err
 }
 
 const updateRefreshToken = `-- name: UpdateRefreshToken :exec
 UPDATE refresh_tokens
-SET token_hash = $1,
+SET hash = $1,
     expires_at = $2,
     revoked_at = $3
 WHERE id = $4
 `
 
 type UpdateRefreshTokenParams struct {
-	TokenHash string           `json:"token_hash"`
+	Hash      []byte           `json:"hash"`
 	ExpiresAt pgtype.Timestamp `json:"expires_at"`
 	RevokedAt pgtype.Timestamp `json:"revoked_at"`
 	ID        int32            `json:"id"`
@@ -239,7 +239,7 @@ type UpdateRefreshTokenParams struct {
 
 func (q *Queries) UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) error {
 	_, err := q.db.Exec(ctx, updateRefreshToken,
-		arg.TokenHash,
+		arg.Hash,
 		arg.ExpiresAt,
 		arg.RevokedAt,
 		arg.ID,
