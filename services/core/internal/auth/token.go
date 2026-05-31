@@ -16,7 +16,7 @@ type AccessTokenClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateAccessToken(userID int, secret string, ttl time.Duration) (string, error) {
+func generateAccessToken(userID int, secret string, ttl time.Duration) (string, error) {
 	claims := AccessTokenClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -25,11 +25,12 @@ func GenerateAccessToken(userID int, secret string, ttl time.Duration) (string, 
 			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(ttl)),
 		},
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }
 
-func GenerateRefreshToken() (string, error) {
+func generateRefreshToken() (string, error) {
 	bytes := make([]byte, 32)
 	if _, err := rand.Read(bytes); err != nil {
 		return "", err
@@ -38,7 +39,7 @@ func GenerateRefreshToken() (string, error) {
 	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
-func HashToken(token string) string {
+func hashToken(token string) string {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:])
 }

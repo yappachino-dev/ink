@@ -2,15 +2,16 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"time"
 )
 
 type EmailVerificationRepository interface {
-	CreateEmailVerification(ctx context.Context, email string, codeHash string) error
+	Create(ctx context.Context, email string, codeHash string) error
 	LatestByEmail(ctx context.Context, email string) (*EmailVerification, error)
 	MarkAsUsed(ctx context.Context, id int) error
 	MarkAllAsUsed(ctx context.Context, email string) error
@@ -24,25 +25,19 @@ func NewEmailVerificationService(repo EmailVerificationRepository) *EmailVerific
 	return &EmailVerificationService{repo: repo}
 }
 
-func generateVerificationCode() string {
-	return fmt.Sprintf("%06d", rand.Intn(1000000))
-}
-
-func hashVerificationCode(code string) string {
-	hash := sha256.Sum256([]byte(code))
-	return hex.EncodeToString(hash[:])
-}
-
 func (s *EmailVerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
 	err := s.repo.MarkAllAsUsed(ctx, email)
 	if err != nil {
 		return "", err
 	}
 
-	code := generateVerificationCode()
+	code, err := generateVerificationCode()
+	if err != nil {
+		return "", err
+	}
 	codeHash := hashVerificationCode(code)
 
-	err = s.repo.CreateEmailVerification(ctx, email, codeHash)
+	err = s.repo.Create(ctx, email, codeHash)
 	if err != nil {
 		return "", err
 	}
@@ -72,4 +67,18 @@ func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string
 	}
 
 	return s.repo.MarkAsUsed(ctx, verification.ID)
+}
+
+func generateVerificationCode() (string, error) {
+	n, err := rand.Int(rand.Reader, big.NewInt(1000000))
+	if err != nil {
+		return "", fmt.Errorf("crypto rand failure: %w", err)
+	}
+
+	return fmt.Sprintf("%06d", n.Int64()), nil
+}
+
+func hashVerificationCode(code string) string {
+	hash := sha256.Sum256([]byte(code))
+	return hex.EncodeToString(hash[:])
 }

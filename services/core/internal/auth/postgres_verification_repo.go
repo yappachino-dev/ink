@@ -17,7 +17,7 @@ func NewPostgresVerificationRepository(q *store.Queries) *PostgresVerificationRe
 	return &PostgresVerificationRepository{q: q}
 }
 
-func (r *PostgresVerificationRepository) CreateEmailVerification(ctx context.Context, email string, codeHash string) error {
+func (r *PostgresVerificationRepository) Create(ctx context.Context, email string, codeHash string) error {
 	return r.q.CreateEmailVerification(ctx, store.CreateEmailVerificationParams{
 		Email:    email,
 		CodeHash: codeHash,

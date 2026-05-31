@@ -64,7 +64,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 		return "", "", ErrInvalidCredentials
 	}
 
-	err = CheckPasswordHash(password, user.PasswordHash)
+	err = checkPasswordHash(password, user.PasswordHash)
 	if err != nil {
 		return "", "", ErrInvalidCredentials
 	}
@@ -81,7 +81,7 @@ func (s *AuthService) Register(ctx context.Context, email, password string) (str
 		return "", "", ErrUserAlreadyExists
 	}
 
-	passwordHash, err := HashPassword(password)
+	passwordHash, err := hashPassword(password)
 	if err != nil {
 		return "", "", err
 	}
@@ -100,17 +100,17 @@ func (s *AuthService) Register(ctx context.Context, email, password string) (str
 }
 
 func (s *AuthService) issueTokens(ctx context.Context, userID int) (string, string, error) {
-	accessToken, err := GenerateAccessToken(userID, s.jwtSecret, s.accessTokenTTL)
+	accessToken, err := generateAccessToken(userID, s.jwtSecret, s.accessTokenTTL)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := GenerateRefreshToken()
+	refreshToken, err := generateRefreshToken()
 	if err != nil {
 		return "", "", err
 	}
 
-	tokenHash := HashToken(refreshToken)
+	tokenHash := hashToken(refreshToken)
 	session := &RefreshToken{
 		UserID:    userID,
 		TokenHash: tokenHash,
@@ -130,7 +130,7 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string,
 		return "", "", ErrInvalidRefreshToken
 	}
 
-	tokenHash := HashToken(refreshToken)
+	tokenHash := hashToken(refreshToken)
 	storedToken, err := s.refreshTokenRepo.ByHash(ctx, tokenHash)
 	if err != nil {
 		return "", "", err
@@ -156,6 +156,6 @@ func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 		return ErrInvalidLogoutToken
 	}
 
-	tokenHash := HashToken(refreshToken)
+	tokenHash := hashToken(refreshToken)
 	return s.refreshTokenRepo.RevokeByHash(ctx, tokenHash)
 }
