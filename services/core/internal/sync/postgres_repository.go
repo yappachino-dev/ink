@@ -2,11 +2,10 @@ package sync
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
@@ -74,13 +73,6 @@ func (r *PostgresSyncRepository) SyncData(ctx context.Context, userID int, clien
 	return newCursor, SyncChanges{Projects: projects, Notes: notes}, nil
 }
 
-func timeToPg(t time.Time) pgtype.Timestamp {
-	if t.IsZero() {
-		return pgtype.Timestamp{Valid: false}
-	}
-	return pgtype.Timestamp{Time: t, Valid: true}
-}
-
 func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, qtx *store.Queries, userID int, syncSequence int, projects []Project) error {
 	if len(projects) == 0 {
 		return nil
@@ -94,9 +86,9 @@ func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, qtx *store.
 			EncryptedContent: p.EncryptedContent,
 			Version:          int32(p.Version),
 			SyncSequence:     int32(syncSequence),
-			CreatedAt:        timeToPg(p.CreatedAt),
-			UpdatedAt:        timeToPg(p.UpdatedAt),
-			DeletedAt:        timeToPg(p.DeletedAt),
+			CreatedAt:        database.TimeToPg(p.CreatedAt),
+			UpdatedAt:        database.TimeToPg(p.UpdatedAt),
+			DeletedAt:        database.TimeToPg(p.DeletedAt),
 		})
 	}
 
@@ -133,9 +125,9 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, qtx *store.Que
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
 			SyncSequence:     int32(syncSequence),
-			CreatedAt:        timeToPg(n.CreatedAt),
-			UpdatedAt:        timeToPg(n.UpdatedAt),
-			DeletedAt:        timeToPg(n.DeletedAt),
+			CreatedAt:        database.TimeToPg(n.CreatedAt),
+			UpdatedAt:        database.TimeToPg(n.UpdatedAt),
+			DeletedAt:        database.TimeToPg(n.DeletedAt),
 		})
 	}
 
@@ -150,13 +142,6 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, qtx *store.Que
 	})
 
 	return batchErr
-}
-
-func pgToTime(ts pgtype.Timestamp) time.Time {
-	if !ts.Valid {
-		return time.Time{}
-	}
-	return ts.Time
 }
 
 func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, qtx *store.Queries, userID int, cursor int) ([]Project, error) {
@@ -176,9 +161,9 @@ func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, qtx *sto
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
 			SyncSequence:     int(row.SyncSequence),
-			CreatedAt:        pgToTime(row.CreatedAt),
-			UpdatedAt:        pgToTime(row.UpdatedAt),
-			DeletedAt:        pgToTime(row.DeletedAt),
+			CreatedAt:        database.PgToTime(row.CreatedAt),
+			UpdatedAt:        database.PgToTime(row.UpdatedAt),
+			DeletedAt:        database.PgToTime(row.DeletedAt),
 		})
 	}
 
@@ -209,9 +194,9 @@ func (r *PostgresSyncRepository) GetNotesChanges(ctx context.Context, qtx *store
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
 			SyncSequence:     int(row.SyncSequence),
-			CreatedAt:        pgToTime(row.CreatedAt),
-			UpdatedAt:        pgToTime(row.UpdatedAt),
-			DeletedAt:        pgToTime(row.DeletedAt),
+			CreatedAt:        database.PgToTime(row.CreatedAt),
+			UpdatedAt:        database.PgToTime(row.UpdatedAt),
+			DeletedAt:        database.PgToTime(row.DeletedAt),
 		})
 	}
 

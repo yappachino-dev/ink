@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
@@ -16,20 +16,6 @@ type PostgresAuthRepository struct {
 
 func NewPostgresAuthRepository(q *store.Queries) *PostgresAuthRepository {
 	return &PostgresAuthRepository{q: q}
-}
-
-func pgToTime(ts pgtype.Timestamp) time.Time {
-	if !ts.Valid {
-		return time.Time{}
-	}
-	return ts.Time
-}
-
-func timeToPg(t time.Time) pgtype.Timestamp {
-	if t.IsZero() {
-		return pgtype.Timestamp{Valid: false}
-	}
-	return pgtype.Timestamp{Time: t, Valid: true}
 }
 
 // --- UserRepository Implementation ---
@@ -44,8 +30,8 @@ func (r *PostgresAuthRepository) CreateUser(ctx context.Context, user *User) err
 	}
 
 	user.ID = int(row.ID)
-	user.CreatedAt = pgToTime(row.CreatedAt)
-	user.UpdatedAt = pgToTime(row.UpdatedAt)
+	user.CreatedAt = database.PgToTime(row.CreatedAt)
+	user.UpdatedAt = database.PgToTime(row.UpdatedAt)
 	return nil
 }
 
@@ -63,8 +49,8 @@ func (r *PostgresAuthRepository) GetUserByEmail(ctx context.Context, email strin
 		Email:        row.Email,
 		PasswordHash: row.PasswordHash,
 		SyncCursor:   int(row.SyncCursor),
-		CreatedAt:    pgToTime(row.CreatedAt),
-		UpdatedAt:    pgToTime(row.UpdatedAt),
+		CreatedAt:    database.PgToTime(row.CreatedAt),
+		UpdatedAt:    database.PgToTime(row.UpdatedAt),
 	}, nil
 }
 
@@ -82,8 +68,8 @@ func (r *PostgresAuthRepository) GetUserByID(ctx context.Context, id int) (*User
 		Email:        row.Email,
 		PasswordHash: row.PasswordHash,
 		SyncCursor:   int(row.SyncCursor),
-		CreatedAt:    pgToTime(row.CreatedAt),
-		UpdatedAt:    pgToTime(row.UpdatedAt),
+		CreatedAt:    database.PgToTime(row.CreatedAt),
+		UpdatedAt:    database.PgToTime(row.UpdatedAt),
 	}, nil
 }
 
@@ -93,15 +79,15 @@ func (r *PostgresAuthRepository) CreateRefreshToken(ctx context.Context, token *
 	row, err := r.q.CreateRefreshToken(ctx, store.CreateRefreshTokenParams{
 		UserID:    int32(token.UserID),
 		TokenHash: token.TokenHash,
-		ExpiresAt: timeToPg(token.ExpiresAt),
+		ExpiresAt: database.TimeToPg(token.ExpiresAt),
 	})
 	if err != nil {
 		return err
 	}
 
 	token.ID = int(row.ID)
-	token.CreatedAt = pgToTime(row.CreatedAt)
-	token.RevokedAt = pgToTime(row.RevokedAt)
+	token.CreatedAt = database.PgToTime(row.CreatedAt)
+	token.RevokedAt = database.PgToTime(row.RevokedAt)
 	return nil
 }
 
@@ -118,16 +104,16 @@ func (r *PostgresAuthRepository) GetRefreshTokenByHash(ctx context.Context, hash
 		ID:        int(row.ID),
 		UserID:    int(row.UserID),
 		TokenHash: row.TokenHash,
-		ExpiresAt: pgToTime(row.ExpiresAt),
-		CreatedAt: pgToTime(row.CreatedAt),
-		RevokedAt: pgToTime(row.RevokedAt),
+		ExpiresAt: database.PgToTime(row.ExpiresAt),
+		CreatedAt: database.PgToTime(row.CreatedAt),
+		RevokedAt: database.PgToTime(row.RevokedAt),
 	}, nil
 }
 
 func (r *PostgresAuthRepository) RevokeRefreshTokenByHash(ctx context.Context, hash string) error {
 	return r.q.RevokeRefreshTokenByHash(ctx, store.RevokeRefreshTokenByHashParams{
 		TokenHash: hash,
-		RevokedAt: timeToPg(time.Now().UTC()),
+		RevokedAt: database.TimeToPg(time.Now().UTC()),
 	})
 }
 
@@ -139,8 +125,8 @@ func (r *PostgresAuthRepository) UpdateRefreshToken(ctx context.Context, token *
 	return r.q.UpdateRefreshToken(ctx, store.UpdateRefreshTokenParams{
 		ID:        int32(token.ID),
 		TokenHash: token.TokenHash,
-		ExpiresAt: timeToPg(token.ExpiresAt),
-		RevokedAt: timeToPg(token.RevokedAt),
+		ExpiresAt: database.TimeToPg(token.ExpiresAt),
+		RevokedAt: database.TimeToPg(token.RevokedAt),
 	})
 }
 
@@ -166,9 +152,9 @@ func (r *PostgresAuthRepository) GetLatestEmailVerification(ctx context.Context,
 		ID:        int(row.ID),
 		Email:     row.Email,
 		CodeHash:  row.CodeHash,
-		CreatedAt: pgToTime(row.CreatedAt),
-		ExpiresAt: pgToTime(row.ExpiresAt),
-		UsedAt:    pgToTime(row.UsedAt),
+		CreatedAt: database.PgToTime(row.CreatedAt),
+		ExpiresAt: database.PgToTime(row.ExpiresAt),
+		UsedAt:    database.PgToTime(row.UsedAt),
 	}, nil
 }
 
