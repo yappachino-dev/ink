@@ -21,7 +21,7 @@ func NewPostgresTokenRepository(q *store.Queries) *PostgresTokenRepository {
 func (r *PostgresTokenRepository) Create(ctx context.Context, token *RefreshToken) error {
 	row, err := r.q.CreateRefreshToken(ctx, store.CreateRefreshTokenParams{
 		UserID:    int32(token.UserID),
-		TokenHash: token.TokenHash,
+		Hash:      token.Hash,
 		ExpiresAt: database.TimeToPg(token.ExpiresAt),
 	})
 	if err != nil {
@@ -34,7 +34,7 @@ func (r *PostgresTokenRepository) Create(ctx context.Context, token *RefreshToke
 	return nil
 }
 
-func (r *PostgresTokenRepository) ByHash(ctx context.Context, hash string) (*RefreshToken, error) {
+func (r *PostgresTokenRepository) ByHash(ctx context.Context, hash []byte) (*RefreshToken, error) {
 	row, err := r.q.GetRefreshTokenByHash(ctx, hash)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -46,16 +46,16 @@ func (r *PostgresTokenRepository) ByHash(ctx context.Context, hash string) (*Ref
 	return &RefreshToken{
 		ID:        int(row.ID),
 		UserID:    int(row.UserID),
-		TokenHash: row.TokenHash,
+		Hash:      row.Hash,
 		ExpiresAt: database.PgToTime(row.ExpiresAt),
 		CreatedAt: database.PgToTime(row.CreatedAt),
 		RevokedAt: database.PgToTime(row.RevokedAt),
 	}, nil
 }
 
-func (r *PostgresTokenRepository) RevokeByHash(ctx context.Context, hash string) error {
+func (r *PostgresTokenRepository) RevokeByHash(ctx context.Context, hash []byte) error {
 	return r.q.RevokeRefreshTokenByHash(ctx, store.RevokeRefreshTokenByHashParams{
-		TokenHash: hash,
+		Hash:      hash,
 		RevokedAt: database.TimeToPg(time.Now().UTC()),
 	})
 }
@@ -67,7 +67,7 @@ func (r *PostgresTokenRepository) RevokeAllByUserID(ctx context.Context, userID 
 func (r *PostgresTokenRepository) Update(ctx context.Context, token *RefreshToken) error {
 	return r.q.UpdateRefreshToken(ctx, store.UpdateRefreshTokenParams{
 		ID:        int32(token.ID),
-		TokenHash: token.TokenHash,
+		Hash:      token.Hash,
 		ExpiresAt: database.TimeToPg(token.ExpiresAt),
 		RevokedAt: database.TimeToPg(token.RevokedAt),
 	})

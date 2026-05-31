@@ -12,7 +12,7 @@ import (
 type EmailVerification struct {
 	ID        int32            `json:"id"`
 	Email     string           `json:"email"`
-	CodeHash  string           `json:"code_hash"`
+	CodeHash  []byte           `json:"code_hash"`
 	ExpiresAt pgtype.Timestamp `json:"expires_at"`
 	UsedAt    pgtype.Timestamp `json:"used_at"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
@@ -45,7 +45,7 @@ type Project struct {
 type RefreshToken struct {
 	ID        int32            `json:"id"`
 	UserID    int32            `json:"user_id"`
-	TokenHash string           `json:"token_hash"`
+	Hash      []byte           `json:"hash"`
 	ExpiresAt pgtype.Timestamp `json:"expires_at"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
 	RevokedAt pgtype.Timestamp `json:"revoked_at"`

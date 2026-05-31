@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"strconv"
 	"time"
 
@@ -39,7 +38,7 @@ func generateRefreshToken() (string, error) {
 	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
-func hashToken(token string) string {
+func hashToken(token string) []byte {
 	hash := sha256.Sum256([]byte(token))
-	return hex.EncodeToString(hash[:])
+	return hash[:]
 }

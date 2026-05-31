@@ -16,7 +16,7 @@ type User struct {
 type RefreshToken struct {
 	ID        int
 	UserID    int
-	TokenHash string
+	Hash      []byte
 	ExpiresAt time.Time
 	CreatedAt time.Time
 	RevokedAt time.Time
@@ -25,7 +25,7 @@ type RefreshToken struct {
 type Verification struct {
 	ID        int
 	Email     string
-	CodeHash  string
+	CodeHash  []byte
 	CreatedAt time.Time
 	ExpiresAt time.Time
 	UsedAt    time.Time

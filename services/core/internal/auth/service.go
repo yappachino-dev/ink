@@ -14,8 +14,8 @@ type UserRepository interface {
 
 type RefreshTokenRepository interface {
 	Create(ctx context.Context, token *RefreshToken) error
-	ByHash(ctx context.Context, hash string) (*RefreshToken, error)
-	RevokeByHash(ctx context.Context, hash string) error
+	ByHash(ctx context.Context, hash []byte) (*RefreshToken, error)
+	RevokeByHash(ctx context.Context, hash []byte) error
 	RevokeAllByUserID(ctx context.Context, userID int) error
 	Update(ctx context.Context, token *RefreshToken) error
 }
@@ -110,10 +110,9 @@ func (s *AuthService) issueTokens(ctx context.Context, userID int) (string, stri
 		return "", "", err
 	}
 
-	tokenHash := hashToken(refreshToken)
 	session := &RefreshToken{
 		UserID:    userID,
-		TokenHash: tokenHash,
+		Hash:      hashToken(refreshToken),
 		ExpiresAt: time.Now().UTC().Add(s.refreshTokenTTL),
 	}
 
@@ -156,6 +155,5 @@ func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 		return ErrInvalidLogoutToken
 	}
 
-	tokenHash := hashToken(refreshToken)
-	return s.refreshTokenRepo.RevokeByHash(ctx, tokenHash)
+	return s.refreshTokenRepo.RevokeByHash(ctx, hashToken(refreshToken))
 }

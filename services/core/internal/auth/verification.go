@@ -1,17 +1,17 @@
 package auth
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"math/big"
 	"time"
 )
 
 type VerificationRepository interface {
-	Create(ctx context.Context, email string, codeHash string) error
+	Create(ctx context.Context, email string, codeHash []byte) error
 	LatestByEmail(ctx context.Context, email string) (*Verification, error)
 	MarkAsUsed(ctx context.Context, id int) error
 	MarkAllAsUsed(ctx context.Context, email string) error
@@ -35,9 +35,8 @@ func (s *VerificationService) CreateVerification(ctx context.Context, email stri
 	if err != nil {
 		return "", err
 	}
-	codeHash := hashVerificationCode(code)
 
-	err = s.repo.Create(ctx, email, codeHash)
+	err = s.repo.Create(ctx, email, hashVerificationCode(code))
 	if err != nil {
 		return "", err
 	}
@@ -61,8 +60,7 @@ func (s *VerificationService) ConfirmCode(ctx context.Context, email string, cod
 		return fmt.Errorf("verification code expired")
 	}
 
-	codeHash := hashVerificationCode(code)
-	if verification.CodeHash != codeHash {
+	if !bytes.Equal(verification.CodeHash, hashVerificationCode(code)) {
 		return fmt.Errorf("invalid verification code")
 	}
 
@@ -78,7 +76,7 @@ func generateVerificationCode() (string, error) {
 	return fmt.Sprintf("%06d", n.Int64()), nil
 }
 
-func hashVerificationCode(code string) string {
+func hashVerificationCode(code string) []byte {
 	hash := sha256.Sum256([]byte(code))
-	return hex.EncodeToString(hash[:])
+	return hash[:]
 }

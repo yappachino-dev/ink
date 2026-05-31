@@ -69,7 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_notes_sync ON notes(user_id, sync_sequence);
 CREATE TABLE IF NOT EXISTS refresh_tokens (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    token_hash TEXT NOT NULL,
+    hash BYTEA NOT NULL,
 
     expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -84,7 +84,7 @@ CREATE INDEX IF NOT EXISTS idx_refresh_tokens_user_id ON refresh_tokens(user_id)
 CREATE TABLE IF NOT EXISTS email_verifications (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    code_hash TEXT NOT NULL,
+    code_hash BYTEA NOT NULL,
 
     expires_at TIMESTAMP NOT NULL,
     used_at TIMESTAMP NULL,
