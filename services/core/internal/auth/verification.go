@@ -10,22 +10,22 @@ import (
 	"time"
 )
 
-type EmailVerificationRepository interface {
+type VerificationRepository interface {
 	Create(ctx context.Context, email string, codeHash string) error
-	LatestByEmail(ctx context.Context, email string) (*EmailVerification, error)
+	LatestByEmail(ctx context.Context, email string) (*Verification, error)
 	MarkAsUsed(ctx context.Context, id int) error
 	MarkAllAsUsed(ctx context.Context, email string) error
 }
 
-type EmailVerificationService struct {
-	repo EmailVerificationRepository
+type VerificationService struct {
+	repo VerificationRepository
 }
 
-func NewEmailVerificationService(repo EmailVerificationRepository) *EmailVerificationService {
-	return &EmailVerificationService{repo: repo}
+func NewVerificationService(repo VerificationRepository) *VerificationService {
+	return &VerificationService{repo: repo}
 }
 
-func (s *EmailVerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
+func (s *VerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
 	err := s.repo.MarkAllAsUsed(ctx, email)
 	if err != nil {
 		return "", err
@@ -44,7 +44,7 @@ func (s *EmailVerificationService) CreateVerification(ctx context.Context, email
 	return code, nil
 }
 
-func (s *EmailVerificationService) ConfirmCode(ctx context.Context, email string, code string) error {
+func (s *VerificationService) ConfirmCode(ctx context.Context, email string, code string) error {
 	verification, err := s.repo.LatestByEmail(ctx, email)
 	if err != nil {
 		return err

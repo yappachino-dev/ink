@@ -50,7 +50,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	vaultRepo := vault.NewPostgresVaultRepository(queries)
 	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
 
-	emailVerificationSvc := auth.NewEmailVerificationService(verificationRepo)
+	emailVerificationSvc := auth.NewVerificationService(verificationRepo)
 	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	vaultSvc := vault.NewVaultService(vaultRepo)
 	syncSvc := sync.NewSyncService(syncRepo)

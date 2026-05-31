@@ -11,10 +11,10 @@ import (
 type Server struct {
 	authv1.UnimplementedAuthServiceServer
 	authService              *AuthService
-	emailVerificationService *EmailVerificationService
+	emailVerificationService *VerificationService
 }
 
-func NewServer(authService *AuthService, emailEmailVerificationService *EmailVerificationService) *Server {
+func NewServer(authService *AuthService, emailEmailVerificationService *VerificationService) *Server {
 	return &Server{
 		authService:              authService,
 		emailVerificationService: emailEmailVerificationService,

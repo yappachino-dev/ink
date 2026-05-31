@@ -22,7 +22,7 @@ type RefreshToken struct {
 	RevokedAt time.Time
 }
 
-type EmailVerification struct {
+type Verification struct {
 	ID        int
 	Email     string
 	CodeHash  string

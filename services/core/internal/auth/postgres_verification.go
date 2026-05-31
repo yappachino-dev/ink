@@ -24,7 +24,7 @@ func (r *PostgresVerificationRepository) Create(ctx context.Context, email strin
 	})
 }
 
-func (r *PostgresVerificationRepository) LatestByEmail(ctx context.Context, email string) (*EmailVerification, error) {
+func (r *PostgresVerificationRepository) LatestByEmail(ctx context.Context, email string) (*Verification, error) {
 	row, err := r.q.GetLatestEmailVerification(ctx, email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -33,7 +33,7 @@ func (r *PostgresVerificationRepository) LatestByEmail(ctx context.Context, emai
 		return nil, err
 	}
 
-	return &EmailVerification{
+	return &Verification{
 		ID:        int(row.ID),
 		Email:     row.Email,
 		CodeHash:  row.CodeHash,
