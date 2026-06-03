@@ -673,6 +673,8 @@ class TranslationsVaultMethodsPinEn {
 
 	/// en: 'Quick access via 4-digit code'
 	String get subtitle => 'Quick access via 4-digit code';
+
+	late final TranslationsVaultMethodsPinKeyPadEn keyPad = TranslationsVaultMethodsPinKeyPadEn.internal(_root);
 }
 
 // Path: vault.methods.pattern
@@ -951,6 +953,21 @@ class TranslationsProfileSettingsAppearanceEn {
 	String get system => 'System';
 }
 
+// Path: vault.methods.pin.keyPad
+class TranslationsVaultMethodsPinKeyPadEn {
+	TranslationsVaultMethodsPinKeyPadEn.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Digit $n'
+	String digitButton({required Object n}) => 'Digit ${n}';
+
+	/// en: 'Delete last digit'
+	String get backspaceButton => 'Delete last digit';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1002,6 +1019,8 @@ extension on Translations {
 			'vault.methods.subtitle' => 'Choose a quick login method. A secret phrase will be mandatory in the next step.',
 			'vault.methods.pin.title' => 'PIN-code',
 			'vault.methods.pin.subtitle' => 'Quick access via 4-digit code',
+			'vault.methods.pin.keyPad.digitButton' => ({required Object n}) => 'Digit ${n}',
+			'vault.methods.pin.keyPad.backspaceButton' => 'Delete last digit',
 			'vault.methods.pattern.title' => 'Pattern Lock',
 			'vault.methods.pattern.subtitle' => 'Protection with a unique gesture',
 			'vault.methods.seed.title' => 'Recovery Phrase',

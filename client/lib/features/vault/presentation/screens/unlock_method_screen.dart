@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
-import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/domain/vault_state.dart';
@@ -48,58 +48,70 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
       methods = state.unlockMethods;
     }
 
-    return FlowScaffold(
-      showAppBar: false,
-      body: Column(
-        children: [
-          Text(
-            context.t.vault.methods.title,
-            style: context.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
+    return SpacedScaffold(
+      children: [
+        Column(
+          children: [
+            const _Header(),
 
-          const SizedBox(height: sizes.betweenTitleAndSub),
+            const SizedBox(height: 48),
 
-          Text(
-            context.t.vault.methods.subtitle,
-            style: context.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
+            if (methods.contains(KeyType.pin))
+              UnlockMethod(
+                title: context.t.vault.methods.pin.title,
+                subtitle: context.t.vault.methods.pin.subtitle,
+                isSelected: _selectedMethod == KeyType.pin,
+                onTap: () => _selectMethod(KeyType.pin),
+              ),
 
-          const SizedBox(height: 48),
+            if (methods.contains(KeyType.pattern))
+              UnlockMethod(
+                title: context.t.vault.methods.pattern.title,
+                subtitle: context.t.vault.methods.pattern.subtitle,
+                isSelected: _selectedMethod == KeyType.pattern,
+                onTap: () => _selectMethod(KeyType.pattern),
+              ),
 
-          if (methods.contains(KeyType.pin))
-            UnlockMethod(
-              title: context.t.vault.methods.pin.title,
-              subtitle: context.t.vault.methods.pin.subtitle,
-              isSelected: _selectedMethod == KeyType.pin,
-              onTap: () => _selectMethod(KeyType.pin),
-            ),
+            if (methods.contains(KeyType.recoveryPhrase))
+              UnlockMethod(
+                title: context.t.vault.methods.seed.title,
+                subtitle: context.t.vault.methods.seed.subtitle,
+                isSelected: _selectedMethod == KeyType.recoveryPhrase,
+                onTap: () => _selectMethod(KeyType.recoveryPhrase),
+              ),
+          ],
+        ),
 
-          if (methods.contains(KeyType.pattern))
-            UnlockMethod(
-              title: context.t.vault.methods.pattern.title,
-              subtitle: context.t.vault.methods.pattern.subtitle,
-              isSelected: _selectedMethod == KeyType.pattern,
-              onTap: () => _selectMethod(KeyType.pattern),
-            ),
+        WideFilledButton(
+          onPressed: _selectedMethod != null ? _onSubmit : null,
+          child: Text(context.t.common.next),
+        ),
+      ],
+    );
+  }
+}
 
-          if (methods.contains(KeyType.recoveryPhrase))
-            UnlockMethod(
-              title: context.t.vault.methods.seed.title,
-              subtitle: context.t.vault.methods.seed.subtitle,
-              isSelected: _selectedMethod == KeyType.recoveryPhrase,
-              onTap: () => _selectMethod(KeyType.recoveryPhrase),
-            ),
+class _Header extends StatelessWidget {
+  const _Header();
 
-          const Spacer(),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          context.t.vault.methods.title,
+          style: context.textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
 
-          WideFilledButton(
-            onPressed: _selectedMethod != null ? _onSubmit : null,
-            child: Text(context.t.common.next),
-          ),
-        ],
-      ),
+        const SizedBox(height: sizes.betweenTitleAndSub),
+
+        Text(
+          context.t.vault.methods.subtitle,
+          style: context.textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

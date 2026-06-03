@@ -14,7 +14,7 @@ class PatternLockView extends StatefulWidget {
 
   final ValueChanged<List<int>?> onPatternChanged;
   final VoidCallback? onPatternTooShort;
-  final int height;
+  final double height;
 
   @override
   State<PatternLockView> createState() => _PatternLockViewState();
@@ -30,7 +30,7 @@ class _PatternLockViewState extends State<PatternLockView>
     super.initState();
 
     _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
   }
@@ -58,14 +58,15 @@ class _PatternLockViewState extends State<PatternLockView>
     return AnimatedBuilder(
       animation: _shakeController,
       builder: (context, child) {
-        final offset = sin(_shakeController.value * pi * 4) * 10;
+        final offset = sin(_shakeController.value * pi * 3) * 8;
+
         return Transform.translate(
-          offset: Offset(_isError ? offset : 0, 0),
+          offset: Offset(offset, 0),
           child: child,
         );
       },
       child: SizedBox(
-        height: 300,
+        height: widget.height,
         child: PatternLock(
           selectedColor: _isError
               ? context.colorScheme.error

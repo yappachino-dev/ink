@@ -60,7 +60,11 @@
             "subtitle": "Choose a quick login method. A secret phrase will be mandatory in the next step.",
             "pin": {
                 "title": "PIN-code",
-                "subtitle": "Quick access via 4-digit code"
+                "subtitle": "Quick access via 4-digit code",
+                "keyPad": {
+                    "digitButton": "Digit $n",
+                    "backspaceButton": "Delete last digit"
+                }
             },
             "pattern": {
                 "title": "Pattern Lock",

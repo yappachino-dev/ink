@@ -1,20 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/app/database/database_provider.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
-import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
+import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
+import 'package:ink/core/services/session/session_manager.dart';
+import 'package:ink/core/services/sync/sync_storage.dart';
+import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 
-class FatalScreen extends StatefulWidget {
+class FatalScreen extends ConsumerStatefulWidget {
   const FatalScreen({super.key});
 
   @override
-  State<FatalScreen> createState() => _FatalScreenState();
+  ConsumerState<FatalScreen> createState() => _FatalScreenState();
 }
 
-class _FatalScreenState extends State<FatalScreen>
+class _FatalScreenState extends ConsumerState<FatalScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -49,45 +55,58 @@ class _FatalScreenState extends State<FatalScreen>
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlowScaffold(
-      showAppBar: false,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: ScaleTransition(
-            scale: _scaleAnimation,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const AppLogo(size: LogoSize.small),
+    return SpacedScaffold(
+      children: [
+        Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const AppLogo(size: LogoSize.small),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                Text(
-                  context.t.vault.fatal.title,
-                  style: context.textTheme.displayLarge,
-                  textAlign: TextAlign.center,
-                ),
+                  Text(
+                    context.t.vault.fatal.title,
+                    style: context.textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
 
-                const SizedBox(height: sizes.betweenTitleAndSub),
+                  const SizedBox(height: sizes.betweenTitleAndSub),
 
-                Text(
-                  context.t.vault.fatal.subtitle,
-                  style: context.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
+                  Text(
+                    context.t.vault.fatal.subtitle,
+                    style: context.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
 
-                const SizedBox(height: 48),
-              ],
+                  const SizedBox(height: 48),
+
+                  WideFilledButton(
+                    onPressed: () async {
+                      await ref.read(appDatabaseProvider).resetDatabase();
+                      await ref.read(syncStorageProvider).saveSyncCursor(0);
+                      ref.read(sessionControllerProvider).clearAccessToken();
+                      ref.read(sessionControllerProvider).clearRefreshToken();
+                      ref.invalidate(vaultProvider);
+                    },
+                    child: const Text('Reset the app state'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

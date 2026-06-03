@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
-import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/core/presentation/widgets/back_app_bar.dart';
+import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
@@ -38,47 +39,61 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FlowScaffold(
-      body: Column(
-        children: [
-          Text(
-            context.t.vault.methods.title,
-            style: context.textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
+    return SpacedScaffold(
+      appBar: const BackAppBar(),
+      children: [
+        Column(
+          children: [
+            const _Header(),
 
-          const SizedBox(height: sizes.betweenTitleAndSub),
+            const SizedBox(height: 48),
 
-          Text(
-            context.t.vault.methods.subtitle,
-            style: context.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
+            UnlockMethod(
+              title: context.t.vault.methods.pin.title,
+              subtitle: context.t.vault.methods.pin.subtitle,
+              isSelected: _selectedMethod == KeyType.pin,
+              onTap: () => _selectMethod(KeyType.pin),
+            ),
 
-          const SizedBox(height: 48),
+            UnlockMethod(
+              title: context.t.vault.methods.pattern.title,
+              subtitle: context.t.vault.methods.pattern.subtitle,
+              isSelected: _selectedMethod == KeyType.pattern,
+              onTap: () => _selectMethod(KeyType.pattern),
+            ),
+          ],
+        ),
 
-          UnlockMethod(
-            title: context.t.vault.methods.pin.title,
-            subtitle: context.t.vault.methods.pin.subtitle,
-            isSelected: _selectedMethod == KeyType.pin,
-            onTap: () => _selectMethod(KeyType.pin),
-          ),
+        WideFilledButton(
+          onPressed: _selectedMethod != null ? _onSubmit : null,
+          child: Text(context.t.common.next),
+        ),
+      ],
+    );
+  }
+}
 
-          UnlockMethod(
-            title: context.t.vault.methods.pattern.title,
-            subtitle: context.t.vault.methods.pattern.subtitle,
-            isSelected: _selectedMethod == KeyType.pattern,
-            onTap: () => _selectMethod(KeyType.pattern),
-          ),
+class _Header extends StatelessWidget {
+  const _Header();
 
-          const Spacer(),
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          context.t.vault.methods.title,
+          style: context.textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
 
-          WideFilledButton(
-            onPressed: _selectedMethod != null ? _onSubmit : null,
-            child: Text(context.t.common.next),
-          ),
-        ],
-      ),
+        const SizedBox(height: sizes.betweenTitleAndSub),
+
+        Text(
+          context.t.vault.methods.subtitle,
+          style: context.textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

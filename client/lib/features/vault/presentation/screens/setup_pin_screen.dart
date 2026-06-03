@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
-import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/core/presentation/widgets/back_app_bar.dart';
+import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
@@ -33,45 +34,49 @@ class _SetupPinScreenState extends ConsumerState<SetupPinScreen> {
     return PopScope(
       onPopInvokedWithResult: (didPop, _) =>
           didPop ? ref.read(vaultSetupProvider.notifier).abortFlow() : null,
-      child: FlowScaffold(
-        body: Column(
-          children: [
-            Text(
-              context.t.vault.setup.pin.title,
-              style: context.textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
+      child: SpacedScaffold(
+        appBar: const BackAppBar(),
+        children: [
+          const _Header(),
 
-            const SizedBox(height: sizes.betweenTitleAndSub),
+          const AppLogo(size: LogoSize.small),
 
-            Text(
-              context.t.vault.setup.pin.description,
-              style: context.textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
+          PinPadView(
+            pin: _pin,
+            onPinChanged: (pin) => setState(() => _pin = pin),
+          ),
 
-            const SizedBox(height: 20),
-
-            const AppLogo(size: LogoSize.small),
-
-            const Spacer(),
-
-            PinPadView(
-              pin: _pin,
-              onPinChanged: (pin) => setState(() => _pin = pin),
-            ),
-
-            const Spacer(),
-
-            WideFilledButton(
-              onPressed: _pin.length == constants.maxPinLength
-                  ? _onSubmit
-                  : null,
-              child: Text(context.t.common.kContinue),
-            ),
-          ],
-        ),
+          WideFilledButton(
+            onPressed: _pin.length == constants.maxPinLength ? _onSubmit : null,
+            child: Text(context.t.common.kContinue),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          context.t.vault.setup.pin.title,
+          style: context.textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: sizes.betweenTitleAndSub),
+
+        Text(
+          context.t.vault.setup.pin.description,
+          style: context.textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

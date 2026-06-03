@@ -6,7 +6,8 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
-import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/core/presentation/widgets/back_app_bar.dart';
+import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
@@ -24,6 +25,9 @@ class SetupPatternScreen extends ConsumerStatefulWidget {
 class _SetupPatternScreenState extends ConsumerState<SetupPatternScreen> {
   List<int>? _pattern;
 
+  bool _isValid() =>
+      _pattern != null && _pattern!.length >= constants.minPatternLength;
+
   void _onSubmit() {
     ref.read(vaultSetupProvider.notifier).setupPattern(_pattern!);
     unawaited(const SetupRecoveryRoute().push<void>(context));
@@ -34,49 +38,51 @@ class _SetupPatternScreenState extends ConsumerState<SetupPatternScreen> {
     return PopScope(
       onPopInvokedWithResult: (didPop, _) =>
           didPop ? ref.read(vaultSetupProvider.notifier).abortFlow() : null,
-      child: FlowScaffold(
-        body: Column(
-          children: [
-            Text(
-              context.t.vault.setup.pattern.title,
-              style: context.textTheme.headlineMedium,
-              textAlign: TextAlign.center,
+      child: SpacedScaffold(
+        appBar: const BackAppBar(),
+        children: [
+          const _Header(),
+
+          PatternLockView(
+            onPatternChanged: (pattern) => setState(() => _pattern = pattern),
+            onPatternTooShort: () => context.showSnackbarError(
+              context.t.vault.setup.pattern.errorShort,
             ),
+          ),
 
-            const SizedBox(height: sizes.betweenTitleAndSub),
+          const AppLogo(size: LogoSize.large),
 
-            Text(
-              context.t.vault.setup.pattern.description,
-              style: context.textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-
-            const Spacer(),
-
-            PatternLockView(
-              onPatternChanged: (pattern) => setState(() => _pattern = pattern),
-              onPatternTooShort: () => context.showSnackbarError(
-                context.t.vault.setup.pattern.errorShort,
-              ),
-            ),
-
-            const Spacer(),
-
-            const AppLogo(size: LogoSize.large),
-
-            const Spacer(),
-
-            WideFilledButton(
-              onPressed:
-                  (_pattern != null &&
-                      _pattern!.length >= constants.minPatternLength)
-                  ? _onSubmit
-                  : null,
-              child: Text(context.t.common.kContinue),
-            ),
-          ],
-        ),
+          WideFilledButton(
+            onPressed: _isValid() ? _onSubmit : null,
+            child: Text(context.t.common.kContinue),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          context.t.vault.setup.pattern.title,
+          style: context.textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: sizes.betweenTitleAndSub),
+
+        Text(
+          context.t.vault.setup.pattern.description,
+          style: context.textTheme.bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }
