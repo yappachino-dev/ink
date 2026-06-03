@@ -18,7 +18,7 @@ RouteBase get $setupVaultRoute => GoRouteData.$route(
       path: 'recovery',
       factory: $SetupRecoveryRoute._fromState,
     ),
-    GoRouteData.$route(path: 'vefiry', factory: $SetupVerifyRoute._fromState),
+    GoRouteData.$route(path: 'verify', factory: $SetupVerifyRoute._fromState),
   ],
 );
 
@@ -110,7 +110,7 @@ mixin $SetupVerifyRoute on GoRouteData {
       const SetupVerifyRoute();
 
   @override
-  String get location => GoRouteData.$location('/setup/vefiry');
+  String get location => GoRouteData.$location('/setup/verify');
 
   @override
   void go(BuildContext context) => context.go(location);

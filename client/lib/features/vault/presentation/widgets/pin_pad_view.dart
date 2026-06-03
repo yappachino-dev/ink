@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/vault/domain/constants.dart';
+import 'package:ink/i18n/strings.g.dart';
+
+const _buttonWidth = 70.0;
+const _buttonHeight = 70.0;
+const _buttonVSpacing = 16.0;
+const _buttonHSpacing = 24.0;
 
 class PinPadView extends StatelessWidget {
   const PinPadView({
@@ -85,21 +92,19 @@ class _Keypad extends StatelessWidget {
     return Column(
       children: [
         _KeypadRow(digits: const ['1', '2', '3'], onTap: onDigitTap),
-        const SizedBox(height: 16),
+        const SizedBox(height: _buttonVSpacing),
         _KeypadRow(digits: const ['4', '5', '6'], onTap: onDigitTap),
-        const SizedBox(height: 16),
+        const SizedBox(height: _buttonVSpacing),
         _KeypadRow(digits: const ['7', '8', '9'], onTap: onDigitTap),
-        const SizedBox(height: 16),
+        const SizedBox(height: _buttonVSpacing),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(width: 94),
-
+            const SizedBox(width: _buttonWidth),
+            const SizedBox(width: _buttonHSpacing),
             _DigitKey(digit: '0', onTap: onDigitTap),
-
-            const SizedBox(width: 24),
-
+            const SizedBox(width: _buttonHSpacing),
             _BackspaceKey(onTap: onBackspaceTap),
           ],
         ),
@@ -120,9 +125,9 @@ class _KeypadRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _DigitKey(digit: digits[0], onTap: onTap),
-        const SizedBox(width: 24),
+        const SizedBox(width: _buttonHSpacing),
         _DigitKey(digit: digits[1], onTap: onTap),
-        const SizedBox(width: 24),
+        const SizedBox(width: _buttonHSpacing),
         _DigitKey(digit: digits[2], onTap: onTap),
       ],
     );
@@ -137,16 +142,17 @@ class _DigitKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onTap(digit),
-      borderRadius: BorderRadius.circular(40),
-      child: SizedBox(
-        width: 70,
-        height: 70,
-        child: Center(
-          child: Text(
-            digit,
-            style: context.textTheme.headlineMedium,
+    return Semantics(
+      button: true,
+      label: context.t.vault.methods.pin.keyPad.digitButton(n: digit),
+      child: InkWell(
+        onTap: () => onTap(digit),
+        borderRadius: BorderRadius.circular(40),
+        child: SizedBox(
+          width: _buttonWidth,
+          height: _buttonHeight,
+          child: Center(
+            child: Text(digit, style: context.textTheme.headlineMedium),
           ),
         ),
       ),
@@ -161,17 +167,21 @@ class _BackspaceKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(40),
-      child: SizedBox(
-        width: 70,
-        height: 70,
-        child: Center(
-          child: Icon(
-            Icons.backspace_outlined,
-            color: context.colorScheme.primary,
-            size: 26,
+    return Semantics(
+      button: true,
+      label: context.t.vault.methods.pin.keyPad.backspaceButton,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(40),
+        child: SizedBox(
+          width: _buttonWidth,
+          height: _buttonHeight,
+          child: Center(
+            child: Icon(
+              Icons.backspace_outlined,
+              color: context.colorScheme.primary,
+              size: sizes.iconLarge,
+            ),
           ),
         ),
       ),

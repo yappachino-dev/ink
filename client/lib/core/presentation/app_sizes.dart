@@ -10,3 +10,7 @@ const betweenTitleAndSub = 4.0;
 
 const wideButtonSmall = Size(double.infinity, 48);
 const wideButtonLarge = Size(double.infinity, 56);
+
+const iconSmall = 14.0;
+const iconMedium = 20.0;
+const iconLarge = 24.0;

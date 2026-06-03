@@ -12,7 +12,7 @@ part 'vault_setup_notifier.freezed.dart';
 sealed class VaultSetupData with _$VaultSetupData {
   const factory VaultSetupData({
     required List<String> generatedRecoveryPhrase,
-    required List<int> verifyIndecies,
+    required List<int> verifyIndices,
 
     KeyType? selectedType,
     String? temporarySecret,
@@ -32,7 +32,7 @@ class VaultSetup extends _$VaultSetup {
 
     return VaultSetupData(
       generatedRecoveryPhrase: List<String>.filled(12, 'a'),
-      verifyIndecies: _generateIndices(),
+      verifyIndices: _generateIndices(),
     );
   }
 
@@ -61,8 +61,8 @@ class VaultSetup extends _$VaultSetup {
   );
 
   bool verifyPhrase(List<String> userInputs) {
-    for (var i = 0; i < state.verifyIndecies.length; i++) {
-      final index = state.verifyIndecies[i];
+    for (var i = 0; i < state.verifyIndices.length; i++) {
+      final index = state.verifyIndices[i];
       if (userInputs[i].trim().toLowerCase() !=
           state.generatedRecoveryPhrase[index].toLowerCase()) {
         return false;
