@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
@@ -58,7 +59,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
             },
             icon: Icon(
               Icons.copy_rounded,
-              size: 18,
+              size: sizes.iconMedium,
               color: context.colorScheme.primary,
             ),
             label: Text(
@@ -76,9 +77,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
 
           WideFilledButton(
             onPressed: () => const SetupVerifyRoute().push<void>(context),
-            child: Text(
-              context.t.vault.setup.seed.savedButton,
-            ),
+            child: Text(context.t.vault.setup.seed.savedButton),
           ),
         ],
       ),

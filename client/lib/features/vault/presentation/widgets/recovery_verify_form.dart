@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
@@ -13,7 +14,7 @@ class RecoveryVerifyForm extends StatefulWidget {
 
   final List<int> indices;
   final bool isError;
-  final VoidCallback onChanged;
+  final ValueChanged<List<String>> onChanged;
 
   @override
   State<RecoveryVerifyForm> createState() => RecoveryVerifyFormState();
@@ -24,23 +25,33 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
   late final List<TextEditingController> _controllers;
   late final AnimationController _shakeController;
 
-  Future<void> shake() => _shakeController.forward(from: 0);
+  List<String> get values =>
+      _controllers.map((c) => c.text.trim().toLowerCase()).toList();
 
-  List<String> get values => _controllers.map((c) => c.text).toList();
+  void _onTextChanged() => widget.onChanged(values);
 
   @override
   void initState() {
     super.initState();
 
     _controllers = List<TextEditingController>.generate(
-      3,
-      (_) => TextEditingController()..addListener(widget.onChanged),
+      widget.indices.length,
+      (_) => TextEditingController()..addListener(_onTextChanged),
     );
 
     _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant RecoveryVerifyForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.isError && !oldWidget.isError) {
+      unawaited(_shakeController.forward(from: 0));
+    }
   }
 
   @override
@@ -60,36 +71,41 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
 
     return Column(
       children: [
-        if (widget.isError) ...[
-          Text(
+        Visibility(
+          visible: widget.isError,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          child: Text(
             context.t.vault.setup.seedVerify.error,
             style: textTheme.bodyMedium?.copyWith(
               color: context.colorScheme.error,
             ),
             textAlign: TextAlign.center,
           ),
+        ),
 
-          const SizedBox(height: 16),
-        ],
+        const SizedBox(height: 16),
 
         AnimatedBuilder(
           animation: _shakeController,
           builder: (context, child) {
-            final offset = sin(_shakeController.value * pi * 4) * 8;
+            final offset = sin(_shakeController.value * pi * 3) * 8;
 
             return Transform.translate(
-              offset: Offset(widget.isError ? offset : 0, 0),
+              offset: Offset(offset, 0),
               child: child,
             );
           },
           child: Column(
-            children: List.generate(3, (index) {
+            children: List.generate(widget.indices.length, (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: _NumberedField(
                   number: widget.indices[index] + 1,
                   isError: widget.isError,
                   controller: _controllers[index],
+                  isLast: index == widget.indices.length - 1,
                 ),
               );
             }),
@@ -105,14 +121,21 @@ class _NumberedField extends StatelessWidget {
     required this.number,
     required this.isError,
     required this.controller,
+    required this.isLast,
   });
 
   final int number;
   final bool isError;
   final TextEditingController controller;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
+    const borderRadius = 20.0;
+    final activeColor = isError
+        ? context.colorScheme.error
+        : context.colorScheme.primary;
+
     return Row(
       children: [
         SizedBox(
@@ -120,46 +143,39 @@ class _NumberedField extends StatelessWidget {
           child: Text(
             '$number.',
             style: context.textTheme.titleLarge?.copyWith(
-              color: context.colorScheme.primary,
+              color: activeColor,
             ),
           ),
         ),
 
         Expanded(
-          child: Container(
+          child: SizedBox(
             height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: context.colorScheme.shadow.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
             child: TextField(
               controller: controller,
+              autocorrect: false,
+              enableSuggestions: false,
               textAlign: TextAlign.center,
+              textInputAction: isLast
+                  ? TextInputAction.done
+                  : TextInputAction.next,
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: context.customColors.containerColor,
                 hintText: context.t.vault.setup.seedVerify.inputHint,
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   borderSide: BorderSide(
-                    color: isError
-                        ? context.colorScheme.error.withValues(alpha: 0.5)
-                        : context.colorScheme.primary.withValues(alpha: 0.5),
+                    color: activeColor.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   borderSide: BorderSide(
-                    color: isError
-                        ? context.colorScheme.error
-                        : context.colorScheme.primary,
+                    color: activeColor,
                     width: 2,
                   ),
                 ),

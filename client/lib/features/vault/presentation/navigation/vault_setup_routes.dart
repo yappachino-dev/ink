@@ -4,7 +4,7 @@ import 'package:ink/features/vault/presentation/screens/setup_method_screen.dart
 import 'package:ink/features/vault/presentation/screens/setup_pattern_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_recovery_screen.dart';
-import 'package:ink/features/vault/presentation/screens/setup_vefiry_screen.dart';
+import 'package:ink/features/vault/presentation/screens/setup_verify_screen.dart';
 
 part 'vault_setup_routes.g.dart';
 
@@ -14,7 +14,7 @@ part 'vault_setup_routes.g.dart';
     TypedGoRoute<SetupPinRoute>(path: 'pin'),
     TypedGoRoute<SetupPatternRoute>(path: 'pattern'),
     TypedGoRoute<SetupRecoveryRoute>(path: 'recovery'),
-    TypedGoRoute<SetupVerifyRoute>(path: 'vefiry'),
+    TypedGoRoute<SetupVerifyRoute>(path: 'verify'),
   ],
 )
 class SetupVaultRoute extends GoRouteData with $SetupVaultRoute {
