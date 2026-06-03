@@ -8,6 +8,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
+import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pattern_lock_view.dart';
@@ -66,7 +67,9 @@ class _SetupPatternScreenState extends ConsumerState<SetupPatternScreen> {
             const Spacer(),
 
             WideFilledButton(
-              onPressed: (_pattern != null && _pattern!.length >= 4)
+              onPressed:
+                  (_pattern != null &&
+                      _pattern!.length >= constants.minPatternLength)
                   ? _onSubmit
                   : null,
               child: Text(context.t.common.kContinue),

@@ -7,6 +7,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
+import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pin_pad_view.dart';
@@ -63,7 +64,9 @@ class _SetupPinScreenState extends ConsumerState<SetupPinScreen> {
             const Spacer(),
 
             WideFilledButton(
-              onPressed: _pin.length == 4 ? _onSubmit : null,
+              onPressed: _pin.length == constants.maxPinLength
+                  ? _onSubmit
+                  : null,
               child: Text(context.t.common.kContinue),
             ),
           ],

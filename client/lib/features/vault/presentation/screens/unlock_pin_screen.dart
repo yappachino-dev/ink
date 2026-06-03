@@ -5,6 +5,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
+import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pin_pad_view.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -55,7 +56,7 @@ class _UnlockPinScreenState extends ConsumerState<UnlockPinScreen> {
           const Spacer(),
 
           WideFilledButton(
-            onPressed: _pin.length == 4 ? _onSubmit : null,
+            onPressed: _pin.length == constants.maxPinLength ? _onSubmit : null,
             child: Text(context.t.common.kContinue),
           ),
         ],
