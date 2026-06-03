@@ -43,17 +43,18 @@ func New(ctx context.Context, cfg *config.Config) *App {
 
 	db := stdlib.OpenDBFromPool(pool)
 	queries := store.New(pool)
+	transactor := database.NewPgTransactor(pool)
 
 	userRepo := auth.NewPostgresUserRepository(queries)
 	tokenRepo := auth.NewPostgresTokenRepository(queries)
 	verificationRepo := auth.NewPostgresVerificationRepository(queries)
 	vaultRepo := vault.NewPostgresVaultRepository(queries)
-	syncRepo := sync.NewPostgresSyncRepository(pool, queries)
+	syncRepo := sync.NewPostgresSyncRepository(queries)
 
 	verificationSvc := auth.NewVerificationService(verificationRepo)
 	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	vaultSvc := vault.NewVaultService(vaultRepo)
-	syncSvc := sync.NewSyncService(syncRepo)
+	syncSvc := sync.NewSyncService(transactor, syncRepo)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
 		Level: slog.LevelDebug,

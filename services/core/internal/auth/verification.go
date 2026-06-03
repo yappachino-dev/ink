@@ -40,6 +40,7 @@ func (s *VerificationService) CreateVerification(ctx context.Context, email stri
 	if err != nil {
 		return "", err
 	}
+
 	return code, nil
 }
 

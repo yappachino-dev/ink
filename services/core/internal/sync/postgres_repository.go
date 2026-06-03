@@ -4,148 +4,34 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
 type PostgresSyncRepository struct {
-	db *pgxpool.Pool
-	q  *store.Queries
+	q *store.Queries
 }
 
-func NewPostgresSyncRepository(db *pgxpool.Pool, q *store.Queries) *PostgresSyncRepository {
-	return &PostgresSyncRepository{db: db, q: q}
+func NewPostgresSyncRepository(q *store.Queries) *PostgresSyncRepository {
+	return &PostgresSyncRepository{q: q}
 }
 
-func (r *PostgresSyncRepository) SyncData(ctx context.Context, userID int, clientCursor int, changes SyncChanges) (int, SyncChanges, error) {
-	tx, err := r.db.Begin(ctx)
-	if err != nil {
-		return 0, SyncChanges{}, err
-	}
-
-	defer tx.Rollback(ctx)
-
-	qtx := r.q.WithTx(tx)
-
-	currentCursor, err := qtx.GetUserCursor(ctx, int32(userID))
-	if err != nil {
-		return 0, SyncChanges{}, err
-	}
-
-	hasChanges := len(changes.Projects) > 0 || len(changes.Notes) > 0
-	newCursor := int(currentCursor)
-
-	if hasChanges {
-		newCursor = newCursor + 1
-
-		if err = qtx.UpdateUserCursor(ctx, store.UpdateUserCursorParams{
-			SyncCursor: int32(newCursor),
-			ID:         int32(userID),
-		}); err != nil {
-			return 0, SyncChanges{}, err
-		}
-
-		if err = r.UpsertProjects(ctx, qtx, userID, newCursor, changes.Projects); err != nil {
-			return 0, SyncChanges{}, err
-		}
-
-		if err = r.UpsertNotes(ctx, qtx, userID, newCursor, changes.Notes); err != nil {
-			return 0, SyncChanges{}, err
-		}
-
-	}
-
-	projects, err := r.GetProjectChanges(ctx, qtx, userID, clientCursor)
-	if err != nil {
-		return 0, SyncChanges{}, err
-	}
-
-	notes, err := r.GetNotesChanges(ctx, qtx, userID, clientCursor)
-	if err != nil {
-		return 0, SyncChanges{}, err
-	}
-
-	if err = tx.Commit(ctx); err != nil {
-		return 0, SyncChanges{}, err
-	}
-
-	return newCursor, SyncChanges{Projects: projects, Notes: notes}, nil
+func (r *PostgresSyncRepository) GetUserCursor(ctx context.Context, userID int) (int, error) {
+	cursor, err := r.db(ctx).GetUserCursor(ctx, int32(userID))
+	return int(cursor), err
 }
 
-func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, qtx *store.Queries, userID int, syncSequence int, projects []Project) error {
-	if len(projects) == 0 {
-		return nil
-	}
-
-	params := make([]store.UpsertProjectsParams, 0, len(projects))
-	for _, p := range projects {
-		params = append(params, store.UpsertProjectsParams{
-			ID:               p.ID,
-			UserID:           int32(userID),
-			EncryptedContent: p.EncryptedContent,
-			Version:          int32(p.Version),
-			SyncSequence:     int32(syncSequence),
-			CreatedAt:        database.TimeToPg(p.CreatedAt),
-			UpdatedAt:        database.TimeToPg(p.UpdatedAt),
-			DeletedAt:        database.TimeToPg(p.DeletedAt),
-		})
-	}
-
-	batchResults := qtx.UpsertProjects(ctx, params)
-	defer batchResults.Close()
-
-	var batchErr error
-	batchResults.Exec(func(index int, err error) {
-		if err != nil && batchErr == nil {
-			batchErr = err
-		}
+func (r *PostgresSyncRepository) UpdateUserCursor(ctx context.Context, userID int, cursor int) error {
+	return r.db(ctx).UpdateUserCursor(ctx, store.UpdateUserCursorParams{
+		ID:         int32(userID),
+		SyncCursor: int32(cursor),
 	})
-
-	return batchErr
 }
 
-func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, qtx *store.Queries, userID int, syncSequence int, notes []Note) error {
-	if len(notes) == 0 {
-		return nil
-	}
-
-	params := make([]store.UpsertNotesParams, 0, len(notes))
-	for _, n := range notes {
-		var pID *uuid.UUID
-		if n.ProjectID != uuid.Nil {
-			pID = &n.ProjectID
-		}
-
-		params = append(params, store.UpsertNotesParams{
-			ID:               n.ID,
-			UserID:           int32(userID),
-			ProjectID:        pID,
-			EncryptedTitle:   n.EncryptedTitle,
-			EncryptedContent: n.EncryptedContent,
-			Version:          int32(n.Version),
-			SyncSequence:     int32(syncSequence),
-			CreatedAt:        database.TimeToPg(n.CreatedAt),
-			UpdatedAt:        database.TimeToPg(n.UpdatedAt),
-			DeletedAt:        database.TimeToPg(n.DeletedAt),
-		})
-	}
-
-	batchResults := qtx.UpsertNotes(ctx, params)
-	defer batchResults.Close()
-
-	var batchErr error
-	batchResults.Exec(func(index int, err error) {
-		if err != nil && batchErr == nil {
-			batchErr = err
-		}
-	})
-
-	return batchErr
-}
-
-func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, qtx *store.Queries, userID int, cursor int) ([]Project, error) {
-	rows, err := qtx.GetProjectChanges(ctx, store.GetProjectChangesParams{
+func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, userID int, cursor int) ([]Project, error) {
+	rows, err := r.db(ctx).GetProjectChanges(ctx, store.GetProjectChangesParams{
 		UserID:       int32(userID),
 		SyncSequence: int32(cursor),
 	})
@@ -170,8 +56,40 @@ func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, qtx *sto
 	return projects, nil
 }
 
-func (r *PostgresSyncRepository) GetNotesChanges(ctx context.Context, qtx *store.Queries, userID int, cursor int) ([]Note, error) {
-	rows, err := qtx.GetNoteChanges(ctx, store.GetNoteChangesParams{
+func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, userID int, syncSequence int, projects []Project) error {
+	if len(projects) == 0 {
+		return nil
+	}
+
+	params := make([]store.UpsertProjectsParams, 0, len(projects))
+	for _, p := range projects {
+		params = append(params, store.UpsertProjectsParams{
+			ID:               p.ID,
+			UserID:           int32(userID),
+			EncryptedContent: p.EncryptedContent,
+			Version:          int32(p.Version),
+			SyncSequence:     int32(syncSequence),
+			CreatedAt:        database.TimeToPg(p.CreatedAt),
+			UpdatedAt:        database.TimeToPg(p.UpdatedAt),
+			DeletedAt:        database.TimeToPg(p.DeletedAt),
+		})
+	}
+
+	batchResults := r.db(ctx).UpsertProjects(ctx, params)
+	defer batchResults.Close()
+
+	var batchErr error
+	batchResults.Exec(func(index int, err error) {
+		if err != nil && batchErr == nil {
+			batchErr = err
+		}
+	})
+
+	return batchErr
+}
+
+func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int, cursor int) ([]Note, error) {
+	rows, err := r.db(ctx).GetNoteChanges(ctx, store.GetNoteChangesParams{
 		UserID:       int32(userID),
 		SyncSequence: int32(cursor),
 	})
@@ -201,4 +119,50 @@ func (r *PostgresSyncRepository) GetNotesChanges(ctx context.Context, qtx *store
 	}
 
 	return notes, nil
+}
+
+func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, syncSequence int, notes []Note) error {
+	if len(notes) == 0 {
+		return nil
+	}
+
+	params := make([]store.UpsertNotesParams, 0, len(notes))
+	for _, n := range notes {
+		var pID *uuid.UUID
+		if n.ProjectID != uuid.Nil {
+			pID = &n.ProjectID
+		}
+
+		params = append(params, store.UpsertNotesParams{
+			ID:               n.ID,
+			UserID:           int32(userID),
+			ProjectID:        pID,
+			EncryptedTitle:   n.EncryptedTitle,
+			EncryptedContent: n.EncryptedContent,
+			Version:          int32(n.Version),
+			SyncSequence:     int32(syncSequence),
+			CreatedAt:        database.TimeToPg(n.CreatedAt),
+			UpdatedAt:        database.TimeToPg(n.UpdatedAt),
+			DeletedAt:        database.TimeToPg(n.DeletedAt),
+		})
+	}
+
+	batchResults := r.db(ctx).UpsertNotes(ctx, params)
+	defer batchResults.Close()
+
+	var batchErr error
+	batchResults.Exec(func(index int, err error) {
+		if err != nil && batchErr == nil {
+			batchErr = err
+		}
+	})
+
+	return batchErr
+}
+
+func (r *PostgresSyncRepository) db(ctx context.Context) *store.Queries {
+	if tx, ok := appctx.TxFromContext[pgx.Tx](ctx); ok {
+		return r.q.WithTx(tx)
+	}
+	return r.q
 }
