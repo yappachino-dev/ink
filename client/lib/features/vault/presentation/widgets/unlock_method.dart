@@ -17,19 +17,22 @@ class UnlockMethod extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final containerColor = isSelected
+        ? context.customColors.containerColor.withValues(alpha: 0.95)
+        : context.customColors.containerColor;
+
+    final borderColor = isSelected
+        ? context.colorScheme.primary
+        : context.colorScheme.primary.withValues(alpha: 0.1);
+
     return AnimatedContainer(
       margin: const EdgeInsets.only(bottom: 12),
       duration: const Duration(milliseconds: 200),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: context.customColors.containerColor,
+        color: containerColor,
+        border: Border.all(color: borderColor, width: 1.5),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected
-              ? context.colorScheme.primary
-              : context.colorScheme.primary.withValues(alpha: 0.1),
-          width: 1.5,
-        ),
         boxShadow: [
           BoxShadow(
             color: context.colorScheme.shadow.withValues(alpha: 0.05),
@@ -47,19 +50,22 @@ class UnlockMethod extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   title,
-                  textAlign: TextAlign.center,
                   style: context.textTheme.titleLarge?.copyWith(
                     color: context.colorScheme.primary,
                   ),
+                  textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: 4),
+
                 Text(
                   subtitle,
-                  textAlign: TextAlign.center,
                   style: context.textTheme.bodySmall,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
