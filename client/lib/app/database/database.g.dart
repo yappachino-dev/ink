@@ -47,7 +47,7 @@ class $KeySlotsTable extends KeySlots
         false,
         type: DriftSqlType.int,
         requiredDuringInsert: false,
-        defaultValue: const Constant(1),
+        defaultValue: const Constant(syncModifiedIndex),
       ).withConverter<SyncStatus>($KeySlotsTable.$convertersyncStatus);
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
@@ -440,7 +440,7 @@ class $ProjectsTable extends Projects
         false,
         type: DriftSqlType.int,
         requiredDuringInsert: false,
-        defaultValue: const Constant(1),
+        defaultValue: const Constant(syncModifiedIndex),
       ).withConverter<SyncStatus>($ProjectsTable.$convertersyncStatus);
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -982,7 +982,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
         false,
         type: DriftSqlType.int,
         requiredDuringInsert: false,
-        defaultValue: const Constant(1),
+        defaultValue: const Constant(syncModifiedIndex),
       ).withConverter<SyncStatus>($NotesTable.$convertersyncStatus);
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
