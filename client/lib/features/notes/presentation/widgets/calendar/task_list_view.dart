@@ -25,51 +25,54 @@ class TaskListView extends ConsumerWidget {
     final activeNotes = ref.watch(activeCalendarNotesProvider);
     final completedNotes = ref.watch(completedCalendarNotesProvider);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-      children: [
-        ...activeNotes.map(
-          (task) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ActiveNoteCard(
-              key: ValueKey(task.id),
-              note: task,
-              projectName: _listNameFor(
-                allProjects,
-                task.projectId ?? inboxProjectId,
-              ),
-              onTap: () => context.showAppBottomSheetLayout<void>(
-                child: NoteDetailsSheet(
-                  note: task,
+    return CustomScrollView(
+      slivers: [
+        SliverList.builder(
+          itemCount: activeNotes.length,
+          itemBuilder: (ctx, index) {
+            final note = activeNotes[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ActiveNoteCard(
+                key: ValueKey(note.id),
+                note: note,
+                projectName: _listNameFor(
+                  allProjects,
+                  note.projectId ?? inboxProjectId,
                 ),
+                onTap: () => context.showAppBottomSheetLayout<void>(
+                  child: NoteDetailsSheet(note: note),
+                ),
+              ),
+            );
+          },
+        ),
+
+        if (completedNotes.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: CompletedSection(
+                children: [
+                  ...completedNotes.map(
+                    (note) => CompletedNoteCard(
+                      key: ValueKey(note.id),
+                      note: note,
+                      projectName: _listNameFor(
+                        allProjects,
+                        note.projectId ?? inboxProjectId,
+                      ),
+                      onTap: () => context.showAppBottomSheetLayout<void>(
+                        child: NoteDetailsSheet(
+                          note: note,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ),
-
-        if (completedNotes.isNotEmpty) ...[
-          const SizedBox(height: 4),
-
-          CompletedSection(
-            children: [
-              ...completedNotes.map(
-                (note) => CompletedNoteCard(
-                  key: ValueKey(note.id),
-                  note: note,
-                  projectName: _listNameFor(
-                    allProjects,
-                    note.projectId ?? inboxProjectId,
-                  ),
-                  onTap: () => context.showAppBottomSheetLayout<void>(
-                    child: NoteDetailsSheet(
-                      note: note,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ],
     );
   }

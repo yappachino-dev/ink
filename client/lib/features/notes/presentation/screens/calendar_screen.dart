@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
@@ -104,8 +105,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       IconButton(
                         icon: Icon(
                           viewMode.icon,
+                          size: sizes.iconLarge,
                           color: context.colorScheme.onSurface,
-                          size: 24,
                         ),
                         tooltip: viewMode.label(t),
                         onPressed: _openViewModePicker,
@@ -141,7 +142,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 const SizedBox(width: 4),
                                 Icon(
                                   Icons.close,
-                                  size: 14,
+                                  size: sizes.iconSmall,
                                   color: context.colorScheme.primary,
                                 ),
                               ],
@@ -174,10 +175,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           IconButton(
                             icon: Icon(
                               Icons.filter_alt_outlined,
+                              size: sizes.iconLarge,
                               color: isFilterActive
                                   ? context.colorScheme.primary
                                   : context.colorScheme.onSurface,
-                              size: 24,
                             ),
                             tooltip: context.t.calendar.filter,
                             onPressed: _openFilterSheet,
@@ -213,7 +214,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         foregroundColor: context.colorScheme.surface,
         elevation: 4,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: 28),
+        child: const Icon(Icons.add, size: sizes.iconXLarge),
       ),
       bottomNavigationBar: const BottomNav(),
     );

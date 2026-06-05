@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
@@ -13,6 +14,9 @@ import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.d
 import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
+
+const _shadowPercentage = 0.35;
+const _drawerWidthPercentage = 0.80;
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -113,17 +117,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
 
               Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: notes.isNotEmpty
-                      ? TaskListView(
-                          key: ValueKey('list-$selectedProjectId'),
-                          title: selectedProjectTitle,
-                        )
-                      : EmptyStateView(
-                          key: const ValueKey('empty'),
-                          title: selectedProjectTitle,
-                        ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: notes.isNotEmpty
+                        ? TaskListView(
+                            key: ValueKey('list-$selectedProjectId'),
+                            title: selectedProjectTitle,
+                          )
+                        : EmptyStateView(
+                            key: const ValueKey('empty'),
+                            title: selectedProjectTitle,
+                          ),
+                  ),
                 ),
               ),
             ],
@@ -138,14 +145,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               curve: Curves.easeInOut,
               child: AnimatedOpacity(
                 opacity: _isDrawerOpen ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 180),
+                duration: const Duration(milliseconds: 200),
                 child: FloatingActionButton(
                   onPressed: _isDrawerOpen ? null : _openAddTask,
                   backgroundColor: context.colorScheme.primary,
                   foregroundColor: context.colorScheme.surface,
-                  elevation: 4,
+                  elevation: 0,
                   shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: 28),
+                  child: const Icon(Icons.add, size: sizes.iconXLarge),
                 ),
               ),
             ),
@@ -157,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                   child: Container(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: context.colorScheme.shadow.withValues(alpha: 0.08),
                   ),
                 ),
               ),
@@ -170,7 +177,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 onTap: _closeDrawer,
                 child: Container(
                   color: context.colorScheme.shadow.withValues(
-                    alpha: 0.35 * _drawerAnimation.value,
+                    alpha: _shadowPercentage * _drawerAnimation.value,
                   ),
                 ),
               ),
@@ -181,7 +188,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               animation: _drawerAnimation,
               builder: (_, child) {
                 final screenWidth = MediaQuery.of(context).size.width;
-                final drawerWidth = screenWidth * 0.82;
+                final drawerWidth = screenWidth * _drawerWidthPercentage;
+
                 return Positioned(
                   left: -drawerWidth * (1 - _drawerAnimation.value),
                   top: 0,

@@ -9,7 +9,7 @@ class KeySlots extends Table {
   BlobColumn get wrappedMasterKey => blob()();
 
   IntColumn get syncStatus =>
-      intEnum<SyncStatus>().withDefault(const Constant(1))();
+      intEnum<SyncStatus>().withDefault(const Constant(syncModifiedIndex))();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   @override

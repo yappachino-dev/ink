@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
+import 'package:ink/features/notes/domain/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 
@@ -119,8 +121,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             onTap: () => Navigator.of(context).pop(),
             child: Icon(
               Icons.cancel_outlined,
+              size: sizes.iconLarge,
               color: context.theme.hintColor,
-              size: 24,
             ),
           ),
 
@@ -140,8 +142,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             onTap: _confirm,
             child: Icon(
               Icons.check,
+              size: sizes.iconLarge,
               color: context.colorScheme.primary,
-              size: 24,
             ),
           ),
         ],
@@ -231,7 +233,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       ),
                       child: Icon(
                         Icons.format_color_reset_outlined,
-                        size: 18,
+                        size: sizes.iconMedium,
                         color: _selectedColor == context.colorScheme.primary
                             ? context.colorScheme.onSurface
                             : context.theme.hintColor,
@@ -239,7 +241,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                     ),
                   ),
 
-                  ...kListColors.map((color) {
+                  ...projectColors.map((color) {
                     final isSelected = _selectedColor == color;
                     return GestureDetector(
                       onTap: () => setState(() => _selectedColor = color),
@@ -292,7 +294,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                   spacing: 12,
                   runSpacing: 12,
                   children: [
-                    ...kListEmojis.map((emoji) {
+                    ...projectEmojis.map((emoji) {
                       final isSelected = _selectedEmoji == emoji;
                       return GestureDetector(
                         onTap: () => setState(() => _selectedEmoji = emoji),
@@ -329,34 +331,3 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
     );
   }
 }
-
-// TO-DO: tech debt
-const List<Color> kListColors = [
-  Color(0xFFFF3B30),
-  Color(0xFFFF9500),
-  Color(0xFFFFCC00),
-  Color(0xFF34C759),
-  Color(0xFF007AFF),
-  Color(0xFF5856D6),
-  Color(0xFFAF52DE),
-  Color(0xFFFF2D55),
-];
-
-const List<String> kListEmojis = [
-  '📋',
-  '⭐',
-  '🔥',
-  '💡',
-  '📚',
-  '💼',
-  '🏃',
-  '🎯',
-  '🌱',
-  '🎨',
-  '🛒',
-  '✈️',
-  '🏠',
-  '💪',
-  '🎵',
-  '🍀',
-];

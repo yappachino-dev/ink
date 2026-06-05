@@ -10,7 +10,7 @@ class Projects extends Table {
   IntColumn get localVersion => integer().withDefault(const Constant(1))();
   IntColumn get lastSyncedVersion => integer().withDefault(const Constant(0))();
   IntColumn get syncStatus =>
-      intEnum<SyncStatus>().withDefault(const Constant(1))();
+      intEnum<SyncStatus>().withDefault(const Constant(syncModifiedIndex))();
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();

@@ -19,51 +19,57 @@ class TaskListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeTasks = ref.watch(activeNotesProvider);
-    final completedTasks = ref.watch(completedNotesProvider);
+    final activeNotes = ref.watch(activeNotesProvider);
+    final completedNotes = ref.watch(completedNotesProvider);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
-      children: [
-        if (title != null) ...[
-          Text(title!, style: context.textTheme.headlineSmall),
-          const SizedBox(height: 16),
-        ],
+    return CustomScrollView(
+      slivers: [
+        if (title != null)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Text(title!, style: context.textTheme.headlineSmall),
+            ),
+          ),
 
-        ...activeTasks.map(
-          (task) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ActiveNoteCard(
-              key: ValueKey(task.id),
-              note: task,
-              onTap: () => context.showAppBottomSheetLayout<void>(
-                child: NoteDetailsSheet(
-                  note: task,
+        SliverList.builder(
+          itemCount: activeNotes.length,
+          itemBuilder: (ctx, index) {
+            final note = activeNotes[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ActiveNoteCard(
+                key: ValueKey(note.id),
+                note: note,
+                onTap: () => context.showAppBottomSheetLayout<void>(
+                  child: NoteDetailsSheet(note: note),
                 ),
+              ),
+            );
+          },
+        ),
+
+        if (completedNotes.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: CompletedSection(
+                children: [
+                  ...completedNotes.map(
+                    (note) => CompletedNoteCard(
+                      key: ValueKey(note.id),
+                      note: note,
+                      onTap: () => context.showAppBottomSheetLayout<void>(
+                        child: NoteDetailsSheet(
+                          note: note,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ),
-
-        if (completedTasks.isNotEmpty) ...[
-          const SizedBox(height: 4),
-
-          CompletedSection(
-            children: [
-              ...completedTasks.map(
-                (note) => CompletedNoteCard(
-                  key: ValueKey(note.id),
-                  note: note,
-                  onTap: () => context.showAppBottomSheetLayout<void>(
-                    child: NoteDetailsSheet(
-                      note: note,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ],
     );
   }

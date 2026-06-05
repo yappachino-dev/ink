@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
@@ -113,8 +114,8 @@ class PersonalizationScreen extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         Icons.chevron_left,
+                        size: sizes.iconXLarge,
                         color: context.colorScheme.onSurface,
-                        size: 28,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),

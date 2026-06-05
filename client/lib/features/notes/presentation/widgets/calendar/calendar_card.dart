@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
@@ -73,13 +74,13 @@ class CalendarCard extends ConsumerWidget {
           ),
           leftChevronIcon: Icon(
             Icons.chevron_left,
+            size: sizes.iconMedium,
             color: context.theme.hintColor,
-            size: 20,
           ),
           rightChevronIcon: Icon(
             Icons.chevron_right,
+            size: sizes.iconMedium,
             color: context.theme.hintColor,
-            size: 20,
           ),
           leftChevronMargin: EdgeInsets.zero,
           rightChevronMargin: EdgeInsets.zero,

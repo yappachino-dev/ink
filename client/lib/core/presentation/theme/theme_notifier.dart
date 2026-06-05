@@ -8,7 +8,7 @@ part 'theme_notifier.g.dart';
 class ThemeNotifier extends _$ThemeNotifier {
   @override
   ThemeMode build() {
-    final savedThemeString = ref.read(userPreferencesProvider).themeModeString;
+    final savedThemeString = ref.watch(userPreferencesProvider).themeModeString;
 
     return _fromString(savedThemeString);
   }

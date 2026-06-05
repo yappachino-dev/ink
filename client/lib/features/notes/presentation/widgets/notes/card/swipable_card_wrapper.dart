@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
@@ -32,7 +33,7 @@ class SwipableCardWrapper extends ConsumerWidget {
         ),
         child: Icon(
           Icons.delete_outline,
-          size: 24,
+          size: sizes.iconLarge,
           color: context.colorScheme.error,
         ),
       ),

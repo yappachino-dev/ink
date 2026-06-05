@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/i18n/locale_notifier.dart';
@@ -27,8 +28,8 @@ class LanguageSheet extends ConsumerWidget {
             trailing: current == lang
                 ? Icon(
                     Icons.check,
+                    size: sizes.iconMedium,
                     color: context.colorScheme.primary,
-                    size: 20,
                   )
                 : null,
             onTap: () {

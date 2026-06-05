@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -31,8 +32,8 @@ class DayHeader extends ConsumerWidget {
             },
             child: Icon(
               Icons.chevron_left,
+              size: sizes.iconMedium,
               color: context.theme.hintColor,
-              size: 20,
             ),
           ),
 
@@ -55,8 +56,8 @@ class DayHeader extends ConsumerWidget {
             },
             child: Icon(
               Icons.chevron_right,
+              size: sizes.iconMedium,
               color: context.theme.hintColor,
-              size: 20,
             ),
           ),
         ],

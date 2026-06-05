@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
@@ -24,6 +25,7 @@ class ViewModeSheet extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
             leading: Icon(
               mode.icon,
+              size: sizes.iconLarge,
               color: viewMode == mode
                   ? context.colorScheme.primary
                   : context.colorScheme.onSurface,
@@ -39,8 +41,8 @@ class ViewModeSheet extends ConsumerWidget {
             trailing: viewMode == mode
                 ? Icon(
                     Icons.check,
+                    size: sizes.iconMedium,
                     color: context.colorScheme.primary,
-                    size: 20,
                   )
                 : null,
             onTap: () =>

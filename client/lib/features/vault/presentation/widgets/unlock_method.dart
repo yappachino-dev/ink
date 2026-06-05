@@ -17,10 +17,7 @@ class UnlockMethod extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final containerColor = isSelected
-        ? context.customColors.containerColor.withValues(alpha: 0.95)
-        : context.customColors.containerColor;
-
+    final containerColor = context.customColors.containerColor;
     final borderColor = isSelected
         ? context.colorScheme.primary
         : context.colorScheme.primary.withValues(alpha: 0.1);
@@ -33,13 +30,6 @@ class UnlockMethod extends StatelessWidget {
         color: containerColor,
         border: Border.all(color: borderColor, width: 1.5),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Material(
         type: MaterialType.transparency,

@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.dart';
@@ -136,8 +138,8 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             onPressed: () => _openEditSheet(currentNote),
             icon: Icon(
               Icons.edit_outlined,
+              size: sizes.iconLarge,
               color: context.colorScheme.primary,
-              size: 22,
             ),
             tooltip: context.t.note.edit,
             visualDensity: VisualDensity.compact,
@@ -147,8 +149,8 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             onPressed: () => _confirmAndDelete(currentNote),
             icon: Icon(
               Icons.delete_outline,
+              size: sizes.iconLarge,
               color: context.colorScheme.error,
-              size: 22,
             ),
             tooltip: context.t.note.delete.tooltip,
             visualDensity: VisualDensity.compact,
@@ -258,8 +260,8 @@ class _DetailSection extends StatelessWidget {
       children: [
         Icon(
           icon,
+          size: sizes.iconMedium,
           color: iconColor ?? context.theme.hintColor,
-          size: 18,
         ),
 
         const SizedBox(width: 12),

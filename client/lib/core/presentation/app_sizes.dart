@@ -14,3 +14,4 @@ const wideButtonLarge = Size(double.infinity, 56);
 const iconSmall = 14.0;
 const iconMedium = 20.0;
 const iconLarge = 24.0;
+const iconXLarge = 28.0;
