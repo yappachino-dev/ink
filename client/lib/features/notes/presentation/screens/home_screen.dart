@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
@@ -145,7 +146,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   foregroundColor: context.colorScheme.surface,
                   elevation: 4,
                   shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: 28),
+                  child: const Icon(Icons.add, size: sizes.iconXLarge),
                 ),
               ),
             ),

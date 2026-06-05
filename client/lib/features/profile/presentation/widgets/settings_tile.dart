@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 
 class SettingsTile extends StatelessWidget {
@@ -36,8 +37,8 @@ class SettingsTile extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
+                  size: sizes.iconMedium,
                   color: context.colorScheme.primary,
-                  size: 20,
                 ),
               ),
               const SizedBox(width: 14),
@@ -61,8 +62,8 @@ class SettingsTile extends StatelessWidget {
             if (showArrow)
               Icon(
                 Icons.chevron_right,
+                size: sizes.iconMedium,
                 color: context.theme.hintColor,
-                size: 20,
               ),
           ],
         ),

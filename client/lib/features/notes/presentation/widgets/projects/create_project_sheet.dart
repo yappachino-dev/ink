@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
@@ -119,8 +120,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             onTap: () => Navigator.of(context).pop(),
             child: Icon(
               Icons.cancel_outlined,
+              size: sizes.iconLarge,
               color: context.theme.hintColor,
-              size: 24,
             ),
           ),
 
@@ -140,8 +141,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             onTap: _confirm,
             child: Icon(
               Icons.check,
+              size: sizes.iconLarge,
               color: context.colorScheme.primary,
-              size: 24,
             ),
           ),
         ],
@@ -231,7 +232,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       ),
                       child: Icon(
                         Icons.format_color_reset_outlined,
-                        size: 18,
+                        size: sizes.iconMedium,
                         color: _selectedColor == context.colorScheme.primary
                             ? context.colorScheme.onSurface
                             : context.theme.hintColor,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -52,7 +53,7 @@ class _PriorityTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         Icons.flag,
-        size: 22,
+        size: sizes.iconLarge,
         color: priority == TaskPriority.none
             ? context.theme.hintColor
             : priority.color,
@@ -68,8 +69,8 @@ class _PriorityTile extends StatelessWidget {
       trailing: isCurrent
           ? Icon(
               Icons.check,
+              size: sizes.iconMedium,
               color: context.colorScheme.primary,
-              size: 20,
             )
           : null,
       onTap: onTap,

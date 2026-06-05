@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
@@ -76,7 +77,7 @@ class _ProjectTile extends StatelessWidget {
       trailing: isSelected
           ? Icon(
               Icons.check,
-              size: 20,
+              size: sizes.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,

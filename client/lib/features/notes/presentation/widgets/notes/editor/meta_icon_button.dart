@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 
 class MetaIconButton extends StatelessWidget {
@@ -28,7 +29,7 @@ class MetaIconButton extends StatelessWidget {
     if (label == null) {
       return GestureDetector(
         onTap: onTap,
-        child: Icon(icon, size: 20, color: effectiveColor),
+        child: Icon(icon, size: sizes.iconMedium, color: effectiveColor),
       );
     }
 
@@ -44,7 +45,7 @@ class MetaIconButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: effectiveColor),
+            Icon(icon, size: sizes.iconSmall, color: effectiveColor),
 
             const SizedBox(width: 4),
 
@@ -60,7 +61,11 @@ class MetaIconButton extends StatelessWidget {
 
               GestureDetector(
                 onTap: onClear,
-                child: Icon(Icons.close, size: 12, color: effectiveColor),
+                child: Icon(
+                  Icons.close,
+                  size: sizes.iconSmall,
+                  color: effectiveColor,
+                ),
               ),
             ],
           ],

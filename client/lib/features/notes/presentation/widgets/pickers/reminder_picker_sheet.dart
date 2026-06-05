@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
@@ -56,10 +57,10 @@ class _ReminderTile extends StatelessWidget {
         option == null
             ? Icons.notifications_off_outlined
             : Icons.notifications_outlined,
+        size: sizes.iconLarge,
         color: isSelected
             ? context.colorScheme.primary
             : context.theme.hintColor,
-        size: 22,
       ),
       title: Text(
         option == null
@@ -74,7 +75,7 @@ class _ReminderTile extends StatelessWidget {
       trailing: isSelected
           ? Icon(
               Icons.check,
-              size: 20,
+              size: sizes.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,

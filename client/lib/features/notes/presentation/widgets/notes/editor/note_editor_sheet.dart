@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -171,8 +172,8 @@ class _HeaderRow extends StatelessWidget {
           onTap: onCancel,
           child: Icon(
             Icons.cancel_outlined,
+            size: sizes.iconLarge,
             color: context.theme.hintColor,
-            size: 24,
           ),
         ),
 
@@ -188,8 +189,8 @@ class _HeaderRow extends StatelessWidget {
           onTap: onConfirm,
           child: Icon(
             Icons.check,
+            size: sizes.iconLarge,
             color: context.colorScheme.primary,
-            size: 24,
           ),
         ),
       ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/infrastructure/storage/cookie_jar.dart';
+import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/services/session/session_manager.dart';
@@ -285,8 +286,8 @@ class _ProfileHeader extends StatelessWidget {
 
             Icon(
               Icons.chevron_right,
+              size: sizes.iconMedium,
               color: context.theme.hintColor,
-              size: 20,
             ),
           ],
         ),
