@@ -2,7 +2,7 @@ services:
   backend:
     container_name: ink-backend
     build:
-      context: ../../
+      context: .
       dockerfile: services/core/Dockerfile
     ports:
       - "8080:8080"
