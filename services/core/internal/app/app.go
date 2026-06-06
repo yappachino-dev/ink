@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -77,6 +78,26 @@ func New(ctx context.Context, cfg *config.Config) *App {
 	healthServer := health.NewServer()
 	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+
+	var isReady int32 = 0
+
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		for range ticker.C {
+			func() {
+				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+				defer cancel()
+
+				if err := db.PingContext(ctx); err != nil {
+					atomic.StoreInt32(&isReady, 0)
+					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_NOT_SERVING)
+				} else {
+					atomic.StoreInt32(&isReady, 1)
+					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_SERVING)
+				}
+			}()
+		}
+	}()
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
