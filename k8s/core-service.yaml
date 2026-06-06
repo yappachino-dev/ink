@@ -21,16 +21,17 @@ spec:
               containerPort: 8080
             - name: grpc
               containerPort: 50051
-          readinessProbe:
-            grpc:
-              port: 50051
-            initialDelaySeconds: 5
-            periodSeconds: 10
           livenessProbe:
             grpc:
               port: 50051
             initialDelaySeconds: 10
             periodSeconds: 20
+          readinessProbe:
+            grpc:
+              port: 50051
+              service: "readiness"
+            initialDelaySeconds: 5
+            periodSeconds: 10
           env:
             - name: DB_USER
               valueFrom:
