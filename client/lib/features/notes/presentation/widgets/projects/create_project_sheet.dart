@@ -10,6 +10,8 @@ import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/domain/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class CreateProjectSheet extends ConsumerStatefulWidget {
   const CreateProjectSheet({
@@ -109,7 +111,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   @override
   Widget build(BuildContext context) {
     final borderStyle = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadius.lgRadius,
       borderSide: BorderSide.none,
     );
 
@@ -192,8 +194,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.customColors.containerColor,
-            borderRadius: BorderRadius.circular(20),
+            color: context.ink.container,
+            borderRadius: AppRadius.lgRadius,
           ),
           child: Column(
             children: [
@@ -216,7 +218,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       () => _selectedColor = context.colorScheme.primary,
                     ),
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
+                      duration: AppDurations.fast,
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
@@ -246,11 +248,11 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                     return GestureDetector(
                       onTap: () => setState(() => _selectedColor = color),
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
+                        duration: AppDurations.fast,
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: context.customColors.background,
+                          color: context.ink.surface,
                           shape: BoxShape.circle,
                           border: isSelected
                               ? Border.all(
@@ -275,8 +277,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: context.customColors.containerColor,
-              borderRadius: BorderRadius.circular(20),
+              color: context.ink.container,
+              borderRadius: AppRadius.lgRadius,
             ),
             child: Column(
               children: [
@@ -299,14 +301,14 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       return GestureDetector(
                         onTap: () => setState(() => _selectedEmoji = emoji),
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
+                          duration: AppDurations.fast,
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? _selectedColor.withValues(alpha: 0.15)
+                                ? _selectedColor.withValues(alpha: AppAlpha.soft)
                                 : context.colorScheme.surfaceContainer,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: AppRadius.xsRadius,
                             border: isSelected
                                 ? Border.all(
                                     color: _selectedColor,

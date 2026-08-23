@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class BottomSheetLayout extends StatelessWidget {
   const BottomSheetLayout({
@@ -25,8 +26,8 @@ class BottomSheetLayout extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.customColors.background,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        color: context.ink.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.sheet)),
       ),
       child: SafeArea(
         top: false,
@@ -37,16 +38,16 @@ class BottomSheetLayout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _BottomSheetLayoutDragHandle(),
-              const SizedBox(height: 16),
+              AppSpacing.gapLg,
 
               if (header != null) ...[
                 header!,
-                const SizedBox(height: 8),
+                AppSpacing.gapSm,
               ],
 
               if (showDivider) ...[
                 const _Divider(),
-                const SizedBox(height: 12),
+                AppSpacing.gapMd,
               ],
 
               ...children,

@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/app_animations.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class RecoveryVerifyForm extends StatefulWidget {
   const RecoveryVerifyForm({
@@ -40,7 +42,7 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
     );
 
     _shakeController = AnimationController(
-      duration: const Duration(milliseconds: 350),
+      duration: AppDurations.slow,
       vsync: this,
     );
   }
@@ -163,12 +165,12 @@ class _NumberedField extends StatelessWidget {
                   FocusManager.instance.primaryFocus?.unfocus(),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: context.customColors.containerColor,
+                fillColor: context.ink.container,
                 hintText: context.t.vault.setup.seedVerify.inputHint,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                   borderSide: BorderSide(
-                    color: activeColor.withValues(alpha: 0.5),
+                    color: activeColor.withValues(alpha: AppAlpha.medium),
                     width: 1.5,
                   ),
                 ),

@@ -14,9 +14,8 @@ import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.d
 import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
-
-const _shadowPercentage = 0.35;
-const _drawerWidthPercentage = 0.80;
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
     _drawerController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 280),
+      duration: AppDurations.drawer,
     );
 
     _drawerAnimation = CurvedAnimation(
@@ -83,7 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final showDescription = ref.watch(showDescriptionProvider);
 
     return Scaffold(
-      backgroundColor: context.customColors.background,
+      backgroundColor: context.ink.surface,
       body: Stack(
         children: [
           Column(
@@ -120,7 +119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
+                    duration: AppDurations.sheet,
                     child: notes.isNotEmpty
                         ? TaskListView(
                             key: ValueKey('list-$selectedProjectId'),
@@ -141,11 +140,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             bottom: 16,
             child: AnimatedScale(
               scale: _isDrawerOpen ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 200),
+              duration: AppDurations.base,
               curve: Curves.easeInOut,
               child: AnimatedOpacity(
                 opacity: _isDrawerOpen ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 200),
+                duration: AppDurations.base,
                 child: FloatingActionButton(
                   onPressed: _isDrawerOpen ? null : _openAddTask,
                   backgroundColor: context.colorScheme.primary,
@@ -162,10 +161,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             Positioned.fill(
               child: IgnorePointer(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                  child: Container(
-                    color: context.colorScheme.shadow.withValues(alpha: 0.08),
+                  filter: ImageFilter.blur(
+                    sigmaX: AppEffects.blurSm,
+                    sigmaY: AppEffects.blurSm,
                   ),
+                  child: ColoredBox(color: context.ink.shadow),
                 ),
               ),
             ),
@@ -175,9 +175,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               animation: _drawerAnimation,
               builder: (_, _) => GestureDetector(
                 onTap: _closeDrawer,
-                child: Container(
-                  color: context.colorScheme.shadow.withValues(
-                    alpha: _shadowPercentage * _drawerAnimation.value,
+                child: ColoredBox(
+                  color: context.ink.scrim.withValues(
+                    alpha:
+                        context.ink.scrim.a * _drawerAnimation.value,
                   ),
                 ),
               ),
@@ -188,7 +189,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               animation: _drawerAnimation,
               builder: (_, child) {
                 final screenWidth = MediaQuery.of(context).size.width;
-                final drawerWidth = screenWidth * _drawerWidthPercentage;
+                final drawerWidth = screenWidth * AppLayout.drawerWidthRatio;
 
                 return Positioned(
                   left: -drawerWidth * (1 - _drawerAnimation.value),

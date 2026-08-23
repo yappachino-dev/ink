@@ -7,6 +7,7 @@ import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class CalendarCard extends ConsumerWidget {
   const CalendarCard({super.key});
@@ -41,11 +42,11 @@ class CalendarCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
       decoration: BoxDecoration(
-        color: context.customColors.containerColor,
-        borderRadius: BorderRadius.circular(20),
+        color: context.ink.container,
+        borderRadius: AppRadius.lgRadius,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: context.ink.shadow.withValues(alpha: AppAlpha.faint),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -93,7 +94,7 @@ class CalendarCard extends ConsumerWidget {
         calendarStyle: CalendarStyle(
           cellMargin: const EdgeInsets.all(4),
           selectedDecoration: BoxDecoration(
-            color: context.colorScheme.primary.withValues(alpha: 0.12),
+            color: context.ink.highlight,
             shape: BoxShape.circle,
             border: Border.all(color: context.colorScheme.primary, width: 1.5),
           ),
@@ -107,7 +108,7 @@ class CalendarCard extends ConsumerWidget {
           weekendTextStyle: dayStyle,
           outsideDaysVisible: false,
           markerDecoration: BoxDecoration(
-            color: context.colorScheme.primary.withValues(alpha: 0.7),
+            color: context.colorScheme.primary.withValues(alpha: AppAlpha.strong),
             shape: BoxShape.circle,
           ),
           markersMaxCount: 1,

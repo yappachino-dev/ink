@@ -48,7 +48,7 @@ final class GrpcConnectionProvider
   }
 }
 
-String _$grpcConnectionHash() => r'5c49b080623402a01b014f01d75003089655811a';
+String _$grpcConnectionHash() => r'8155ef62cccf14ee0b42338e7be5658f9c5c9412';
 
 @ProviderFor(grpcAuthConnection)
 final grpcAuthConnectionProvider = GrpcAuthConnectionProvider._();
@@ -90,4 +90,4 @@ final class GrpcAuthConnectionProvider
 }
 
 String _$grpcAuthConnectionHash() =>
-    r'6f1981a43502441195ecc309e06ce0c484edc394';
+    r'9f17c49ccec7bb738ac139719f38eb947668865d';

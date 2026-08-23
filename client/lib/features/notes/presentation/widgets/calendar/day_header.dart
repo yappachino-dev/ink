@@ -4,6 +4,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class DayHeader extends ConsumerWidget {
   const DayHeader({super.key});
@@ -17,7 +18,7 @@ class DayHeader extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lgRadius,
       ),
       child: Row(
         children: [

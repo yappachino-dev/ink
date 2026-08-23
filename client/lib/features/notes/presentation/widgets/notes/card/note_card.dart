@@ -8,6 +8,7 @@ import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dar
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class NoteCard extends ConsumerWidget {
   const NoteCard({
@@ -38,7 +39,7 @@ class NoteCard extends ConsumerWidget {
               width: 1.5,
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: AppRadius.xsRadius,
             ),
           ),
         ),

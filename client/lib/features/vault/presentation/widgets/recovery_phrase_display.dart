@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class RecoveryPhraseDisplay extends StatelessWidget {
   const RecoveryPhraseDisplay({
@@ -50,15 +51,15 @@ class _WordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.customColors.containerColor,
-        borderRadius: BorderRadius.circular(12),
+        color: context.ink.container,
+        borderRadius: AppRadius.smRadius,
         border: Border.all(
-          color: context.colorScheme.primary.withValues(alpha: 0.5),
+          color: context.colorScheme.primary.withValues(alpha: AppAlpha.medium),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: context.colorScheme.shadow.withValues(alpha: 0.05),
+            color: context.colorScheme.shadow.withValues(alpha: AppAlpha.faint),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -72,7 +73,7 @@ class _WordCard extends StatelessWidget {
             child: Text(
               '$number',
               style: context.textTheme.labelSmall?.copyWith(
-                color: context.colorScheme.primary.withValues(alpha: 0.7),
+                color: context.colorScheme.primary.withValues(alpha: AppAlpha.strong),
               ),
             ),
           ),

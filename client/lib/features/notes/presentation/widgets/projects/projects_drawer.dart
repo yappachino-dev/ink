@@ -8,6 +8,7 @@ import 'package:ink/features/notes/presentation/widgets/projects/create_project_
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_project_item.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_virtual_project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class ProjectsDrawer extends ConsumerWidget {
   const ProjectsDrawer({super.key});
@@ -19,10 +20,10 @@ class ProjectsDrawer extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainer,
-        borderRadius: const BorderRadius.horizontal(right: Radius.circular(24)),
+        borderRadius: const BorderRadius.horizontal(right: Radius.circular(AppRadius.sheet)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: context.ink.scrim,
             blurRadius: 20,
             offset: const Offset(4, 0),
           ),

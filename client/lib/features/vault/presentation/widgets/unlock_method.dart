@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class UnlockMethod extends StatelessWidget {
   const UnlockMethod({
@@ -17,25 +19,25 @@ class UnlockMethod extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final containerColor = context.customColors.containerColor;
+    final containerColor = context.ink.container;
     final borderColor = isSelected
         ? context.colorScheme.primary
-        : context.colorScheme.primary.withValues(alpha: 0.1);
+        : context.colorScheme.primary.withValues(alpha: AppAlpha.soft);
 
     return AnimatedContainer(
       margin: const EdgeInsets.only(bottom: 12),
-      duration: const Duration(milliseconds: 200),
+      duration: AppDurations.base,
       width: double.infinity,
       decoration: BoxDecoration(
         color: containerColor,
         border: Border.all(color: borderColor, width: 1.5),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lgRadius,
       ),
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.lgRadius,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: Column(

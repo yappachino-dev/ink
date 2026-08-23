@@ -4,6 +4,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class ActiveNoteCard extends ConsumerWidget {
   const ActiveNoteCard({
@@ -25,8 +26,8 @@ class ActiveNoteCard extends ConsumerWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: context.customColors.containerColor,
-            borderRadius: BorderRadius.circular(20),
+            color: context.ink.container,
+            borderRadius: AppRadius.lgRadius,
             border: Border.all(color: context.colorScheme.outlineVariant),
           ),
           child: Padding(

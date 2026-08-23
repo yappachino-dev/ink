@@ -8,6 +8,9 @@ import 'package:ink/features/auth/presentation/screens/register_screen.dart';
 
 part 'auth_routes.g.dart';
 
+/// Default navigation source for auth flows entered outside a deep link.
+const defaultAuthSource = 'onboarding';
+
 @TypedGoRoute<AuthRoute>(
   path: '/auth',
   routes: [
@@ -16,7 +19,7 @@ part 'auth_routes.g.dart';
   ],
 )
 class AuthRoute extends GoRouteData with $AuthRoute {
-  const AuthRoute({this.source = 'onboarding'});
+  const AuthRoute({this.source = defaultAuthSource});
 
   final String source;
 
@@ -27,7 +30,7 @@ class AuthRoute extends GoRouteData with $AuthRoute {
 }
 
 class RegisterRoute extends GoRouteData with $RegisterRoute {
-  const RegisterRoute({this.source = 'onboarding'});
+  const RegisterRoute({this.source = defaultAuthSource});
 
   final String source;
 
@@ -38,7 +41,7 @@ class RegisterRoute extends GoRouteData with $RegisterRoute {
 }
 
 class EmailVerificationRoute extends GoRouteData with $EmailVerificationRoute {
-  const EmailVerificationRoute({this.source = 'onboarding'});
+  const EmailVerificationRoute({this.source = defaultAuthSource});
 
   final String source;
 
