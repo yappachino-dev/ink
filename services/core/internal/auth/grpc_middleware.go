@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -39,6 +40,10 @@ func UnaryAuthInterceptor(secret string) grpc.UnaryServerInterceptor {
 
 		var claims AccessTokenClaims
 		token, err := jwt.ParseWithClaims(parts[1], &claims, func(token *jwt.Token) (any, error) {
+			// Pin the expected signing algorithm to prevent algorithm-confusion attacks.
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
 			return []byte(secret), nil
 		})
 
