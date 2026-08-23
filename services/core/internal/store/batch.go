@@ -89,6 +89,7 @@ ON CONFLICT (id) DO UPDATE SET
     sync_sequence = EXCLUDED.sync_sequence,
     updated_at = EXCLUDED.updated_at,
     deleted_at = EXCLUDED.deleted_at
+WHERE notes.user_id = EXCLUDED.user_id
 `
 
 type UpsertNotesBatchResults struct {
@@ -161,6 +162,7 @@ ON CONFLICT (id) DO UPDATE SET
     sync_sequence = EXCLUDED.sync_sequence,
     updated_at = EXCLUDED.updated_at,
     deleted_at = EXCLUDED.deleted_at
+WHERE projects.user_id = EXCLUDED.user_id
 `
 
 type UpsertProjectsBatchResults struct {
