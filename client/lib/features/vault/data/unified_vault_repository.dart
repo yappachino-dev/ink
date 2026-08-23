@@ -69,6 +69,8 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
   @override
   Future<Result<void, VaultFailure>> pushKeys() async {
+    if (!_canSync()) return const Success(null);
+
     final result = await localRunner(
       call: _local.getAll,
       mapCore: VaultCoreFailure.new,
@@ -87,6 +89,8 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
   @override
   Future<Result<void, VaultFailure>> syncKeys() async {
+    if (!_canSync()) return const Success(null);
+
     final remoteResult = await remoteRunner(
       call: _remote.getKeySlots,
       mapCore: VaultCoreFailure.new,
