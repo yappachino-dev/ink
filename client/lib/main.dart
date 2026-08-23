@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
+    final prefs = ref.watch(themeProvider);
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
@@ -42,9 +42,9 @@ class MyApp extends ConsumerWidget {
         FlutterQuillLocalizations.delegate,
       ],
 
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: themeMode,
+      theme: AppTheme.light(prefs.palette),
+      darkTheme: AppTheme.dark(prefs.palette),
+      themeMode: prefs.mode,
 
       routerConfig: router,
     );

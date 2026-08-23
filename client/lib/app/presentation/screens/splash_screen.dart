@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: AppDurations.dramatic,
       vsync: this,
     );
 
@@ -54,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.customColors.background,
+      backgroundColor: context.ink.surface,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,

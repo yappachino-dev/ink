@@ -11,6 +11,7 @@ class UserConfig {
 
   static const _localOnlyKey = 'localOnly';
   static const _themeModeKey = 'themeMode';
+  static const _paletteIdKey = 'paletteId';
   static const _localeCodeKey = 'localeCode';
 
   bool get localOnly => _sharedPrefs.getBool(_localOnlyKey) ?? true;
@@ -22,6 +23,11 @@ class UserConfig {
 
   Future<void> setThemeModeString(String mode) async =>
       _sharedPrefs.setString(_themeModeKey, mode);
+
+  String? get paletteIdString => _sharedPrefs.getString(_paletteIdKey);
+
+  Future<void> setPaletteIdString(String id) async =>
+      _sharedPrefs.setString(_paletteIdKey, id);
 
   String? get localeCode => _sharedPrefs.getString(_localeCodeKey);
 

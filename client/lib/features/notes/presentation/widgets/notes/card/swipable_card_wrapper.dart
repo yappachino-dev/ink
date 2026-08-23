@@ -6,6 +6,7 @@ import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class SwipableCardWrapper extends ConsumerWidget {
   const SwipableCardWrapper({
@@ -29,7 +30,7 @@ class SwipableCardWrapper extends ConsumerWidget {
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
           color: context.colorScheme.onError,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.mdRadius,
         ),
         child: Icon(
           Icons.delete_outline,

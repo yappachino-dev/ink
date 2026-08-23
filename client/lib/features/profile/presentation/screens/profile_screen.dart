@@ -17,6 +17,7 @@ import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -44,7 +45,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.customColors.background,
+      backgroundColor: context.ink.surface,
       body: SafeArea(
         child: _hasAccount
             ? _AccountView(
@@ -250,8 +251,8 @@ class _ProfileHeader extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: context.customColors.background,
-          borderRadius: BorderRadius.circular(20),
+          color: context.ink.surface,
+          borderRadius: AppRadius.lgRadius,
         ),
         child: Row(
           children: [
@@ -302,7 +303,7 @@ class _LogoutTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadius.lgRadius,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Center(

@@ -6,6 +6,7 @@ import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class PersonalizationScreen extends StatelessWidget {
   const PersonalizationScreen({super.key});
@@ -15,13 +16,13 @@ class PersonalizationScreen extends StatelessWidget {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.25),
+      barrierColor: context.ink.scrim,
       builder: (ctx) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: AppRadius.lgRadius,
           ),
-          backgroundColor: context.customColors.background,
+          backgroundColor: context.ink.surface,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
             child: Column(
@@ -45,7 +46,7 @@ class PersonalizationScreen extends StatelessWidget {
                           foregroundColor: context.colorScheme.surface,
                           minimumSize: const Size(double.infinity, 46),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: AppRadius.lgRadius,
                           ),
                         ),
                         child: Text(
@@ -69,7 +70,7 @@ class PersonalizationScreen extends StatelessWidget {
                           ),
                           minimumSize: const Size(double.infinity, 46),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: AppRadius.lgRadius,
                           ),
                         ),
                         child: Text(
@@ -97,7 +98,7 @@ class PersonalizationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.customColors.background,
+      backgroundColor: context.ink.surface,
       body: SafeArea(
         child: Column(
           children: [

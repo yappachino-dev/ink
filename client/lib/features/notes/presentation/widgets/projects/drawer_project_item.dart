@@ -13,6 +13,7 @@ import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/create_project_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class DrawerProjectItem extends ConsumerWidget {
   const DrawerProjectItem({
@@ -66,7 +67,7 @@ class DrawerProjectItem extends ConsumerWidget {
       context: context,
       position: position,
       elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
       items: [
         PopupMenuItem<String>(
           value: 'edit',

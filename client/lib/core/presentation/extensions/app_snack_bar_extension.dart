@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 extension AppSnackBarExtension on BuildContext {
   void showSnackbarError(String message) {
@@ -16,7 +17,7 @@ extension AppSnackBarExtension on BuildContext {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),
         ),
@@ -37,7 +38,7 @@ extension AppSnackBarExtension on BuildContext {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),
         ),
@@ -58,7 +59,7 @@ extension AppSnackBarExtension on BuildContext {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),
         ),

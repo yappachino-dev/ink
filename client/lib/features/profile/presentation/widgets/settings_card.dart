@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class SettingsCard extends StatelessWidget {
   const SettingsCard({required this.children, super.key});
@@ -10,8 +11,8 @@ class SettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.customColors.containerColor,
-        borderRadius: BorderRadius.circular(20),
+        color: context.ink.container,
+        borderRadius: AppRadius.lgRadius,
       ),
       child: Column(children: children),
     );

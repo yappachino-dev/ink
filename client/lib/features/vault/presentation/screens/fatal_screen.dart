@@ -12,6 +12,7 @@ import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/core/services/sync/sync_storage.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class FatalScreen extends ConsumerStatefulWidget {
   const FatalScreen({super.key});
@@ -31,7 +32,7 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: AppDurations.dramatic,
       vsync: this,
     );
 

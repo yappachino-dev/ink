@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class TimezoneSheet extends StatefulWidget {
   const TimezoneSheet({super.key});
@@ -23,14 +24,14 @@ class _TimezoneSheetState extends State<TimezoneSheet> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: context.customColors.background,
-            borderRadius: BorderRadius.circular(16),
+            color: context.ink.surface,
+            borderRadius: AppRadius.mdRadius,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _selected,
               isExpanded: true,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: AppRadius.mdRadius,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               icon: Icon(
                 Icons.keyboard_arrow_down,
@@ -60,7 +61,7 @@ class _TimezoneSheetState extends State<TimezoneSheet> {
             foregroundColor: context.colorScheme.surface,
             minimumSize: const Size(double.infinity, 48),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppRadius.lgRadius,
             ),
           ),
           child: Text(

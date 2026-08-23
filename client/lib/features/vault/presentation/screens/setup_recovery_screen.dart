@@ -11,6 +11,7 @@ import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.da
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/recovery_phrase_display.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class SetupRecoveryScreen extends ConsumerWidget {
   const SetupRecoveryScreen({super.key});
@@ -31,10 +32,10 @@ class SetupRecoveryScreen extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.customColors.containerColor,
-            borderRadius: BorderRadius.circular(16),
+            color: context.ink.container,
+            borderRadius: AppRadius.mdRadius,
             border: Border.all(
-              color: context.colorScheme.error.withValues(alpha: 0.2),
+              color: context.colorScheme.error.withValues(alpha: AppAlpha.soft),
             ),
           ),
           child: Text(

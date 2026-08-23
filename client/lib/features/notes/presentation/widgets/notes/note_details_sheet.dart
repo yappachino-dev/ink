@@ -16,6 +16,7 @@ import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.d
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class NoteDetailsSheet extends ConsumerStatefulWidget {
   const NoteDetailsSheet({
@@ -113,7 +114,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
                 width: 1.5,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: AppRadius.xsRadius,
               ),
             ),
           ),

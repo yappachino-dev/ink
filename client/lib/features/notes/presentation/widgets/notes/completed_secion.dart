@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class CompletedSection extends ConsumerWidget {
   const CompletedSection({
@@ -18,15 +20,15 @@ class CompletedSection extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.customColors.containerColor,
-        borderRadius: BorderRadius.circular(20),
+        color: context.ink.container,
+        borderRadius: AppRadius.lgRadius,
         border: Border.all(color: context.colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
           InkWell(
             onTap: ref.read(completedExpnadedProvider.notifier).toggle,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: AppRadius.lgRadius,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -49,7 +51,7 @@ class CompletedSection extends ConsumerWidget {
 
                   AnimatedRotation(
                     turns: isExpanded ? 0 : -0.5,
-                    duration: const Duration(milliseconds: 200),
+                    duration: AppDurations.base,
                     child: Icon(
                       Icons.keyboard_arrow_down,
                       color: context.theme.hintColor,
@@ -66,7 +68,7 @@ class CompletedSection extends ConsumerWidget {
             crossFadeState: isExpanded
                 ? CrossFadeState.showFirst
                 : CrossFadeState.showSecond,
-            duration: const Duration(milliseconds: 200),
+            duration: AppDurations.base,
           ),
         ],
       ),

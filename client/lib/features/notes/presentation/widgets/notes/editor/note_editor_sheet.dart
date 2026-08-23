@@ -22,6 +22,7 @@ import 'package:ink/features/notes/presentation/widgets/pickers/priority_picker_
 import 'package:ink/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class NoteEditorSheet extends ConsumerStatefulWidget {
   const NoteEditorSheet({
@@ -208,7 +209,7 @@ class _TitleTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderStyle = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadius.lgRadius,
       borderSide: BorderSide.none,
     );
 
@@ -247,7 +248,7 @@ class _NoteContentField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceBright,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lgRadius,
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(

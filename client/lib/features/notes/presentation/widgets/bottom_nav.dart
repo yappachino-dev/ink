@@ -7,6 +7,7 @@ import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class BottomNav extends ConsumerWidget {
   const BottomNav({super.key});
@@ -26,7 +27,7 @@ class BottomNav extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceDim,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.sheet)),
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,

@@ -20,7 +20,7 @@ class SpacedScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.colorScheme.surfaceContainer,
+      backgroundColor: context.ink.scaffold,
       appBar: appBar,
       body: _SafeScreenWrapper(
         padding: padding,

@@ -20,6 +20,7 @@ import 'package:ink/features/notes/presentation/widgets/calendar/task_list_view.
 import 'package:ink/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -83,7 +84,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    imageFilter: ImageFilter.blur(sigmaX: AppEffects.blurSm, sigmaY: AppEffects.blurSm),
                     child: const Opacity(
                       opacity: 0.25,
                       child: AppLogo(size: LogoSize.large),
@@ -121,10 +122,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: context.colorScheme.primary.withValues(
-                                alpha: 0.12,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                              color: context.ink.highlight,
+                              borderRadius: AppRadius.lgRadius,
                               border: Border.all(
                                 color: context.colorScheme.primary,
                               ),
