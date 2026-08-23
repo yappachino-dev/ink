@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:pattern_lock/pattern_lock.dart';
-import 'package:ink/core/presentation/app_animations.dart';
 
 class PatternLockView extends StatefulWidget {
   const PatternLockView({

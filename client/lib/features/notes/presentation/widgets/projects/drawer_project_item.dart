@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
@@ -13,7 +14,6 @@ import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/create_project_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class DrawerProjectItem extends ConsumerWidget {
   const DrawerProjectItem({
@@ -42,7 +42,7 @@ class DrawerProjectItem extends ConsumerWidget {
       await ref.read(projectsProvider.notifier).deleteProject(project);
 
       if (ref.read(selectedProjectIdProvider) == project.id) {
-        ref.read(selectedProjectIdProvider.notifier).set(todayProjectId);
+        ref.read(selectedProjectIdProvider.notifier).id = todayProjectId;
       }
     }
   }
@@ -67,7 +67,7 @@ class DrawerProjectItem extends ConsumerWidget {
       context: context,
       position: position,
       elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
+      shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdRadius),
       items: [
         PopupMenuItem<String>(
           value: 'edit',
@@ -125,7 +125,7 @@ class DrawerProjectItem extends ConsumerWidget {
       title: project.title,
       emoji: project.emoji,
       color: project.color,
-      onTap: () => ref.read(selectedProjectIdProvider.notifier).set(project.id),
+      onTap: () => ref.read(selectedProjectIdProvider.notifier).id = project.id,
       onLongPress: () => _showContextMenu(context, ref),
       isSelected: ref.watch(selectedProjectIdProvider) == project.id,
       count: count,

@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/domain/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/core/presentation/app_animations.dart';
 
 class CreateProjectSheet extends ConsumerStatefulWidget {
   const CreateProjectSheet({
@@ -110,7 +110,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final borderStyle = OutlineInputBorder(
+    const borderStyle = OutlineInputBorder(
       borderRadius: AppRadius.lgRadius,
       borderSide: BorderSide.none,
     );
@@ -306,7 +306,9 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? _selectedColor.withValues(alpha: AppAlpha.soft)
+                                ? _selectedColor.withValues(
+                                    alpha: AppAlpha.soft,
+                                  )
                                 : context.colorScheme.surfaceContainer,
                             borderRadius: AppRadius.xsRadius,
                             border: isSelected

@@ -46,7 +46,7 @@ class ViewModeSheet extends ConsumerWidget {
                   )
                 : null,
             onTap: () =>
-                ref.read(calendarViewModeStateProvider.notifier).setMode(mode),
+                ref.read(calendarViewModeStateProvider.notifier).mode = mode,
           ),
         ),
       ],

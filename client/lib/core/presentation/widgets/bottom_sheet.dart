@@ -27,7 +27,7 @@ class BottomSheetLayout extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.ink.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.sheet)),
+        borderRadius: AppRadius.sheetTop,
       ),
       child: SafeArea(
         top: false,

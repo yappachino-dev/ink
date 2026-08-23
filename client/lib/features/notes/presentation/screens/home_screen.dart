@@ -3,9 +3,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
@@ -14,8 +16,6 @@ import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.d
 import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/core/presentation/app_animations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

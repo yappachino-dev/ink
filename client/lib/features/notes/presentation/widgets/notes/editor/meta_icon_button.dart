@@ -41,7 +41,9 @@ class MetaIconButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: effectiveColor.withValues(alpha: AppAlpha.soft),
           borderRadius: AppRadius.smRadius,
-          border: Border.all(color: effectiveColor.withValues(alpha: AppAlpha.medium)),
+          border: Border.all(
+            color: effectiveColor.withValues(alpha: AppAlpha.medium),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

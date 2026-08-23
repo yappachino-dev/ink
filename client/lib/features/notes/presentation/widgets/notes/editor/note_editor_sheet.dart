@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
@@ -22,7 +23,6 @@ import 'package:ink/features/notes/presentation/widgets/pickers/priority_picker_
 import 'package:ink/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class NoteEditorSheet extends ConsumerStatefulWidget {
   const NoteEditorSheet({
@@ -208,7 +208,7 @@ class _TitleTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderStyle = OutlineInputBorder(
+    const borderStyle = OutlineInputBorder(
       borderRadius: AppRadius.lgRadius,
       borderSide: BorderSide.none,
     );

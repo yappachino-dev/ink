@@ -95,7 +95,9 @@ class _OptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = selected ? context.colorScheme.primary : context.theme.hintColor;
+    final accent = selected
+        ? context.colorScheme.primary
+        : context.theme.hintColor;
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -135,7 +137,9 @@ class _PaletteSwatch extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: AppRadius.smRadius,
             border: Border.all(
-              color: selected ? context.colorScheme.primary : context.ink.outline,
+              color: selected
+                  ? context.colorScheme.primary
+                  : context.ink.outline,
               width: selected ? 2 : 1,
             ),
           ),
@@ -152,7 +156,9 @@ class _PaletteSwatch extends StatelessWidget {
               Text(
                 palette.label,
                 style: context.textTheme.labelSmall?.copyWith(
-                  color: selected ? context.colorScheme.primary : context.ink.onSurfaceMuted,
+                  color: selected
+                      ? context.colorScheme.primary
+                      : context.ink.onSurfaceMuted,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

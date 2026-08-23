@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/app/database/database_provider.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
@@ -12,7 +13,6 @@ import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/core/services/sync/sync_storage.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/app_animations.dart';
 
 class FatalScreen extends ConsumerStatefulWidget {
   const FatalScreen({super.key});

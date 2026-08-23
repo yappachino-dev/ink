@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
-import 'package:ink/i18n/strings.g.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/i18n/strings.g.dart';
 
 class RecoveryPhraseInput extends StatefulWidget {
   const RecoveryPhraseInput({
@@ -112,7 +112,9 @@ class _InputCard extends StatelessWidget {
             child: Text(
               '$number',
               style: context.textTheme.labelSmall?.copyWith(
-                color: context.colorScheme.primary.withValues(alpha: AppAlpha.strong),
+                color: context.colorScheme.primary.withValues(
+                  alpha: AppAlpha.strong,
+                ),
               ),
             ),
           ),

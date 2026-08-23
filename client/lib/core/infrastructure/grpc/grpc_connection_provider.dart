@@ -77,6 +77,6 @@ GrpcConnection grpcAuthConnection(Ref ref) {
 CallOptions _timeoutOptions({
   List<MetadataProvider> providers = const [],
 }) => CallOptions(
-  timeout: Duration(seconds: networkSecondsTimeout),
+  timeout: const Duration(seconds: networkSecondsTimeout),
   providers: providers,
 );

@@ -47,7 +47,7 @@ void main() {
     });
 
     test(
-      'ignores remote note if it does not exist locally AND is marked deleted on server',
+      'ignores remote note deleted on server and missing locally',
       () async {
         when(() => mockNotesLocal.get(any())).thenAnswer((_) async => null);
 
@@ -93,7 +93,7 @@ void main() {
     );
 
     test(
-      'saves with conflict if server deleted it, but local has unsynced changes',
+      'conflicts if server deleted it but local has unsynced changes',
       () async {
         final localModel = NotesFixtures.buildNoteModel(
           id: 'del_conflict',
@@ -122,7 +122,7 @@ void main() {
     );
 
     test(
-      'deletes locally if server deleted it and no local unsynced changes exist',
+      'deletes locally when server deleted it and local is clean',
       () async {
         final localModel = NotesFixtures.buildNoteModel(
           id: 'clean_delete',
@@ -148,7 +148,7 @@ void main() {
     );
 
     test(
-      'performs clean save if server has newer version and local has no unsynced changes',
+      'clean-saves when server is newer and local has no unsynced changes',
       () async {
         final localModel = NotesFixtures.buildNoteModel(
           id: 'clean_update',

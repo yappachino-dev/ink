@@ -6,7 +6,7 @@ extension NotesFailureToCore on NotesFailure {
     return switch (this) {
       IdNotFound() => const ApiFailure(404, 'The requested item was not found'),
       SessionLocked() => const StorageFailure('Vault session is locked'),
-      NotesCoreFailure(core: final core) => core,
+      NotesCoreFailure(: final core) => core,
     };
   }
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class CalendarCard extends ConsumerWidget {
   const CalendarCard({super.key});
@@ -59,11 +59,11 @@ class CalendarCard extends ConsumerWidget {
         calendarFormat: viewMode.calendarFormat ?? CalendarFormat.month,
         selectedDayPredicate: (day) => isSameDay(selectedDay, day),
         onDaySelected: (selected, focused) {
-          ref.read(calendarSelectedDateProvider.notifier).setDate(selected);
-          ref.read(calendarFocusedDateProvider.notifier).setDate(focused);
+          ref.read(calendarSelectedDateProvider.notifier).date = selected;
+          ref.read(calendarFocusedDateProvider.notifier).date = focused;
         },
         onPageChanged: (date) =>
-            ref.read(calendarFocusedDateProvider.notifier).setDate(date),
+            ref.read(calendarFocusedDateProvider.notifier).date = date,
         eventLoader: (day) =>
             hasTasksForDay(day, notes.values.toList()) ? [true] : [],
         headerStyle: HeaderStyle(
@@ -108,7 +108,8 @@ class CalendarCard extends ConsumerWidget {
           weekendTextStyle: dayStyle,
           outsideDaysVisible: false,
           markerDecoration: BoxDecoration(
-            color: context.colorScheme.primary.withValues(alpha: AppAlpha.strong),
+            color: context.colorScheme.primary
+                .withValues(alpha: AppAlpha.strong),
             shape: BoxShape.circle,
           ),
           markersMaxCount: 1,

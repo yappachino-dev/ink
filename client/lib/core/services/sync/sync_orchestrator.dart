@@ -80,7 +80,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
       await syncStorage.saveSyncCursor(syncResponse.nextCursor);
 
       state = const SyncSuccess();
-    } catch (e, st) {
+    } on Object catch (e, st) {
       logger.e(
         'Unhandled exception in SyncOrchestrator.performSync',
         error: e,

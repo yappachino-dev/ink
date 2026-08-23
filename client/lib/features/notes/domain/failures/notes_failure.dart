@@ -1,6 +1,6 @@
 import 'package:ink/core/domain/core_failure.dart';
 
-sealed class NotesFailure {
+sealed class NotesFailure implements Exception {
   const NotesFailure();
 }
 

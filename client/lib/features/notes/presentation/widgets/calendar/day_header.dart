@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class DayHeader extends ConsumerWidget {
   const DayHeader({super.key});
@@ -26,10 +26,10 @@ class DayHeader extends ConsumerWidget {
             onTap: () {
               ref
                   .read(calendarSelectedDateProvider.notifier)
-                  .setDate(selectedDate.subtract(const Duration(days: 1)));
+                  .date = selectedDate.subtract(const Duration(days: 1));
               ref
                   .read(calendarFocusedDateProvider.notifier)
-                  .setDate(selectedDate.subtract(const Duration(days: 1)));
+                  .date = selectedDate.subtract(const Duration(days: 1));
             },
             child: Icon(
               Icons.chevron_left,
@@ -50,10 +50,10 @@ class DayHeader extends ConsumerWidget {
             onTap: () {
               ref
                   .read(calendarSelectedDateProvider.notifier)
-                  .setDate(selectedDate.add(const Duration(days: 1)));
+                  .date = selectedDate.add(const Duration(days: 1));
               ref
                   .read(calendarFocusedDateProvider.notifier)
-                  .setDate(selectedDate.add(const Duration(days: 1)));
+                  .date = selectedDate.add(const Duration(days: 1));
             },
             child: Icon(
               Icons.chevron_right,

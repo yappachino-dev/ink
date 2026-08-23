@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
@@ -17,7 +18,6 @@ import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});

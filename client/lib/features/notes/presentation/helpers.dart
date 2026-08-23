@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 String reminderLabel(int minutes, Translations t) {
   if (minutes == 0) return t.note.reminder.atTime;
@@ -35,7 +35,7 @@ Future<bool> confirmDeletion(
     builder: (ctx) {
       final t = ctx.t;
       return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
         actionsAlignment: MainAxisAlignment.center,
         title: Text(
           title,
