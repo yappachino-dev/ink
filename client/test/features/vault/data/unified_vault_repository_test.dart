@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
@@ -16,24 +15,20 @@ class MockVaultLocalDataSource extends Mock implements VaultLocalDataSource {}
 
 class MockVaultRemoteDataSource extends Mock implements VaultRemoteDataSource {}
 
-class MockUserPreferences extends Mock implements UserConfig {}
-
 void main() {
   setUpAll(registerTestFallbacks);
 
   late MockVaultLocalDataSource mockLocal;
   late MockVaultRemoteDataSource mockRemote;
-  late MockUserPreferences mockUserPrefs;
   late VaultRepository repository;
 
   setUp(() {
     mockLocal = MockVaultLocalDataSource();
     mockRemote = MockVaultRemoteDataSource();
-    mockUserPrefs = MockUserPreferences();
     repository = UnifiedVaultRepository(
       local: mockLocal,
       remote: mockRemote,
-      userPrefs: mockUserPrefs,
+      canSync: () => true,
     );
   });
 

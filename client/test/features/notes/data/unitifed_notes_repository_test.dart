@@ -36,7 +36,7 @@ void main() {
         () => mockNotesLocal.create(any()),
       ).thenAnswer((_) async => NotesFixtures.buildNoteModel());
 
-      final remoteDto = NotesFixtures.buildNoteDto(id: 'new_server_note');
+      final remoteDto = NotesFixtures.buildEncryptedNote(id: 'new_server_note');
 
       final result = await repository.applyRemoteNotes([remoteDto]);
 
@@ -50,7 +50,7 @@ void main() {
       () async {
         when(() => mockNotesLocal.get(any())).thenAnswer((_) async => null);
 
-        final remoteDto = NotesFixtures.buildNoteDto(
+        final remoteDto = NotesFixtures.buildEncryptedNote(
           id: 'ghost_note',
           deletedAt: DateTime.now(),
         );
@@ -79,7 +79,7 @@ void main() {
           () => mockNotesLocal.saveWithConflict(any(), any()),
         ).thenAnswer((_) async {});
 
-        final remoteDto = NotesFixtures.buildNoteDto(
+        final remoteDto = NotesFixtures.buildEncryptedNote(
           id: 'conflict_note',
           version: 2,
         );
@@ -107,7 +107,7 @@ void main() {
           () => mockNotesLocal.saveWithConflict(any(), any()),
         ).thenAnswer((_) async {});
 
-        final remoteDto = NotesFixtures.buildNoteDto(
+        final remoteDto = NotesFixtures.buildEncryptedNote(
           id: 'del_conflict',
           version: 1,
           deletedAt: DateTime.now(),
@@ -134,7 +134,7 @@ void main() {
         ).thenAnswer((_) async => localModel);
         when(() => mockNotesLocal.delete(any())).thenAnswer((_) async {});
 
-        final remoteDto = NotesFixtures.buildNoteDto(
+        final remoteDto = NotesFixtures.buildEncryptedNote(
           id: 'clean_delete',
           version: 2,
           deletedAt: DateTime.now(),
@@ -160,7 +160,7 @@ void main() {
         ).thenAnswer((_) async => localModel);
         when(() => mockNotesLocal.save(any())).thenAnswer((_) async {});
 
-        final remoteDto = NotesFixtures.buildNoteDto(
+        final remoteDto = NotesFixtures.buildEncryptedNote(
           id: 'clean_update',
           version: 2,
         );

@@ -1,9 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
-import 'package:ink/features/notes/data/dto/note_dto.dart';
-import 'package:ink/features/notes/data/dto/project_dto.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
 
 class NotesFixtures {
   static Uint8List generateBytes(int length, int fill) =>
@@ -129,41 +131,45 @@ class NotesFixtures {
     );
   }
 
-  // --- Dto builders ---
+  // --- Remote entity builders ---
 
-  static NoteDto buildNoteDto({
+  static EncryptedNote buildEncryptedNote({
     String? id,
     int? version,
     DateTime? deletedAt,
   }) {
-    return NoteDto(
+    return EncryptedNote(
       id: id ?? 'note_1',
       encryptedTitle: defaultBytes,
       encryptedContent: defaultBytes,
-      version: version ?? 1,
+      localVersion: version ?? 1,
+      lastSyncedVersion: 0,
+      syncStatus: SyncStatus.synced,
       createdAt: defaultDate,
       updatedAt: defaultDate,
       deletedAt: deletedAt,
     );
   }
 
-  static ProjectDto buildProjectDto({
+  static EncryptedProject buildEncryptedProject({
     String? id,
     int? version,
     DateTime? updatedAt,
     DateTime? deletedAt,
   }) {
-    return ProjectDto(
+    return EncryptedProject(
       id: id ?? 'project_1',
       encryptedContent: defaultBytes,
-      version: version ?? 1,
+      localVersion: version ?? 1,
+      lastSyncedVersion: 0,
+      syncStatus: SyncStatus.synced,
       createdAt: defaultDate,
       updatedAt: updatedAt ?? defaultDate,
       deletedAt: deletedAt,
     );
   }
 
-  // --- Value ojbect builders ---
+  // --- Value object builders ---
 
   static SyncAck buildAck({
     String? id,
