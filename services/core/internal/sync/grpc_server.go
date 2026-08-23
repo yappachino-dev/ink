@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
@@ -31,7 +32,8 @@ func (s *Server) Sync(ctx context.Context, req *syncv1.SyncRequest) (*syncv1.Syn
 
 	result, err := s.syncService.Sync(ctx, userID, payload)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to execute domain sync operations: %v", err)
+		slog.Error("sync failed", "userID", userID, "error", err)
+		return nil, status.Error(codes.Internal, "internal sync failure")
 	}
 
 	return toProto(result), nil

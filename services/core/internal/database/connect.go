@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -36,7 +36,7 @@ func Connect(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
 			break
 		}
 
-		log.Printf("Database not ready (attempt %d/%d): %v. Retrying in %v...", attempt, maxRetries, err, backoffDelay)
+		slog.Warn("database not ready, retrying", "attempt", attempt, "maxAttempts", maxRetries, "error", err, "backoff", backoffDelay)
 
 		select {
 		case <-ctx.Done():
