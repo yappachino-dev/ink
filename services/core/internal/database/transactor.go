@@ -8,6 +8,13 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 )
 
+// Transactor abstracts running a function inside a database transaction.
+// Implementations inject the transaction into the context so repositories can
+// pick it up via appctx.TxFromContext.
+type Transactor interface {
+	WithinTransaction(ctx context.Context, fn func(txCtx context.Context) error) error
+}
+
 type PgTransactor struct {
 	db *pgxpool.Pool
 }

@@ -26,7 +26,6 @@ type Querier interface {
 	RevokeRefreshTokenByHash(ctx context.Context, arg RevokeRefreshTokenByHashParams) error
 	UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) error
 	UpdateUserCursor(ctx context.Context, arg UpdateUserCursorParams) error
-	UpsertKeySlot(ctx context.Context, arg UpsertKeySlotParams) error
 	UpsertKeySlots(ctx context.Context, arg []UpsertKeySlotsParams) *UpsertKeySlotsBatchResults
 	UpsertNotes(ctx context.Context, arg []UpsertNotesParams) *UpsertNotesBatchResults
 	UpsertProjects(ctx context.Context, arg []UpsertProjectsParams) *UpsertProjectsBatchResults

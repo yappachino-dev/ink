@@ -31,7 +31,7 @@ logs:
 .PHONY: apply-schema reset-db users
 
 apply-schema:
-	cat ./db/migrations/001_init.sql | docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) 
+	cat ./services/core/db/migrations/001_init.sql | docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME)
 
 reset-db:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres; GRANT ALL ON SCHEMA public TO public;"
