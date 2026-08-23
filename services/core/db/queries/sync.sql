@@ -12,7 +12,8 @@ ON CONFLICT (id) DO UPDATE SET
     version = EXCLUDED.version,
     sync_sequence = EXCLUDED.sync_sequence,
     updated_at = EXCLUDED.updated_at,
-    deleted_at = EXCLUDED.deleted_at;
+    deleted_at = EXCLUDED.deleted_at
+WHERE projects.user_id = EXCLUDED.user_id;
 
 -- name: GetProjectChanges :many
 SELECT id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
@@ -28,7 +29,8 @@ ON CONFLICT (id) DO UPDATE SET
     version = EXCLUDED.version,
     sync_sequence = EXCLUDED.sync_sequence,
     updated_at = EXCLUDED.updated_at,
-    deleted_at = EXCLUDED.deleted_at;
+    deleted_at = EXCLUDED.deleted_at
+WHERE notes.user_id = EXCLUDED.user_id;
 
 -- name: GetNoteChanges :many
 SELECT id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
