@@ -36,10 +36,10 @@ type App struct {
 	grpcServer *grpc.Server
 }
 
-func New(ctx context.Context, cfg *config.Config) *App {
+func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	pool, err := database.Connect(ctx, cfg.DatabaseURL)
 	if err != nil {
-		panic(fmt.Sprintf("failed to connect database: %v", err))
+		return nil, fmt.Errorf("failed to connect database: %w", err)
 	}
 
 	db := stdlib.OpenDBFromPool(pool)
@@ -66,6 +66,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			auth.UnaryRateLimitInterceptor(),
 			auth.UnaryAuthInterceptor(cfg.JwtSecretKey),
 			logging.UnaryServerInterceptor(interceptorLogger(logger), logOpts...),
 		),
@@ -117,7 +118,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 		db:         db,
 		httpServer: &http.Server{Addr: ":8080", Handler: r},
 		grpcServer: grpcServer,
-	}
+	}, nil
 }
 
 func (a *App) Run(ctx context.Context) error {
@@ -129,14 +130,14 @@ func (a *App) Run(ctx context.Context) error {
 	errChan := make(chan error, 2)
 
 	go func() {
-		fmt.Printf("[HTTP] Server starting on %s\n", a.httpServer.Addr)
+		slog.Info("HTTP server starting", "addr", a.httpServer.Addr)
 		if err := a.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			errChan <- fmt.Errorf("HTTP server crash: %w", err)
 		}
 	}()
 
 	go func() {
-		fmt.Printf("[gRPC] Server starting on %s\n", grpcListener.Addr().String())
+		slog.Info("gRPC server starting", "addr", grpcListener.Addr().String())
 		if err := a.grpcServer.Serve(grpcListener); err != nil {
 			errChan <- fmt.Errorf("gRPC server crash: %w", err)
 		}

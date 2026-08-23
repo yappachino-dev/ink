@@ -24,7 +24,7 @@ type SyncChanges struct {
 type Note struct {
 	ID        uuid.UUID
 	UserID    int
-	ProjectID uuid.UUID
+	ProjectID *uuid.UUID
 
 	EncryptedTitle   []byte
 	EncryptedContent []byte

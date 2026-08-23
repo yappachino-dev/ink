@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,21 +12,27 @@ import (
 )
 
 func main() {
-	fmt.Println("System bootstrapping initiated...")
+	slog.Info("system bootstrapping initiated")
 
 	cfg, err := config.Load()
 	if err != nil {
-		panic(fmt.Sprintf("failed to load configurations: %v", err))
+		slog.Error("failed to load configuration", "error", err)
+		os.Exit(1)
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	application := app.New(ctx, cfg)
-	if err := application.Run(ctx); err != nil {
-		fmt.Fprintf(os.Stderr, "Application runtime system crash error: %v\n", err)
+	application, err := app.New(ctx, cfg)
+	if err != nil {
+		slog.Error("failed to initialize application", "error", err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Application gracefully terminated.")
+	if err := application.Run(ctx); err != nil {
+		slog.Error("application runtime crash", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("application gracefully terminated")
 }

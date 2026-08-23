@@ -42,7 +42,12 @@ func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequ
 		return nil, status.Error(codes.InvalidArgument, "request body must contain key slots")
 	}
 
-	if err := s.keyService.SaveKeySlots(ctx, userID, toModelSlice(userID, req.KeySlots)); err != nil {
+	model, err := toModelSlice(userID, req.KeySlots)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.keyService.SaveKeySlots(ctx, userID, model); err != nil {
 		return nil, status.Error(codes.Internal, "failed to save key slots")
 	}
 
