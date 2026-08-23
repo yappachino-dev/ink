@@ -19,10 +19,6 @@ dependencies:
   
   # Network & Auth
   connectivity_plus: ^7.1.1
-  cookie_jar: ^4.0.9
-  dio: ^5.9.2
-  dio_cookie_manager: ^3.4.0
-  retrofit: ^4.9.2
   protobuf: ^6.0.0
   grpc: ^5.1.0
 
@@ -72,7 +68,6 @@ dev_dependencies:
   # Builders
   build_runner: ^2.14.1
   riverpod_generator: ^4.0.3
-  retrofit_generator: ^10.2.5
   drift_dev: ^2.31.0
   freezed: ^3.2.5
   json_serializable: ^6.13.0
