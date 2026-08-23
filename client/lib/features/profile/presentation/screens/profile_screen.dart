@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/infrastructure/storage/cookie_jar.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
@@ -60,7 +59,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTimezoneTap: _openTimezone,
                 onWidgetsTap: _openWidgets,
                 onLogout: () {
-                  unawaited(ref.read(cookieJarProvider).deleteAll());
                   ref.read(sessionControllerProvider).clearAccessToken();
                   ref.read(sessionControllerProvider).clearRefreshToken();
                 },

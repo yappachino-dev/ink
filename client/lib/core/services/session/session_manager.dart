@@ -43,7 +43,9 @@ class SessionManager extends _$SessionManager
   @override
   Uint8List get masterKey {
     if (state.masterKey == null) throw const SessionLockedException();
-    return state.masterKey!;
+    // Return a clone so consumers can never mutate or retain a reference to the
+    // live key buffer that clearMasterKey() zeroes in place.
+    return Uint8List.fromList(state.masterKey!);
   }
 
   @override

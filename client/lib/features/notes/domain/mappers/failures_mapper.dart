@@ -4,11 +4,9 @@ import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 extension NotesFailureToCore on NotesFailure {
   CoreFailure toCore() {
     return switch (this) {
-      _ => UnexpectedFailure(
-        Exception(
-          'Unexpected failure when mapping from NotesFailure to CoreFailure',
-        ),
-      ),
+      IdNotFound() => const ApiFailure(404, 'The requested item was not found'),
+      SessionLocked() => const StorageFailure('Vault session is locked'),
+      NotesCoreFailure(core: final core) => core,
     };
   }
 }

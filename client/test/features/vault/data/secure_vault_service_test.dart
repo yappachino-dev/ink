@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/crypto/crypto.dart';
 import 'package:ink/core/services/session/session_controller.dart';
-import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/domain/entities/key_slot.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
@@ -23,8 +22,6 @@ class MockEncryptionService extends Mock implements EncryptionService {}
 
 class MockSessionController extends Mock implements SessionController {}
 
-class MockSyncOrchestrator extends Mock implements SyncOrchestrator {}
-
 class MockVaultRepository extends Mock implements VaultRepository {}
 
 void main() {
@@ -38,7 +35,6 @@ void main() {
   late MockEncryptionService mockEncryption;
   late MockVaultRepository mockRepo;
   late MockSessionController mockSessionController;
-  late MockSyncOrchestrator mockSyncOrchestrator;
   late VaultService service;
 
   setUp(() {
@@ -46,7 +42,6 @@ void main() {
     mockDerivation = MockDerivationService();
     mockEncryption = MockEncryptionService();
     mockSessionController = MockSessionController();
-    mockSyncOrchestrator = MockSyncOrchestrator();
     mockRepo = MockVaultRepository();
 
     service = SecureVaultService(
@@ -54,7 +49,6 @@ void main() {
       derivation: mockDerivation,
       encryption: mockEncryption,
       sessionController: mockSessionController,
-      sync: mockSyncOrchestrator,
       repository: mockRepo,
     );
   });
@@ -127,6 +121,9 @@ void main() {
         when(
           () => mockEncryption.decrypt(any(), any()),
         ).thenAnswer((_) async => masterKey);
+        when(
+          () => mockRepo.syncKeys(),
+        ).thenAnswer((_) async => const Success(null));
 
         final result = await service.unlock(KeyType.pin, '1234');
 
