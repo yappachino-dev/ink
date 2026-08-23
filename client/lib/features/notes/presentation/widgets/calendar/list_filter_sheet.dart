@@ -30,7 +30,7 @@ class ListFilterSheet extends ConsumerWidget {
           emoji: _allProjectsEmoji,
           isSelected: selectedProjectId == allProjectsId,
           onTap: () =>
-              ref.read(selectedProjectIdProvider.notifier).set(allProjectsId),
+              ref.read(selectedProjectIdProvider.notifier).id = allProjectsId,
         ),
 
         if (projects.isNotEmpty) const Divider(),
@@ -41,7 +41,7 @@ class ListFilterSheet extends ConsumerWidget {
             emoji: project.emoji,
             isSelected: selectedProjectId == project.id,
             onTap: () =>
-                ref.read(selectedProjectIdProvider.notifier).set(project.id),
+                ref.read(selectedProjectIdProvider.notifier).id = project.id,
           ),
         ),
       ],

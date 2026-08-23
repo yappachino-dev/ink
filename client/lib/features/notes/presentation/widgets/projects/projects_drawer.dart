@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/create_project_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_project_item.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_virtual_project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class ProjectsDrawer extends ConsumerWidget {
   const ProjectsDrawer({super.key});
@@ -20,7 +20,9 @@ class ProjectsDrawer extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainer,
-        borderRadius: const BorderRadius.horizontal(right: Radius.circular(AppRadius.sheet)),
+        borderRadius: const BorderRadius.horizontal(
+          right: Radius.circular(AppRadius.sheet),
+        ),
         boxShadow: [
           BoxShadow(
             color: context.ink.scrim,

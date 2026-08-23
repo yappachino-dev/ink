@@ -73,7 +73,9 @@ class _WordCard extends StatelessWidget {
             child: Text(
               '$number',
               style: context.textTheme.labelSmall?.copyWith(
-                color: context.colorScheme.primary.withValues(alpha: AppAlpha.strong),
+                color: context.colorScheme.primary.withValues(
+                  alpha: AppAlpha.strong,
+                ),
               ),
             ),
           ),

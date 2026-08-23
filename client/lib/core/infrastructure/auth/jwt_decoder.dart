@@ -36,7 +36,7 @@ extension JwtDecoder on String {
       final now = DateTime.now().toUtc();
 
       return now.isAfter(expirationDate.subtract(buffer));
-    } catch (_) {
+    } on Object {
       return true;
     }
   }

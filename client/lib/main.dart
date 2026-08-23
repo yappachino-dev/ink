@@ -8,17 +8,17 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/theme_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 
-void main() async {
+Future<void> main() async {
   final sharedPrefs = await initializeGlobalSettings();
 
-  const root = MyApp();
-
-  final app = await wrapWithProviderScope(
-    child: wrapWithTranslation(child: root),
-    sharedPrefs: sharedPrefs,
+  // ProviderScope must be written literally as the runApp child so tooling
+  // (and the riverpod lint) can recognize it as the unscoped root.
+  runApp(
+    ProviderScope(
+      overrides: buildOverrides(sharedPrefs),
+      child: wrapWithTranslation(child: const MyApp()),
+    ),
   );
-
-  runApp(app);
 }
 
 class MyApp extends ConsumerWidget {

@@ -16,7 +16,7 @@ extension AppSnackBarExtension on BuildContext {
               color: colorScheme.onError,
             ),
           ),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),
@@ -37,7 +37,7 @@ extension AppSnackBarExtension on BuildContext {
               color: colorScheme.onSurface,
             ),
           ),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),
@@ -58,7 +58,7 @@ extension AppSnackBarExtension on BuildContext {
               color: colorScheme.onPrimary,
             ),
           ),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.smRadius,
           ),
           duration: const Duration(seconds: 2),

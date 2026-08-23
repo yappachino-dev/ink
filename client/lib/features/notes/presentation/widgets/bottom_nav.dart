@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class BottomNav extends ConsumerWidget {
   const BottomNav({super.key});
@@ -27,7 +27,7 @@ class BottomNav extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceDim,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.sheet)),
+        borderRadius: AppRadius.sheetTop,
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -39,11 +39,11 @@ class BottomNav extends ConsumerWidget {
               if (ref.read(selectedProjectIdProvider) == allProjectsId) {
                 ref
                     .read(selectedProjectIdProvider.notifier)
-                    .set(todayProjectId);
+                    .id = todayProjectId;
               }
               const NotesRoute().go(context);
             case 1:
-              ref.read(selectedProjectIdProvider.notifier).set(allProjectsId);
+              ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
               const NotesCalendarRoute().go(context);
             case 2:
               const ProfileRoute().go(context);

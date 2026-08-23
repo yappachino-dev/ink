@@ -10,6 +10,7 @@ import 'package:ink/features/notes/data/notes_sync_delegate.dart';
 import 'package:ink/features/notes/data/projects_sync_delegate.dart';
 import 'package:ink/features/notes/data/unified_notes_repository.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<SharedPreferences> initializeGlobalSettings() async {
@@ -28,12 +29,10 @@ Future<SharedPreferences> initializeGlobalSettings() async {
   return sharedPrefs;
 }
 
-Future<ProviderScope> wrapWithProviderScope({
-  required Widget child,
-  required SharedPreferences sharedPrefs,
-}) async {
-  return ProviderScope(
-    overrides: [
+/// Overrides installed at the app root. Must be passed to the [ProviderScope]
+/// constructed directly inside `runApp` (see main.dart).
+List<Override> buildOverrides(SharedPreferences sharedPrefs) {
+  return [
       sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       tokenRefresherProvider.overrideWith(
         (ref) => ref.watch(unifiedAuthRepositoryProvider),
@@ -49,9 +48,7 @@ Future<ProviderScope> wrapWithProviderScope({
         },
       ),
       ...overrideNavigators(),
-    ],
-    child: child,
-  );
+  ];
 }
 
 Widget wrapWithTranslation({required Widget child}) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class TimezoneSheet extends StatefulWidget {
   const TimezoneSheet({super.key});
@@ -60,7 +60,7 @@ class _TimezoneSheetState extends State<TimezoneSheet> {
           style: FilledButton.styleFrom(
             foregroundColor: context.colorScheme.surface,
             minimumSize: const Size(double.infinity, 48),
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: AppRadius.lgRadius,
             ),
           ),

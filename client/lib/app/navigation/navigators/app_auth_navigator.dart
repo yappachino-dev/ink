@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/app/navigation/app_router.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_navigator.dart';
@@ -17,7 +19,7 @@ class AppAuthNavigator implements AuthNavigator {
 
   @override
   void onAuthCompleted() {
-    ref.read(vaultProvider.notifier).forcePushKeys();
+    unawaited(ref.read(vaultProvider.notifier).forcePushKeys());
     ref.read(appRouterProvider).go(const NotesRoute().location);
   }
 }

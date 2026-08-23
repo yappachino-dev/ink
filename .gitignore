@@ -21,3 +21,6 @@ services/**/.env
 # Local development files
 go.work
 go.work.sum
+
+# AI agent documentation
+docs/

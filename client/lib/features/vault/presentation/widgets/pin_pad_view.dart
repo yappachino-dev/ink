@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/vault/domain/constants.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/core/presentation/app_animations.dart';
 
 const _buttonWidth = 70.0;
 const _buttonHeight = 70.0;
@@ -72,7 +72,9 @@ class _PinDots extends StatelessWidget {
                   : Colors.transparent,
               shape: BoxShape.circle,
               border: Border.all(
-                color: context.colorScheme.primary.withValues(alpha: AppAlpha.medium),
+                color: context.colorScheme.primary.withValues(
+                  alpha: AppAlpha.medium,
+                ),
                 width: 2,
               ),
             ),

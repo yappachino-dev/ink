@@ -92,7 +92,7 @@ void main() {
 
   group('SecureVaultService - unlock', () {
     test(
-      'returns Failure(VaultFailure.vaultNotInitialized()) if given slot is not found',
+      'returns VaultNotInitialized failure when the slot is missing',
       () async {
         when(
           () => mockRepo.getKeySlotByType(KeyType.pin),
@@ -110,7 +110,7 @@ void main() {
     );
 
     test(
-      'sets decrypted master key in session and returns Success when secret is correct',
+      'stores master key in session and succeeds for a valid secret',
       () async {
         when(
           () => mockRepo.getKeySlotByType(KeyType.pin),

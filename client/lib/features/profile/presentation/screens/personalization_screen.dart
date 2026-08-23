@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class PersonalizationScreen extends StatelessWidget {
   const PersonalizationScreen({super.key});
@@ -19,7 +19,7 @@ class PersonalizationScreen extends StatelessWidget {
       barrierColor: context.ink.scrim,
       builder: (ctx) {
         return Dialog(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: AppRadius.lgRadius,
           ),
           backgroundColor: context.ink.surface,
@@ -45,7 +45,7 @@ class PersonalizationScreen extends StatelessWidget {
                           backgroundColor: context.colorScheme.primary,
                           foregroundColor: context.colorScheme.surface,
                           minimumSize: const Size(double.infinity, 46),
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: AppRadius.lgRadius,
                           ),
                         ),
@@ -69,7 +69,7 @@ class PersonalizationScreen extends StatelessWidget {
                             color: context.colorScheme.error,
                           ),
                           minimumSize: const Size(double.infinity, 46),
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: AppRadius.lgRadius,
                           ),
                         ),

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
@@ -20,7 +21,6 @@ import 'package:ink/features/notes/presentation/widgets/calendar/task_list_view.
 import 'package:ink/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
-import 'package:ink/core/presentation/theme/tokens.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -84,7 +84,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: AppEffects.blurSm, sigmaY: AppEffects.blurSm),
+                    imageFilter: ImageFilter.blur(
+                      sigmaX: AppEffects.blurSm,
+                      sigmaY: AppEffects.blurSm,
+                    ),
                     child: const Opacity(
                       opacity: 0.25,
                       child: AppLogo(size: LogoSize.large),

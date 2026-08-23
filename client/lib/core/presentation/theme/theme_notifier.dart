@@ -6,7 +6,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'theme_notifier.g.dart';
 
 class ThemePreferences {
-  const ThemePreferences({this.mode = ThemeMode.system, this.palette = InkPalette.forest});
+  const ThemePreferences({
+    this.mode = ThemeMode.system,
+    this.palette = InkPalette.forest,
+  });
 
   final ThemeMode mode;
   final InkPalette palette;

@@ -11,7 +11,10 @@ class SelectedProjectId extends _$SelectedProjectId {
   @override
   String build() => todayProjectId;
 
-  void set(String id) => state = id;
+  // Riverpod notifiers hold state in the base class; a paired getter is
+  // not meaningful here.
+  // ignore: avoid_setters_without_getters
+  set id(String id) => state = id;
 }
 
 @riverpod
@@ -51,7 +54,9 @@ class CalendarViewModeState extends _$CalendarViewModeState {
   @override
   CalendarViewMode build() => CalendarViewMode.month;
 
-  void setMode(CalendarViewMode mode) => state = mode;
+  // Same rationale as [SelectedProjectId.id]: no meaningful paired getter.
+  // ignore: avoid_setters_without_getters
+  set mode(CalendarViewMode mode) => state = mode;
 }
 
 @riverpod
@@ -59,7 +64,9 @@ class CalendarSelectedDate extends _$CalendarSelectedDate {
   @override
   DateTime build() => DateTime.now();
 
-  void setDate(DateTime date) => state = date;
+  // Same rationale as [SelectedProjectId.id]: no meaningful paired getter.
+  // ignore: avoid_setters_without_getters
+  set date(DateTime date) => state = date;
 }
 
 @riverpod
@@ -67,5 +74,7 @@ class CalendarFocusedDate extends _$CalendarFocusedDate {
   @override
   DateTime build() => DateTime.now();
 
-  void setDate(DateTime date) => state = date;
+  // Same rationale as [SelectedProjectId.id]: no meaningful paired getter.
+  // ignore: avoid_setters_without_getters
+  set date(DateTime date) => state = date;
 }
