@@ -2,6 +2,8 @@ package vault
 
 import (
 	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -18,9 +20,13 @@ func toProtoSlice(models []KeySlot) []*vaultv1.KeySlot {
 	return pbKeySlots
 }
 
-func toModelSlice(userID int, pbKeySlots []*vaultv1.KeySlot) []KeySlot {
+func toModelSlice(userID int, pbKeySlots []*vaultv1.KeySlot) ([]KeySlot, error) {
 	keySlots := make([]KeySlot, 0, len(pbKeySlots))
 	for _, k := range pbKeySlots {
+		if k.GetType() == vaultv1.KeyType_KEY_TYPE_UNSPECIFIED {
+			return nil, status.Error(codes.InvalidArgument, "key slot type is required")
+		}
+
 		keySlots = append(keySlots, KeySlot{
 			UserID:           userID,
 			Type:             int(k.Type),
@@ -29,5 +35,5 @@ func toModelSlice(userID int, pbKeySlots []*vaultv1.KeySlot) []KeySlot {
 			UpdatedAt:        k.UpdatedAt.AsTime(),
 		})
 	}
-	return keySlots
+	return keySlots, nil
 }

@@ -3,7 +3,6 @@ package sync
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
@@ -89,15 +88,11 @@ func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int,
 
 	notes := make([]Note, 0, len(rows))
 	for _, row := range rows {
-		var pID uuid.UUID
-		if row.ProjectID != nil {
-			pID = *row.ProjectID
-		}
 
 		notes = append(notes, Note{
 			ID:               row.ID,
 			UserID:           userID,
-			ProjectID:        pID,
+			ProjectID:        row.ProjectID,
 			EncryptedTitle:   row.EncryptedTitle,
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
@@ -118,15 +113,10 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 
 	params := make([]store.UpsertNotesParams, 0, len(notes))
 	for _, n := range notes {
-		var pID *uuid.UUID
-		if n.ProjectID != uuid.Nil {
-			pID = &n.ProjectID
-		}
-
 		params = append(params, store.UpsertNotesParams{
 			ID:               n.ID,
 			UserID:           int32(userID),
-			ProjectID:        pID,
+			ProjectID:        n.ProjectID,
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),

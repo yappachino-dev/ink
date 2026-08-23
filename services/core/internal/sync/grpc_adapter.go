@@ -48,13 +48,13 @@ func toDomain(pbReq *syncv1.SyncRequest) (SyncPayload, error) {
 				return SyncPayload{}, fmt.Errorf("invalid note id %q: %w", n.Id, err)
 			}
 
-			var pID uuid.UUID
+			var pID *uuid.UUID
 			if n.ProjectId != nil {
-				var err error
-				pID, err = uuid.Parse(*n.ProjectId)
+				parsed, err := uuid.Parse(*n.ProjectId)
 				if err != nil {
 					return SyncPayload{}, fmt.Errorf("invalid project_id %q for note %q: %w", *n.ProjectId, n.Id, err)
 				}
+				pID = &parsed
 			}
 
 			changes.Notes = append(changes.Notes, Note{
@@ -101,7 +101,7 @@ func toProto(result SyncResult) *syncv1.SyncResponse {
 	pbNotes := make([]*syncv1.Note, 0, len(result.Changes.Notes))
 	for _, n := range result.Changes.Notes {
 		var projectIDStr *string
-		if n.ProjectID != uuid.Nil {
+		if n.ProjectID != nil {
 			str := n.ProjectID.String()
 			projectIDStr = &str
 		}
