@@ -8,6 +8,8 @@ import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
 
+const _allProjectsEmoji = '🗂️';
+
 class ListFilterSheet extends ConsumerWidget {
   const ListFilterSheet({super.key});
 
@@ -25,7 +27,7 @@ class ListFilterSheet extends ConsumerWidget {
       children: [
         _ProjectTile(
           title: context.t.note.allProjects,
-          emoji: '🗂️',
+          emoji: _allProjectsEmoji,
           isSelected: selectedProjectId == allProjectsId,
           onTap: () =>
               ref.read(selectedProjectIdProvider.notifier).set(allProjectsId),

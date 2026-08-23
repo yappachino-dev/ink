@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 class ProjectItem extends StatelessWidget {
   const ProjectItem({
@@ -29,14 +31,14 @@ class ProjectItem extends StatelessWidget {
         onTap: onTap,
         onLongPress: onLongPress,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+          duration: AppDurations.fast,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           decoration: BoxDecoration(
             color: isSelected
-                ? color.withValues(alpha: 0.12)
+                ? color.withValues(alpha: AppAlpha.soft)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: AppRadius.smRadius,
           ),
           child: Row(
             children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class MetaIconButton extends StatelessWidget {
   const MetaIconButton({
@@ -38,9 +39,9 @@ class MetaIconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: effectiveColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: effectiveColor.withValues(alpha: 0.4)),
+          color: effectiveColor.withValues(alpha: AppAlpha.soft),
+          borderRadius: AppRadius.smRadius,
+          border: Border.all(color: effectiveColor.withValues(alpha: AppAlpha.medium)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

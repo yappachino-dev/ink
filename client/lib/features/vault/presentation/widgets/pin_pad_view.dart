@@ -3,6 +3,8 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/vault/domain/constants.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/app_animations.dart';
 
 const _buttonWidth = 70.0;
 const _buttonHeight = 70.0;
@@ -61,7 +63,7 @@ class _PinDots extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+            duration: AppDurations.base,
             width: 24,
             height: 24,
             decoration: BoxDecoration(
@@ -70,7 +72,7 @@ class _PinDots extends StatelessWidget {
                   : Colors.transparent,
               shape: BoxShape.circle,
               border: Border.all(
-                color: context.colorScheme.primary.withValues(alpha: 0.5),
+                color: context.colorScheme.primary.withValues(alpha: AppAlpha.medium),
                 width: 2,
               ),
             ),
@@ -147,7 +149,7 @@ class _DigitKey extends StatelessWidget {
       label: context.t.vault.methods.pin.keyPad.digitButton(n: digit),
       child: InkWell(
         onTap: () => onTap(digit),
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
         child: SizedBox(
           width: _buttonWidth,
           height: _buttonHeight,
@@ -172,7 +174,7 @@ class _BackspaceKey extends StatelessWidget {
       label: context.t.vault.methods.pin.keyPad.backspaceButton,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
         child: SizedBox(
           width: _buttonWidth,
           height: _buttonHeight,
