@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/app/navigation/navigators/overrides.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/storage/shared_prefs.dart';
@@ -28,12 +29,10 @@ Future<SharedPreferences> initializeGlobalSettings() async {
   return sharedPrefs;
 }
 
-Future<ProviderScope> wrapWithProviderScope({
-  required Widget child,
-  required SharedPreferences sharedPrefs,
-}) async {
-  return ProviderScope(
-    overrides: [
+/// Overrides installed at the app root. Must be passed to the [ProviderScope]
+/// constructed directly inside `runApp` (see main.dart).
+List<Override> buildOverrides(SharedPreferences sharedPrefs) {
+  return [
       sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       tokenRefresherProvider.overrideWith(
         (ref) => ref.watch(unifiedAuthRepositoryProvider),
@@ -49,9 +48,7 @@ Future<ProviderScope> wrapWithProviderScope({
         },
       ),
       ...overrideNavigators(),
-    ],
-    child: child,
-  );
+  ];
 }
 
 Widget wrapWithTranslation({required Widget child}) {

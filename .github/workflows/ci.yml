@@ -73,6 +73,9 @@ jobs:
           input: proto
           lint: true
           format: false
+          # PR comments require issues:write, which the default token lacks
+          # on private repositories.
+          pr_comment: false
           breaking: true
           breaking_against: >-
             https://github.com/${{ github.repository }}.git#branch=main,subdir=proto
