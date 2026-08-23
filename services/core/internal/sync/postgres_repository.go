@@ -75,17 +75,7 @@ func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, userID int,
 		})
 	}
 
-	batchResults := r.db(ctx).UpsertProjects(ctx, params)
-	defer batchResults.Close()
-
-	var batchErr error
-	batchResults.Exec(func(index int, err error) {
-		if err != nil && batchErr == nil {
-			batchErr = err
-		}
-	})
-
-	return batchErr
+	return database.ExecBatch(r.db(ctx).UpsertProjects(ctx, params))
 }
 
 func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int, cursor int) ([]Note, error) {
@@ -147,17 +137,7 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 		})
 	}
 
-	batchResults := r.db(ctx).UpsertNotes(ctx, params)
-	defer batchResults.Close()
-
-	var batchErr error
-	batchResults.Exec(func(index int, err error) {
-		if err != nil && batchErr == nil {
-			batchErr = err
-		}
-	})
-
-	return batchErr
+	return database.ExecBatch(r.db(ctx).UpsertNotes(ctx, params))
 }
 
 func (r *PostgresSyncRepository) db(ctx context.Context) *store.Queries {

@@ -2,11 +2,9 @@ package sync
 
 import (
 	"context"
-)
 
-type Transactor interface {
-	WithinTransaction(ctx context.Context, fn func(txCtx context.Context) error) error
-}
+	"github.com/yappachino-dev/ink/services/core/internal/database"
+)
 
 type SyncRepository interface {
 	GetUserCursor(ctx context.Context, userID int) (int, error)
@@ -18,11 +16,11 @@ type SyncRepository interface {
 }
 
 type SyncService struct {
-	transactor Transactor
+	transactor database.Transactor
 	repo       SyncRepository
 }
 
-func NewSyncService(transactor Transactor, repo SyncRepository) *SyncService {
+func NewSyncService(transactor database.Transactor, repo SyncRepository) *SyncService {
 	return &SyncService{transactor: transactor, repo: repo}
 }
 
