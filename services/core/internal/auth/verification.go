@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/big"
+	"sync"
 	"time"
 )
 
@@ -19,10 +20,17 @@ type VerificationRepository interface {
 
 type VerificationService struct {
 	repo VerificationRepository
+
+	mu       sync.Mutex
+	attempts map[string]int
 }
 
+// maxCodeAttempts caps failed confirmation tries per email before the code
+// is treated as burned (mitigates brute-forcing the 6-digit space).
+const maxCodeAttempts = 5
+
 func NewVerificationService(repo VerificationRepository) *VerificationService {
-	return &VerificationService{repo: repo}
+	return &VerificationService{repo: repo, attempts: make(map[string]int)}
 }
 
 func (s *VerificationService) CreateVerification(ctx context.Context, email string) (string, error) {
@@ -30,6 +38,10 @@ func (s *VerificationService) CreateVerification(ctx context.Context, email stri
 	if err != nil {
 		return "", err
 	}
+
+	s.mu.Lock()
+	delete(s.attempts, email)
+	s.mu.Unlock()
 
 	code, err := generateVerificationCode()
 	if err != nil {
@@ -45,6 +57,13 @@ func (s *VerificationService) CreateVerification(ctx context.Context, email stri
 }
 
 func (s *VerificationService) ConfirmCode(ctx context.Context, email string, code string) error {
+	s.mu.Lock()
+	if s.attempts[email] >= maxCodeAttempts {
+		s.mu.Unlock()
+		return fmt.Errorf("too many attempts, request a new code")
+	}
+	s.mu.Unlock()
+
 	verification, err := s.repo.LatestByEmail(ctx, email)
 	if err != nil {
 		return err
@@ -62,8 +81,16 @@ func (s *VerificationService) ConfirmCode(ctx context.Context, email string, cod
 	}
 
 	if !bytes.Equal(verification.CodeHash, hashVerificationCode(code)) {
+		s.mu.Lock()
+		s.attempts[email]++
+		s.mu.Unlock()
+
 		return fmt.Errorf("invalid verification code")
 	}
+
+	s.mu.Lock()
+	delete(s.attempts, email)
+	s.mu.Unlock()
 
 	return s.repo.MarkAsUsed(ctx, verification.ID)
 }
