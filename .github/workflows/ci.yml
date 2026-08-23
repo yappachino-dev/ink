@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    name: Client · analyze & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        working-directory: client
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: client
+        run: flutter analyze
+
+      - name: Test
+        working-directory: client
+        run: flutter test
+
+  backend:
+    name: Backend · build, vet & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: services/core/go.mod
+          cache-dependency-path: |
+            services/core/go.sum
+            services/gen/go.sum
+
+      # go.work is intentionally local-only; recreate it for module resolution.
+      - name: Init Go workspace
+        run: go work init ./services/core ./services/gen
+
+      - name: Build
+        working-directory: services/core
+        run: go build ./...
+
+      - name: Vet
+        working-directory: services/core
+        run: go vet ./...
+
+      - name: Test
+        working-directory: services/core
+        run: go test ./...
+
+  proto:
+    name: Protobuf · lint & breaking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bufbuild/buf-action@v1
+        with:
+          input: proto
+          lint: true
+          format: false
+          breaking: true
+          breaking_against: >-
+            https://github.com/${{ github.repository }}.git#branch=main,subdir=proto

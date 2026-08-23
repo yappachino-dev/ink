@@ -3,6 +3,7 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
 import 'package:ink/features/notes/data/sources/projects_local_data_source.dart';
 import 'package:ink/features/notes/data/unified_notes_repository.dart';
+import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../fixtures/notes_fixtures.dart';
@@ -40,7 +41,7 @@ void main() {
 
       final result = await repository.applyRemoteNotes([remoteDto]);
 
-      expect(result, isA<Success>());
+      expect(result, isA<Success<void, NotesFailure>>());
       verify(() => mockNotesLocal.get('new_server_note')).called(1);
       verify(() => mockNotesLocal.create(any())).called(1);
     });
@@ -57,7 +58,7 @@ void main() {
 
         final result = await repository.applyRemoteNotes([remoteDto]);
 
-        expect(result, isA<Success>());
+        expect(result, isA<Success<void, NotesFailure>>());
         verifyNever(() => mockNotesLocal.create(any()));
         verifyNever(() => mockNotesLocal.delete(any()));
       },

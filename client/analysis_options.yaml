@@ -19,3 +19,9 @@ linter:
   rules:
     public_member_api_docs: false
     sort_pub_dependencies: false
+
+# Riverpod's scoped-provider lint cannot know that our root ProviderScope
+# overrides are intentionally app-lifetime; suppress until real scopes exist.
+analyzer:
+  errors:
+    scoped_providers_should_specify_dependencies: ignore
