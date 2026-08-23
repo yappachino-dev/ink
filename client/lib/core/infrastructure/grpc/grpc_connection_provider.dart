@@ -1,4 +1,5 @@
 import 'package:grpc/grpc.dart';
+import 'package:ink/core/config/env_config.dart';
 import 'package:ink/core/infrastructure/auth/jwt_decoder.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/grpc/client_channel_provider.dart';
@@ -19,7 +20,7 @@ GrpcConnection grpcConnection(Ref ref) {
 
   return (
     channel: channel,
-    options: CallOptions(),
+    options: _timeoutOptions(),
     interceptors: [],
   );
 }
@@ -30,7 +31,7 @@ GrpcConnection grpcAuthConnection(Ref ref) {
 
   return (
     channel: channel,
-    options: CallOptions(
+    options: _timeoutOptions(
       providers: [
         (metadata, uri) async {
           var token = ref.read(authSessionProvider).accessToken;
@@ -72,3 +73,10 @@ GrpcConnection grpcAuthConnection(Ref ref) {
     interceptors: [],
   );
 }
+
+CallOptions _timeoutOptions({
+  List<MetadataProvider> providers = const [],
+}) => CallOptions(
+  timeout: Duration(seconds: networkSecondsTimeout),
+  providers: providers,
+);
