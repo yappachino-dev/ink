@@ -54,7 +54,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 
 	verificationSvc := auth.NewVerificationService(verificationRepo)
 	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
-	vaultSvc := vault.NewVaultService(vaultRepo)
+	vaultSvc := vault.NewVaultService(transactor, vaultRepo)
 	syncSvc := sync.NewSyncService(transactor, syncRepo)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{

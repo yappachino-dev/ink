@@ -3,7 +3,10 @@ package vault
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/yappachino-dev/ink/services/core/internal/appctx"
+	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
@@ -35,16 +38,6 @@ func (r *PostgresVaultRepository) GetKeySlotsByUserID(ctx context.Context, userI
 	return keySlots, nil
 }
 
-func (r *PostgresVaultRepository) Upsert(ctx context.Context, userID int, key KeySlot) error {
-	return r.q.UpsertKeySlot(ctx, store.UpsertKeySlotParams{
-		UserID:           int32(userID),
-		KeyType:          int32(key.Type),
-		Salt:             key.Salt,
-		WrappedMasterKey: key.WrappedMasterKey,
-		UpdatedAt:        pgtype.Timestamp{Time: key.UpdatedAt, Valid: true},
-	})
-}
-
 func (r *PostgresVaultRepository) UpsertKeySlots(ctx context.Context, userID int, keySlots []KeySlot) error {
 	if len(keySlots) == 0 {
 		return nil
@@ -61,15 +54,12 @@ func (r *PostgresVaultRepository) UpsertKeySlots(ctx context.Context, userID int
 		}
 	}
 
-	batchResults := r.q.UpsertKeySlots(ctx, params)
-	defer batchResults.Close()
+	return database.ExecBatch(r.db(ctx).UpsertKeySlots(ctx, params))
+}
 
-	var batchErr error
-	batchResults.Exec(func(index int, err error) {
-		if err != nil && batchErr == nil {
-			batchErr = err
-		}
-	})
-
-	return batchErr
+func (r *PostgresVaultRepository) db(ctx context.Context) *store.Queries {
+	if tx, ok := appctx.TxFromContext[pgx.Tx](ctx); ok {
+		return r.q.WithTx(tx)
+	}
+	return r.q
 }
