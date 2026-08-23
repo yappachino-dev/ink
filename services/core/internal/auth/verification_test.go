@@ -85,7 +85,10 @@ func TestConfirmCode_RejectsWrongUsedAndExpired(t *testing.T) {
 	ctx := context.Background()
 
 	wrongCode, svc := newCode(t, repo, "a@b.c")
-	if err := svc.ConfirmCode(ctx, "a@b.c", wrongCode[:5]+"0"); err == nil {
+	// Rotate the last digit deterministically: overwriting it with a fixed
+	// digit would collide with the real code 1 in 10 times and flake.
+	mutated := wrongCode[:5] + string('0'+(wrongCode[5]-'0'+1)%10)
+	if err := svc.ConfirmCode(ctx, "a@b.c", mutated); err == nil {
 		t.Fatal("invalid code should fail")
 	}
 
