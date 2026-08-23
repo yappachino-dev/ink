@@ -38,6 +38,10 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("missing required database environment variables")
 	}
 
+	if jwtSecretKey == "" {
+		return nil, fmt.Errorf("missing required JWT_SECRET_KEY")
+	}
+
 	cfg := Config{
 		DatabaseURL:  databaseURL,
 		JwtSecretKey: jwtSecretKey,
