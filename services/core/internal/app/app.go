@@ -66,6 +66,7 @@ func New(ctx context.Context, cfg *config.Config) *App {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			auth.UnaryRateLimitInterceptor(),
 			auth.UnaryAuthInterceptor(cfg.JwtSecretKey),
 			logging.UnaryServerInterceptor(interceptorLogger(logger), logOpts...),
 		),
