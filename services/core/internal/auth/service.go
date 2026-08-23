@@ -135,6 +135,11 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string,
 		return "", "", err
 	}
 	if storedToken == nil || !storedToken.RevokedAt.IsZero() {
+		// Reuse of a revoked token means it likely leaked: revoke every
+		// session of the owner as standard refresh-token reuse detection.
+		if storedToken != nil {
+			_ = s.refreshTokenRepo.RevokeAllByUserID(ctx, storedToken.UserID)
+		}
 		return "", "", ErrRevokedRefreshToken
 	}
 
