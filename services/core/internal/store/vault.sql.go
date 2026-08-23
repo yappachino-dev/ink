@@ -47,31 +47,3 @@ func (q *Queries) GetKeySlotsByUserID(ctx context.Context, userID int32) ([]GetK
 	}
 	return items, nil
 }
-
-const upsertKeySlot = `-- name: UpsertKeySlot :exec
-INSERT INTO user_keys (user_id, key_type, salt, wrapped_master_key, updated_at)
-VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (user_id, key_type) DO UPDATE SET
-    salt = EXCLUDED.salt,
-    wrapped_master_key = EXCLUDED.wrapped_master_key,
-    updated_at = EXCLUDED.updated_at
-`
-
-type UpsertKeySlotParams struct {
-	UserID           int32            `json:"user_id"`
-	KeyType          int32            `json:"key_type"`
-	Salt             []byte           `json:"salt"`
-	WrappedMasterKey []byte           `json:"wrapped_master_key"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-}
-
-func (q *Queries) UpsertKeySlot(ctx context.Context, arg UpsertKeySlotParams) error {
-	_, err := q.db.Exec(ctx, upsertKeySlot,
-		arg.UserID,
-		arg.KeyType,
-		arg.Salt,
-		arg.WrappedMasterKey,
-		arg.UpdatedAt,
-	)
-	return err
-}
