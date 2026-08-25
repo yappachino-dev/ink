@@ -28,14 +28,22 @@ status:
 logs:
 	docker compose logs -f
 
-.PHONY: apply-schema reset-db users
+.PHONY: migrate-up migrate-down migrate-status reset-db users
 
-apply-schema:
-	cat ./services/core/db/migrations/001_init.sql | docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME)
+MIGRATE_URL ?= postgres://$(DB_USER):$(DB_PASSWORD)@localhost:5432/$(DB_NAME)?sslmode=disable
+
+migrate-up:
+	go run ./services/core/cmd/migrate -url "$(MIGRATE_URL)" up
+
+migrate-down:
+	go run ./services/core/cmd/migrate -url "$(MIGRATE_URL)" down
+
+migrate-status:
+	go run ./services/core/cmd/migrate -url "$(MIGRATE_URL)" status
 
 reset-db:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO postgres; GRANT ALL ON SCHEMA public TO public;"
-	$(MAKE) apply-schema
+	$(MAKE) migrate-up
 
 users:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from users;"

@@ -43,6 +43,11 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	}
 
 	db := stdlib.OpenDBFromPool(pool)
+
+	if err := database.Migrate(ctx, db); err != nil {
+		return nil, fmt.Errorf("failed to migrate database: %w", err)
+	}
+
 	queries := store.New(pool)
 	transactor := database.NewPgTransactor(pool)
 
