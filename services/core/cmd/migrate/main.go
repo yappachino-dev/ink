@@ -53,16 +53,16 @@ func run(ctx context.Context, command, url string) error {
 
 	switch command {
 	case "up":
-		return goose.UpContext(ctx, db, "migrations")
+		return goose.UpContext(ctx, db, ".")
 	case "down":
-		return goose.DownContext(ctx, db, "migrations")
+		return goose.DownContext(ctx, db, ".")
 	case "status":
-		return goose.StatusContext(ctx, db, "migrations")
+		return goose.StatusContext(ctx, db, ".")
 	case "reset":
-		if err := goose.ResetContext(ctx, db, "migrations"); err != nil {
+		if err := goose.ResetContext(ctx, db, "."); err != nil {
 			return err
 		}
-		return goose.UpContext(ctx, db, "migrations")
+		return goose.UpContext(ctx, db, ".")
 	default:
 		return fmt.Errorf("unknown command %q: expected one of up|down|status|reset", command)
 	}

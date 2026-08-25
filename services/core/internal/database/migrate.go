@@ -21,7 +21,7 @@ func Migrate(ctx context.Context, db *sql.DB) error {
 		return fmt.Errorf("failed to set migration dialect: %w", err)
 	}
 
-	if err := goose.UpContext(ctx, db, "migrations"); err != nil {
+	if err := goose.UpContext(ctx, db, "."); err != nil {
 		return fmt.Errorf("failed to apply migrations: %w", err)
 	}
 
