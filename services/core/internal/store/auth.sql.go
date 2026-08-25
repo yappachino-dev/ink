@@ -7,8 +7,7 @@ package store
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 const createEmailVerification = `-- name: CreateEmailVerification :exec
@@ -33,15 +32,15 @@ RETURNING id, created_at, revoked_at
 `
 
 type CreateRefreshTokenParams struct {
-	UserID    int32            `json:"user_id"`
-	Hash      []byte           `json:"hash"`
-	ExpiresAt pgtype.Timestamp `json:"expires_at"`
+	UserID    int32     `json:"user_id"`
+	Hash      []byte    `json:"hash"`
+	ExpiresAt time.Time `json:"expires_at"`
 }
 
 type CreateRefreshTokenRow struct {
-	ID        int32            `json:"id"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	RevokedAt pgtype.Timestamp `json:"revoked_at"`
+	ID        int32      `json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
@@ -63,9 +62,9 @@ type CreateUserParams struct {
 }
 
 type CreateUserRow struct {
-	ID        int32            `json:"id"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	ID        int32     `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
@@ -123,12 +122,12 @@ FROM users WHERE email = $1
 `
 
 type GetUserByEmailRow struct {
-	ID           int32            `json:"id"`
-	Email        string           `json:"email"`
-	PasswordHash string           `json:"password_hash"`
-	CreatedAt    pgtype.Timestamp `json:"created_at"`
-	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
-	SyncCursor   int32            `json:"sync_cursor"`
+	ID           int32     `json:"id"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	SyncCursor   int32     `json:"sync_cursor"`
 }
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
@@ -151,12 +150,12 @@ FROM users WHERE id = $1
 `
 
 type GetUserByIDRow struct {
-	ID           int32            `json:"id"`
-	Email        string           `json:"email"`
-	PasswordHash string           `json:"password_hash"`
-	CreatedAt    pgtype.Timestamp `json:"created_at"`
-	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
-	SyncCursor   int32            `json:"sync_cursor"`
+	ID           int32     `json:"id"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	SyncCursor   int32     `json:"sync_cursor"`
 }
 
 func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {
@@ -213,8 +212,8 @@ WHERE hash = $2
 `
 
 type RevokeRefreshTokenByHashParams struct {
-	RevokedAt pgtype.Timestamp `json:"revoked_at"`
-	Hash      []byte           `json:"hash"`
+	RevokedAt *time.Time `json:"revoked_at"`
+	Hash      []byte     `json:"hash"`
 }
 
 func (q *Queries) RevokeRefreshTokenByHash(ctx context.Context, arg RevokeRefreshTokenByHashParams) error {
@@ -231,10 +230,10 @@ WHERE id = $4
 `
 
 type UpdateRefreshTokenParams struct {
-	Hash      []byte           `json:"hash"`
-	ExpiresAt pgtype.Timestamp `json:"expires_at"`
-	RevokedAt pgtype.Timestamp `json:"revoked_at"`
-	ID        int32            `json:"id"`
+	Hash      []byte     `json:"hash"`
+	ExpiresAt time.Time  `json:"expires_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
+	ID        int32      `json:"id"`
 }
 
 func (q *Queries) UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) error {

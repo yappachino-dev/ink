@@ -8,10 +8,10 @@ package store
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 var (
@@ -34,11 +34,11 @@ type UpsertKeySlotsBatchResults struct {
 }
 
 type UpsertKeySlotsParams struct {
-	UserID           int32            `json:"user_id"`
-	KeyType          int32            `json:"key_type"`
-	Salt             []byte           `json:"salt"`
-	WrappedMasterKey []byte           `json:"wrapped_master_key"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
+	UserID           int32     `json:"user_id"`
+	KeyType          int32     `json:"key_type"`
+	Salt             []byte    `json:"salt"`
+	WrappedMasterKey []byte    `json:"wrapped_master_key"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 func (q *Queries) UpsertKeySlots(ctx context.Context, arg []UpsertKeySlotsParams) *UpsertKeySlotsBatchResults {
@@ -99,16 +99,16 @@ type UpsertNotesBatchResults struct {
 }
 
 type UpsertNotesParams struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	ProjectID        *uuid.UUID       `json:"project_id"`
-	EncryptedTitle   []byte           `json:"encrypted_title"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	UserID           int32      `json:"user_id"`
+	ProjectID        *uuid.UUID `json:"project_id"`
+	EncryptedTitle   []byte     `json:"encrypted_title"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 func (q *Queries) UpsertNotes(ctx context.Context, arg []UpsertNotesParams) *UpsertNotesBatchResults {
@@ -172,14 +172,14 @@ type UpsertProjectsBatchResults struct {
 }
 
 type UpsertProjectsParams struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	UserID           int32      `json:"user_id"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 func (q *Queries) UpsertProjects(ctx context.Context, arg []UpsertProjectsParams) *UpsertProjectsBatchResults {

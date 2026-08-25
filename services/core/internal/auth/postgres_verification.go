@@ -37,9 +37,9 @@ func (r *PostgresVerificationRepository) LatestByEmail(ctx context.Context, emai
 		ID:        int(row.ID),
 		Email:     row.Email,
 		CodeHash:  row.CodeHash,
-		CreatedAt: database.PgToTime(row.CreatedAt),
-		ExpiresAt: database.PgToTime(row.ExpiresAt),
-		UsedAt:    database.PgToTime(row.UsedAt),
+		CreatedAt: row.CreatedAt,
+		ExpiresAt: row.ExpiresAt,
+		UsedAt:    database.FromNullTime(row.UsedAt),
 	}, nil
 }
 

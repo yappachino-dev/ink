@@ -5,65 +5,66 @@
 package store
 
 import (
+	"time"
+
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type EmailVerification struct {
-	ID        int32            `json:"id"`
-	Email     string           `json:"email"`
-	CodeHash  []byte           `json:"code_hash"`
-	ExpiresAt pgtype.Timestamp `json:"expires_at"`
-	UsedAt    pgtype.Timestamp `json:"used_at"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
+	ID        int32      `json:"id"`
+	Email     string     `json:"email"`
+	CodeHash  []byte     `json:"code_hash"`
+	ExpiresAt time.Time  `json:"expires_at"`
+	UsedAt    *time.Time `json:"used_at"`
+	CreatedAt time.Time  `json:"created_at"`
 }
 
 type Note struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	ProjectID        *uuid.UUID       `json:"project_id"`
-	EncryptedTitle   []byte           `json:"encrypted_title"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	UserID           int32      `json:"user_id"`
+	ProjectID        *uuid.UUID `json:"project_id"`
+	EncryptedTitle   []byte     `json:"encrypted_title"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 type Project struct {
-	ID               uuid.UUID        `json:"id"`
-	UserID           int32            `json:"user_id"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	UserID           int32      `json:"user_id"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 type RefreshToken struct {
-	ID        int32            `json:"id"`
-	UserID    int32            `json:"user_id"`
-	Hash      []byte           `json:"hash"`
-	ExpiresAt pgtype.Timestamp `json:"expires_at"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	RevokedAt pgtype.Timestamp `json:"revoked_at"`
+	ID        int32      `json:"id"`
+	UserID    int32      `json:"user_id"`
+	Hash      []byte     `json:"hash"`
+	ExpiresAt time.Time  `json:"expires_at"`
+	CreatedAt time.Time  `json:"created_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
 }
 
 type User struct {
-	ID           int32            `json:"id"`
-	Email        string           `json:"email"`
-	PasswordHash string           `json:"password_hash"`
-	SyncCursor   int32            `json:"sync_cursor"`
-	CreatedAt    pgtype.Timestamp `json:"created_at"`
-	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	ID           int32     `json:"id"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"password_hash"`
+	SyncCursor   int32     `json:"sync_cursor"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type UserKey struct {
-	UserID           int32            `json:"user_id"`
-	KeyType          int32            `json:"key_type"`
-	Salt             []byte           `json:"salt"`
-	WrappedMasterKey []byte           `json:"wrapped_master_key"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
+	UserID           int32     `json:"user_id"`
+	KeyType          int32     `json:"key_type"`
+	Salt             []byte    `json:"salt"`
+	WrappedMasterKey []byte    `json:"wrapped_master_key"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }

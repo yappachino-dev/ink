@@ -7,9 +7,9 @@ package store
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getNoteChanges = `-- name: GetNoteChanges :many
@@ -23,15 +23,15 @@ type GetNoteChangesParams struct {
 }
 
 type GetNoteChangesRow struct {
-	ID               uuid.UUID        `json:"id"`
-	ProjectID        *uuid.UUID       `json:"project_id"`
-	EncryptedTitle   []byte           `json:"encrypted_title"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	ProjectID        *uuid.UUID `json:"project_id"`
+	EncryptedTitle   []byte     `json:"encrypted_title"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 func (q *Queries) GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) ([]GetNoteChangesRow, error) {
@@ -75,13 +75,13 @@ type GetProjectChangesParams struct {
 }
 
 type GetProjectChangesRow struct {
-	ID               uuid.UUID        `json:"id"`
-	EncryptedContent []byte           `json:"encrypted_content"`
-	Version          int32            `json:"version"`
-	SyncSequence     int32            `json:"sync_sequence"`
-	CreatedAt        pgtype.Timestamp `json:"created_at"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
-	DeletedAt        pgtype.Timestamp `json:"deleted_at"`
+	ID               uuid.UUID  `json:"id"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
 func (q *Queries) GetProjectChanges(ctx context.Context, arg GetProjectChangesParams) ([]GetProjectChangesRow, error) {
