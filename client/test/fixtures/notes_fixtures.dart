@@ -1,5 +1,3 @@
-
-
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
@@ -65,6 +63,24 @@ class NotesFixtures {
       updatedAt: updatedAt ?? defaultDate,
       deletedAt: Value(deletedAt),
       projectId: Value(projectId),
+    );
+  }
+
+  static ProjectConflictsCompanion buildProjectConflictCompanion({
+    String? id,
+    Uint8List? encryptedContent,
+    int? version,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
+  }) {
+    return ProjectConflictsCompanion.insert(
+      id: id ?? 'project_1',
+      encryptedContent: encryptedContent ?? defaultBytes,
+      version: version ?? 2,
+      createdAt: createdAt ?? defaultDate,
+      updatedAt: updatedAt ?? defaultDate,
+      deletedAt: Value(deletedAt),
     );
   }
 

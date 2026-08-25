@@ -10,6 +10,7 @@ import 'package:ink/features/notes/data/notes_sync_engine.dart';
 import 'package:ink/features/notes/data/projects_sync_engine.dart';
 import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
 import 'package:ink/features/notes/data/sources/projects_local_data_source.dart';
+import 'package:ink/features/notes/data/sync_delta_resolution.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
@@ -172,13 +173,63 @@ class UnifiedNotesRepository
   Future<Result<void, NotesFailure>> applyRemoteNotes(
     List<EncryptedNote> remoteData,
   ) async {
-    for (final note in remoteData) {
-      final processResult = await _processSingleNoteDelta(note);
+    if (remoteData.isEmpty) return const Success(null);
 
-      if (processResult case Failure(error: final e)) return Failure(e);
+    final existingResult = await localRunner(
+      call: () =>
+          _localNotes.getByIds(remoteData.map((note) => note.id).toList()),
+      mapCore: NotesCoreFailure.new,
+    );
+    if (existingResult case Failure(error: final e)) return Failure(e);
+
+    final existing = {
+      for (final model in existingResult.unwrap) model.id: model,
+    };
+
+    final upserts = <NotesCompanion>[];
+    final deletes = <String>[];
+    final conflicts = <(NotesCompanion, NoteConflictsCompanion)>[];
+
+    for (final delta in remoteData) {
+      final localModel = existing[delta.id];
+
+      switch (resolveSyncDelta(
+        existsLocally: localModel != null,
+        locallyModified:
+            localModel != null &&
+            localModel.localVersion > localModel.lastSyncedVersion,
+        lastSyncedVersion: localModel?.lastSyncedVersion ?? 0,
+        incomingVersion: delta.localVersion,
+        incomingDeleted: delta.deletedAt != null,
+      )) {
+        case SyncDeltaResolution.skip:
+          break;
+        case SyncDeltaResolution.upsert:
+          upserts.add(delta.toCompanion());
+        case SyncDeltaResolution.deleteLocal:
+          deletes.add(delta.id);
+        case SyncDeltaResolution.conflict:
+          conflicts.add((
+            localModel!
+                .copyWith(syncStatus: SyncStatus.conflicted)
+                .toCompanion(true),
+            delta.toConflictCompanion(),
+          ));
+      }
     }
 
-    return const Success(null);
+    if (upserts.isEmpty && deletes.isEmpty && conflicts.isEmpty) {
+      return const Success(null);
+    }
+
+    return localRunner(
+      call: () => _localNotes.applyRemoteDeltas(
+        upserts: upserts,
+        deletes: deletes,
+        conflicts: conflicts,
+      ),
+      mapCore: NotesCoreFailure.new,
+    );
   }
 
   // --- Projects sync engine interface implementation ---
@@ -210,126 +261,64 @@ class UnifiedNotesRepository
   Future<Result<void, NotesFailure>> applyRemoteProjects(
     List<EncryptedProject> remoteData,
   ) async {
-    for (final project in remoteData) {
-      final processResult = await _processSingleProjectDelta(project);
+    if (remoteData.isEmpty) return const Success(null);
 
-      if (processResult case Failure(error: final e)) return Failure(e);
-    }
-
-    return const Success(null);
-  }
-
-  // -- Sync engine logic ---
-
-  Future<Result<void, NotesFailure>> _processSingleNoteDelta(
-    EncryptedNote note,
-  ) async {
-    final getResult = await localRunner(
-      call: () => _localNotes.get(note.id),
+    final existingResult = await localRunner(
+      call: () => _localProjects.getByIds(
+        remoteData.map((project) => project.id).toList(),
+      ),
       mapCore: NotesCoreFailure.new,
     );
+    if (existingResult case Failure(error: final e)) return Failure(e);
 
-    if (getResult case Failure(error: final e)) return Failure(e);
-    final noteModel = getResult.unwrap;
+    final existing = {
+      for (final model in existingResult.unwrap) model.id: model,
+    };
 
-    // Note doesn't exist locally
-    if (noteModel == null) {
-      // Note doesn't exist on server either => skip
-      if (note.deletedAt != null) return const Success(null);
+    final upserts = <ProjectsCompanion>[];
+    final deletes = <String>[];
+    final conflicts = <(ProjectsCompanion, ProjectConflictsCompanion)>[];
 
-      return localRunner(
-        call: () => _localNotes.create(note.toCompanion()),
-        mapCore: NotesCoreFailure.new,
-      );
+    for (final delta in remoteData) {
+      final localModel = existing[delta.id];
+
+      switch (resolveSyncDelta(
+        existsLocally: localModel != null,
+        locallyModified:
+            localModel != null &&
+            localModel.localVersion > localModel.lastSyncedVersion,
+        lastSyncedVersion: localModel?.lastSyncedVersion ?? 0,
+        incomingVersion: delta.localVersion,
+        incomingDeleted: delta.deletedAt != null,
+      )) {
+        case SyncDeltaResolution.skip:
+          break;
+        case SyncDeltaResolution.upsert:
+          upserts.add(delta.toCompanion());
+        case SyncDeltaResolution.deleteLocal:
+          deletes.add(delta.id);
+        case SyncDeltaResolution.conflict:
+          conflicts.add((
+            localModel!
+                .copyWith(syncStatus: SyncStatus.conflicted)
+                .toCompanion(true),
+            delta.toConflictCompanion(),
+          ));
+      }
     }
 
-    // Note has been modified locally and on the server
-    if (noteModel.localVersion > noteModel.lastSyncedVersion) {
-      return localRunner(
-        call: () => _localNotes.saveWithConflict(
-          noteModel
-              .copyWith(syncStatus: SyncStatus.conflicted)
-              .toCompanion(true),
-          note.toConflictCompanion(),
-        ),
-        mapCore: NotesCoreFailure.new,
-      );
-    }
-
-    // Note hasn't been updated on the server
-    if (note.localVersion <= noteModel.lastSyncedVersion) {
+    if (upserts.isEmpty && deletes.isEmpty && conflicts.isEmpty) {
       return const Success(null);
     }
 
-    // Note has been deleted on the server
-    if (note.deletedAt != null) {
-      // Note has been modified locally and deleted on the server
-      if (noteModel.localVersion > note.localVersion) {
-        return localRunner(
-          call: () => _localNotes.saveWithConflict(
-            noteModel
-                .copyWith(syncStatus: SyncStatus.conflicted)
-                .toCompanion(true),
-            note.toConflictCompanion(),
-          ),
-          mapCore: NotesCoreFailure.new,
-        );
-      }
-
-      return localRunner(
-        call: () => _localNotes.delete(note.id),
-        mapCore: NotesCoreFailure.new,
-      );
-    }
-
-    // No conflict => normal update
     return localRunner(
-      call: () => _localNotes.save(note.toCompanion()),
+      call: () => _localProjects.applyRemoteDeltas(
+        upserts: upserts,
+        deletes: deletes,
+        conflicts: conflicts,
+      ),
       mapCore: NotesCoreFailure.new,
     );
-  }
-
-  Future<Result<void, NotesFailure>> _processSingleProjectDelta(
-    EncryptedProject project,
-  ) async {
-    final getResult = await localRunner(
-      call: () => _localProjects.get(project.id),
-      mapCore: NotesCoreFailure.new,
-    );
-
-    if (getResult case Failure(error: final e)) return Failure(e);
-    final projectModel = getResult.unwrap;
-
-    // Project doesn't exist locally
-    if (projectModel == null) {
-      // Project doesn't exist on server either => skip
-      if (project.deletedAt != null) return const Success(null);
-
-      return localRunner(
-        call: () => _localProjects.create(project.toCompanion()),
-        mapCore: NotesCoreFailure.new,
-      );
-    }
-
-    // LLW update
-    if (project.updatedAt.isAfter(projectModel.updatedAt)) {
-      // Project has been deleted on the server => delete locally
-      if (project.deletedAt != null) {
-        return localRunner(
-          call: () => _localProjects.delete(projectModel.id),
-          mapCore: NotesCoreFailure.new,
-        );
-      }
-
-      return localRunner(
-        call: () => _localProjects.save(
-          project.toCompanion(),
-        ),
-        mapCore: NotesCoreFailure.new,
-      );
-    }
-
-    return const Success(null);
   }
 }
 

@@ -25,6 +25,21 @@ class ProjectsLocalDataSource {
 
   Future<List<ProjectModel>> getAll() => _projectsDao.getAll();
 
+  Future<List<ProjectModel>> getByIds(List<String> ids) =>
+      _projectsDao.getByIds(ids);
+
+  Future<void> applyRemoteDeltas({
+    List<ProjectsCompanion> upserts = const [],
+    List<String> deletes = const [],
+    List<(ProjectsCompanion project, ProjectConflictsCompanion conflict)>
+        conflicts =
+        const [],
+  }) => _projectsDao.applyRemoteDeltas(
+    upserts: upserts,
+    deletes: deletes,
+    conflicts: conflicts,
+  );
+
   Future<List<ProjectModel>> getPending() => _projectsDao.getPending();
 
   Future<void> delete(String id) => _projectsDao.deleteProject(id);

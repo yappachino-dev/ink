@@ -32,4 +32,14 @@ extension EncryptedProjectToCompanion on EncryptedProject {
     updatedAt: Value(updatedAt),
     deletedAt: Value(deletedAt),
   );
+
+  ProjectConflictsCompanion toConflictCompanion() =>
+      ProjectConflictsCompanion.insert(
+        id: id,
+        encryptedContent: encryptedContent,
+        version: localVersion,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        deletedAt: Value(deletedAt),
+      );
 }

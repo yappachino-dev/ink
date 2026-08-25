@@ -16,20 +16,6 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
 
   Future<void> updateNote(NotesCompanion note) => update(notes).replace(note);
 
-  Future<void> upsertNote(NotesCompanion note) =>
-      into(notes).insert(note, mode: InsertMode.insertOrReplace);
-
-  Future<void> upsertConflict(NoteConflictsCompanion conflict) =>
-      into(noteConflicts).insert(conflict, mode: InsertMode.insertOrReplace);
-
-  Future<void> updateWithConflict(
-    NotesCompanion note,
-    NoteConflictsCompanion conflict,
-  ) => transaction(() async {
-    await updateNote(note);
-    await upsertConflict(conflict);
-  });
-
   Future<void> acknowledgePushed(
     List<SyncAck> acknowledgements,
   ) => batch((batch) {
@@ -57,6 +43,36 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
       (select(notes)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
 
   Future<List<NoteModel>> getAllNotes() => select(notes).get();
+
+  Future<List<NoteModel>> getByIds(List<String> ids) =>
+      (select(notes)..where((tbl) => tbl.id.isIn(ids))).get();
+
+  /// Applies a pre-computed set of remote delta writes atomically: every
+  /// upsert, delete and conflict write runs inside a single transaction.
+  Future<void> applyRemoteDeltas({
+    List<NotesCompanion> upserts = const [],
+    List<String> deletes = const [],
+    List<(NotesCompanion note, NoteConflictsCompanion conflict)> conflicts =
+        const [],
+  }) => batch((b) {
+    b
+      ..insertAll(notes, upserts, mode: InsertMode.replace)
+      ..insertAll(
+        noteConflicts,
+        [for (final (_, conflict) in conflicts) conflict],
+        mode: InsertMode.replace,
+      );
+    for (final (note, _) in conflicts) {
+      b.update(
+        notes,
+        note,
+        where: (tbl) => tbl.id.equals(note.id.value),
+      );
+    }
+    if (deletes.isNotEmpty) {
+      b.deleteWhere(notes, (tbl) => tbl.id.isIn(deletes));
+    }
+  });
 
   Future<List<NoteModel>> getPending() =>
       (select(notes)..where(

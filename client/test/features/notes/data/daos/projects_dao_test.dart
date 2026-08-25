@@ -67,6 +67,62 @@ void main() {
       },
     );
 
+    test('getByIds returns only requested rows', () async {
+      await dao.insertProject(NotesFixtures.buildProjectCompanion(id: 'a'));
+      await dao.insertProject(NotesFixtures.buildProjectCompanion(id: 'b'));
+
+      final rows = await dao.getByIds(['b']);
+
+      expect(rows.map((e) => e.id), ['b']);
+    });
+
+    test(
+      'applyRemoteDeltas upserts, conflicts and deletes atomically',
+      () async {
+        await dao.insertProject(
+          NotesFixtures.buildProjectCompanion(
+            id: 'conf_1',
+            localVersion: 2,
+            lastSyncedVersion: 1,
+            syncStatus: SyncStatus.modified,
+          ),
+        );
+        await dao.insertProject(
+          NotesFixtures.buildProjectCompanion(id: 'del_1'),
+        );
+
+        await dao.applyRemoteDeltas(
+          upserts: [NotesFixtures.buildProjectCompanion(id: 'new_1')],
+          deletes: ['del_1'],
+          conflicts: [
+            (
+              NotesFixtures.buildProjectCompanion(
+                id: 'conf_1',
+                localVersion: 2,
+                lastSyncedVersion: 1,
+                syncStatus: SyncStatus.conflicted,
+              ),
+              NotesFixtures.buildProjectConflictCompanion(
+                id: 'conf_1',
+                version: 4,
+              ),
+            ),
+          ],
+        );
+
+        expect(await dao.getProject('del_1'), isNull);
+        expect(await dao.getProject('new_1'), isNotNull);
+
+        final conflicted = (await dao.getProject('conf_1'))!;
+        expect(conflicted.syncStatus, equals(SyncStatus.conflicted));
+        final conflictRow = await (db.select(
+          db.projectConflicts,
+        )..where((tbl) => tbl.id.equals('conf_1'))).getSingleOrNull();
+        expect(conflictRow, isNotNull);
+        expect(conflictRow!.version, equals(4));
+      },
+    );
+
     test('deleteProject physically removes the project row', () async {
       final project = NotesFixtures.buildProjectCompanion(id: 'del_me');
       await dao.insertProject(project);
