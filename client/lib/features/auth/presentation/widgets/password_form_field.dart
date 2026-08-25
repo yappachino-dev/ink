@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/form_fields/deferred_validation_text_form_field.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/validators.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -24,20 +25,20 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return DeferredValidationTextFormField(
       controller: widget.controller,
       obscureText: _obscureInput,
       style: context.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: widget.hintText ?? context.t.auth.form.passwordHint,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscureInput
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
-          ),
-          onPressed: () => setState(() => _obscureInput = !_obscureInput),
+      ),
+      suffixIcon: IconButton(
+        icon: Icon(
+          _obscureInput
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
         ),
+        onPressed: () => setState(() => _obscureInput = !_obscureInput),
       ),
       validator:
           widget.validator ??

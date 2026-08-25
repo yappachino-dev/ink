@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ink/core/presentation/form_fields/deferred_validation_text_form_field.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/validators.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -10,7 +11,7 @@ class EmailFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return DeferredValidationTextFormField(
       controller: controller,
       keyboardType: TextInputType.emailAddress,
       style: context.textTheme.bodyLarge,
