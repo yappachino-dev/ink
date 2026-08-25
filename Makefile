@@ -30,6 +30,19 @@ logs:
 
 .PHONY: migrate-up migrate-down migrate-status reset-db users
 
+# --- Client Drift schema evolution ---
+
+# Run after changing the Drift schema, then bump schemaVersion in database.dart:
+#   1. make schema-dump  (snapshots the CURRENT lib schema; do this before bumping)
+#   2. bump schemaVersion + write onUpgrade step
+#   3. make schema-generate  (regenerates test/migrations helpers)
+#   4. extend client/test/migrations/migration_test.dart
+schema-dump:
+	cd client && dart run drift_dev schema dump lib/app/database/database.dart drift_schemas/
+
+schema-generate:
+	cd client && dart run drift_dev schema generate drift_schemas/ test/migrations/
+
 MIGRATE_URL ?= postgres://$(DB_USER):$(DB_PASSWORD)@localhost:5432/$(DB_NAME)?sslmode=disable
 
 migrate-up:
