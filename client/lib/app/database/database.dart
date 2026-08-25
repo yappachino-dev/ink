@@ -7,6 +7,7 @@ import 'package:ink/features/notes/data/daos/notes_dao.dart';
 import 'package:ink/features/notes/data/daos/projects_dao.dart';
 import 'package:ink/features/notes/data/tables/note_conflicts.dart';
 import 'package:ink/features/notes/data/tables/notes.dart';
+import 'package:ink/features/notes/data/tables/project_conflicts.dart';
 import 'package:ink/features/notes/data/tables/projects.dart';
 import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
 import 'package:ink/features/vault/data/tables/key_slots.dart';
@@ -27,7 +28,7 @@ LazyDatabase _openConnection() {
 }
 
 @DriftDatabase(
-  tables: [KeySlots, Notes, NoteConflicts, Projects],
+  tables: [KeySlots, Notes, NoteConflicts, Projects, ProjectConflicts],
   daos: [KeySlotsDao, NotesDao, ProjectsDao],
 )
 class AppDatabase extends _$AppDatabase {
@@ -48,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -56,7 +57,11 @@ class AppDatabase extends _$AppDatabase {
       onCreate: (m) async {
         await m.createAll();
       },
-      onUpgrade: (m, from, to) async {},
+      onUpgrade: (m, from, to) async {
+        if (from < 2) {
+          await m.createTable(projectConflicts);
+        }
+      },
       beforeOpen: (details) async {
         await customStatement('PRAGMA foreign_keys = ON');
       },

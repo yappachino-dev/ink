@@ -55,31 +55,62 @@ void main() {
       expect(pendingIds, isNot(contains('synced_1')));
     });
 
-    test('updateWithConflict saves both the note and the conflict', () async {
-      final note = NotesFixtures.buildNoteCompanion(id: 'conflict_test');
-      await dao.insertNote(note);
+    test('getByIds returns only requested rows', () async {
+      await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'a'));
+      await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'b'));
+      await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'c'));
 
-      final updatedNote = NotesFixtures.buildNoteCompanion(
-        id: 'conflict_test',
-        localVersion: 3,
-      );
-      final conflict = NotesFixtures.buildConflictCompanion(
-        id: 'conflict_test',
-        version: 2,
-      );
+      final rows = await dao.getByIds(['a', 'c']);
 
-      await dao.updateWithConflict(updatedNote, conflict);
-
-      final savedNote = await dao.getNote('conflict_test');
-      expect(savedNote!.localVersion, equals(3));
-
-      final savedConflict = await (db.select(
-        db.noteConflicts,
-      )..where((tbl) => tbl.id.equals('conflict_test'))).getSingleOrNull();
-
-      expect(savedConflict, isNotNull);
-      expect(savedConflict!.version, equals(2));
+      expect(rows.map((e) => e.id), unorderedEquals(['a', 'c']));
     });
+
+    test(
+      'applyRemoteDeltas upserts, conflicts and deletes atomically',
+      () async {
+        await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'over_1'));
+        await dao.insertNote(
+          NotesFixtures.buildNoteCompanion(
+            id: 'conf_1',
+            localVersion: 2,
+            lastSyncedVersion: 1,
+            syncStatus: SyncStatus.modified,
+          ),
+        );
+        await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'del_1'));
+
+        await dao.applyRemoteDeltas(
+          upserts: [
+            NotesFixtures.buildNoteCompanion(id: 'new_1'),
+            NotesFixtures.buildNoteCompanion(id: 'over_1', localVersion: 5),
+          ],
+          deletes: ['del_1'],
+          conflicts: [
+            (
+              NotesFixtures.buildNoteCompanion(
+                id: 'conf_1',
+                localVersion: 2,
+                lastSyncedVersion: 1,
+                syncStatus: SyncStatus.conflicted,
+              ),
+              NotesFixtures.buildConflictCompanion(id: 'conf_1', version: 3),
+            ),
+          ],
+        );
+
+        expect(await dao.getNote('del_1'), isNull);
+        expect(await dao.getNote('new_1'), isNotNull);
+        expect((await dao.getNote('over_1'))!.localVersion, equals(5));
+
+        final conflicted = (await dao.getNote('conf_1'))!;
+        expect(conflicted.syncStatus, equals(SyncStatus.conflicted));
+        final conflictRow = await (db.select(
+          db.noteConflicts,
+        )..where((tbl) => tbl.id.equals('conf_1'))).getSingleOrNull();
+        expect(conflictRow, isNotNull);
+        expect(conflictRow!.version, equals(3));
+      },
+    );
 
     test('acknowledgePushed updates sync status or deletes notes', () async {
       final noteToUpdate = NotesFixtures.buildNoteCompanion(

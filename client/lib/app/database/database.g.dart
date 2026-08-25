@@ -2091,6 +2091,438 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
   }
 }
 
+class $ProjectConflictsTable extends ProjectConflicts
+    with TableInfo<$ProjectConflictsTable, ProjectConflictModel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProjectConflictsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES projects (id) ON UPDATE CASCADE ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _encryptedContentMeta = const VerificationMeta(
+    'encryptedContent',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> encryptedContent =
+      GeneratedColumn<Uint8List>(
+        'encrypted_content',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    encryptedContent,
+    version,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'project_conflicts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProjectConflictModel> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('encrypted_content')) {
+      context.handle(
+        _encryptedContentMeta,
+        encryptedContent.isAcceptableOrUnknown(
+          data['encrypted_content']!,
+          _encryptedContentMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_encryptedContentMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProjectConflictModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProjectConflictModel(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      encryptedContent: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}encrypted_content'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $ProjectConflictsTable createAlias(String alias) {
+    return $ProjectConflictsTable(attachedDatabase, alias);
+  }
+}
+
+class ProjectConflictModel extends DataClass
+    implements Insertable<ProjectConflictModel> {
+  final String id;
+  final Uint8List encryptedContent;
+  final int version;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
+  const ProjectConflictModel({
+    required this.id,
+    required this.encryptedContent,
+    required this.version,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['encrypted_content'] = Variable<Uint8List>(encryptedContent);
+    map['version'] = Variable<int>(version);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    return map;
+  }
+
+  ProjectConflictsCompanion toCompanion(bool nullToAbsent) {
+    return ProjectConflictsCompanion(
+      id: Value(id),
+      encryptedContent: Value(encryptedContent),
+      version: Value(version),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory ProjectConflictModel.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProjectConflictModel(
+      id: serializer.fromJson<String>(json['id']),
+      encryptedContent: serializer.fromJson<Uint8List>(
+        json['encryptedContent'],
+      ),
+      version: serializer.fromJson<int>(json['version']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'encryptedContent': serializer.toJson<Uint8List>(encryptedContent),
+      'version': serializer.toJson<int>(version),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+    };
+  }
+
+  ProjectConflictModel copyWith({
+    String? id,
+    Uint8List? encryptedContent,
+    int? version,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+  }) => ProjectConflictModel(
+    id: id ?? this.id,
+    encryptedContent: encryptedContent ?? this.encryptedContent,
+    version: version ?? this.version,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  ProjectConflictModel copyWithCompanion(ProjectConflictsCompanion data) {
+    return ProjectConflictModel(
+      id: data.id.present ? data.id.value : this.id,
+      encryptedContent: data.encryptedContent.present
+          ? data.encryptedContent.value
+          : this.encryptedContent,
+      version: data.version.present ? data.version.value : this.version,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectConflictModel(')
+          ..write('id: $id, ')
+          ..write('encryptedContent: $encryptedContent, ')
+          ..write('version: $version, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    $driftBlobEquality.hash(encryptedContent),
+    version,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProjectConflictModel &&
+          other.id == this.id &&
+          $driftBlobEquality.equals(
+            other.encryptedContent,
+            this.encryptedContent,
+          ) &&
+          other.version == this.version &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
+  final Value<String> id;
+  final Value<Uint8List> encryptedContent;
+  final Value<int> version;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
+  final Value<int> rowid;
+  const ProjectConflictsCompanion({
+    this.id = const Value.absent(),
+    this.encryptedContent = const Value.absent(),
+    this.version = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProjectConflictsCompanion.insert({
+    required String id,
+    required Uint8List encryptedContent,
+    required int version,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       encryptedContent = Value(encryptedContent),
+       version = Value(version),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<ProjectConflictModel> custom({
+    Expression<String>? id,
+    Expression<Uint8List>? encryptedContent,
+    Expression<int>? version,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (encryptedContent != null) 'encrypted_content': encryptedContent,
+      if (version != null) 'version': version,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProjectConflictsCompanion copyWith({
+    Value<String>? id,
+    Value<Uint8List>? encryptedContent,
+    Value<int>? version,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return ProjectConflictsCompanion(
+      id: id ?? this.id,
+      encryptedContent: encryptedContent ?? this.encryptedContent,
+      version: version ?? this.version,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (encryptedContent.present) {
+      map['encrypted_content'] = Variable<Uint8List>(encryptedContent.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProjectConflictsCompanion(')
+          ..write('id: $id, ')
+          ..write('encryptedContent: $encryptedContent, ')
+          ..write('version: $version, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2098,6 +2530,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $NotesTable notes = $NotesTable(this);
   late final $NoteConflictsTable noteConflicts = $NoteConflictsTable(this);
+  late final $ProjectConflictsTable projectConflicts = $ProjectConflictsTable(
+    this,
+  );
   late final KeySlotsDao keySlotsDao = KeySlotsDao(this as AppDatabase);
   late final NotesDao notesDao = NotesDao(this as AppDatabase);
   late final ProjectsDao projectsDao = ProjectsDao(this as AppDatabase);
@@ -2110,6 +2545,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     projects,
     notes,
     noteConflicts,
+    projectConflicts,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2154,6 +2590,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('note_conflicts', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('project_conflicts', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'projects',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('project_conflicts', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -2424,6 +2874,26 @@ final class $$ProjectsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ProjectConflictsTable, List<ProjectConflictModel>>
+  _projectConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.projectConflicts,
+    aliasName: $_aliasNameGenerator(db.projects.id, db.projectConflicts.id),
+  );
+
+  $$ProjectConflictsTableProcessedTableManager get projectConflictsRefs {
+    final manager = $$ProjectConflictsTableTableManager(
+      $_db,
+      $_db.projectConflicts,
+    ).filter((f) => f.id.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _projectConflictsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ProjectsTableFilterComposer
@@ -2517,6 +2987,31 @@ class $$ProjectsTableFilterComposer
           }) => $$NoteConflictsTableFilterComposer(
             $db: $db,
             $table: $db.noteConflicts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> projectConflictsRefs(
+    Expression<bool> Function($$ProjectConflictsTableFilterComposer f) f,
+  ) {
+    final $$ProjectConflictsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projectConflicts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectConflictsTableFilterComposer(
+            $db: $db,
+            $table: $db.projectConflicts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2668,6 +3163,31 @@ class $$ProjectsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> projectConflictsRefs<T extends Object>(
+    Expression<T> Function($$ProjectConflictsTableAnnotationComposer a) f,
+  ) {
+    final $$ProjectConflictsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projectConflicts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectConflictsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projectConflicts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProjectsTableTableManager
@@ -2683,7 +3203,11 @@ class $$ProjectsTableTableManager
           $$ProjectsTableUpdateCompanionBuilder,
           (ProjectModel, $$ProjectsTableReferences),
           ProjectModel,
-          PrefetchHooks Function({bool notesRefs, bool noteConflictsRefs})
+          PrefetchHooks Function({
+            bool notesRefs,
+            bool noteConflictsRefs,
+            bool projectConflictsRefs,
+          })
         > {
   $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
     : super(
@@ -2749,12 +3273,17 @@ class $$ProjectsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({notesRefs = false, noteConflictsRefs = false}) {
+              ({
+                notesRefs = false,
+                noteConflictsRefs = false,
+                projectConflictsRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (notesRefs) db.notes,
                     if (noteConflictsRefs) db.noteConflicts,
+                    if (projectConflictsRefs) db.projectConflicts,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -2801,6 +3330,26 @@ class $$ProjectsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (projectConflictsRefs)
+                        await $_getPrefetchedData<
+                          ProjectModel,
+                          $ProjectsTable,
+                          ProjectConflictModel
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProjectsTableReferences
+                              ._projectConflictsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProjectsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).projectConflictsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) =>
+                                  referencedItems.where((e) => e.id == item.id),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -2821,7 +3370,11 @@ typedef $$ProjectsTableProcessedTableManager =
       $$ProjectsTableUpdateCompanionBuilder,
       (ProjectModel, $$ProjectsTableReferences),
       ProjectModel,
-      PrefetchHooks Function({bool notesRefs, bool noteConflictsRefs})
+      PrefetchHooks Function({
+        bool notesRefs,
+        bool noteConflictsRefs,
+        bool projectConflictsRefs,
+      })
     >;
 typedef $$NotesTableCreateCompanionBuilder =
     NotesCompanion Function({
@@ -3808,6 +4361,359 @@ typedef $$NoteConflictsTableProcessedTableManager =
       NoteConflictModel,
       PrefetchHooks Function({bool id, bool projectId})
     >;
+typedef $$ProjectConflictsTableCreateCompanionBuilder =
+    ProjectConflictsCompanion Function({
+      required String id,
+      required Uint8List encryptedContent,
+      required int version,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$ProjectConflictsTableUpdateCompanionBuilder =
+    ProjectConflictsCompanion Function({
+      Value<String> id,
+      Value<Uint8List> encryptedContent,
+      Value<int> version,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$ProjectConflictsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ProjectConflictsTable,
+          ProjectConflictModel
+        > {
+  $$ProjectConflictsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ProjectsTable _idTable(_$AppDatabase db) => db.projects.createAlias(
+    $_aliasNameGenerator(db.projectConflicts.id, db.projects.id),
+  );
+
+  $$ProjectsTableProcessedTableManager get id {
+    final $_column = $_itemColumn<String>('id')!;
+
+    final manager = $$ProjectsTableTableManager(
+      $_db,
+      $_db.projects,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_idTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ProjectConflictsTableFilterComposer
+    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
+  $$ProjectConflictsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<Uint8List> get encryptedContent => $composableBuilder(
+    column: $table.encryptedContent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ProjectsTableFilterComposer get id {
+    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableFilterComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectConflictsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
+  $$ProjectConflictsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<Uint8List> get encryptedContent => $composableBuilder(
+    column: $table.encryptedContent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ProjectsTableOrderingComposer get id {
+    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableOrderingComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectConflictsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
+  $$ProjectConflictsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<Uint8List> get encryptedContent => $composableBuilder(
+    column: $table.encryptedContent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$ProjectsTableAnnotationComposer get id {
+    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.projects,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProjectsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.projects,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProjectConflictsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProjectConflictsTable,
+          ProjectConflictModel,
+          $$ProjectConflictsTableFilterComposer,
+          $$ProjectConflictsTableOrderingComposer,
+          $$ProjectConflictsTableAnnotationComposer,
+          $$ProjectConflictsTableCreateCompanionBuilder,
+          $$ProjectConflictsTableUpdateCompanionBuilder,
+          (ProjectConflictModel, $$ProjectConflictsTableReferences),
+          ProjectConflictModel,
+          PrefetchHooks Function({bool id})
+        > {
+  $$ProjectConflictsTableTableManager(
+    _$AppDatabase db,
+    $ProjectConflictsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProjectConflictsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProjectConflictsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProjectConflictsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<Uint8List> encryptedContent = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectConflictsCompanion(
+                id: id,
+                encryptedContent: encryptedContent,
+                version: version,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required Uint8List encryptedContent,
+                required int version,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProjectConflictsCompanion.insert(
+                id: id,
+                encryptedContent: encryptedContent,
+                version: version,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ProjectConflictsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({id = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (id) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.id,
+                                referencedTable:
+                                    $$ProjectConflictsTableReferences._idTable(
+                                      db,
+                                    ),
+                                referencedColumn:
+                                    $$ProjectConflictsTableReferences
+                                        ._idTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ProjectConflictsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ProjectConflictsTable,
+      ProjectConflictModel,
+      $$ProjectConflictsTableFilterComposer,
+      $$ProjectConflictsTableOrderingComposer,
+      $$ProjectConflictsTableAnnotationComposer,
+      $$ProjectConflictsTableCreateCompanionBuilder,
+      $$ProjectConflictsTableUpdateCompanionBuilder,
+      (ProjectConflictModel, $$ProjectConflictsTableReferences),
+      ProjectConflictModel,
+      PrefetchHooks Function({bool id})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3820,4 +4726,6 @@ class $AppDatabaseManager {
       $$NotesTableTableManager(_db, _db.notes);
   $$NoteConflictsTableTableManager get noteConflicts =>
       $$NoteConflictsTableTableManager(_db, _db.noteConflicts);
+  $$ProjectConflictsTableTableManager get projectConflicts =>
+      $$ProjectConflictsTableTableManager(_db, _db.projectConflicts);
 }

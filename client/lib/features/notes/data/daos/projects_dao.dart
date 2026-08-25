@@ -2,11 +2,12 @@ import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
+import 'package:ink/features/notes/data/tables/project_conflicts.dart';
 import 'package:ink/features/notes/data/tables/projects.dart';
 
 part 'projects_dao.g.dart';
 
-@DriftAccessor(tables: [Projects])
+@DriftAccessor(tables: [Projects, ProjectConflicts])
 class ProjectsDao extends DatabaseAccessor<AppDatabase>
     with _$ProjectsDaoMixin {
   ProjectsDao(super.attachedDatabase);
@@ -16,9 +17,6 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> updateProject(ProjectsCompanion note) =>
       update(projects).replace(note);
-
-  Future<void> upsertFolder(ProjectsCompanion project) =>
-      into(projects).insert(project, mode: InsertMode.insertOrReplace);
 
   Future<void> acknowledgePushed(
     List<SyncAck> acknowledgements,
@@ -47,6 +45,37 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
       (select(projects)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
 
   Future<List<ProjectModel>> getAll() => select(projects).get();
+
+  Future<List<ProjectModel>> getByIds(List<String> ids) =>
+      (select(projects)..where((tbl) => tbl.id.isIn(ids))).get();
+
+  /// Applies a pre-computed set of remote delta writes atomically: every
+  /// upsert, delete and conflict write runs inside a single transaction.
+  Future<void> applyRemoteDeltas({
+    List<ProjectsCompanion> upserts = const [],
+    List<String> deletes = const [],
+    List<(ProjectsCompanion project, ProjectConflictsCompanion conflict)>
+        conflicts =
+        const [],
+  }) => batch((b) {
+    b
+      ..insertAll(projects, upserts, mode: InsertMode.replace)
+      ..insertAll(
+        projectConflicts,
+        [for (final (_, conflict) in conflicts) conflict],
+        mode: InsertMode.replace,
+      );
+    for (final (project, _) in conflicts) {
+      b.update(
+        projects,
+        project,
+        where: (tbl) => tbl.id.equals(project.id.value),
+      );
+    }
+    if (deletes.isNotEmpty) {
+      b.deleteWhere(projects, (tbl) => tbl.id.isIn(deletes));
+    }
+  });
 
   Future<List<ProjectModel>> getPending() =>
       (select(projects)..where(

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/database.dart';
 import 'package:ink/features/notes/data/daos/projects_dao.dart';
 import 'package:ink/features/notes/data/sources/projects_local_data_source.dart';
 import 'package:mocktail/mocktail.dart';
@@ -29,6 +30,27 @@ void main() {
       await dataSource.create(companion);
 
       verify(() => mockDao.insertProject(companion)).called(1);
+    });
+
+    test(
+      'applyRemoteDeltas delegates to ProjectsDao.applyRemoteDeltas',
+      () async {
+        when(() => mockDao.applyRemoteDeltas()).thenAnswer((_) async {});
+
+        await dataSource.applyRemoteDeltas();
+
+        verify(() => mockDao.applyRemoteDeltas()).called(1);
+      },
+    );
+
+    test('getByIds delegates to ProjectsDao.getByIds', () async {
+      when(
+        () => mockDao.getByIds(any()),
+      ).thenAnswer((_) async => <ProjectModel>[]);
+
+      await dataSource.getByIds(['a', 'b']);
+
+      verify(() => mockDao.getByIds(['a', 'b'])).called(1);
     });
 
     test('getPending delegates to ProjectsDao.getPending', () async {

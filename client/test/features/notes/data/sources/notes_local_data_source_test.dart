@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/database.dart';
 import 'package:ink/features/notes/data/daos/notes_dao.dart';
 import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
 import 'package:mocktail/mocktail.dart';
@@ -31,17 +32,22 @@ void main() {
       verify(() => mockDao.insertNote(companion)).called(1);
     });
 
-    test('saveWithConflict delegates to NotesDao.updateWithConflict', () async {
+    test('applyRemoteDeltas delegates to NotesDao.applyRemoteDeltas', () async {
+      when(() => mockDao.applyRemoteDeltas()).thenAnswer((_) async {});
+
+      await dataSource.applyRemoteDeltas();
+
+      verify(() => mockDao.applyRemoteDeltas()).called(1);
+    });
+
+    test('getByIds delegates to NotesDao.getByIds', () async {
       when(
-        () => mockDao.updateWithConflict(any(), any()),
-      ).thenAnswer((_) async {});
+        () => mockDao.getByIds(any()),
+      ).thenAnswer((_) async => <NoteModel>[]);
 
-      final note = NotesFixtures.buildNoteCompanion();
-      final conflict = NotesFixtures.buildConflictCompanion();
+      await dataSource.getByIds(['a', 'b']);
 
-      await dataSource.saveWithConflict(note, conflict);
-
-      verify(() => mockDao.updateWithConflict(note, conflict)).called(1);
+      verify(() => mockDao.getByIds(['a', 'b'])).called(1);
     });
 
     test('acknowledgePushed delegates to NotesDao.acknowledgePushed', () async {

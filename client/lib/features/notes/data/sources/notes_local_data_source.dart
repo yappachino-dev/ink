@@ -15,11 +15,6 @@ class NotesLocalDataSource {
 
   Future<void> save(NotesCompanion note) => _notesDao.updateNote(note);
 
-  Future<void> saveWithConflict(
-    NotesCompanion note,
-    NoteConflictsCompanion conflict,
-  ) => _notesDao.updateWithConflict(note, conflict);
-
   Future<void> acknowledgePushed(
     List<SyncAck> acknowledgements,
   ) => _notesDao.acknowledgePushed(acknowledgements);
@@ -27,6 +22,19 @@ class NotesLocalDataSource {
   Future<NoteModel?> get(String id) => _notesDao.getNote(id);
 
   Future<List<NoteModel>> getAll() => _notesDao.getAllNotes();
+
+  Future<List<NoteModel>> getByIds(List<String> ids) => _notesDao.getByIds(ids);
+
+  Future<void> applyRemoteDeltas({
+    List<NotesCompanion> upserts = const [],
+    List<String> deletes = const [],
+    List<(NotesCompanion note, NoteConflictsCompanion conflict)> conflicts =
+        const [],
+  }) => _notesDao.applyRemoteDeltas(
+    upserts: upserts,
+    deletes: deletes,
+    conflicts: conflicts,
+  );
 
   Future<List<NoteModel>> getPending() => _notesDao.getPending();
 
