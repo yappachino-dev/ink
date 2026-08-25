@@ -139,7 +139,8 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 func (a *App) Run(ctx context.Context) error {
 	grpcListener, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		panic(fmt.Sprintf("gRPC failed to listen: %v", err))
+		slog.Error("gRPC failed to listen", "error", err)
+		os.Exit(1)
 	}
 
 	errChan := make(chan error, 2)

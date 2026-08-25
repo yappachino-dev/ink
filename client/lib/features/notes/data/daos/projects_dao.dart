@@ -79,10 +79,7 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<ProjectModel>> getPending() =>
       (select(projects)..where(
-            (tbl) => tbl.syncStatus.isIn([
-              SyncStatus.modified.index,
-              SyncStatus.deleted.index,
-            ]),
+            (tbl) => tbl.syncStatus.isIn(syncPendingPushIndexes),
           ))
           .get();
 
