@@ -115,9 +115,11 @@ func TestSendVerificationCodeDeliversFormattedMessage(t *testing.T) {
 	for _, want := range []string{
 		"From: ink@localhost",
 		"To: user@example.com",
-		"Subject:",
+		"Subject: Your Ink verification code",
 		"123456",
 		"Content-Type: text/html",
+		"Welcome to Ink!",
+		"expires in 10 minutes",
 	} {
 		if !strings.Contains(f.data, want) {
 			t.Errorf("message missing %q", want)
