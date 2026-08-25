@@ -171,14 +171,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
 
           if (_isDrawerOpen)
-            AnimatedBuilder(
-              animation: _drawerAnimation,
-              builder: (_, _) => GestureDetector(
-                onTap: _closeDrawer,
-                child: ColoredBox(
-                  color: context.ink.scrim.withValues(
-                    alpha:
-                        context.ink.scrim.a * _drawerAnimation.value,
+            Positioned.fill(
+              child: AnimatedBuilder(
+                animation: _drawerAnimation,
+                builder: (_, _) => GestureDetector(
+                  onTap: _closeDrawer,
+                  behavior: HitTestBehavior.opaque,
+                  child: ColoredBox(
+                    color: context.ink.scrim.withValues(
+                      alpha: context.ink.scrim.a * _drawerAnimation.value,
+                    ),
                   ),
                 ),
               ),
