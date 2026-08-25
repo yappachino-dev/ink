@@ -1,3 +1,6 @@
+-- Ink schema v1: initial tables.
+
+-- +goose Up
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -92,3 +95,11 @@ CREATE TABLE IF NOT EXISTS email_verifications (
 );
 
 CREATE INDEX IF NOT EXISTS idx_email_verifications_email ON email_verifications(email);
+
+-- +goose Down
+DROP TABLE IF EXISTS email_verifications;
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS user_keys;
+DROP TABLE IF EXISTS users;
