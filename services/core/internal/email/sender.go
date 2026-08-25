@@ -32,11 +32,11 @@ func (s *Sender) SendVerificationCode(to string, code string) error {
 <body style="margin:0; padding:0; background:#f7f7f5; font-family:Arial, sans-serif; color:#2f2f2f;">
   <div style="max-width:560px; margin:40px auto; background:#ffffff; border-radius:24px; padding:36px; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
     <h1 style="margin:0 0 12px; font-size:28px; color:#2f2f2f;">
-      PPlaner 🌿
+      Ink 🌿
     </h1>
 
     <p style="font-size:16px; line-height:1.6; margin:0 0 24px;">
-      Привіт! На зв’язку команда PPlaner ✨
+      Привіт! На зв’язку команда Ink ✨
     </p>
 
     <p style="font-size:16px; line-height:1.6; margin:0 0 24px;">
@@ -55,14 +55,14 @@ func (s *Sender) SendVerificationCode(to string, code string) error {
     </p>
 
     <p style="font-size:14px; line-height:1.6; color:#777; margin:0;">
-      Якщо ви не створювали акаунт у PPlaner, просто проігноруйте цей лист.
+      Якщо ви не створювали акаунт в Ink, просто проігноруйте цей лист.
     </p>
 
     <hr style="border:none; border-top:1px solid #eeeeee; margin:28px 0;">
 
     <p style="font-size:14px; color:#8fa68f; margin:0;">
       З турботою,<br>
-      команда PPlaner 🌿
+      команда Ink 🌿
     </p>
   </div>
 </body>

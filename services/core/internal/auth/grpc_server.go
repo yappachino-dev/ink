@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"log/slog"
 
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
 	"google.golang.org/grpc/codes"
@@ -13,12 +12,14 @@ type Server struct {
 	authv1.UnimplementedAuthServiceServer
 	authService         *AuthService
 	verificationService *VerificationService
+	codeSender          CodeSender
 }
 
-func NewServer(authService *AuthService, emailEmailVerificationService *VerificationService) *Server {
+func NewServer(authService *AuthService, verificationService *VerificationService, codeSender CodeSender) *Server {
 	return &Server{
 		authService:         authService,
-		verificationService: emailEmailVerificationService,
+		verificationService: verificationService,
+		codeSender:          codeSender,
 	}
 }
 
@@ -31,9 +32,9 @@ func (s *Server) VerifyEmail(ctx context.Context, req *authv1.VerifyEmailRequest
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to generate email verification")
 	}
-	// TODO(debt): verification codes are not emailed yet (T-02 in docs/tech-debt.md);
-	// they are logged so registration can be tested manually. Remove once SMTP is wired.
-	slog.Warn("verification code generated (email delivery not wired)", "code", code)
+	if err := s.codeSender.SendCode(ctx, req.GetEmail(), code); err != nil {
+		return nil, status.Error(codes.Internal, "failed to send verification email")
+	}
 
 	return &authv1.VerifyEmailResponse{}, nil
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
+	"github.com/yappachino-dev/ink/services/core/internal/email"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
@@ -58,13 +59,22 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	syncRepo := sync.NewPostgresSyncRepository(queries)
 
 	verificationSvc := auth.NewVerificationService(verificationRepo)
-	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
-	vaultSvc := vault.NewVaultService(transactor, vaultRepo)
-	syncSvc := sync.NewSyncService(transactor, syncRepo)
 
 	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
 		Level: slog.LevelDebug,
 	}))
+
+	// Verification-code delivery: real SMTP in production, log output in dev.
+	var codeSender auth.CodeSender
+	if cfg.Env == config.EnvProduction {
+		codeSender = emailCodeSender{sender: email.NewSender(cfg.SMTP)}
+	} else {
+		codeSender = auth.NewLogCodeSender(logger)
+	}
+
+	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
+	vaultSvc := vault.NewVaultService(transactor, vaultRepo)
+	syncSvc := sync.NewSyncService(transactor, syncRepo)
 	logOpts := []logging.Option{logging.WithLogOnEvents(
 		logging.StartCall, logging.FinishCall,
 	)}
@@ -77,7 +87,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		),
 	)
 
-	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, verificationSvc))
+	authv1.RegisterAuthServiceServer(grpcServer, auth.NewServer(authSvc, verificationSvc, codeSender))
 	vaultv1.RegisterVaultServiceServer(grpcServer, vault.NewServer(vaultSvc))
 	syncv1.RegisterSyncServiceServer(grpcServer, sync.NewServer(syncSvc))
 
@@ -170,4 +180,13 @@ func interceptorLogger(l *slog.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
 		l.Log(ctx, slog.Level(lvl), msg, fields...)
 	})
+}
+
+// emailCodeSender adapts the SMTP sender to the auth.CodeSender interface.
+type emailCodeSender struct {
+	sender *email.Sender
+}
+
+func (a emailCodeSender) SendCode(_ context.Context, email, code string) error {
+	return a.sender.SendVerificationCode(email, code)
 }

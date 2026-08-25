@@ -7,9 +7,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Environment names accepted in APP_ENV. Development (the default) logs
+// verification codes instead of emailing them; production sends real email.
+const (
+	EnvDevelopment = "development"
+	EnvProduction  = "production"
+)
+
 type Config struct {
 	DatabaseURL  string
 	JwtSecretKey string
+	Env          string
 	SMTP         SMTP
 }
 
@@ -34,6 +42,14 @@ func Load() (*Config, error) {
 
 	jwtSecretKey := os.Getenv("JWT_SECRET_KEY")
 
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = EnvDevelopment
+	}
+	if env != EnvDevelopment && env != EnvProduction {
+		return nil, fmt.Errorf("invalid APP_ENV %q: expected %q or %q", env, EnvDevelopment, EnvProduction)
+	}
+
 	if databaseURL == "" {
 		return nil, fmt.Errorf("missing required database environment variables")
 	}
@@ -45,6 +61,7 @@ func Load() (*Config, error) {
 	cfg := Config{
 		DatabaseURL:  databaseURL,
 		JwtSecretKey: jwtSecretKey,
+		Env:          env,
 		SMTP: SMTP{
 			Host:     smtpHost,
 			Port:     smtpPort,
