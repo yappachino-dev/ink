@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
@@ -31,7 +30,7 @@ func (r *PostgresVaultRepository) GetKeySlotsByUserID(ctx context.Context, userI
 			Type:             int(row.KeyType),
 			Salt:             row.Salt,
 			WrappedMasterKey: row.WrappedMasterKey,
-			UpdatedAt:        row.UpdatedAt.Time,
+			UpdatedAt:        row.UpdatedAt,
 		})
 	}
 
@@ -50,7 +49,7 @@ func (r *PostgresVaultRepository) UpsertKeySlots(ctx context.Context, userID int
 			KeyType:          int32(keySlot.Type),
 			Salt:             keySlot.Salt,
 			WrappedMasterKey: keySlot.WrappedMasterKey,
-			UpdatedAt:        pgtype.Timestamp{Time: keySlot.UpdatedAt, Valid: true},
+			UpdatedAt:        keySlot.UpdatedAt,
 		}
 	}
 

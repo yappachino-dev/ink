@@ -7,8 +7,7 @@ package store
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
+	"time"
 )
 
 const getKeySlotsByUserID = `-- name: GetKeySlotsByUserID :many
@@ -17,10 +16,10 @@ FROM user_keys WHERE user_id = $1
 `
 
 type GetKeySlotsByUserIDRow struct {
-	KeyType          int32            `json:"key_type"`
-	Salt             []byte           `json:"salt"`
-	WrappedMasterKey []byte           `json:"wrapped_master_key"`
-	UpdatedAt        pgtype.Timestamp `json:"updated_at"`
+	KeyType          int32     `json:"key_type"`
+	Salt             []byte    `json:"salt"`
+	WrappedMasterKey []byte    `json:"wrapped_master_key"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 func (q *Queries) GetKeySlotsByUserID(ctx context.Context, userID int32) ([]GetKeySlotsByUserIDRow, error) {

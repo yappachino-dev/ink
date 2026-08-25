@@ -22,15 +22,15 @@ func (r *PostgresTokenRepository) Create(ctx context.Context, token *RefreshToke
 	row, err := r.q.CreateRefreshToken(ctx, store.CreateRefreshTokenParams{
 		UserID:    int32(token.UserID),
 		Hash:      token.Hash,
-		ExpiresAt: database.TimeToPg(token.ExpiresAt),
+		ExpiresAt: token.ExpiresAt,
 	})
 	if err != nil {
 		return err
 	}
 
 	token.ID = int(row.ID)
-	token.CreatedAt = database.PgToTime(row.CreatedAt)
-	token.RevokedAt = database.PgToTime(row.RevokedAt)
+	token.CreatedAt = row.CreatedAt
+	token.RevokedAt = database.FromNullTime(row.RevokedAt)
 	return nil
 }
 
@@ -47,16 +47,16 @@ func (r *PostgresTokenRepository) ByHash(ctx context.Context, hash []byte) (*Ref
 		ID:        int(row.ID),
 		UserID:    int(row.UserID),
 		Hash:      row.Hash,
-		ExpiresAt: database.PgToTime(row.ExpiresAt),
-		CreatedAt: database.PgToTime(row.CreatedAt),
-		RevokedAt: database.PgToTime(row.RevokedAt),
+		ExpiresAt: row.ExpiresAt,
+		CreatedAt: row.CreatedAt,
+		RevokedAt: database.FromNullTime(row.RevokedAt),
 	}, nil
 }
 
 func (r *PostgresTokenRepository) RevokeByHash(ctx context.Context, hash []byte) error {
 	return r.q.RevokeRefreshTokenByHash(ctx, store.RevokeRefreshTokenByHashParams{
 		Hash:      hash,
-		RevokedAt: database.TimeToPg(time.Now().UTC()),
+		RevokedAt: database.ToNullTime(time.Now().UTC()),
 	})
 }
 
@@ -68,7 +68,7 @@ func (r *PostgresTokenRepository) Update(ctx context.Context, token *RefreshToke
 	return r.q.UpdateRefreshToken(ctx, store.UpdateRefreshTokenParams{
 		ID:        int32(token.ID),
 		Hash:      token.Hash,
-		ExpiresAt: database.TimeToPg(token.ExpiresAt),
-		RevokedAt: database.TimeToPg(token.RevokedAt),
+		ExpiresAt: token.ExpiresAt,
+		RevokedAt: database.ToNullTime(token.RevokedAt),
 	})
 }

@@ -46,9 +46,9 @@ func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, userID i
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
 			SyncSequence:     int(row.SyncSequence),
-			CreatedAt:        database.PgToTime(row.CreatedAt),
-			UpdatedAt:        database.PgToTime(row.UpdatedAt),
-			DeletedAt:        database.PgToTime(row.DeletedAt),
+			CreatedAt:        row.CreatedAt,
+			UpdatedAt:        row.UpdatedAt,
+			DeletedAt:        database.FromNullTime(row.DeletedAt),
 		})
 	}
 
@@ -68,9 +68,9 @@ func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, userID int,
 			EncryptedContent: p.EncryptedContent,
 			Version:          int32(p.Version),
 			SyncSequence:     int32(syncSequence),
-			CreatedAt:        database.TimeToPg(p.CreatedAt),
-			UpdatedAt:        database.TimeToPg(p.UpdatedAt),
-			DeletedAt:        database.TimeToPg(p.DeletedAt),
+			CreatedAt:        p.CreatedAt,
+			UpdatedAt:        p.UpdatedAt,
+			DeletedAt:        database.ToNullTime(p.DeletedAt),
 		})
 	}
 
@@ -97,9 +97,9 @@ func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int,
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
 			SyncSequence:     int(row.SyncSequence),
-			CreatedAt:        database.PgToTime(row.CreatedAt),
-			UpdatedAt:        database.PgToTime(row.UpdatedAt),
-			DeletedAt:        database.PgToTime(row.DeletedAt),
+			CreatedAt:        row.CreatedAt,
+			UpdatedAt:        row.UpdatedAt,
+			DeletedAt:        database.FromNullTime(row.DeletedAt),
 		})
 	}
 
@@ -121,9 +121,9 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
 			SyncSequence:     int32(syncSequence),
-			CreatedAt:        database.TimeToPg(n.CreatedAt),
-			UpdatedAt:        database.TimeToPg(n.UpdatedAt),
-			DeletedAt:        database.TimeToPg(n.DeletedAt),
+			CreatedAt:        n.CreatedAt,
+			UpdatedAt:        n.UpdatedAt,
+			DeletedAt:        database.ToNullTime(n.DeletedAt),
 		})
 	}
 

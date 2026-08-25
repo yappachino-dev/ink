@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/yappachino-dev/ink/services/core/internal/database"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
@@ -27,8 +26,8 @@ func (r *PostgresUserRepository) Create(ctx context.Context, user *User) error {
 	}
 
 	user.ID = int(row.ID)
-	user.CreatedAt = database.PgToTime(row.CreatedAt)
-	user.UpdatedAt = database.PgToTime(row.UpdatedAt)
+	user.CreatedAt = row.CreatedAt
+	user.UpdatedAt = row.UpdatedAt
 	return nil
 }
 
@@ -46,8 +45,8 @@ func (r *PostgresUserRepository) ByEmail(ctx context.Context, email string) (*Us
 		Email:        row.Email,
 		PasswordHash: row.PasswordHash,
 		SyncCursor:   int(row.SyncCursor),
-		CreatedAt:    database.PgToTime(row.CreatedAt),
-		UpdatedAt:    database.PgToTime(row.UpdatedAt),
+		CreatedAt:    row.CreatedAt,
+		UpdatedAt:    row.UpdatedAt,
 	}, nil
 }
 
@@ -65,7 +64,7 @@ func (r *PostgresUserRepository) ByID(ctx context.Context, id int) (*User, error
 		Email:        row.Email,
 		PasswordHash: row.PasswordHash,
 		SyncCursor:   int(row.SyncCursor),
-		CreatedAt:    database.PgToTime(row.CreatedAt),
-		UpdatedAt:    database.PgToTime(row.UpdatedAt),
+		CreatedAt:    row.CreatedAt,
+		UpdatedAt:    row.UpdatedAt,
 	}, nil
 }
