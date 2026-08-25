@@ -76,10 +76,7 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
 
   Future<List<NoteModel>> getPending() =>
       (select(notes)..where(
-            (tbl) => tbl.syncStatus.isIn([
-              SyncStatus.modified.index,
-              SyncStatus.deleted.index,
-            ]),
+            (tbl) => tbl.syncStatus.isIn(syncPendingPushIndexes),
           ))
           .get();
 
