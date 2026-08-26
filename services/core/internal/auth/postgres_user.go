@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
@@ -22,6 +23,12 @@ func (r *PostgresUserRepository) Create(ctx context.Context, user *User) error {
 		PasswordHash: user.PasswordHash,
 	})
 	if err != nil {
+		// The ByEmail pre-check in the service is racy; the UNIQUE constraint
+		// is authoritative. Surface the race as a domain error instead of 500.
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return ErrUserAlreadyExists
+		}
 		return err
 	}
 

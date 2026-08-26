@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"net"
 	"time"
 
 	"github.com/yappachino-dev/ink/services/core/internal/ratelimit"
@@ -53,10 +54,15 @@ func UnaryRateLimitInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
+// peerKey returns the peer's host address without the ephemeral port, so the
+// fixed-window limits apply per client IP and cannot be reset by reconnecting.
 func peerKey(ctx context.Context) string {
 	p, ok := peer.FromContext(ctx)
 	if !ok || p.Addr == nil {
 		return "unknown"
+	}
+	if host, _, err := net.SplitHostPort(p.Addr.String()); err == nil {
+		return host
 	}
 	return p.Addr.String()
 }

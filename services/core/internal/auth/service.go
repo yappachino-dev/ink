@@ -47,6 +47,7 @@ func NewAuthService(
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrUserAlreadyExists  = errors.New("user already exists")
+	ErrInvalidPassword    = errors.New("password must be between 6 and 72 bytes")
 
 	ErrInvalidRefreshToken = errors.New("invalid refresh token")
 	ErrExpiredRefreshToken = errors.New("expired refresh token")
@@ -73,6 +74,11 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 }
 
 func (s *AuthService) Register(ctx context.Context, email, password string) (string, string, error) {
+	// bcrypt silently truncates input beyond 72 bytes; reject instead.
+	if len(password) < 6 || len(password) > 72 {
+		return "", "", ErrInvalidPassword
+	}
+
 	existingUser, err := s.userRepo.ByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
@@ -97,6 +103,16 @@ func (s *AuthService) Register(ctx context.Context, email, password string) (str
 	}
 
 	return s.issueTokens(ctx, user.ID)
+}
+
+// UserExists reports whether an account is registered for the given email.
+// Used to fail registration before consuming a single-use verification code.
+func (s *AuthService) UserExists(ctx context.Context, email string) (bool, error) {
+	user, err := s.userRepo.ByEmail(ctx, email)
+	if err != nil {
+		return false, err
+	}
+	return user != nil, nil
 }
 
 func (s *AuthService) issueTokens(ctx context.Context, userID int) (string, string, error) {
