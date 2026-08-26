@@ -45,7 +45,7 @@
             "password": "Password",
             "passwordHint": "Password",
             "passwordError": "Password is required",
-            "passwordLengthError": "Password must be at least 8 characters",
+            "passwordLengthError": "Password must be between 6 and 72 characters",
             "confirmPassword": "Confirm password",
             "passwordsNotMatch": "Passwords do not match"
         }
