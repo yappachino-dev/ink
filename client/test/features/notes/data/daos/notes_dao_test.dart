@@ -55,6 +55,48 @@ void main() {
       expect(pendingIds, isNot(contains('synced_1')));
     });
 
+    test(
+      'deleteNote tombstones the row so the deletion can be pushed',
+      () async {
+        await dao.insertNote(
+          NotesFixtures.buildNoteCompanion(
+            id: 'tomb_1',
+            syncStatus: SyncStatus.synced,
+          ),
+        );
+
+        await dao.deleteNote('tomb_1');
+
+        final row = await dao.getNote('tomb_1');
+        expect(row, isNotNull);
+        expect(row!.syncStatus, equals(SyncStatus.deleted));
+        expect(row.deletedAt, isNotNull);
+
+        // The tombstone must still be queued for push...
+        final pending = await dao.getPending();
+        expect(pending.map((e) => e.id), contains('tomb_1'));
+        // ...but hidden from reads that back the UI.
+        expect(
+          (await dao.getAllNotes()).map((e) => e.id),
+          isNot(contains('tomb_1')),
+        );
+      },
+    );
+
+    test('getByIds keeps tombstones for conflict detection', () async {
+      await dao.insertNote(
+        NotesFixtures.buildNoteCompanion(
+          id: 'tomb_2',
+          syncStatus: SyncStatus.synced,
+        ),
+      );
+      await dao.deleteNote('tomb_2');
+
+      final rows = await dao.getByIds(['tomb_2']);
+      expect(rows, hasLength(1));
+      expect(rows.single.syncStatus, equals(SyncStatus.deleted));
+    });
+
     test('getByIds returns only requested rows', () async {
       await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'a'));
       await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'b'));

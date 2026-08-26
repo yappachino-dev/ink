@@ -48,6 +48,34 @@ void main() {
     });
 
     test(
+      'deleteProject tombstones the row so the deletion can be pushed',
+      () async {
+        await dao.insertProject(
+          NotesFixtures.buildProjectCompanion(
+            id: 'p_tomb',
+            syncStatus: SyncStatus.synced,
+          ),
+        );
+
+        await dao.deleteProject('p_tomb');
+
+        final row = await dao.getProject('p_tomb');
+        expect(row, isNotNull);
+        expect(row!.syncStatus, equals(SyncStatus.deleted));
+        expect(row.deletedAt, isNotNull);
+
+        // The tombstone must still be queued for push...
+        final pending = await dao.getPending();
+        expect(pending.map((e) => e.id), contains('p_tomb'));
+        // ...but hidden from reads that back the UI.
+        expect(
+          (await dao.getAll()).map((e) => e.id),
+          isNot(contains('p_tomb')),
+        );
+      },
+    );
+
+    test(
       'acknowledgePushed properly applies server acknowledgements',
       () async {
         final project = NotesFixtures.buildProjectCompanion(
@@ -122,15 +150,5 @@ void main() {
         expect(conflictRow!.version, equals(4));
       },
     );
-
-    test('deleteProject physically removes the project row', () async {
-      final project = NotesFixtures.buildProjectCompanion(id: 'del_me');
-      await dao.insertProject(project);
-
-      await dao.deleteProject('del_me');
-
-      final result = await dao.getProject('del_me');
-      expect(result, isNull);
-    });
   });
 }
