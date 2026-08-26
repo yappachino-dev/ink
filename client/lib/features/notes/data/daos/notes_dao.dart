@@ -42,7 +42,11 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
   Future<NoteModel?> getNote(String id) =>
       (select(notes)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
 
-  Future<List<NoteModel>> getAllNotes() => select(notes).get();
+  Future<List<NoteModel>> getAllNotes() =>
+      (select(notes)..where(
+            (tbl) => tbl.syncStatus.isNotInValues(const [SyncStatus.deleted]),
+          ))
+          .get();
 
   Future<List<NoteModel>> getByIds(List<String> ids) =>
       (select(notes)..where((tbl) => tbl.id.isIn(ids))).get();
@@ -80,6 +84,15 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
           ))
           .get();
 
+  /// Marks the note as locally deleted instead of removing it: the tombstone
+  /// row stays in the pending-push queue so the deletion reaches the server
+  /// on the next sync. It is physically removed once the push is acknowledged.
   Future<void> deleteNote(String id) =>
-      (delete(notes)..where((tbl) => tbl.id.equals(id))).go();
+      (update(notes)..where((tbl) => tbl.id.equals(id))).write(
+        NotesCompanion(
+          syncStatus: const Value(SyncStatus.deleted),
+          deletedAt: Value(DateTime.now().toUtc()),
+          updatedAt: Value(DateTime.now().toUtc()),
+        ),
+      );
 }

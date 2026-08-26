@@ -44,7 +44,11 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
   Future<ProjectModel?> getProject(String id) =>
       (select(projects)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
 
-  Future<List<ProjectModel>> getAll() => select(projects).get();
+  Future<List<ProjectModel>> getAll() =>
+      (select(projects)..where(
+            (tbl) => tbl.syncStatus.isNotInValues(const [SyncStatus.deleted]),
+          ))
+          .get();
 
   Future<List<ProjectModel>> getByIds(List<String> ids) =>
       (select(projects)..where((tbl) => tbl.id.isIn(ids))).get();
@@ -83,6 +87,16 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
           ))
           .get();
 
+  /// Marks the project as locally deleted instead of removing it: the
+  /// tombstone row stays in the pending-push queue so the deletion reaches
+  /// the server on the next sync. It is physically removed once the push is
+  /// acknowledged.
   Future<void> deleteProject(String id) =>
-      (delete(projects)..where((tbl) => tbl.id.equals(id))).go();
+      (update(projects)..where((tbl) => tbl.id.equals(id))).write(
+        ProjectsCompanion(
+          syncStatus: const Value(SyncStatus.deleted),
+          deletedAt: Value(DateTime.now().toUtc()),
+          updatedAt: Value(DateTime.now().toUtc()),
+        ),
+      );
 }
