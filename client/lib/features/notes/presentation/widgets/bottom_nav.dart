@@ -37,9 +37,8 @@ class BottomNav extends ConsumerWidget {
           switch (index) {
             case 0:
               if (ref.read(selectedProjectIdProvider) == allProjectsId) {
-                ref
-                    .read(selectedProjectIdProvider.notifier)
-                    .id = todayProjectId;
+                ref.read(selectedProjectIdProvider.notifier).id =
+                    todayProjectId;
               }
               const NotesRoute().go(context);
             case 1:

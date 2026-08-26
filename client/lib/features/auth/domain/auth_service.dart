@@ -10,4 +10,8 @@ abstract interface class AuthService {
     String password,
     String code,
   );
+
+  /// Clears the session: revokes the server-side refresh token (best-effort),
+  /// zeroes the vault master key and removes stored tokens.
+  Future<void> logout();
 }

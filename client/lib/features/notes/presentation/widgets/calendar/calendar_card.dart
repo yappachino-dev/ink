@@ -108,8 +108,9 @@ class CalendarCard extends ConsumerWidget {
           weekendTextStyle: dayStyle,
           outsideDaysVisible: false,
           markerDecoration: BoxDecoration(
-            color: context.colorScheme.primary
-                .withValues(alpha: AppAlpha.strong),
+            color: context.colorScheme.primary.withValues(
+              alpha: AppAlpha.strong,
+            ),
             shape: BoxShape.circle,
           ),
           markersMaxCount: 1,

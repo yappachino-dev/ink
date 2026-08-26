@@ -9,6 +9,7 @@ import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/recovery_phrase_input.dart';
+import 'package:ink/features/vault/presentation/widgets/unlock_throttle_message.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 class UnlockRecoveryScreen extends ConsumerStatefulWidget {
@@ -34,6 +35,10 @@ class _UnlockRecoveryScreenState extends ConsumerState<UnlockRecoveryScreen> {
       context.showSnackbarError('err: $next');
     });
 
+    final isLocked = UnlockThrottleMessage.isLocked(
+      ref.watch(vaultUnlockProvider),
+    );
+
     return SpacedScaffold(
       appBar: const BackAppBar(),
       children: [
@@ -46,10 +51,13 @@ class _UnlockRecoveryScreenState extends ConsumerState<UnlockRecoveryScreen> {
 
         const AppLogo(size: LogoSize.small),
 
-        WideFilledButton(
-          onPressed: _enteredPhrase != null ? _onSubmit : null,
-          child: Text(context.t.common.kContinue),
-        ),
+        if (isLocked)
+          const UnlockThrottleMessage()
+        else
+          WideFilledButton(
+            onPressed: _enteredPhrase != null ? _onSubmit : null,
+            child: Text(context.t.common.kContinue),
+          ),
       ],
     );
   }

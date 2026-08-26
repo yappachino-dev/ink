@@ -66,9 +66,7 @@ class AppearanceSheet extends ConsumerWidget {
                     palette: palette,
                     selected: prefs.palette == palette,
                     onTap: () => unawaited(
-                      ref
-                          .read(themeProvider.notifier)
-                          .setPalette(palette),
+                      ref.read(themeProvider.notifier).setPalette(palette),
                     ),
                   ),
                 ),
@@ -103,9 +101,7 @@ class _OptionTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, size: 24, color: accent),
       title: Text(label, style: context.textTheme.titleMedium),
-      trailing: selected
-          ? Icon(Icons.check, size: 20, color: accent)
-          : null,
+      trailing: selected ? Icon(Icons.check, size: 20, color: accent) : null,
       onTap: onTap,
     );
   }

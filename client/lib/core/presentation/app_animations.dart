@@ -1,4 +1,3 @@
-
 /// Canonical animation durations. Pick by role, not by feel-of-the-moment.
 abstract final class AppDurations {
   /// Micro-interactions: icon swaps, small fades.

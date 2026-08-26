@@ -14,4 +14,8 @@ abstract interface class AuthRepository {
     String password,
     String code,
   );
+
+  /// Revokes the refresh token server-side. Best-effort: callers clear local
+  /// credentials regardless of the outcome.
+  Future<Result<void, AuthFailure>> logout(String refreshToken);
 }
