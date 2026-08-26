@@ -52,6 +52,14 @@ class UnifiedAuthRepository
     );
   }
 
+  @override
+  Future<Result<void, AuthFailure>> logout(String refreshToken) {
+    return remoteRunner(
+      call: () => _remote.logout(refreshToken),
+      mapCore: AuthCoreFailure.new,
+    );
+  }
+
   // --- Token refresher interface implementation ---
 
   @override

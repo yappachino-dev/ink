@@ -33,21 +33,21 @@ Future<SharedPreferences> initializeGlobalSettings() async {
 /// constructed directly inside `runApp` (see main.dart).
 List<Override> buildOverrides(SharedPreferences sharedPrefs) {
   return [
-      sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-      tokenRefresherProvider.overrideWith(
-        (ref) => ref.watch(unifiedAuthRepositoryProvider),
-      ),
-      registeredSyncablesProvider.overrideWith(
-        (ref) {
-          final concreteNotesRepo = ref.watch(unifiedNotesRepositoryProvider);
+    sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+    tokenRefresherProvider.overrideWith(
+      (ref) => ref.watch(unifiedAuthRepositoryProvider),
+    ),
+    registeredSyncablesProvider.overrideWith(
+      (ref) {
+        final concreteNotesRepo = ref.watch(unifiedNotesRepositoryProvider);
 
-          return [
-            ProjectsSyncDelegate(engine: concreteNotesRepo),
-            NotesSyncDelegate(engine: concreteNotesRepo),
-          ];
-        },
-      ),
-      ...overrideNavigators(),
+        return [
+          ProjectsSyncDelegate(engine: concreteNotesRepo),
+          NotesSyncDelegate(engine: concreteNotesRepo),
+        ];
+      },
+    ),
+    ...overrideNavigators(),
   ];
 }
 

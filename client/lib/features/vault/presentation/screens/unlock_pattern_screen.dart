@@ -10,6 +10,7 @@ import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pattern_lock_view.dart';
+import 'package:ink/features/vault/presentation/widgets/unlock_throttle_message.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 class UnlockPatternScreen extends ConsumerStatefulWidget {
@@ -31,6 +32,10 @@ class _UnlockPatternScreenState extends ConsumerState<UnlockPatternScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLocked = UnlockThrottleMessage.isLocked(
+      ref.watch(vaultUnlockProvider),
+    );
+
     return PopScope(
       onPopInvokedWithResult: (didPop, _) =>
           didPop ? ref.invalidate(vaultUnlockProvider) : null,
@@ -48,10 +53,13 @@ class _UnlockPatternScreenState extends ConsumerState<UnlockPatternScreen> {
 
           const AppLogo(size: LogoSize.large),
 
-          WideFilledButton(
-            onPressed: _isValid() ? _onSubmit : null,
-            child: Text(context.t.common.kContinue),
-          ),
+          if (isLocked)
+            const UnlockThrottleMessage()
+          else
+            WideFilledButton(
+              onPressed: _isValid() ? _onSubmit : null,
+              child: Text(context.t.common.kContinue),
+            ),
         ],
       ),
     );

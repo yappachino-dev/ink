@@ -41,7 +41,7 @@ final class SelectedProjectIdProvider
   }
 }
 
-String _$selectedProjectIdHash() => r'a38f96160a9b1ccc12dc75616cac765ec55974a1';
+String _$selectedProjectIdHash() => r'59c59c9969afdb9384c438791d6b9517119e7dbf';
 
 abstract class _$SelectedProjectId extends $Notifier<String> {
   String build();
@@ -251,7 +251,7 @@ final class CalendarViewModeStateProvider
 }
 
 String _$calendarViewModeStateHash() =>
-    r'd0c4b5190808d87d9a16a0569a3ba5e716f2cd55';
+    r'aa229b0476f9274ab5e775852cb91ed842c3d930';
 
 abstract class _$CalendarViewModeState extends $Notifier<CalendarViewMode> {
   CalendarViewMode build();
@@ -304,7 +304,7 @@ final class CalendarSelectedDateProvider
 }
 
 String _$calendarSelectedDateHash() =>
-    r'b05739a40871a987b6a2796c292d6e6b7aad6a05';
+    r'f005f295af90f26db6465a94b2eaf8b63a1ae494';
 
 abstract class _$CalendarSelectedDate extends $Notifier<DateTime> {
   DateTime build();
@@ -357,7 +357,7 @@ final class CalendarFocusedDateProvider
 }
 
 String _$calendarFocusedDateHash() =>
-    r'0f0779304709226d4fad4b6d660fec6115c432ab';
+    r'ceff976707021f7885aa2ee64f9bbf1bcbdfe4dc';
 
 abstract class _$CalendarFocusedDate extends $Notifier<DateTime> {
   DateTime build();

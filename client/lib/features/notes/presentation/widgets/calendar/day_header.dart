@@ -24,12 +24,10 @@ class DayHeader extends ConsumerWidget {
         children: [
           GestureDetector(
             onTap: () {
-              ref
-                  .read(calendarSelectedDateProvider.notifier)
-                  .date = selectedDate.subtract(const Duration(days: 1));
-              ref
-                  .read(calendarFocusedDateProvider.notifier)
-                  .date = selectedDate.subtract(const Duration(days: 1));
+              ref.read(calendarSelectedDateProvider.notifier).date =
+                  selectedDate.subtract(const Duration(days: 1));
+              ref.read(calendarFocusedDateProvider.notifier).date = selectedDate
+                  .subtract(const Duration(days: 1));
             },
             child: Icon(
               Icons.chevron_left,
@@ -48,12 +46,10 @@ class DayHeader extends ConsumerWidget {
 
           GestureDetector(
             onTap: () {
-              ref
-                  .read(calendarSelectedDateProvider.notifier)
-                  .date = selectedDate.add(const Duration(days: 1));
-              ref
-                  .read(calendarFocusedDateProvider.notifier)
-                  .date = selectedDate.add(const Duration(days: 1));
+              ref.read(calendarSelectedDateProvider.notifier).date =
+                  selectedDate.add(const Duration(days: 1));
+              ref.read(calendarFocusedDateProvider.notifier).date = selectedDate
+                  .add(const Duration(days: 1));
             },
             child: Icon(
               Icons.chevron_right,

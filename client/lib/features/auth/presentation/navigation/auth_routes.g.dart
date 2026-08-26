@@ -21,15 +21,18 @@ RouteBase get $authRoute => GoRouteData.$route(
 );
 
 mixin $AuthRoute on GoRouteData {
-  static AuthRoute _fromState(GoRouterState state) =>
-      AuthRoute(source: state.uri.queryParameters['source'] ?? 'onboarding');
+  static AuthRoute _fromState(GoRouterState state) => AuthRoute(
+    source: state.uri.queryParameters['source'] ?? defaultAuthSource,
+  );
 
   AuthRoute get _self => this as AuthRoute;
 
   @override
   String get location => GoRouteData.$location(
     '/auth',
-    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+    queryParams: {
+      if (_self.source != defaultAuthSource) 'source': _self.source,
+    },
   );
 
   @override
@@ -48,7 +51,7 @@ mixin $AuthRoute on GoRouteData {
 
 mixin $RegisterRoute on GoRouteData {
   static RegisterRoute _fromState(GoRouterState state) => RegisterRoute(
-    source: state.uri.queryParameters['source'] ?? 'onboarding',
+    source: state.uri.queryParameters['source'] ?? defaultAuthSource,
   );
 
   RegisterRoute get _self => this as RegisterRoute;
@@ -56,7 +59,9 @@ mixin $RegisterRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/auth/register',
-    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+    queryParams: {
+      if (_self.source != defaultAuthSource) 'source': _self.source,
+    },
   );
 
   @override
@@ -76,7 +81,7 @@ mixin $RegisterRoute on GoRouteData {
 mixin $EmailVerificationRoute on GoRouteData {
   static EmailVerificationRoute _fromState(GoRouterState state) =>
       EmailVerificationRoute(
-        source: state.uri.queryParameters['source'] ?? 'onboarding',
+        source: state.uri.queryParameters['source'] ?? defaultAuthSource,
       );
 
   EmailVerificationRoute get _self => this as EmailVerificationRoute;
@@ -84,7 +89,9 @@ mixin $EmailVerificationRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/auth/email-verification',
-    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+    queryParams: {
+      if (_self.source != defaultAuthSource) 'source': _self.source,
+    },
   );
 
   @override

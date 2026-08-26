@@ -6,7 +6,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/core/services/session/session_manager.dart';
+import 'package:ink/features/auth/data/auth_service_impl.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
@@ -60,8 +60,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTimezoneTap: _openTimezone,
                 onWidgetsTap: _openWidgets,
                 onLogout: () {
-                  ref.read(sessionControllerProvider).clearAccessToken();
-                  ref.read(sessionControllerProvider).clearRefreshToken();
+                  unawaited(ref.read(authServiceProvider).logout());
                 },
               ),
       ),

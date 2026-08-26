@@ -9,6 +9,7 @@ import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pin_pad_view.dart';
+import 'package:ink/features/vault/presentation/widgets/unlock_throttle_message.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 class UnlockPinScreen extends ConsumerStatefulWidget {
@@ -26,6 +27,10 @@ class _UnlockPinScreenState extends ConsumerState<UnlockPinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLocked = UnlockThrottleMessage.isLocked(
+      ref.watch(vaultUnlockProvider),
+    );
+
     return SpacedScaffold(
       appBar: const BackAppBar(),
       children: [
@@ -38,10 +43,14 @@ class _UnlockPinScreenState extends ConsumerState<UnlockPinScreen> {
           onPinChanged: (pin) => setState(() => _pin = pin),
         ),
 
-        WideFilledButton(
-          onPressed: _pin.length == constants.maxPinLength ? _onSubmit : null,
-          child: Text(context.t.common.kContinue),
-        ),
+        if (isLocked)
+          const UnlockThrottleMessage()
+        else ...[
+          WideFilledButton(
+            onPressed: _pin.length == constants.maxPinLength ? _onSubmit : null,
+            child: Text(context.t.common.kContinue),
+          ),
+        ],
       ],
     );
   }

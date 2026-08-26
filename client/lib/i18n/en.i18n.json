@@ -140,7 +140,8 @@
                 "verifyTitle": "Record Verification",
                 "verifyError": "Words do not match. Try again!",
                 "verifySuccess": "Verification successful"
-            }
+            },
+            "throttled": "Too many attempts. Try again in ${seconds}s."
         }
     },
     "home": {
@@ -160,8 +161,18 @@
             "day": "Day"
         },
         "months": [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
         ],
         "timezone": "Choose timezone"
     },
@@ -243,7 +254,7 @@
             "personalization": "Personalization",
             "language": "Language",
             "appearance": {
-                "title": "Appearance", 
+                "title": "Appearance",
                 "light": "Light",
                 "dark": "Dark",
                 "system": "System"

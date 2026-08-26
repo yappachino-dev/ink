@@ -446,6 +446,9 @@ class TranslationsVaultUnlockEn {
 	late final TranslationsVaultUnlockPatternEn pattern = TranslationsVaultUnlockPatternEn.internal(_root);
 	late final TranslationsVaultUnlockWordEn word = TranslationsVaultUnlockWordEn.internal(_root);
 	late final TranslationsVaultUnlockSeedEn seed = TranslationsVaultUnlockSeedEn.internal(_root);
+
+	/// en: 'Too many attempts. Try again in ${seconds}s.'
+	String throttled({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.';
 }
 
 // Path: calendar.modes
@@ -1064,6 +1067,7 @@ extension on Translations {
 			'vault.unlock.seed.verifyTitle' => 'Record Verification',
 			'vault.unlock.seed.verifyError' => 'Words do not match. Try again!',
 			'vault.unlock.seed.verifySuccess' => 'Verification successful',
+			'vault.unlock.throttled' => ({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.',
 			'home.inbox' => 'Inbox',
 			'home.today' => 'Today',
 			'home.completed' => 'Completed',

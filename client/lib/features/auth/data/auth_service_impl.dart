@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/features/auth/data/unified_auth_repository.dart';
@@ -55,6 +57,20 @@ class AuthServiceImpl implements AuthService {
     );
 
     return const Success(null);
+  }
+
+  @override
+  Future<void> logout() async {
+    final refreshToken = _sessionManager.refreshToken;
+    if (refreshToken != null) {
+      // Best effort: even when the revoke call fails (offline, expired),
+      // local credentials must always be cleared.
+      unawaited(_repo.logout(refreshToken));
+    }
+
+    _sessionManager.clearMasterKey();
+    await _sessionManager.clearAccessToken();
+    await _sessionManager.clearRefreshToken();
   }
 }
 
