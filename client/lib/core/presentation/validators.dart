@@ -1,5 +1,5 @@
 final emailRegex = RegExp(
-  r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+  r'^[\w.+-]+@([\w-]+\.)+[A-Za-z]{2,}$',
 );
 
 String? emailValidator(
@@ -15,15 +15,18 @@ String? emailValidator(
   return null;
 }
 
+// Passwords are not trimmed: leading/trailing spaces are part of the secret
+// the user chose, and silently altering them causes login mismatches.
+// The upper bound matches the server policy (bcrypt truncates at 72 bytes).
 String? passwordValidator(
   String? v, {
   required String emptyError,
   required String lengthError,
 }) {
-  final value = v?.trim() ?? '';
+  final value = v ?? '';
 
   if (value.isEmpty) return emptyError;
-  if (value.length < 6 || value.length > 128) return lengthError;
+  if (value.length < 6 || value.length > 72) return lengthError;
 
   return null;
 }
@@ -34,10 +37,10 @@ String? passwordConfirmValidator(
   required String emptyError,
   required String noMatchError,
 }) {
-  final value = v?.trim() ?? '';
+  final value = v ?? '';
 
   if (value.isEmpty) return emptyError;
-  if (value != password.trim()) return noMatchError;
+  if (value != password) return noMatchError;
 
   return null;
 }

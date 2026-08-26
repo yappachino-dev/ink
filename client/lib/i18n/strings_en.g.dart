@@ -374,8 +374,8 @@ class TranslationsAuthFormEn {
 	/// en: 'Password is required'
 	String get passwordError => 'Password is required';
 
-	/// en: 'Password must be at least 8 characters'
-	String get passwordLengthError => 'Password must be at least 8 characters';
+	/// en: 'Password must be between 6 and 72 characters'
+	String get passwordLengthError => 'Password must be between 6 and 72 characters';
 
 	/// en: 'Confirm password'
 	String get confirmPassword => 'Confirm password';
@@ -1013,7 +1013,7 @@ extension on Translations {
 			'auth.form.password' => 'Password',
 			'auth.form.passwordHint' => 'Password',
 			'auth.form.passwordError' => 'Password is required',
-			'auth.form.passwordLengthError' => 'Password must be at least 8 characters',
+			'auth.form.passwordLengthError' => 'Password must be between 6 and 72 characters',
 			'auth.form.confirmPassword' => 'Confirm password',
 			'auth.form.passwordsNotMatch' => 'Passwords do not match',
 			'vault.fatal.title' => 'App crashed fatally',
