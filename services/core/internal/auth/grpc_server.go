@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 
 	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
 	"google.golang.org/grpc/codes"
@@ -40,14 +41,26 @@ func (s *Server) VerifyEmail(ctx context.Context, req *authv1.VerifyEmailRequest
 }
 
 func (s *Server) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
+	// Reject unknown emails before burning a single-use verification code.
+	exists, err := s.authService.UserExists(ctx, req.GetEmail())
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal registration failure")
+	}
+	if exists {
+		return nil, status.Error(codes.AlreadyExists, ErrUserAlreadyExists.Error())
+	}
+
 	if err := s.verificationService.ConfirmCode(ctx, req.GetEmail(), req.GetCode()); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	accessToken, refreshToken, err := s.authService.Register(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
-		if err == ErrUserAlreadyExists {
+		switch {
+		case errors.Is(err, ErrUserAlreadyExists):
 			return nil, status.Error(codes.AlreadyExists, err.Error())
+		case errors.Is(err, ErrInvalidPassword):
+			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
 		return nil, status.Error(codes.Internal, "internal registration failure")
 	}

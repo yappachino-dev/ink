@@ -274,3 +274,43 @@ func TestGenerateAccessToken_ContainsUserIDClaim(t *testing.T) {
 		t.Fatalf("want userID 42, got %d", claims.UserID)
 	}
 }
+
+func TestRegister_RejectsPasswordOutsidePolicy(t *testing.T) {
+	ctx := context.Background()
+	svc := newTestService(newFakeUserRepo(), newFakeTokenRepo())
+
+	for _, password := range []string{"", "abc12", string(make([]byte, 73))} {
+		if _, _, err := svc.Register(ctx, "new@example.com", password); err != ErrInvalidPassword {
+			t.Fatalf("Register(%d bytes): want ErrInvalidPassword, got %v", len(password), err)
+		}
+	}
+
+	// Boundary values must be accepted.
+	if _, _, err := svc.Register(ctx, "a@example.com", "abcdef"); err != nil {
+		t.Fatalf("Register(6 bytes): %v", err)
+	}
+	long := make([]byte, 72)
+	for i := range long {
+		long[i] = 'x'
+	}
+	if _, _, err := svc.Register(ctx, "b@example.com", string(long)); err != nil {
+		t.Fatalf("Register(72 bytes): %v", err)
+	}
+}
+
+func TestUserExists(t *testing.T) {
+	ctx := context.Background()
+	userRepo := newFakeUserRepo()
+	seedUser(t, userRepo)
+	svc := newTestService(userRepo, newFakeTokenRepo())
+
+	exists, err := svc.UserExists(ctx, "user@example.com")
+	if err != nil || !exists {
+		t.Fatalf("existing user: exists=%v err=%v", exists, err)
+	}
+
+	exists, err = svc.UserExists(ctx, "nobody@example.com")
+	if err != nil || exists {
+		t.Fatalf("unknown user: exists=%v err=%v", exists, err)
+	}
+}

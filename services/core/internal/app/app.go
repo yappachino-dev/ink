@@ -115,6 +115,12 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		}
 	}()
 
+	// Put gin in release mode outside development to silence debug routing
+	// logs and disable debug-only behavior.
+	if cfg.Env != config.EnvDevelopment {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
@@ -129,9 +135,16 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	})
 
 	return &App{
-		cfg:        cfg,
-		db:         db,
-		httpServer: &http.Server{Addr: ":8080", Handler: r},
+		cfg: cfg,
+		db:  db,
+		httpServer: &http.Server{
+			Addr:              ":8080",
+			Handler:           r,
+			ReadHeaderTimeout: 5 * time.Second,
+			ReadTimeout:       10 * time.Second,
+			WriteTimeout:      15 * time.Second,
+			IdleTimeout:       60 * time.Second,
+		},
 		grpcServer: grpcServer,
 	}, nil
 }

@@ -51,6 +51,19 @@ func TestUserRepositoryRoundTrip(t *testing.T) {
 	}
 }
 
+func TestUserRepositoryDuplicateEmailMapsToDomainError(t *testing.T) {
+	users, _, _ := newRepos(t)
+	ctx := context.Background()
+
+	if err := users.Create(ctx, &User{Email: "dup@example.com", PasswordHash: "h"}); err != nil {
+		t.Fatalf("first create: %v", err)
+	}
+	err := users.Create(ctx, &User{Email: "dup@example.com", PasswordHash: "h"})
+	if err != ErrUserAlreadyExists {
+		t.Fatalf("duplicate email must surface ErrUserAlreadyExists, got %v", err)
+	}
+}
+
 func TestTokenRepositoryLifecycle(t *testing.T) {
 	users, tokens, _ := newRepos(t)
 	ctx := context.Background()
