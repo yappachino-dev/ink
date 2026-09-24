@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 
 part 'note.freezed.dart';
 
@@ -12,7 +11,7 @@ sealed class Note with _$Note {
     required String id,
 
     required String title,
-    required Document content,
+    required List<dynamic> content,
 
     required int localVersion,
     required int lastSyncedVersion,
@@ -25,7 +24,7 @@ sealed class Note with _$Note {
     String? projectId,
 
     DateTime? dueDate,
-    TimeOfDay? dueTime,
+    NoteTime? dueTime,
     int? reminderMinutesBefore,
 
     @Default(TaskPriority.none) TaskPriority priority,

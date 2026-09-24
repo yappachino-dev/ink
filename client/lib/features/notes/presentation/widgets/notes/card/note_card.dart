@@ -6,6 +6,7 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dart';
+import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';

@@ -4,6 +4,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
+import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
 

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ink/core/domain/sync_status.dart';
 
@@ -11,7 +10,7 @@ sealed class Project with _$Project {
 
     required String title,
     required String emoji,
-    required Color color,
+    required int colorValue,
 
     required int localVersion,
     required int lastSyncedVersion,

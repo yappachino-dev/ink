@@ -13,6 +13,8 @@ import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/presentation/extensions/note_time_ui_extension.dart';
+import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/note_form_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
@@ -72,7 +74,7 @@ class _NoteEditorSheetState extends ConsumerState<NoteEditorSheet> {
 
       _titleController = TextEditingController(text: init.title);
       _quillController = QuillController(
-        document: Document.fromDelta(init.content.toDelta()),
+        document: Document.fromJson(init.content),
         selection: const TextSelection.collapsed(offset: 0),
       );
 
@@ -104,10 +106,10 @@ class _NoteEditorSheetState extends ConsumerState<NoteEditorSheet> {
     if (widget.isEditing) {
       final updated = widget.existingNote!.copyWith(
         title: title,
-        content: _quillController.document,
+        content: _quillController.document.toDelta().toJson(),
         projectId: state.projectId,
         dueDate: state.dueDate,
-        dueTime: state.dueTime,
+        dueTime: state.dueTime?.toNoteTime(),
         priority: state.priority,
         reminderMinutesBefore: state.reminderMinutes,
       );
@@ -116,10 +118,10 @@ class _NoteEditorSheetState extends ConsumerState<NoteEditorSheet> {
     } else {
       final payload = NoteCreationPayload(
         title: title,
-        content: _quillController.document,
+        content: _quillController.document.toDelta().toJson(),
         projectId: state.projectId,
         dueDate: state.dueDate,
-        dueTime: state.dueTime,
+        dueTime: state.dueTime?.toNoteTime(),
         priority: state.priority,
         reminderMinutesBefore: state.reminderMinutes,
       );
@@ -402,7 +404,7 @@ class _MetaActionBar extends ConsumerWidget {
           MetaIconButton(
             icon: Icons.calendar_today_outlined,
             label: state.dueDate != null
-                ? formatDateTime(state.dueDate!, state.dueTime, t)
+                ? formatDateTime(state.dueDate!, state.dueTime?.toNoteTime(), t)
                 : null,
             isActive: state.dueDate != null,
             onTap: () => _pickDate(context, ref),
