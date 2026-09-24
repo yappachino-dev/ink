@@ -1,5 +1,4 @@
 import 'package:ink/app/database/database.dart';
-import 'package:ink/app/database/database_provider.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/data/daos/notes_dao.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -42,5 +41,6 @@ class NotesLocalDataSource {
 }
 
 @riverpod
-NotesLocalDataSource notesLocalDataSource(Ref ref) =>
-    NotesLocalDataSource(notesDao: ref.watch(appDatabaseProvider).notesDao);
+NotesLocalDataSource notesLocalDataSource(Ref ref) => throw StateError(
+  'notesLocalDataSourceProvider must be overridden at the app root',
+);

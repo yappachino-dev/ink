@@ -1,5 +1,4 @@
 import 'package:ink/app/database/database.dart';
-import 'package:ink/app/database/database_provider.dart';
 import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -34,6 +33,6 @@ class VaultLocalDataSource {
 }
 
 @Riverpod(keepAlive: true)
-VaultLocalDataSource vaultLocalDataSource(Ref ref) => VaultLocalDataSource(
-  keySlotsDao: ref.watch(appDatabaseProvider).keySlotsDao,
+VaultLocalDataSource vaultLocalDataSource(Ref ref) => throw StateError(
+  'vaultLocalDataSourceProvider must be overridden at the app root',
 );
