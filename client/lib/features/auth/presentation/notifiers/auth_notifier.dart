@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/misc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ink/features/auth/data/auth_service_impl.dart';
+import 'package:ink/features/auth/domain/auth_providers.dart';
 import 'package:ink/features/auth/domain/failures/auth_failure.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

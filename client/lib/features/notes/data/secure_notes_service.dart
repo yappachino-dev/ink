@@ -346,7 +346,7 @@ class SecureNotesService implements NotesService {
 }
 
 @riverpod
-NotesService notesService(Ref ref) => SecureNotesService(
+NotesService secureNotesService(Ref ref) => SecureNotesService(
   encryption: ref.watch(encryptionServiceProvider),
   cryptoSession: ref.watch(cryptoSessionProvider),
   repository: ref.watch(notesRepositoryProvider),

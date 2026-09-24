@@ -6,7 +6,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/auth/data/auth_service_impl.dart';
+import 'package:ink/features/auth/domain/auth_providers.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
