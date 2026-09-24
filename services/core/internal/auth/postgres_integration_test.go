@@ -127,6 +127,55 @@ func TestTokenRepositoryLifecycle(t *testing.T) {
 	}
 }
 
+func TestTokenRepositoryRotate(t *testing.T) {
+	users, tokens, _ := newRepos(t)
+	ctx := context.Background()
+
+	u := &User{Email: "rotate@example.com", PasswordHash: "hash"}
+	if err := users.Create(ctx, u); err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+
+	oldHash := []byte(uuid.NewString())
+	oldToken := &RefreshToken{
+		UserID:    u.ID,
+		Hash:      oldHash,
+		ExpiresAt: time.Now().UTC().Add(time.Hour),
+	}
+	if err := tokens.Create(ctx, oldToken); err != nil {
+		t.Fatalf("create old token: %v", err)
+	}
+
+	newHash := []byte(uuid.NewString())
+	newToken := &RefreshToken{
+		UserID:    u.ID,
+		Hash:      newHash,
+		ExpiresAt: time.Now().UTC().Add(time.Hour),
+	}
+	rotated, err := tokens.Rotate(ctx, oldHash, newToken)
+	if err != nil || !rotated {
+		t.Fatalf("rotate: rotated=%v err=%v", rotated, err)
+	}
+
+	oldToken, err = tokens.ByHash(ctx, oldHash)
+	if err != nil || oldToken == nil || oldToken.RevokedAt.IsZero() {
+		t.Fatalf("old token should be revoked: token=%+v err=%v", oldToken, err)
+	}
+	newToken, err = tokens.ByHash(ctx, newHash)
+	if err != nil || newToken == nil || !newToken.RevokedAt.IsZero() {
+		t.Fatalf("new token should be active: token=%+v err=%v", newToken, err)
+	}
+
+	rotated, err = tokens.Rotate(ctx, oldHash, &RefreshToken{
+		UserID:    u.ID,
+		Hash:      []byte(uuid.NewString()),
+		ExpiresAt: time.Now().UTC().Add(time.Hour),
+	})
+	if err != nil || rotated {
+		t.Fatalf("reusing revoked token must not rotate: rotated=%v err=%v", rotated, err)
+	}
+}
+
 func TestTokenRepositoryUpdate(t *testing.T) {
 	users, tokens, _ := newRepos(t)
 	ctx := context.Background()

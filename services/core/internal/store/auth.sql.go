@@ -221,6 +221,39 @@ func (q *Queries) RevokeRefreshTokenByHash(ctx context.Context, arg RevokeRefres
 	return err
 }
 
+const rotateRefreshToken = `-- name: RotateRefreshToken :one
+WITH revoked AS (
+    UPDATE refresh_tokens AS current_token
+    SET revoked_at = NOW()
+    WHERE current_token.hash = $3
+      AND current_token.revoked_at IS NULL
+    RETURNING current_token.user_id
+)
+INSERT INTO refresh_tokens (user_id, hash, expires_at, created_at, revoked_at)
+SELECT user_id, $1, $2, NOW(), NULL
+FROM revoked
+RETURNING id, created_at, revoked_at
+`
+
+type RotateRefreshTokenParams struct {
+	NewHash      []byte    `json:"new_hash"`
+	NewExpiresAt time.Time `json:"new_expires_at"`
+	OldHash      []byte    `json:"old_hash"`
+}
+
+type RotateRefreshTokenRow struct {
+	ID        int32      `json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	RevokedAt *time.Time `json:"revoked_at"`
+}
+
+func (q *Queries) RotateRefreshToken(ctx context.Context, arg RotateRefreshTokenParams) (RotateRefreshTokenRow, error) {
+	row := q.db.QueryRow(ctx, rotateRefreshToken, arg.NewHash, arg.NewExpiresAt, arg.OldHash)
+	var i RotateRefreshTokenRow
+	err := row.Scan(&i.ID, &i.CreatedAt, &i.RevokedAt)
+	return i, err
+}
+
 const updateRefreshToken = `-- name: UpdateRefreshToken :exec
 UPDATE refresh_tokens
 SET hash = $1,

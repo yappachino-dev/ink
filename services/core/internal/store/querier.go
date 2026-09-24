@@ -24,6 +24,7 @@ type Querier interface {
 	MarkEmailVerificationAsUsed(ctx context.Context, id int32) error
 	RevokeAllRefreshTokensByUserID(ctx context.Context, userID int32) error
 	RevokeRefreshTokenByHash(ctx context.Context, arg RevokeRefreshTokenByHashParams) error
+	RotateRefreshToken(ctx context.Context, arg RotateRefreshTokenParams) (RotateRefreshTokenRow, error)
 	UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) error
 	UpdateUserCursor(ctx context.Context, arg UpdateUserCursorParams) error
 	UpsertKeySlots(ctx context.Context, arg []UpsertKeySlotsParams) *UpsertKeySlotsBatchResults

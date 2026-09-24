@@ -53,6 +53,29 @@ func (r *PostgresTokenRepository) ByHash(ctx context.Context, hash []byte) (*Ref
 	}, nil
 }
 
+func (r *PostgresTokenRepository) Rotate(
+	ctx context.Context,
+	oldHash []byte,
+	newToken *RefreshToken,
+) (bool, error) {
+	row, err := r.q.RotateRefreshToken(ctx, store.RotateRefreshTokenParams{
+		OldHash:      oldHash,
+		NewHash:      newToken.Hash,
+		NewExpiresAt: newToken.ExpiresAt,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	newToken.ID = int(row.ID)
+	newToken.CreatedAt = row.CreatedAt
+	newToken.RevokedAt = database.FromNullTime(row.RevokedAt)
+	return true, nil
+}
+
 func (r *PostgresTokenRepository) RevokeByHash(ctx context.Context, hash []byte) error {
 	return r.q.RevokeRefreshTokenByHash(ctx, store.RevokeRefreshTokenByHashParams{
 		Hash:      hash,
