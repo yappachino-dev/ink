@@ -9,25 +9,25 @@ part of 'secure_vault_service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(vaultService)
-final vaultServiceProvider = VaultServiceProvider._();
+@ProviderFor(secureVaultService)
+final secureVaultServiceProvider = SecureVaultServiceProvider._();
 
-final class VaultServiceProvider
+final class SecureVaultServiceProvider
     extends $FunctionalProvider<VaultService, VaultService, VaultService>
     with $Provider<VaultService> {
-  VaultServiceProvider._()
+  SecureVaultServiceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'vaultServiceProvider',
+        name: r'secureVaultServiceProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$vaultServiceHash();
+  String debugGetCreateSourceHash() => _$secureVaultServiceHash();
 
   @$internal
   @override
@@ -36,7 +36,7 @@ final class VaultServiceProvider
 
   @override
   VaultService create(Ref ref) {
-    return vaultService(ref);
+    return secureVaultService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -48,4 +48,5 @@ final class VaultServiceProvider
   }
 }
 
-String _$vaultServiceHash() => r'44054d0f4a6854f9e6d0a41220809368c8f56d67';
+String _$secureVaultServiceHash() =>
+    r'0b388696731b5129f35c91a26e6f2b94a6fff184';

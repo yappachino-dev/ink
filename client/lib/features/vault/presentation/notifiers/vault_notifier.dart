@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/services/session/session_manager.dart';
-import 'package:ink/features/vault/data/secure_vault_service.dart';
+import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 import 'package:ink/features/vault/domain/vault_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

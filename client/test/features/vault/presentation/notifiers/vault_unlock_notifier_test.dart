@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/domain/failures/vault_failure.dart';
+import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 

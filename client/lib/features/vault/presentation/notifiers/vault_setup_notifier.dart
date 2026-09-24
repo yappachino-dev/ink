@@ -1,8 +1,9 @@
+import 'package:bip39/bip39.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/domain/failures/vault_failure.dart';
+import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vault_setup_notifier.g.dart';
@@ -30,8 +31,12 @@ class VaultSetup extends _$VaultSetup {
   VaultSetupData build() {
     _link = ref.keepAlive();
 
+    final recoveryPhrase = generateMnemonic(
+      randomBytes: ref.read(vaultRandomServiceProvider).generateBytes,
+    );
+
     return VaultSetupData(
-      generatedRecoveryPhrase: List<String>.filled(12, 'a'),
+      generatedRecoveryPhrase: recoveryPhrase.split(' '),
       verifyIndices: _generateIndices(),
     );
   }

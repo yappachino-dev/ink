@@ -3,9 +3,9 @@ import 'dart:math' as math;
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ink/core/services/sync/sync_orchestrator.dart';
-import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/domain/failures/vault_failure.dart';
+import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vault_unlock_notifier.g.dart';
