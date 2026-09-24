@@ -13,8 +13,13 @@ part of 'client_channel_provider.dart';
 final clientChannelProvider = ClientChannelProvider._();
 
 final class ClientChannelProvider
-    extends $FunctionalProvider<ClientChannel, ClientChannel, ClientChannel>
-    with $Provider<ClientChannel> {
+    extends
+        $FunctionalProvider<
+          grpc_internal.ClientChannel,
+          grpc_internal.ClientChannel,
+          grpc_internal.ClientChannel
+        >
+    with $Provider<grpc_internal.ClientChannel> {
   ClientChannelProvider._()
     : super(
         from: null,
@@ -31,21 +36,22 @@ final class ClientChannelProvider
 
   @$internal
   @override
-  $ProviderElement<ClientChannel> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<grpc_internal.ClientChannel> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  ClientChannel create(Ref ref) {
+  grpc_internal.ClientChannel create(Ref ref) {
     return clientChannel(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ClientChannel value) {
+  Override overrideWithValue(grpc_internal.ClientChannel value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ClientChannel>(value),
+      providerOverride: $SyncValueProvider<grpc_internal.ClientChannel>(value),
     );
   }
 }
 
-String _$clientChannelHash() => r'6b3d816d58c64cf5630c464fbcfb665e938b6c03';
+String _$clientChannelHash() => r'fd70f126e7db13222bdd75fa95c8e40b9ef4c905';
