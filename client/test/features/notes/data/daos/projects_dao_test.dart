@@ -1,8 +1,8 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/daos/projects_dao.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/domain/sync_status.dart';
-import 'package:ink/features/notes/data/daos/projects_dao.dart';
 
 import '../../../../fixtures/notes_fixtures.dart';
 

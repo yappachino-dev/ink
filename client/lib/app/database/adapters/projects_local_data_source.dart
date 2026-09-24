@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:ink/app/database/daos/projects_dao.dart';
 import 'package:ink/app/database/database.dart';
+import 'package:ink/app/database/mappers/encrypted_project_local_mapper.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
-import 'package:ink/features/notes/data/daos/projects_dao.dart';
-import 'package:ink/features/notes/data/mappers/encrypted_project_local_mapper.dart';
 import 'package:ink/features/notes/data/ports/projects_local_store.dart';
 import 'package:ink/features/notes/data/sync_delta_resolution.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
@@ -140,5 +140,5 @@ class ProjectsLocalDataSource implements ProjectsLocalStore {
 
 @riverpod
 ProjectsLocalDataSource projectsLocalDataSource(Ref ref) => throw StateError(
-  'projectsLocalDataSourceProvider must be overridden at the app root',
+  'projectsLocalStoreProvider must be overridden at the app root',
 );

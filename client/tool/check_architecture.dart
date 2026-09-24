@@ -23,10 +23,8 @@ void main() {
 
       if (relativePath.startsWith('lib/features/') &&
           relativePath.contains('/data/') &&
-          source.contains('package:ink/app/database/database_provider.dart')) {
-        violations.add(
-          '$relativePath obtains AppDatabase from the app database provider',
-        );
+          source.contains('package:ink/app/database/')) {
+        violations.add('$relativePath imports the app database boundary');
       }
 
       if (relativePath.startsWith('lib/core/') &&

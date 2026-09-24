@@ -4,7 +4,7 @@ import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/network/network_state_provider.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_remote_mapper.dart';
 import 'package:ink/features/vault/data/ports/vault_local_store.dart';
-import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
+import 'package:ink/features/vault/data/sources/vault_local_store_provider.dart';
 import 'package:ink/features/vault/data/sources/vault_remote_data_source.dart';
 import 'package:ink/features/vault/domain/entities/key_slot.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
@@ -137,7 +137,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
 @Riverpod(keepAlive: true)
 VaultRepository vaultRepository(Ref ref) => UnifiedVaultRepository(
-  local: ref.watch(vaultLocalDataSourceProvider),
+  local: ref.watch(vaultLocalStoreProvider),
   remote: ref.watch(vaultRemoteDataSourceProvider),
   canSync: () => ref.read(networkStateProvider).isAllowedToSync,
 );

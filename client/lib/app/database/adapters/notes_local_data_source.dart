@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
+import 'package:ink/app/database/daos/notes_dao.dart';
 import 'package:ink/app/database/database.dart';
+import 'package:ink/app/database/mappers/encrypted_note_local_mapper.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
-import 'package:ink/features/notes/data/daos/notes_dao.dart';
-import 'package:ink/features/notes/data/mappers/encrypted_note_local_mapper.dart';
 import 'package:ink/features/notes/data/ports/notes_local_store.dart';
 import 'package:ink/features/notes/data/sync_delta_resolution.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
@@ -139,5 +139,5 @@ class NotesLocalDataSource implements NotesLocalStore {
 
 @riverpod
 NotesLocalDataSource notesLocalDataSource(Ref ref) => throw StateError(
-  'notesLocalDataSourceProvider must be overridden at the app root',
+  'notesLocalStoreProvider must be overridden at the app root',
 );

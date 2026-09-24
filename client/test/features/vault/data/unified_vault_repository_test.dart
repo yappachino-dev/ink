@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
+import 'package:ink/features/vault/data/ports/vault_local_store.dart';
 import 'package:ink/features/vault/data/sources/vault_remote_data_source.dart';
 import 'package:ink/features/vault/data/unified_vault_repository.dart';
 import 'package:ink/features/vault/domain/vault_repository.dart';
@@ -8,7 +8,7 @@ import 'package:mocktail/mocktail.dart';
 import '../../../fixtures/vault_fixtures.dart';
 import '../../../helpers/test_helpers.dart';
 
-class MockVaultLocalDataSource extends Mock implements VaultLocalDataSource {}
+class MockVaultLocalDataSource extends Mock implements VaultLocalStore {}
 
 class MockVaultRemoteDataSource extends Mock implements VaultRemoteDataSource {}
 

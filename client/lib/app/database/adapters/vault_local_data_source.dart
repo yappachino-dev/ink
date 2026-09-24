@@ -1,6 +1,6 @@
+import 'package:ink/app/database/daos/key_slots_dao.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
-import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
+import 'package:ink/app/database/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/ports/vault_local_store.dart';
 import 'package:ink/features/vault/domain/entities/key_slot.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
@@ -61,5 +61,5 @@ class VaultLocalDataSource implements VaultLocalStore {
 
 @Riverpod(keepAlive: true)
 VaultLocalDataSource vaultLocalDataSource(Ref ref) => throw StateError(
-  'vaultLocalDataSourceProvider must be overridden at the app root',
+  'vaultLocalStoreProvider must be overridden at the app root',
 );

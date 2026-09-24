@@ -55,4 +55,4 @@ final class ProjectsLocalDataSourceProvider
 }
 
 String _$projectsLocalDataSourceHash() =>
-    r'2cc8e02fa0ce2499b0674194bf4c40e84e64f0c4';
+    r'75ba6131efa3ee255d3cc125ef8fe9d02a40aa1b';

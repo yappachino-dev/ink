@@ -7,8 +7,8 @@ import 'package:ink/features/notes/data/notes_sync_engine.dart';
 import 'package:ink/features/notes/data/ports/notes_local_store.dart';
 import 'package:ink/features/notes/data/ports/projects_local_store.dart';
 import 'package:ink/features/notes/data/projects_sync_engine.dart';
-import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
-import 'package:ink/features/notes/data/sources/projects_local_data_source.dart';
+import 'package:ink/features/notes/data/sources/notes_local_store_provider.dart';
+import 'package:ink/features/notes/data/sources/projects_local_store_provider.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
@@ -183,6 +183,6 @@ NotesRepository notesRepository(Ref ref) =>
 @riverpod
 UnifiedNotesRepository unifiedNotesRepository(Ref ref) =>
     UnifiedNotesRepository(
-      localNotes: ref.watch(notesLocalDataSourceProvider),
-      localProjects: ref.watch(projectsLocalDataSourceProvider),
+      localNotes: ref.watch(notesLocalStoreProvider),
+      localProjects: ref.watch(projectsLocalStoreProvider),
     );

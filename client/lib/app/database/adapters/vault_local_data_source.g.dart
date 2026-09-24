@@ -55,4 +55,4 @@ final class VaultLocalDataSourceProvider
 }
 
 String _$vaultLocalDataSourceHash() =>
-    r'9b0e5ad32437ce5df780946117e12b26fca33f50';
+    r'1d7ce84b20217bee315735ca9fdad1e0f66a8677';

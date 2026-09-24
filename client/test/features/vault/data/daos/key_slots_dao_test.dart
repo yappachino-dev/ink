@@ -1,8 +1,8 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/daos/key_slots_dao.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
-import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
+import 'package:ink/app/database/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 
 import '../../../../fixtures/vault_fixtures.dart';
