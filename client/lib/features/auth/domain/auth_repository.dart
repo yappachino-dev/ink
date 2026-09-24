@@ -1,5 +1,5 @@
+import 'package:ink/core/domain/auth_tokens.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/infrastructure/auth/types.dart';
 import 'package:ink/features/auth/domain/failures/auth_failure.dart';
 
 abstract interface class AuthRepository {

@@ -1,4 +1,4 @@
-import 'package:ink/core/infrastructure/auth/types.dart';
+import 'package:ink/core/domain/auth_tokens.dart';
 import 'package:ink/core/infrastructure/grpc/gen/auth/v1/auth.pbgrpc.dart';
 import 'package:ink/core/infrastructure/grpc/grpc_connection_provider.dart';
 import 'package:ink/features/auth/domain/types.dart';

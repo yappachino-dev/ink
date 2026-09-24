@@ -1,6 +1,6 @@
+import 'package:ink/core/domain/auth_tokens.dart';
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/infrastructure/auth/types.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'token_refresher.g.dart';
