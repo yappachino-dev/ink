@@ -64,6 +64,7 @@ class AuthNotifier extends _$AuthNotifier {
       email: email,
       password: password,
       isProcessing: true,
+      failure: null,
     );
 
     final result = await ref
@@ -72,11 +73,15 @@ class AuthNotifier extends _$AuthNotifier {
 
     if (!ref.mounted) return RegisterResult.processing;
 
-    state = state.copyWith(isProcessing: false);
-
     return result.fold(
-      (success) => RegisterResult.codeSent,
-      (failure) => RegisterResult.failure,
+      (success) {
+        state = state.copyWith(isProcessing: false);
+        return RegisterResult.codeSent;
+      },
+      (failure) {
+        state = state.copyWith(isProcessing: false, failure: failure);
+        return RegisterResult.failure;
+      },
     );
   }
 
