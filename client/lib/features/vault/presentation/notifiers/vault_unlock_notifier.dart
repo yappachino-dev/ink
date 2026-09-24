@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ink/core/services/sync/sync_orchestrator.dart';
+import 'package:ink/core/domain/sync_events.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/domain/failures/vault_failure.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
@@ -81,7 +81,7 @@ class VaultUnlock extends _$VaultUnlock {
 
     if (!ref.mounted) return;
 
-    unawaited(ref.read(syncOrchestratorProvider.notifier).performSync());
+    unawaited(ref.read(syncControllerProvider).performSync());
 
     result.fold(
       (_) => state = state.copyWith(
@@ -107,7 +107,7 @@ class VaultUnlock extends _$VaultUnlock {
 
     if (!ref.mounted) return;
 
-    unawaited(ref.read(syncOrchestratorProvider.notifier).performSync());
+    unawaited(ref.read(syncControllerProvider).performSync());
 
     result.fold(
       (_) => state = state.copyWith(

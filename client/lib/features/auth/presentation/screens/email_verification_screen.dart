@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/features/auth/domain/auth_preferences.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_navigator.dart';
 import 'package:ink/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:ink/features/auth/presentation/widgets/code_form_field.dart';
@@ -43,7 +43,7 @@ class _EmailVerificationScreenState
 
     if (success) {
       context.showSnackBarSuccess(context.t.auth.register.success);
-      await ref.read(userPreferencesProvider).setLocalOnly(local: false);
+      await ref.read(authPreferencesProvider).setLocalOnly(local: false);
 
       if (widget.source == 'inApp') {
         ref.read(authNavigatorProvider).onAuthCompleted();
