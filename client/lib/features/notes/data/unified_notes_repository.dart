@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/domain/result.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/data/mappers/encrypted_note_local_mapper.dart';
 import 'package:ink/features/notes/data/mappers/encrypted_project_local_mapper.dart';

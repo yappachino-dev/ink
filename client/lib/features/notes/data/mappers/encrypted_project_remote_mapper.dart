@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/grpc/gen/sync/v1/sync.pb.dart' as pb;
-import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
 import 'package:protobuf/well_known_types/google/protobuf/timestamp.pb.dart';
 

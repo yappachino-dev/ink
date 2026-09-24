@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
+import 'package:ink/core/services/sync/sync_indexes.dart';
 
 void main() {
   test('syncModifiedIndex matches the SyncStatus.modified ordinal', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
 import 'package:ink/features/vault/data/sources/vault_remote_data_source.dart';

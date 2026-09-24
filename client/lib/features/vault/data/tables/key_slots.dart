@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
+import 'package:ink/core/services/sync/sync_indexes.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 
 @DataClassName('KeySlotModel')

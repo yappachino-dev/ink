@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
