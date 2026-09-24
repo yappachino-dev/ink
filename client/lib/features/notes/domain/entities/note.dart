@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 
 part 'note.freezed.dart';

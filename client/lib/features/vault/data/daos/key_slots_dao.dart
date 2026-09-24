@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/vault/data/tables/key_slots.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 

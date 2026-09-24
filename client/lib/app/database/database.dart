@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
+import 'package:ink/core/services/sync/sync_indexes.dart';
 import 'package:ink/features/notes/data/daos/notes_dao.dart';
 import 'package:ink/features/notes/data/daos/projects_dao.dart';
 import 'package:ink/features/notes/data/tables/note_conflicts.dart';

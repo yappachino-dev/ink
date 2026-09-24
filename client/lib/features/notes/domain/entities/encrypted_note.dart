@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
+import 'package:ink/core/domain/sync_status.dart';
 
 part 'encrypted_note.freezed.dart';
 

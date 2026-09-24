@@ -1,7 +1,7 @@
 import 'package:ink/core/domain/result.dart';
+import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/network/network_state_provider.dart';
-import 'package:ink/core/services/sync/sync_status.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_remote_mapper.dart';
 import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
