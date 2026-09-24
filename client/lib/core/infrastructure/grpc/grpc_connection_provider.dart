@@ -1,4 +1,8 @@
 import 'package:grpc/grpc.dart';
+// Keep the connection record aligned with the abstract channel returned by the
+// custom transport provider.
+// ignore_for_file: implementation_imports
+import 'package:grpc/src/client/channel.dart' as grpc_internal;
 import 'package:ink/core/config/env_config.dart';
 import 'package:ink/core/infrastructure/auth/jwt_decoder.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
@@ -9,7 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'grpc_connection_provider.g.dart';
 
 typedef GrpcConnection = ({
-  ClientChannel channel,
+  grpc_internal.ClientChannel channel,
   CallOptions options,
   List<ClientInterceptor> interceptors,
 });

@@ -48,4 +48,4 @@ final class AppConfigProvider
   }
 }
 
-String _$appConfigHash() => r'94e5dec3e7d49cebbdb765a12b7d47c9b8471baf';
+String _$appConfigHash() => r'e0a93b4354a226d3ddbf429f0d473bc342b52fb9';

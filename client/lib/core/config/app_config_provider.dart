@@ -10,4 +10,5 @@ AppConfig appConfig(Ref ref) => const AppConfig(
   grpcPort: env.grpcPort,
   environment: env.environmentName,
   networkTimeout: Duration(seconds: env.networkSecondsTimeout),
+  certificatePin: env.grpcCertificatePin,
 );

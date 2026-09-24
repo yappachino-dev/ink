@@ -10,3 +10,5 @@ const int networkSecondsTimeout = int.fromEnvironment(
   'NETWORK_SECONDS_TIMEOUT',
   defaultValue: 15,
 );
+
+const String grpcCertificatePin = String.fromEnvironment('GRPC_CERT_PIN');
