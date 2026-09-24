@@ -1,11 +1,14 @@
 import 'package:ink/app/database/database.dart';
 import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
+import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
+import 'package:ink/features/vault/data/ports/vault_local_store.dart';
+import 'package:ink/features/vault/domain/entities/key_slot.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vault_local_data_source.g.dart';
 
-class VaultLocalDataSource {
+class VaultLocalDataSource implements VaultLocalStore {
   VaultLocalDataSource({required KeySlotsDao keySlotsDao})
     : _keySlotsDao = keySlotsDao;
 
@@ -30,6 +33,30 @@ class VaultLocalDataSource {
   Future<List<KeySlotModel>> getPending() {
     return _keySlotsDao.getPendingKeySlots();
   }
+
+  @override
+  Future<void> saveKeySlotRecord(KeySlot slot) =>
+      _keySlotsDao.saveKeySlot(slot.toCompanion());
+
+  @override
+  Future<void> saveKeySlotRecords(List<KeySlot> slots) => _keySlotsDao
+      .saveKeySlots(slots.map((slot) => slot.toCompanion()).toList());
+
+  @override
+  Future<List<KeySlot>> getAllKeySlotRecords() async =>
+      (await _keySlotsDao.getAllKeySlots())
+          .map((model) => model.toDomain())
+          .toList();
+
+  @override
+  Future<KeySlot?> getKeySlotRecord(KeyType type) async =>
+      (await _keySlotsDao.getKeySlotByType(type))?.toDomain();
+
+  @override
+  Future<List<KeySlot>> getPendingKeySlotRecords() async =>
+      (await _keySlotsDao.getPendingKeySlots())
+          .map((model) => model.toDomain())
+          .toList();
 }
 
 @Riverpod(keepAlive: true)

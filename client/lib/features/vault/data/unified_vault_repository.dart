@@ -2,8 +2,8 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/infrastructure/network/network_state_provider.dart';
-import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:ink/features/vault/data/mappers/key_slot_remote_mapper.dart';
+import 'package:ink/features/vault/data/ports/vault_local_store.dart';
 import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
 import 'package:ink/features/vault/data/sources/vault_remote_data_source.dart';
 import 'package:ink/features/vault/domain/entities/key_slot.dart';
@@ -16,55 +16,47 @@ part 'unified_vault_repository.g.dart';
 
 class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   UnifiedVaultRepository({
-    required VaultLocalDataSource local,
+    required VaultLocalStore local,
     required VaultRemoteDataSource remote,
     required bool Function() canSync,
   }) : _local = local,
        _remote = remote,
        _canSync = canSync;
 
-  final VaultLocalDataSource _local;
+  final VaultLocalStore _local;
   final VaultRemoteDataSource _remote;
   final bool Function() _canSync;
 
   @override
-  Future<Result<void, VaultFailure>> saveKeySlot(KeySlot slot) async {
+  Future<Result<void, VaultFailure>> saveKeySlot(KeySlot slot) {
     return localRunner(
-      call: () => _local.saveKeySlot(slot.toCompanion()),
+      call: () => _local.saveKeySlotRecord(slot),
       mapCore: VaultCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<void, VaultFailure>> saveKeySlots(List<KeySlot> slots) async {
-    final companions = slots.map((s) => s.toCompanion()).toList();
-
+  Future<Result<void, VaultFailure>> saveKeySlots(List<KeySlot> slots) {
     return localRunner(
-      call: () => _local.saveKeySlots(companions),
+      call: () => _local.saveKeySlotRecords(slots),
       mapCore: VaultCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<List<KeySlot>, VaultFailure>> getAll() async {
-    final result = await localRunner(
-      call: _local.getAll,
+  Future<Result<List<KeySlot>, VaultFailure>> getAll() {
+    return localRunner(
+      call: _local.getAllKeySlotRecords,
       mapCore: VaultCoreFailure.new,
-    );
-
-    return result.map(
-      (models) => models.map((model) => model.toDomain()).toList(),
     );
   }
 
   @override
-  Future<Result<KeySlot?, VaultFailure>> getKeySlotByType(KeyType type) async {
-    final result = await localRunner(
-      call: () => _local.getKeySlotByType(type),
+  Future<Result<KeySlot?, VaultFailure>> getKeySlotByType(KeyType type) {
+    return localRunner(
+      call: () => _local.getKeySlotRecord(type),
       mapCore: VaultCoreFailure.new,
     );
-
-    return result.map((model) => model?.toDomain());
   }
 
   @override
@@ -72,16 +64,14 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
     if (!_canSync()) return const Success(null);
 
     final result = await localRunner(
-      call: _local.getAll,
+      call: _local.getAllKeySlotRecords,
       mapCore: VaultCoreFailure.new,
     );
-
     if (result case Failure(error: final e)) return Failure(e);
-    final keys = result.unwrap;
 
     return remoteRunner(
       call: () => _remote.saveKeySlots(
-        keys.map((m) => m.toDomain().toProto()).toList(),
+        result.unwrap.map((slot) => slot.toProto()).toList(),
       ),
       mapCore: VaultCoreFailure.new,
     );
@@ -95,63 +85,51 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
       call: _remote.getKeySlots,
       mapCore: VaultCoreFailure.new,
     );
-
     if (remoteResult case Failure(error: final e)) return Failure(e);
-    final remoteProtos = remoteResult.unwrap;
 
-    // LWW update
-    for (final remoteProto in remoteProtos) {
+    for (final remoteProto in remoteResult.unwrap) {
       final remoteKeySlot = remoteProto.toDomain();
-
-      final localModelResult = await localRunner(
-        call: () => _local.getKeySlotByType(remoteKeySlot.type),
+      final localResult = await localRunner(
+        call: () => _local.getKeySlotRecord(remoteKeySlot.type),
         mapCore: VaultCoreFailure.new,
       );
+      if (localResult case Failure(error: final e)) return Failure(e);
 
-      if (localModelResult case Failure(error: final e)) return Failure(e);
-      final localModel = localModelResult.unwrap;
-
-      if (localModel == null ||
-          remoteKeySlot.updatedAt.isAfter(localModel.updatedAt)) {
+      if (localResult.unwrap == null ||
+          remoteKeySlot.updatedAt.isAfter(localResult.unwrap!.updatedAt)) {
         await localRunner(
-          call: () => _local.saveKeySlot(remoteKeySlot.toCompanion()),
+          call: () => _local.saveKeySlotRecord(remoteKeySlot),
           mapCore: VaultCoreFailure.new,
         );
       }
     }
 
-    final pendingModelsResult = await localRunner(
-      call: _local.getPending,
+    final pendingResult = await localRunner(
+      call: _local.getPendingKeySlotRecords,
       mapCore: VaultCoreFailure.new,
     );
+    if (pendingResult case Failure(error: final e)) return Failure(e);
 
-    if (pendingModelsResult case Failure(error: final e)) return Failure(e);
-    final pendingModels = pendingModelsResult.unwrap;
+    if (pendingResult.unwrap.isEmpty) return const Success(null);
 
-    if (pendingModels.isNotEmpty) {
-      final pendingProtos = pendingModels
-          .map((m) => m.toDomain().toProto())
-          .toList();
-
-      final saveResult = await remoteRunner(
-        call: () => _remote.saveKeySlots(pendingProtos),
-        mapCore: VaultCoreFailure.new,
-      );
-
-      if (saveResult is Success) {
-        final toUpdate = pendingModels
-            .map(
-              (m) =>
-                  m.copyWith(syncStatus: SyncStatus.synced).toCompanion(true),
-            )
-            .toList();
-
-        await localRunner(
-          call: () => _local.saveKeySlots(toUpdate),
-          mapCore: VaultCoreFailure.new,
-        );
-      }
+    final saveResult = await remoteRunner(
+      call: () => _remote.saveKeySlots(
+        pendingResult.unwrap.map((slot) => slot.toProto()).toList(),
+      ),
+      mapCore: VaultCoreFailure.new,
+    );
+    if (saveResult case Failure(error: final e)) {
+      return Failure(e);
     }
+
+    await localRunner(
+      call: () => _local.saveKeySlotRecords(
+        pendingResult.unwrap
+            .map((slot) => slot.copyWith(syncStatus: SyncStatus.synced))
+            .toList(),
+      ),
+      mapCore: VaultCoreFailure.new,
+    );
 
     return const Success(null);
   }
