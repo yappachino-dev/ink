@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ink/features/vault/data/daos/key_slots_dao.dart';
-import 'package:ink/features/vault/data/mappers/key_slot_local_mapper.dart';
-import 'package:ink/features/vault/data/sources/vault_local_data_source.dart';
+import 'package:ink/app/database/adapters/vault_local_data_source.dart';
+import 'package:ink/app/database/daos/key_slots_dao.dart';
+import 'package:ink/app/database/mappers/key_slot_local_mapper.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../fixtures/vault_fixtures.dart';

@@ -55,4 +55,4 @@ final class NotesLocalDataSourceProvider
 }
 
 String _$notesLocalDataSourceHash() =>
-    r'7df2952dc8a441e593a38461f441160ee0364c1b';
+    r'4d35ebe98a7bc593a8ecaa5aac266ae7b868cf21';

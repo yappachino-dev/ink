@@ -3,6 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/app/database/adapters/notes_local_data_source.dart';
+import 'package:ink/app/database/adapters/projects_local_data_source.dart';
+import 'package:ink/app/database/adapters/vault_local_data_source.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/app/database/database_provider.dart';
 import 'package:ink/app/navigation/navigators/overrides.dart';
@@ -24,9 +27,12 @@ import 'package:ink/features/auth/domain/auth_providers.dart';
 import 'package:ink/features/notes/data/notes_sync_delegate.dart';
 import 'package:ink/features/notes/data/projects_sync_delegate.dart';
 import 'package:ink/features/notes/data/secure_notes_service.dart';
+import 'package:ink/features/notes/data/sources/notes_local_store_provider.dart';
+import 'package:ink/features/notes/data/sources/projects_local_store_provider.dart';
 import 'package:ink/features/notes/data/unified_notes_repository.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/vault/data/secure_vault_service.dart';
+import 'package:ink/features/vault/data/sources/vault_local_store_provider.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -65,12 +71,27 @@ List<Override> buildOverrides(SharedPreferences sharedPrefs) {
     notesServiceProvider.overrideWith(
       (ref) => ref.watch(secureNotesServiceProvider),
     ),
+    notesLocalStoreProvider.overrideWith(
+      (ref) => NotesLocalDataSource(
+        notesDao: ref.watch(appDatabaseProvider).notesDao,
+      ),
+    ),
+    projectsLocalStoreProvider.overrideWith(
+      (ref) => ProjectsLocalDataSource(
+        projectsDao: ref.watch(appDatabaseProvider).projectsDao,
+      ),
+    ),
     vaultServiceProvider.overrideWith(
       (ref) => ref.watch(secureVaultServiceProvider),
     ),
     vaultRandomServiceProvider.overrideWithValue(_VaultRandomService()),
     vaultSessionStatusProvider.overrideWith(
       (ref) => _VaultSessionStatusAdapter(ref.watch(sessionManagerProvider)),
+    ),
+    vaultLocalStoreProvider.overrideWith(
+      (ref) => VaultLocalDataSource(
+        keySlotsDao: ref.watch(appDatabaseProvider).keySlotsDao,
+      ),
     ),
     vaultRecoveryProvider.overrideWith(
       (ref) => _VaultRecoveryAdapter(

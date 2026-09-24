@@ -21,6 +21,12 @@ void main() {
         _checkPresentationImports(relativePath, source, violations);
       }
 
+      if (relativePath.startsWith('lib/features/') &&
+          relativePath.contains('/data/') &&
+          source.contains('package:ink/app/database/')) {
+        violations.add('$relativePath imports the app database boundary');
+      }
+
       if (relativePath.startsWith('lib/core/') &&
           source.contains('package:ink/features/')) {
         violations.add('$relativePath imports a feature module from core');

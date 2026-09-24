@@ -97,4 +97,4 @@ final class UnifiedNotesRepositoryProvider
 }
 
 String _$unifiedNotesRepositoryHash() =>
-    r'b0954a5208e7d4bd30ae77f16fad97c0ef68c57f';
+    r'6603871f4c73d7e86cc18bf98bd61a7f2dc26fb1';

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/adapters/notes_local_data_source.dart';
+import 'package:ink/app/database/daos/notes_dao.dart';
 import 'package:ink/app/database/database.dart';
-import 'package:ink/features/notes/data/daos/notes_dao.dart';
-import 'package:ink/features/notes/data/sources/notes_local_data_source.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../fixtures/notes_fixtures.dart';
