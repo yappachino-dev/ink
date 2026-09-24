@@ -82,5 +82,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - assets/fonts/inter/
 
   uses-material-design: true
