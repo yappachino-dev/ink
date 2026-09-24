@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -43,6 +44,7 @@ type fakeTokenRepo struct {
 	tokens    map[string]*RefreshToken // keyed by hash
 	revokeAll []int
 	nextID    int
+	rotateErr error
 }
 
 func newFakeTokenRepo() *fakeTokenRepo {
@@ -64,6 +66,27 @@ func (f *fakeTokenRepo) ByHash(_ context.Context, hash []byte) (*RefreshToken, e
 		return nil, nil
 	}
 	return t, nil
+}
+
+func (f *fakeTokenRepo) Rotate(
+	_ context.Context,
+	oldHash []byte,
+	newToken *RefreshToken,
+) (bool, error) {
+	if f.rotateErr != nil {
+		return false, f.rotateErr
+	}
+
+	oldToken, ok := f.tokens[key(oldHash)]
+	if !ok || !oldToken.RevokedAt.IsZero() {
+		return false, nil
+	}
+
+	oldToken.RevokedAt = time.Now().UTC()
+	newToken.ID = f.nextID
+	f.nextID++
+	f.tokens[key(newToken.Hash)] = newToken
+	return true, nil
 }
 
 func (f *fakeTokenRepo) RevokeByHash(_ context.Context, hash []byte) error {
@@ -175,6 +198,38 @@ func TestRefresh_RotatesTokens(t *testing.T) {
 	_, _, err = svc.Refresh(context.Background(), refresh1)
 	if err != ErrRevokedRefreshToken {
 		t.Fatalf("rotated-in token must be revoked, got %v", err)
+	}
+}
+
+func TestRefresh_RotationFailureKeepsCurrentTokenUsable(t *testing.T) {
+	ctx := context.Background()
+	userRepo := newFakeUserRepo()
+	tokenRepo := newFakeTokenRepo()
+	seedUser(t, userRepo)
+	svc := newTestService(userRepo, tokenRepo)
+
+	_, refresh, err := svc.Login(ctx, "user@example.com", testPassword)
+	if err != nil {
+		t.Fatalf("Login: %v", err)
+	}
+
+	tokenRepo.rotateErr = errors.New("replacement insert failed")
+	_, _, err = svc.Refresh(ctx, refresh)
+	if !errors.Is(err, tokenRepo.rotateErr) {
+		t.Fatalf("want replacement error, got %v", err)
+	}
+
+	stored, err := tokenRepo.ByHash(ctx, hashToken(refresh))
+	if err != nil {
+		t.Fatalf("ByHash: %v", err)
+	}
+	if stored == nil || !stored.RevokedAt.IsZero() {
+		t.Fatal("failed replacement issuance must leave the current token active")
+	}
+
+	tokenRepo.rotateErr = nil
+	if _, _, err := svc.Refresh(ctx, refresh); err != nil {
+		t.Fatalf("current token should remain usable for retry: %v", err)
 	}
 }
 

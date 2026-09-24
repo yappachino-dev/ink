@@ -15,6 +15,7 @@ type UserRepository interface {
 type RefreshTokenRepository interface {
 	Create(ctx context.Context, token *RefreshToken) error
 	ByHash(ctx context.Context, hash []byte) (*RefreshToken, error)
+	Rotate(ctx context.Context, oldHash []byte, newToken *RefreshToken) (bool, error)
 	RevokeByHash(ctx context.Context, hash []byte) error
 	RevokeAllByUserID(ctx context.Context, userID int) error
 	Update(ctx context.Context, token *RefreshToken) error
@@ -163,12 +164,34 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string,
 		return "", "", ErrExpiredRefreshToken
 	}
 
-	err = s.refreshTokenRepo.RevokeByHash(ctx, tokenHash)
+	accessToken, err := generateAccessToken(storedToken.UserID, s.jwtSecret, s.accessTokenTTL)
 	if err != nil {
 		return "", "", err
 	}
 
-	return s.issueTokens(ctx, storedToken.UserID)
+	refreshToken, err = generateRefreshToken()
+	if err != nil {
+		return "", "", err
+	}
+
+	newToken := &RefreshToken{
+		UserID:    storedToken.UserID,
+		Hash:      hashToken(refreshToken),
+		ExpiresAt: time.Now().UTC().Add(s.refreshTokenTTL),
+	}
+
+	rotated, err := s.refreshTokenRepo.Rotate(ctx, tokenHash, newToken)
+	if err != nil {
+		return "", "", err
+	}
+	if !rotated {
+		// Another request may have rotated this token between validation and
+		// the atomic update. Treat it as reuse and invalidate every session.
+		_ = s.refreshTokenRepo.RevokeAllByUserID(ctx, storedToken.UserID)
+		return "", "", ErrRevokedRefreshToken
+	}
+
+	return accessToken, refreshToken, nil
 }
 
 func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {

@@ -26,6 +26,19 @@ UPDATE refresh_tokens
 SET revoked_at = $1
 WHERE hash = $2;
 
+-- name: RotateRefreshToken :one
+WITH revoked AS (
+    UPDATE refresh_tokens AS current_token
+    SET revoked_at = NOW()
+    WHERE current_token.hash = sqlc.arg(old_hash)
+      AND current_token.revoked_at IS NULL
+    RETURNING current_token.user_id
+)
+INSERT INTO refresh_tokens (user_id, hash, expires_at, created_at, revoked_at)
+SELECT user_id, sqlc.arg(new_hash), sqlc.arg(new_expires_at), NOW(), NULL
+FROM revoked
+RETURNING id, created_at, revoked_at;
+
 -- name: UpdateRefreshToken :exec
 UPDATE refresh_tokens
 SET hash = $1,
