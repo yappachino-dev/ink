@@ -1,8 +1,8 @@
 import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/core/services/sync/sync_state.dart';
-import 'package:ink/features/notes/data/secure_notes_service.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
+import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notes_notifier.g.dart';

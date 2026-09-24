@@ -9,25 +9,25 @@ part of 'secure_notes_service.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(notesService)
-final notesServiceProvider = NotesServiceProvider._();
+@ProviderFor(secureNotesService)
+final secureNotesServiceProvider = SecureNotesServiceProvider._();
 
-final class NotesServiceProvider
+final class SecureNotesServiceProvider
     extends $FunctionalProvider<NotesService, NotesService, NotesService>
     with $Provider<NotesService> {
-  NotesServiceProvider._()
+  SecureNotesServiceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'notesServiceProvider',
+        name: r'secureNotesServiceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$notesServiceHash();
+  String debugGetCreateSourceHash() => _$secureNotesServiceHash();
 
   @$internal
   @override
@@ -36,7 +36,7 @@ final class NotesServiceProvider
 
   @override
   NotesService create(Ref ref) {
-    return notesService(ref);
+    return secureNotesService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -48,4 +48,5 @@ final class NotesServiceProvider
   }
 }
 
-String _$notesServiceHash() => r'bdedb8e9270bcc4246642443fac8a59114462d2c';
+String _$secureNotesServiceHash() =>
+    r'acb5c40bc8c4bbaa14d12cee86fcc5f6c47a1136';

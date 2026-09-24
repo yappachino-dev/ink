@@ -75,7 +75,7 @@ class AuthServiceImpl implements AuthService {
 }
 
 @riverpod
-AuthService authService(Ref ref) => AuthServiceImpl(
+AuthService authServiceImpl(Ref ref) => AuthServiceImpl(
   repo: ref.watch(authRepositoryProvider),
   sessionManager: ref.watch(sessionManagerProvider.notifier),
 );

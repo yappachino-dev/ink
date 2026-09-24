@@ -9,25 +9,25 @@ part of 'auth_service_impl.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(authService)
-final authServiceProvider = AuthServiceProvider._();
+@ProviderFor(authServiceImpl)
+final authServiceImplProvider = AuthServiceImplProvider._();
 
-final class AuthServiceProvider
+final class AuthServiceImplProvider
     extends $FunctionalProvider<AuthService, AuthService, AuthService>
     with $Provider<AuthService> {
-  AuthServiceProvider._()
+  AuthServiceImplProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'authServiceProvider',
+        name: r'authServiceImplProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$authServiceHash();
+  String debugGetCreateSourceHash() => _$authServiceImplHash();
 
   @$internal
   @override
@@ -36,7 +36,7 @@ final class AuthServiceProvider
 
   @override
   AuthService create(Ref ref) {
-    return authService(ref);
+    return authServiceImpl(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -48,4 +48,4 @@ final class AuthServiceProvider
   }
 }
 
-String _$authServiceHash() => r'db28a622f8c7a39d8875bd3a2e2fbe7e716f2303';
+String _$authServiceImplHash() => r'b09bcb36f78fa5d9b0d1096300848903eb975b4d';
