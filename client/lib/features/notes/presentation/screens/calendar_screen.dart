@@ -2,8 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
@@ -13,7 +16,6 @@ import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/calendar_card.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/day_header.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/list_filter_sheet.dart';
@@ -59,6 +61,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     await context.showAppBottomSheetLayout<void>(
       child: const NoteEditorSheet(),
     );
+  }
+
+  void _onDestinationSelected(int index) {
+    switch (index) {
+      case 0:
+        if (ref.read(selectedProjectIdProvider) == allProjectsId) {
+          ref.read(selectedProjectIdProvider.notifier).id = todayProjectId;
+        }
+        context.go(AppDestinations.notes);
+      case 1:
+        ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
+        context.go(AppDestinations.calendar);
+      case 2:
+        context.go(AppDestinations.profile);
+    }
   }
 
   @override
@@ -218,7 +235,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: sizes.iconXLarge),
       ),
-      bottomNavigationBar: const BottomNav(),
+      bottomNavigationBar: AppBottomNav(
+        onDestinationSelected: _onDestinationSelected,
+      ),
     );
   }
 }

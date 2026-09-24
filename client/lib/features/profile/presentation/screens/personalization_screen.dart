@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
+import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
@@ -176,7 +178,18 @@ class PersonalizationScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNav(),
+      bottomNavigationBar: AppBottomNav(
+        onDestinationSelected: (index) {
+          switch (index) {
+            case 0:
+              context.go(AppDestinations.notes);
+            case 1:
+              context.go(AppDestinations.calendar);
+            case 2:
+              context.go(AppDestinations.profile);
+          }
+        },
+      ),
     );
   }
 }

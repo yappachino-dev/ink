@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 import 'package:ink/features/vault/domain/vault_state.dart';
@@ -13,17 +12,14 @@ part 'vault_notifier.g.dart';
 class VaultNotifier extends _$VaultNotifier {
   @override
   VaultState build() {
-    final isSessionLoaded = ref.watch(isSessionLoadedProvider);
-    if (!isSessionLoaded) return const VaultInitializing();
+    final session = ref.watch(vaultSessionStatusProvider);
+    if (!session.isLoaded) return const VaultInitializing();
 
-    final hasAccessToken = ref.watch(isAccessTokenPresentProvider);
-    final hasMasterKey = ref.watch(isMasterKeyPresentProvider);
-
-    if (hasMasterKey) return const VaultUnlocked();
+    if (session.hasMasterKey) return const VaultUnlocked();
 
     final vaultService = ref.watch(vaultServiceProvider);
 
-    unawaited(_checkInitalizationState(vaultService, hasAccessToken));
+    unawaited(_checkInitalizationState(vaultService, session.hasAccessToken));
     return const VaultInitializing();
   }
 
@@ -31,12 +27,10 @@ class VaultNotifier extends _$VaultNotifier {
     final vaultService = ref.read(vaultServiceProvider);
     await vaultService.pushKeys();
 
-    if (!ref.read(isMasterKeyPresentProvider)) {
+    final session = ref.read(vaultSessionStatusProvider);
+    if (!session.hasMasterKey) {
       unawaited(
-        _checkInitalizationState(
-          vaultService,
-          ref.read(isAccessTokenPresentProvider),
-        ),
+        _checkInitalizationState(vaultService, session.hasAccessToken),
       );
     }
   }
@@ -54,7 +48,7 @@ class VaultNotifier extends _$VaultNotifier {
 
     final result = await vaultService.getUnlockMethods();
 
-    if (ref.read(isMasterKeyPresentProvider)) return;
+    if (ref.read(vaultSessionStatusProvider).hasMasterKey) return;
 
     state = result.fold(
       (keys) => keys.isNotEmpty

@@ -1,5 +1,4 @@
-import 'package:ink/core/services/sync/sync_orchestrator.dart';
-import 'package:ink/core/services/sync/sync_state.dart';
+import 'package:ink/core/domain/sync_events.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
@@ -11,8 +10,8 @@ part 'notes_notifier.g.dart';
 class NotesNotifier extends _$NotesNotifier {
   @override
   Future<Map<String, Note>> build() async {
-    ref.listen(syncOrchestratorProvider, (previous, next) {
-      if (next is SyncSuccess) {
+    ref.listen(syncEventsProvider, (previous, next) {
+      if (next.value == SyncEvent.completed) {
         ref.invalidateSelf();
       }
     });

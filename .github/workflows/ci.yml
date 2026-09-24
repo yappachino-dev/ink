@@ -28,6 +28,10 @@ jobs:
         working-directory: client
         run: flutter analyze
 
+      - name: Check architecture imports
+        working-directory: client
+        run: dart run tool/check_architecture.dart
+
       - name: Test
         working-directory: client
         run: flutter test

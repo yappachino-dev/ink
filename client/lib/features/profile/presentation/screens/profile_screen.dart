@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/auth/domain/auth_providers.dart';
-import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
-import 'package:ink/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:ink/features/profile/presentation/widgets/options/appearance_sheet.dart';
 import 'package:ink/features/profile/presentation/widgets/options/langauge_sheet.dart';
@@ -42,6 +43,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _openWidgets() async =>
       context.showAppBottomSheetLayout<void>(child: const WidgetsSheet());
 
+  void _onDestinationSelected(int index) {
+    switch (index) {
+      case 0:
+        context.go(AppDestinations.notes);
+      case 1:
+        context.go(AppDestinations.calendar);
+      case 2:
+        context.go(AppDestinations.profile);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +76,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 },
               ),
       ),
-      bottomNavigationBar: const BottomNav(),
+      bottomNavigationBar: AppBottomNav(
+        onDestinationSelected: _onDestinationSelected,
+      ),
     );
   }
 }
@@ -171,7 +185,7 @@ class _LocalView extends StatelessWidget {
         _ProfileHeader(
           name: context.t.profile.personal.name,
           email: context.t.profile.personal.email,
-          onTap: () => const AuthRoute(source: 'inApp').push<void>(context),
+          onTap: () => context.go(AppDestinations.authInApp),
         ),
 
         const SizedBox(height: 12),
