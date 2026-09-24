@@ -3,13 +3,45 @@ name: CI
 on:
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      client: ${{ steps.filter.outputs.client }}
+      backend: ${{ steps.filter.outputs.backend }}
+      proto: ${{ steps.filter.outputs.proto }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            client:
+              - 'client/**'
+              - 'proto/**'
+              - 'buf*.yaml'
+            backend:
+              - 'services/**'
+              - 'proto/**'
+              - 'buf*.yaml'
+            proto:
+              - 'proto/**'
+              - 'buf*.yaml'
+
   client:
     name: Client · analyze & test
+    needs: changes
+    if: needs.changes.outputs.client == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +70,8 @@ jobs:
 
   backend:
     name: Backend · build, vet & test
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,6 +101,8 @@ jobs:
 
   proto:
     name: Protobuf · lint & breaking
+    needs: changes
+    if: needs.changes.outputs.proto == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -82,3 +118,19 @@ jobs:
           breaking: true
           breaking_against: >-
             https://github.com/${{ github.repository }}.git#branch=main,subdir=proto
+
+  ci:
+    name: CI gate
+    if: always()
+    needs: [changes, client, backend, proto]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check required jobs
+        run: |
+          test "${{ needs.changes.result }}" = "success"
+          for result in "${{ needs.client.result }}" "${{ needs.backend.result }}" "${{ needs.proto.result }}"; do
+            case "$result" in
+              success|skipped) ;;
+              *) exit 1 ;;
+            esac
+          done
