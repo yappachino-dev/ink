@@ -42,7 +42,56 @@ abstract final class AppTheme {
             ),
           );
 
-    return base.copyWith(extensions: [_tokens(base.colorScheme, brightness)]);
+    final accessibleScheme = _accessibleColorScheme(
+      base.colorScheme,
+      brightness,
+    );
+
+    return base.copyWith(
+      colorScheme: accessibleScheme,
+      extensions: [_tokens(accessibleScheme, brightness)],
+    );
+  }
+
+  static ColorScheme _accessibleColorScheme(
+    ColorScheme scheme,
+    Brightness brightness,
+  ) {
+    final primary = brightness == Brightness.light
+        ? HSLColor.fromColor(scheme.primary)
+              .withLightness(
+                HSLColor.fromColor(scheme.primary).lightness > 0.30
+                    ? 0.30
+                    : HSLColor.fromColor(scheme.primary).lightness,
+              )
+              .toColor()
+        : scheme.primary;
+
+    return scheme.copyWith(
+      primary: primary,
+      onPrimary: _readableOn(primary),
+      onSecondary: _readableOn(scheme.secondary),
+      onTertiary: _readableOn(scheme.tertiary),
+      onError: _readableOn(scheme.error),
+    );
+  }
+
+  static Color _readableOn(Color background) {
+    final onBlack = _contrastRatio(Colors.black, background);
+    final onWhite = _contrastRatio(Colors.white, background);
+    return onBlack >= onWhite ? Colors.black : Colors.white;
+  }
+
+  static double _contrastRatio(Color foreground, Color background) {
+    final foregroundLuminance = foreground.computeLuminance();
+    final backgroundLuminance = background.computeLuminance();
+    final lighter = foregroundLuminance > backgroundLuminance
+        ? foregroundLuminance
+        : backgroundLuminance;
+    final darker = foregroundLuminance > backgroundLuminance
+        ? backgroundLuminance
+        : foregroundLuminance;
+    return (lighter + 0.05) / (darker + 0.05);
   }
 
   static const _subThemes = FlexSubThemesData(
