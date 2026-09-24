@@ -1,7 +1,7 @@
+import 'package:ink/core/domain/auth_tokens.dart';
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
-import 'package:ink/core/infrastructure/auth/types.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/features/auth/data/sources/auth_remote_data_source.dart';
 import 'package:ink/features/auth/domain/auth_repository.dart';
