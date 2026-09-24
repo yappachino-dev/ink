@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 String reminderLabel(int minutes, Translations t) {
@@ -11,7 +12,7 @@ String reminderLabel(int minutes, Translations t) {
   return t.note.reminder.days(n: minutes ~/ 1440);
 }
 
-String formatDateTime(DateTime date, TimeOfDay? time, Translations t) {
+String formatDateTime(DateTime date, NoteTime? time, Translations t) {
   final monthName = t.calendar.months[date.month - 1];
   final dateStr = '${date.day} $monthName ${date.year}';
   if (time == null) return dateStr;

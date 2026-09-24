@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectCreationPayload {
 
- String get title; String get emoji; Color get color;
+ String get title; String get emoji; int get colorValue;
 /// Create a copy of ProjectCreationPayload
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ProjectCreationPayloadCopyWith<ProjectCreationPayload> get copyWith => _$Projec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.color, color) || other.color == color));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,emoji,color);
+int get hashCode => Object.hash(runtimeType,title,emoji,colorValue);
 
 @override
 String toString() {
-  return 'ProjectCreationPayload(title: $title, emoji: $emoji, color: $color)';
+  return 'ProjectCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ProjectCreationPayloadCopyWith<$Res>  {
   factory $ProjectCreationPayloadCopyWith(ProjectCreationPayload value, $Res Function(ProjectCreationPayload) _then) = _$ProjectCreationPayloadCopyWithImpl;
 @useResult
 $Res call({
- String title, String emoji, Color color
+ String title, String emoji, int colorValue
 });
 
 
@@ -62,12 +62,12 @@ class _$ProjectCreationPayloadCopyWithImpl<$Res>
 
 /// Create a copy of ProjectCreationPayload
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? emoji = null,Object? color = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? emoji = null,Object? colorValue = null,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,emoji: null == emoji ? _self.emoji : emoji // ignore: cast_nullable_to_non_nullable
-as String,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
-as Color,
+as String,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -149,10 +149,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String emoji,  Color color)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String emoji,  int colorValue)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectCreationPayload() when $default != null:
-return $default(_that.title,_that.emoji,_that.color);case _:
+return $default(_that.title,_that.emoji,_that.colorValue);case _:
   return orElse();
 
 }
@@ -170,10 +170,10 @@ return $default(_that.title,_that.emoji,_that.color);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String emoji,  Color color)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String emoji,  int colorValue)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectCreationPayload():
-return $default(_that.title,_that.emoji,_that.color);}
+return $default(_that.title,_that.emoji,_that.colorValue);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -187,10 +187,10 @@ return $default(_that.title,_that.emoji,_that.color);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String emoji,  Color color)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String emoji,  int colorValue)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectCreationPayload() when $default != null:
-return $default(_that.title,_that.emoji,_that.color);case _:
+return $default(_that.title,_that.emoji,_that.colorValue);case _:
   return null;
 
 }
@@ -202,12 +202,12 @@ return $default(_that.title,_that.emoji,_that.color);case _:
 
 
 class _ProjectCreationPayload implements ProjectCreationPayload {
-  const _ProjectCreationPayload({required this.title, required this.emoji, required this.color});
+  const _ProjectCreationPayload({required this.title, required this.emoji, required this.colorValue});
   
 
 @override final  String title;
 @override final  String emoji;
-@override final  Color color;
+@override final  int colorValue;
 
 /// Create a copy of ProjectCreationPayload
 /// with the given fields replaced by the non-null parameter values.
@@ -219,16 +219,16 @@ _$ProjectCreationPayloadCopyWith<_ProjectCreationPayload> get copyWith => __$Pro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.color, color) || other.color == color));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,emoji,color);
+int get hashCode => Object.hash(runtimeType,title,emoji,colorValue);
 
 @override
 String toString() {
-  return 'ProjectCreationPayload(title: $title, emoji: $emoji, color: $color)';
+  return 'ProjectCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
 }
 
 
@@ -239,7 +239,7 @@ abstract mixin class _$ProjectCreationPayloadCopyWith<$Res> implements $ProjectC
   factory _$ProjectCreationPayloadCopyWith(_ProjectCreationPayload value, $Res Function(_ProjectCreationPayload) _then) = __$ProjectCreationPayloadCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String emoji, Color color
+ String title, String emoji, int colorValue
 });
 
 
@@ -256,12 +256,12 @@ class __$ProjectCreationPayloadCopyWithImpl<$Res>
 
 /// Create a copy of ProjectCreationPayload
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? emoji = null,Object? color = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? emoji = null,Object? colorValue = null,}) {
   return _then(_ProjectCreationPayload(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,emoji: null == emoji ? _self.emoji : emoji // ignore: cast_nullable_to_non_nullable
-as String,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
-as Color,
+as String,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

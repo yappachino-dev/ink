@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/presentation/extensions/note_time_ui_extension.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'note_form_notifier.g.dart';
@@ -26,7 +27,7 @@ class NoteFormNotifier extends _$NoteFormNotifier {
   void initWithExisting(Note note) => state = state.copyWith(
     projectId: note.projectId,
     dueDate: note.dueDate ?? DateTime.now(),
-    dueTime: note.dueTime,
+    dueTime: note.dueTime?.timeOfDay,
     reminderMinutes: note.reminderMinutesBefore,
     priority: note.priority,
   );

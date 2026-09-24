@@ -13,6 +13,7 @@ import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';

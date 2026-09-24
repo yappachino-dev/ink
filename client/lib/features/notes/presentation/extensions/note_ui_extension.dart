@@ -1,8 +1,9 @@
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 extension NoteUiExtension on Note {
-  String get subtitle => content.toPlainText().trim();
+  String get subtitle => Document.fromJson(content).toPlainText().trim();
 
   String timeLabel(Translations t) {
     if (dueTime != null) {

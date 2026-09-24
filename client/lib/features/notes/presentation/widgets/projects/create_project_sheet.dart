@@ -9,7 +9,7 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
-import 'package:ink/features/notes/domain/project_constants.dart';
+import 'package:ink/features/notes/presentation/constants/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 
@@ -61,8 +61,9 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
     super.didChangeDependencies();
 
     if (!_isColorInitialized) {
-      _selectedColor =
-          widget.initialProject?.color ?? context.colorScheme.primary;
+      _selectedColor = widget.initialProject == null
+          ? context.colorScheme.primary
+          : Color(widget.initialProject!.colorValue);
       _isColorInitialized = true;
     }
   }
@@ -79,7 +80,9 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
     final notifier = ref.read(projectsProvider.notifier);
 
     if (_colorOnly) {
-      final project = widget.initialProject!.copyWith(color: _selectedColor);
+      final project = widget.initialProject!.copyWith(
+        colorValue: _selectedColor.toARGB32(),
+      );
 
       unawaited(notifier.saveProject(project));
     } else {
@@ -90,7 +93,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
         final project = widget.initialProject!.copyWith(
           title: name,
           emoji: _selectedEmoji,
-          color: _selectedColor,
+          colorValue: _selectedColor.toARGB32(),
         );
 
         unawaited(notifier.saveProject(project));
@@ -98,7 +101,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
         final payload = ProjectCreationPayload(
           title: name,
           emoji: _selectedEmoji,
-          color: _selectedColor,
+          colorValue: _selectedColor.toARGB32(),
         );
 
         unawaited(notifier.createProject(payload));

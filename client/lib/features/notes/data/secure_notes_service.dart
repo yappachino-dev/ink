@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter/material.dart';
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/crypto/crypto.dart';
@@ -25,6 +25,7 @@ import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
 import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
+import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'secure_notes_service.g.dart';
@@ -51,9 +52,9 @@ class SecureNotesService implements NotesService {
       final masterKey = _cryptoSession.masterKey;
 
       final p = NotePayload(
-        quillData: payload.content.toDelta().toJson(),
+        quillData: payload.content,
         dueDate: payload.dueDate,
-        dueTime: payload.dueTime,
+        dueTime: _toTimeOfDay(payload.dueTime),
         priority: payload.priority,
         reminderMinutesBefore: payload.reminderMinutesBefore,
       );
@@ -91,10 +92,10 @@ class SecureNotesService implements NotesService {
       final masterKey = _cryptoSession.masterKey;
 
       final payload = NotePayload(
-        quillData: note.content.toDelta().toJson(),
+        quillData: note.content,
         isCompleted: note.isCompleted,
         dueDate: note.dueDate,
-        dueTime: note.dueTime,
+        dueTime: _toTimeOfDay(note.dueTime),
         priority: note.priority,
         reminderMinutesBefore: note.reminderMinutesBefore,
       );
@@ -187,11 +188,16 @@ class SecureNotesService implements NotesService {
 
     final note = encryptedNote.toNote(
       title: title,
-      content: Document.fromJson(notePayload.quillData),
+      content: notePayload.quillData,
       isCompleted: notePayload.isCompleted,
       priority: notePayload.priority,
       dueDate: notePayload.dueDate,
-      dueTime: notePayload.dueTime,
+      dueTime: notePayload.dueTime == null
+          ? null
+          : (
+              hour: notePayload.dueTime!.hour,
+              minute: notePayload.dueTime!.minute,
+            ),
       reminderMinutesBefore: notePayload.reminderMinutesBefore,
     );
 
@@ -208,7 +214,7 @@ class SecureNotesService implements NotesService {
       final p = ProjectPayload(
         title: payload.title,
         emoji: payload.emoji,
-        colorValue: payload.color,
+        colorValue: Color(payload.colorValue),
       );
 
       final plainContent = jsonEncode(p.toJson());
@@ -238,7 +244,7 @@ class SecureNotesService implements NotesService {
       final payload = ProjectPayload(
         title: project.title,
         emoji: project.emoji,
-        colorValue: project.color,
+        colorValue: Color(project.colorValue),
       );
 
       final plainContent = jsonEncode(payload.toJson());
@@ -323,10 +329,15 @@ class SecureNotesService implements NotesService {
     final project = encryptedProject.toProject(
       title: projectPayload.title,
       emoji: projectPayload.emoji,
-      color: projectPayload.colorValue,
+      colorValue: projectPayload.colorValue.toARGB32(),
     );
 
     return project;
+  }
+
+  TimeOfDay? _toTimeOfDay(NoteTime? time) {
+    if (time == null) return null;
+    return TimeOfDay(hour: time.hour, minute: time.minute);
   }
 
   Future<Result<T, NotesFailure>> _guard<T>(

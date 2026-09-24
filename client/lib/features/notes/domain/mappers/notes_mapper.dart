@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 
 extension NoteToEncrypted on Note {
   EncryptedNote toEncrypted({
@@ -30,12 +29,12 @@ extension NoteToEncrypted on Note {
 extension EncryptedToNote on EncryptedNote {
   Note toNote({
     required String title,
-    required Document content,
+    required List<dynamic> content,
     required bool isCompleted,
     required TaskPriority priority,
 
     DateTime? dueDate,
-    TimeOfDay? dueTime,
+    NoteTime? dueTime,
     int? reminderMinutesBefore,
   }) => Note(
     id: id,

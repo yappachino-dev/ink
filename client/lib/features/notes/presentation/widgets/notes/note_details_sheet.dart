@@ -11,6 +11,7 @@ import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dart';
+import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.dart';
@@ -54,7 +55,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
     }
 
     _readOnlyController = QuillController(
-      document: Document.fromDelta(note.content.toDelta()),
+      document: Document.fromJson(note.content),
       selection: const TextSelection.collapsed(offset: 0),
     );
   }
