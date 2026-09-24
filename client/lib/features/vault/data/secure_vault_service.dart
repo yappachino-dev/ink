@@ -131,7 +131,7 @@ class SecureVaultService implements VaultService {
 }
 
 @Riverpod(keepAlive: true)
-VaultService vaultService(Ref ref) => SecureVaultService(
+VaultService secureVaultService(Ref ref) => SecureVaultService(
   random: ref.watch(randomServiceProvider),
   derivation: ref.watch(derivationServiceProvider),
   encryption: ref.watch(encryptionServiceProvider),
