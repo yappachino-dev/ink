@@ -68,9 +68,13 @@ else
   fi
 fi
 
-# The PR description is optional. The squash commit body is always the
-# chronological list of commit titles, independent of the PR description.
-MERGE_BODY=$(git log --reverse "origin/$BASE_BRANCH..HEAD" --format="* %s")
+# The PR description is optional. Only multi-commit squash merges get a
+# chronological list of commit titles in the merge commit body.
+if [[ "$COMMIT_COUNT" -gt 1 ]]; then
+  MERGE_BODY=$(git log --reverse "origin/$BASE_BRANCH..HEAD" --format="* %s")
+else
+  MERGE_BODY=""
+fi
 
 printf 'Creating PR for %s against origin/%s (%s commit(s))...\n' \
   "$HEAD_BRANCH" "$BASE_BRANCH" "$COMMIT_COUNT"

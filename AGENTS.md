@@ -61,9 +61,9 @@ When the owner explicitly asks for the full GitHub CLI lifecycle, use
 The script derives the default branch from `origin/HEAD`, fetches it, and
 counts commits relative to that branch. The PR description is empty by
 default; use `--pr-body` only when a complex PR needs a concise explanation.
-One-commit PRs use the exact commit title. The squash commit body always uses a
-single-spaced bullet list of commit titles in oldest-to-newest order, including
-one-commit PRs. The script pushes the branch, creates the PR, watches CI with
+One-commit PRs use the exact commit title and an empty squash body. Multi-commit
+PRs use a single-spaced bullet list of commit titles in oldest-to-newest order
+as the squash body. The script pushes the branch, creates the PR, watches CI with
 `--fail-fast`, and squash merges only after checks pass. It never bypasses
 branch protection or uses `--admin`. The agent must not run this script unless
 the owner explicitly requests the lifecycle.
