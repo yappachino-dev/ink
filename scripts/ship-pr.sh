@@ -4,6 +4,30 @@
 # implementation or verification.
 set -euo pipefail
 
+wait_for_ci_checks() {
+  local pr_num=$1
+  local output
+
+  # GitHub can accept the PR before the workflow run is registered. Retry that
+  # narrow startup state instead of treating it as a failed CI check.
+  for _ in {1..60}; do
+    if output=$(gh pr checks "$pr_num" 2>&1); then
+      printf '%s\n' "$output"
+    elif [[ "$output" == *"no checks reported"* ]]; then
+      sleep 2
+      continue
+    else
+      printf '%s\n' "$output"
+    fi
+
+    gh pr checks "$pr_num" --watch --fail-fast
+    return
+  done
+
+  echo "error: timed out waiting for CI checks on PR #$pr_num" >&2
+  return 1
+}
+
 if ! command -v gh >/dev/null 2>&1; then
   echo "error: GitHub CLI (gh) is required" >&2
   exit 1
@@ -87,7 +111,7 @@ gh pr create \
 
 PR_NUM=$(gh pr view "$HEAD_BRANCH" --json number --jq '.number')
 printf 'Waiting for CI checks on PR #%s...\n' "$PR_NUM"
-gh pr checks "$PR_NUM" --watch --fail-fast
+wait_for_ci_checks "$PR_NUM"
 
 printf 'Squash-merging PR #%s...\n' "$PR_NUM"
 gh pr merge "$PR_NUM" \
