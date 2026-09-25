@@ -238,9 +238,9 @@ class SecureNotesService implements NotesService {
       final encryptedProject = result.unwrap;
 
       _scheduleSync();
-      final note = await _decryptProject(encryptedProject, masterKey);
+      final project = await _decryptProject(encryptedProject, masterKey);
 
-      return Success(note);
+      return Success(project);
     });
   }
 
