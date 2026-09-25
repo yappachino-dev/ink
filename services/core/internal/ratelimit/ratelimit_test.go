@@ -1,6 +1,7 @@
 package ratelimit
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -47,6 +48,20 @@ func TestLimiter_WindowReset(t *testing.T) {
 
 	if !l.Allow("a") {
 		t.Fatal("request after window should be allowed")
+	}
+}
+
+func TestLimiter_NeverExceedsHardBucketLimit(t *testing.T) {
+	l := New(1, time.Hour)
+
+	for i := 0; i < maxBuckets+100; i++ {
+		l.Allow(fmt.Sprintf("key-%d", i))
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if len(l.buckets) > maxBuckets {
+		t.Fatalf("bucket count exceeded hard limit: %d", len(l.buckets))
 	}
 }
 

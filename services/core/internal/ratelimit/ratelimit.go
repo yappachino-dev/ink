@@ -8,6 +8,8 @@ import (
 // Limiter is a fixed-window rate limiter keyed by arbitrary strings
 // (e.g. peer IP or account email). Intentionally in-memory: it protects a
 // single replica; revisit when running multiple instances.
+const maxBuckets = 10_000
+
 type Limiter struct {
 	mu     sync.Mutex
 	limit  int
@@ -38,13 +40,8 @@ func (l *Limiter) Allow(key string) bool {
 
 	b, ok := l.buckets[key]
 	if !ok || now.Sub(b.windowStart) >= l.window {
-		// Lazy eviction of stale buckets to keep the map bounded.
-		if len(l.buckets) > 10_000 {
-			for k, v := range l.buckets {
-				if now.Sub(v.windowStart) >= l.window {
-					delete(l.buckets, k)
-				}
-			}
+		if !ok && len(l.buckets) >= maxBuckets {
+			l.evictForInsert(now)
 		}
 
 		l.buckets[key] = &bucket{windowStart: now, count: 1}
@@ -57,4 +54,28 @@ func (l *Limiter) Allow(key string) bool {
 
 	b.count++
 	return true
+}
+
+// evictForInsert removes expired buckets first, then the oldest bucket if the
+// map is still full. The caller holds l.mu.
+func (l *Limiter) evictForInsert(now time.Time) {
+	for k, v := range l.buckets {
+		if now.Sub(v.windowStart) >= l.window {
+			delete(l.buckets, k)
+		}
+	}
+
+	if len(l.buckets) < maxBuckets {
+		return
+	}
+
+	var oldestKey string
+	var oldestStart time.Time
+	for k, v := range l.buckets {
+		if oldestStart.IsZero() || v.windowStart.Before(oldestStart) {
+			oldestKey = k
+			oldestStart = v.windowStart
+		}
+	}
+	delete(l.buckets, oldestKey)
 }
