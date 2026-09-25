@@ -18,9 +18,15 @@ type fakeSyncRepo struct {
 	projectsFetchedAt []int
 	notesFetchedAt    []int
 	cursorUpdates     []int
+	lockedCursorReads int
 }
 
 func (f *fakeSyncRepo) GetUserCursor(context.Context, int) (int, error) {
+	return f.currentCursor, nil
+}
+
+func (f *fakeSyncRepo) GetUserCursorForUpdate(_ context.Context, _ int) (int, error) {
+	f.lockedCursorReads++
 	return f.currentCursor, nil
 }
 
@@ -89,6 +95,9 @@ func TestSync_PushIncrementsCursorOnce(t *testing.T) {
 	if len(repo.cursorUpdates) != 1 || repo.cursorUpdates[0] != 6 {
 		t.Fatalf("cursor update should happen once with value 6, got %v", repo.cursorUpdates)
 	}
+	if repo.lockedCursorReads != 1 {
+		t.Fatalf("push sync should lock the cursor once, got %d", repo.lockedCursorReads)
+	}
 
 	for i, seq := range repo.upsertSequences {
 		if seq != 6 {
@@ -111,6 +120,9 @@ func TestSync_PullOnlyKeepsCursorUntouched(t *testing.T) {
 	}
 	if len(repo.cursorUpdates) != 0 || len(repo.upsertNotes) != 0 || len(repo.upsertProjects) != 0 {
 		t.Fatal("pull-only sync must not write anything")
+	}
+	if repo.lockedCursorReads != 0 {
+		t.Fatalf("pull-only sync must not take the cursor write lock, got %d", repo.lockedCursorReads)
 	}
 
 	if len(repo.projectsFetchedAt) != 1 || repo.projectsFetchedAt[0] != 4 {

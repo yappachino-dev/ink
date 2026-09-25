@@ -8,6 +8,7 @@ import (
 
 type SyncRepository interface {
 	GetUserCursor(ctx context.Context, userID int) (int, error)
+	GetUserCursorForUpdate(ctx context.Context, userID int) (int, error)
 	UpdateUserCursor(ctx context.Context, userID int, cursor int) error
 	UpsertProjects(ctx context.Context, userID int, syncSequence int, projects []Project) error
 	UpsertNotes(ctx context.Context, userID int, syncSequence int, notes []Note) error
@@ -27,14 +28,21 @@ func NewSyncService(transactor database.Transactor, repo SyncRepository) *SyncSe
 func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (SyncResult, error) {
 	var newCursor int
 	var fetchedChanges SyncChanges
+	hasChanges := len(req.Changes.Projects) > 0 || len(req.Changes.Notes) > 0
 
 	err := s.transactor.WithinTransaction(ctx, func(txCtx context.Context) error {
-		currentCursor, err := s.repo.GetUserCursor(txCtx, userID)
+		var currentCursor int
+		var err error
+		if hasChanges {
+			// Only push transactions need to serialize cursor allocation.
+			currentCursor, err = s.repo.GetUserCursorForUpdate(txCtx, userID)
+		} else {
+			currentCursor, err = s.repo.GetUserCursor(txCtx, userID)
+		}
 		if err != nil {
 			return err
 		}
 
-		hasChanges := len(req.Changes.Projects) > 0 || len(req.Changes.Notes) > 0
 		newCursor = currentCursor
 		if hasChanges {
 			newCursor = newCursor + 1
