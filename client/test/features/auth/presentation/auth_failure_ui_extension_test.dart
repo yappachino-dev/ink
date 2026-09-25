@@ -19,7 +19,7 @@ void main() {
     expect(const InvalidVerificationCode().message(strings), 'Invalid code');
     expect(
       const InvalidPassword().message(strings),
-      'Password must be between 6 and 72 characters',
+      'Password does not meet the security requirements.',
     );
   });
 

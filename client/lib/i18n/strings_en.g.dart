@@ -380,6 +380,9 @@ class Translations$auth$errors$en {
 
 	/// en: 'An account with this email already exists.'
 	String get emailAlreadyInUse => 'An account with this email already exists.';
+
+	/// en: 'Password does not meet the security requirements.'
+	String get invalidPassword => 'Password does not meet the security requirements.';
 }
 
 // Path: auth.form
@@ -1048,6 +1051,7 @@ extension on Translations {
 			'auth.verify.resend' => 'Resend code',
 			'auth.errors.invalidCredentials' => 'Invalid email or password.',
 			'auth.errors.emailAlreadyInUse' => 'An account with this email already exists.',
+			'auth.errors.invalidPassword' => 'Password does not meet the security requirements.',
 			'auth.form.email' => 'Email',
 			'auth.form.emailHint' => 'Email',
 			'auth.form.emailError' => 'Email is required',

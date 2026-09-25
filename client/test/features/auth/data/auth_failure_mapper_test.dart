@@ -12,6 +12,18 @@ void main() {
     );
   });
 
+  test(
+    'verification requests map already-exists responses to email-in-use',
+    () {
+      expect(
+        mapRequestVerificationFailure(
+          const ApiFailure(StatusCode.alreadyExists, 'exists'),
+        ),
+        const EmailAlreadyInUse(),
+      );
+    },
+  );
+
   test('register maps already-exists responses to email-in-use', () {
     expect(
       mapRegisterFailure(const ApiFailure(StatusCode.alreadyExists, 'exists')),
@@ -22,10 +34,7 @@ void main() {
   test('register maps verification-code errors to a specific failure', () {
     expect(
       mapRegisterFailure(
-        const ApiFailure(
-          StatusCode.invalidArgument,
-          'invalid verification code',
-        ),
+        const ApiFailure(StatusCode.invalidArgument, 'invalid code'),
       ),
       const InvalidVerificationCode(),
     );

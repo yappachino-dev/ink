@@ -18,14 +18,27 @@ AuthFailure mapRegisterFailure(CoreFailure failure) {
       return const EmailAlreadyInUse();
     }
 
+    // The current backend contract uses InvalidArgument plus a human-readable
+    // message for verification/password errors. Keep this mapping aligned with
+    // those messages until structured gRPC error details are introduced.
     final normalizedMessage = message?.toLowerCase() ?? '';
     if (statusCode == StatusCode.invalidArgument) {
-      if (normalizedMessage.contains('verification code')) {
+      if (normalizedMessage.contains('code')) {
         return const InvalidVerificationCode();
       }
       if (normalizedMessage.contains('password')) {
         return const InvalidPassword();
       }
+    }
+  }
+
+  return AuthCoreFailure(failure);
+}
+
+AuthFailure mapRequestVerificationFailure(CoreFailure failure) {
+  if (failure case ApiFailure(:final statusCode)) {
+    if (statusCode == StatusCode.alreadyExists) {
+      return const EmailAlreadyInUse();
     }
   }
 

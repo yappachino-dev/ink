@@ -8,7 +8,7 @@ extension AuthFailureUiMessage on AuthFailure {
       InvalidCredentials() => strings.auth.errors.invalidCredentials,
       EmailAlreadyInUse() => strings.auth.errors.emailAlreadyInUse,
       InvalidVerificationCode() => strings.auth.verify.codeError,
-      InvalidPassword() => strings.auth.form.passwordLengthError,
+      InvalidPassword() => strings.auth.errors.invalidPassword,
       AuthCoreFailure(:final core) => _coreMessage(core, strings),
     };
   }

@@ -36,7 +36,7 @@ class UnifiedAuthRepository
   Future<Result<void, AuthFailure>> requestVerification(String email) {
     return remoteRunner(
       call: () => _remote.requestVerification((email: email)),
-      mapCore: mapAuthFailure,
+      mapCore: mapRequestVerificationFailure,
     );
   }
 
