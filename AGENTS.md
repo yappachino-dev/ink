@@ -53,14 +53,17 @@ When the owner explicitly asks for the full GitHub CLI lifecycle, use
 
 ```bash
 ./scripts/ship-pr.sh 'chore(scope): summarize the complete change'
+# Optional, short PR context for a genuinely complex change:
+./scripts/ship-pr.sh --pr-body 'Short explanation of the core design.' \
+  'chore(scope): summarize the complete change'
 ```
 
 The script derives the default branch from `origin/HEAD`, fetches it, and
-counts commits relative to that branch. One-commit PRs use the exact commit
-title and an empty body. Multi-commit PRs require an explicit high-level title
-and use a single-spaced bullet list of commit titles in oldest-to-newest order
-as the body. The script pushes the branch, creates the PR, watches CI with
-`--fail-fast`, and squash
-merges only after checks pass. It never bypasses branch protection or uses
-`--admin`. The agent must not run this script unless the owner explicitly
-requests the lifecycle.
+counts commits relative to that branch. The PR description is empty by
+default; use `--pr-body` only when a complex PR needs a concise explanation.
+One-commit PRs use the exact commit title. The squash commit body always uses a
+single-spaced bullet list of commit titles in oldest-to-newest order, including
+one-commit PRs. The script pushes the branch, creates the PR, watches CI with
+`--fail-fast`, and squash merges only after checks pass. It never bypasses
+branch protection or uses `--admin`. The agent must not run this script unless
+the owner explicitly requests the lifecycle.
