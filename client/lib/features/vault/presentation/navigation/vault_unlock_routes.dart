@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/vault/presentation/screens/fatal_screen.dart';
 import 'package:ink/features/vault/presentation/screens/unlock_method_screen.dart';
 import 'package:ink/features/vault/presentation/screens/unlock_pattern_screen.dart';
 import 'package:ink/features/vault/presentation/screens/unlock_pin_screen.dart';
 import 'package:ink/features/vault/presentation/screens/unlock_recovery_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'vault_unlock_routes.g.dart';
 

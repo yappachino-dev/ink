@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/features/notes/domain/constants.dart';
@@ -10,6 +9,7 @@ import 'package:ink/features/notes/presentation/widgets/notes/card/completed_not
 import 'package:ink/features/notes/presentation/widgets/notes/completed_secion.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/note_details_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TaskListView extends ConsumerWidget {
   const TaskListView({super.key});

@@ -55,7 +55,7 @@ jobs:
 
       - name: Resolve dependencies
         working-directory: client
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
       - name: Analyze
         working-directory: client

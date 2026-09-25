@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/extensions/navigation_helper.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BackAppBar({super.key});

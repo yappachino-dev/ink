@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
@@ -19,6 +18,7 @@ import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.d
 import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

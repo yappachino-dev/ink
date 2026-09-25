@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Shown on unlock screens while the progressive lockout is active: displays a
 /// ticking countdown and reports whether submissions must be blocked.

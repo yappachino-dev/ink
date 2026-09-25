@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/extensions/navigation_helper.dart';
@@ -13,6 +12,7 @@ import 'package:ink/features/auth/presentation/widgets/email_form_field.dart';
 import 'package:ink/features/auth/presentation/widgets/password_form_field.dart';
 import 'package:ink/features/auth/presentation/widgets/primary_button.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({required this.source, super.key});

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/vault/presentation/screens/setup_method_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pattern_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_recovery_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_verify_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'vault_setup_routes.g.dart';
 

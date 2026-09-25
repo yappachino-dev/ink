@@ -1,6 +1,8 @@
 # Miscellaneous
 *.class
 *.lock
+# Keep the Flutter application lockfile for reproducible CI builds.
+!pubspec.lock
 *.log
 *.pyc
 *.swp

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -18,6 +17,7 @@ import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.d
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NoteDetailsSheet extends ConsumerStatefulWidget {
   const NoteDetailsSheet({

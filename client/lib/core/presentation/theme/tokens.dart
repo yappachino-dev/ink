@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/ink_colors.dart' show InkColors;
+import 'package:material_ui/material_ui.dart';
 
 /// Corner radii. The scale is intentionally coarse — pick the closest role
 /// instead of inventing a new value.

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/back_app_bar.dart';
 import 'package:ink/core/presentation/widgets/safe_screen_wrapper.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FlowScaffold extends StatelessWidget {
   const FlowScaffold({

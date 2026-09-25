@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:typed_data';
 
 // Used as a contract
-// ignore: one_member_abstracts
 abstract class RandomService {
   Uint8List generateBytes(int length);
 }

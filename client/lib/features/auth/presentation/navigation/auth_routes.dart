@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/auth/presentation/screens/email_verification_screen.dart';
 import 'package:ink/features/auth/presentation/screens/login_screen.dart';
 import 'package:ink/features/auth/presentation/screens/register_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'auth_routes.g.dart';
 

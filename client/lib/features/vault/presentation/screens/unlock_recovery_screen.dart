@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
@@ -11,6 +10,7 @@ import 'package:ink/features/vault/presentation/notifiers/vault_unlock_notifier.
 import 'package:ink/features/vault/presentation/widgets/recovery_phrase_input.dart';
 import 'package:ink/features/vault/presentation/widgets/unlock_throttle_message.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class UnlockRecoveryScreen extends ConsumerStatefulWidget {
   const UnlockRecoveryScreen({super.key});

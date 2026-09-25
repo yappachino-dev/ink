@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
@@ -14,6 +13,7 @@ import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/create_project_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DrawerProjectItem extends ConsumerWidget {
   const DrawerProjectItem({

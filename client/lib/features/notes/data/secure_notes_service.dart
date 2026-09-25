@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/crypto/crypto.dart';
@@ -26,6 +25,7 @@ import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/value_objects/note_time.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'secure_notes_service.g.dart';

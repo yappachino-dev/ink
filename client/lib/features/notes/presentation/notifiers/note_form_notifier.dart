@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/note_time_ui_extension.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'note_form_notifier.g.dart';
 part 'note_form_notifier.freezed.dart';
+part 'note_form_notifier.g.dart';
 
 @freezed
 sealed class NoteDraftState with _$NoteDraftState {

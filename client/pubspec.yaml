@@ -41,10 +41,12 @@ dependencies:
   # UI
   flutter_quill: ^11.6.0
   flutter_quill_extensions: ^11.0.0
+  material_ui: ^1.4.0
+  cupertino_ui: ^1.1.1
   slang_flutter: ^4.19.0
   cupertino_icons: ^1.0.9
   google_fonts: ^8.2.1
-  flex_color_scheme: ^8.4.0
+  flex_color_scheme: ^9.0.0
   table_calendar: ^3.2.1
   pattern_lock: ^2.0.0
 
@@ -76,7 +78,7 @@ dev_dependencies:
   go_router_builder: ^4.5.0
 
   # Linting
-  very_good_analysis: ^10.3.0
+  very_good_analysis: ^11.0.0
 
 flutter:
   assets:

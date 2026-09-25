@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -9,6 +8,7 @@ import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
 import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PersonalizationScreen extends StatelessWidget {
   const PersonalizationScreen({super.key});

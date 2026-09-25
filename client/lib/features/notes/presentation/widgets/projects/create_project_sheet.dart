@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -12,6 +11,7 @@ import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/presentation/constants/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CreateProjectSheet extends ConsumerStatefulWidget {
   const CreateProjectSheet({

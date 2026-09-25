@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CompletedNoteCard extends ConsumerWidget {
   const CompletedNoteCard({

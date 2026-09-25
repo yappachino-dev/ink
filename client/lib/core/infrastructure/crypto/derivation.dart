@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:unorm_dart/unorm_dart.dart' as unorm;
 
 // Used as a contract
-// ignore: one_member_abstracts
 abstract class DerivationService {
   Future<Uint8List> derive(Uint8List data, Uint8List salt);
 }

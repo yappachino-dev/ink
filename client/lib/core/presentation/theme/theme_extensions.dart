@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/ink_colors.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension ThemeBuildContextExtension on BuildContext {
   ThemeData get theme => Theme.of(this);

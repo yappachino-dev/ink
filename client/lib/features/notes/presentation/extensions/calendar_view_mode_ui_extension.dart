@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 extension CalendarViewModeUiExtension on CalendarViewMode {

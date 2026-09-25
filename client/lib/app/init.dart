@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/app/database/adapters/notes_local_data_source.dart';
 import 'package:ink/app/database/adapters/projects_local_data_source.dart';
@@ -35,6 +34,7 @@ import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/data/sources/vault_local_store_provider.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
