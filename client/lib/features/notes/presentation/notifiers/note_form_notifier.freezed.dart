@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'note_form_notifier.dart';
@@ -9,6 +9,7 @@ part of 'note_form_notifier.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $NoteDraftStateCopyWith<NoteDraftState> get copyWith => _$NoteDraftStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteDraftState&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.reminderMinutes, reminderMinutes) || other.reminderMinutes == reminderMinutes)&&(identical(other.priority, priority) || other.priority == priority));
+  final _this = this as NoteDraftState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteDraftState&&(identical(other.projectId, _this.projectId) || other.projectId == _this.projectId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.reminderMinutes, _this.reminderMinutes) || other.reminderMinutes == _this.reminderMinutes)&&(identical(other.priority, _this.priority) || other.priority == _this.priority));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,projectId,dueDate,dueTime,reminderMinutes,priority);
+int get hashCode {
+  final _this = this as NoteDraftState;
+  return Object.hash(runtimeType,_this.projectId,_this.dueDate,_this.dueTime,_this.reminderMinutes,_this.priority);
+}
 
 @override
 String toString() {
-  return 'NoteDraftState(projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, reminderMinutes: $reminderMinutes, priority: $priority)';
+  final _this = this as NoteDraftState;
+  return 'NoteDraftState(projectId: ${_this.projectId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, reminderMinutes: ${_this.reminderMinutes}, priority: ${_this.priority})';
 }
 
 
@@ -63,7 +69,7 @@ class _$NoteDraftStateCopyWithImpl<$Res>
 /// Create a copy of NoteDraftState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? reminderMinutes = freezed,Object? priority = null,}) {
-  return _then(_self.copyWith(
+  return _then(NoteDraftState(
 projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
 as String?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,dueTime: freezed == dueTime ? _self.dueTime : dueTime // ignore: cast_nullable_to_non_nullable
@@ -223,16 +229,18 @@ _$NoteDraftStateCopyWith<_NoteDraftState> get copyWith => __$NoteDraftStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDraftState&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.reminderMinutes, reminderMinutes) || other.reminderMinutes == reminderMinutes)&&(identical(other.priority, priority) || other.priority == priority));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDraftState&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.reminderMinutes, reminderMinutes) || other.reminderMinutes == reminderMinutes)&&(identical(other.priority, priority) || other.priority == priority));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,projectId,dueDate,dueTime,reminderMinutes,priority);
+int get hashCode {
+    return Object.hash(runtimeType,projectId,dueDate,dueTime,reminderMinutes,priority);
+}
 
 @override
 String toString() {
-  return 'NoteDraftState(projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, reminderMinutes: $reminderMinutes, priority: $priority)';
+    return 'NoteDraftState(projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, reminderMinutes: $reminderMinutes, priority: $priority)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'auth_notifier.dart';
@@ -9,6 +9,7 @@ part of 'auth_notifier.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AuthDataCopyWith<AuthData> get copyWith => _$AuthDataCopyWithImpl<AuthData>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthData&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing)&&(identical(other.failure, failure) || other.failure == failure));
+  final _this = this as AuthData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthData&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.isProcessing, _this.isProcessing) || other.isProcessing == _this.isProcessing)&&(identical(other.failure, _this.failure) || other.failure == _this.failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,email,password,isProcessing,failure);
+int get hashCode {
+  final _this = this as AuthData;
+  return Object.hash(runtimeType,_this.email,_this.password,_this.isProcessing,_this.failure);
+}
 
 @override
 String toString() {
-  return 'AuthData(email: $email, password: $password, isProcessing: $isProcessing, failure: $failure)';
+  final _this = this as AuthData;
+  return 'AuthData(email: ${_this.email}, password: ${_this.password}, isProcessing: ${_this.isProcessing}, failure: ${_this.failure})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AuthDataCopyWithImpl<$Res>
 /// Create a copy of AuthData
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? email = freezed,Object? password = freezed,Object? isProcessing = null,Object? failure = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AuthData(
 email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String?,password: freezed == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String?,isProcessing: null == isProcessing ? _self.isProcessing : isProcessing // ignore: cast_nullable_to_non_nullable
@@ -221,16 +227,18 @@ _$AuthDataCopyWith<_AuthData> get copyWith => __$AuthDataCopyWithImpl<_AuthData>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthData&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing)&&(identical(other.failure, failure) || other.failure == failure));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthData&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing)&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,email,password,isProcessing,failure);
+int get hashCode {
+    return Object.hash(runtimeType,email,password,isProcessing,failure);
+}
 
 @override
 String toString() {
-  return 'AuthData(email: $email, password: $password, isProcessing: $isProcessing, failure: $failure)';
+    return 'AuthData(email: $email, password: $password, isProcessing: $isProcessing, failure: $failure)';
 }
 
 

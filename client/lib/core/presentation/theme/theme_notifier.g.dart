@@ -47,7 +47,7 @@ abstract class _$ThemeNotifier extends $Notifier<ThemePreferences> {
   ThemePreferences build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ThemePreferences, ThemePreferences>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$ThemeNotifier extends $Notifier<ThemePreferences> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -47,7 +47,7 @@ abstract class _$SelectedProjectId extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$SelectedProjectId extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -100,7 +100,7 @@ abstract class _$SelectedProjectTitle extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -110,7 +110,7 @@ abstract class _$SelectedProjectTitle extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -152,7 +152,7 @@ abstract class _$CompletedExpnaded extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -162,7 +162,7 @@ abstract class _$CompletedExpnaded extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -204,7 +204,7 @@ abstract class _$ShowDescription extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -214,7 +214,7 @@ abstract class _$ShowDescription extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -257,7 +257,7 @@ abstract class _$CalendarViewModeState extends $Notifier<CalendarViewMode> {
   CalendarViewMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<CalendarViewMode, CalendarViewMode>;
     final element =
         ref.element
@@ -267,7 +267,7 @@ abstract class _$CalendarViewModeState extends $Notifier<CalendarViewMode> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -310,7 +310,7 @@ abstract class _$CalendarSelectedDate extends $Notifier<DateTime> {
   DateTime build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<DateTime, DateTime>;
     final element =
         ref.element
@@ -320,7 +320,7 @@ abstract class _$CalendarSelectedDate extends $Notifier<DateTime> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -363,7 +363,7 @@ abstract class _$CalendarFocusedDate extends $Notifier<DateTime> {
   DateTime build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<DateTime, DateTime>;
     final element =
         ref.element
@@ -373,6 +373,6 @@ abstract class _$CalendarFocusedDate extends $Notifier<DateTime> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

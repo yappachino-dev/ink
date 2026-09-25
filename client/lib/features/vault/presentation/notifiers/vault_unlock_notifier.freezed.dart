@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'vault_unlock_notifier.dart';
@@ -9,6 +9,7 @@ part of 'vault_unlock_notifier.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $VaultUnlockDataCopyWith<VaultUnlockData> get copyWith => _$VaultUnlockDataCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VaultUnlockData&&(identical(other.isUnlocking, isUnlocking) || other.isUnlocking == isUnlocking)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.failureStreak, failureStreak) || other.failureStreak == failureStreak)&&(identical(other.lockedUntil, lockedUntil) || other.lockedUntil == lockedUntil));
+  final _this = this as VaultUnlockData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VaultUnlockData&&(identical(other.isUnlocking, _this.isUnlocking) || other.isUnlocking == _this.isUnlocking)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.failureStreak, _this.failureStreak) || other.failureStreak == _this.failureStreak)&&(identical(other.lockedUntil, _this.lockedUntil) || other.lockedUntil == _this.lockedUntil));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isUnlocking,failure,failureStreak,lockedUntil);
+int get hashCode {
+  final _this = this as VaultUnlockData;
+  return Object.hash(runtimeType,_this.isUnlocking,_this.failure,_this.failureStreak,_this.lockedUntil);
+}
 
 @override
 String toString() {
-  return 'VaultUnlockData(isUnlocking: $isUnlocking, failure: $failure, failureStreak: $failureStreak, lockedUntil: $lockedUntil)';
+  final _this = this as VaultUnlockData;
+  return 'VaultUnlockData(isUnlocking: ${_this.isUnlocking}, failure: ${_this.failure}, failureStreak: ${_this.failureStreak}, lockedUntil: ${_this.lockedUntil})';
 }
 
 
@@ -63,7 +69,7 @@ class _$VaultUnlockDataCopyWithImpl<$Res>
 /// Create a copy of VaultUnlockData
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? isUnlocking = null,Object? failure = freezed,Object? failureStreak = null,Object? lockedUntil = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(VaultUnlockData(
 isUnlocking: null == isUnlocking ? _self.isUnlocking : isUnlocking // ignore: cast_nullable_to_non_nullable
 as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
 as VaultFailure?,failureStreak: null == failureStreak ? _self.failureStreak : failureStreak // ignore: cast_nullable_to_non_nullable
@@ -221,16 +227,18 @@ _$VaultUnlockDataCopyWith<_VaultUnlockData> get copyWith => __$VaultUnlockDataCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VaultUnlockData&&(identical(other.isUnlocking, isUnlocking) || other.isUnlocking == isUnlocking)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.failureStreak, failureStreak) || other.failureStreak == failureStreak)&&(identical(other.lockedUntil, lockedUntil) || other.lockedUntil == lockedUntil));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VaultUnlockData&&(identical(other.isUnlocking, isUnlocking) || other.isUnlocking == isUnlocking)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.failureStreak, failureStreak) || other.failureStreak == failureStreak)&&(identical(other.lockedUntil, lockedUntil) || other.lockedUntil == lockedUntil));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isUnlocking,failure,failureStreak,lockedUntil);
+int get hashCode {
+    return Object.hash(runtimeType,isUnlocking,failure,failureStreak,lockedUntil);
+}
 
 @override
 String toString() {
-  return 'VaultUnlockData(isUnlocking: $isUnlocking, failure: $failure, failureStreak: $failureStreak, lockedUntil: $lockedUntil)';
+    return 'VaultUnlockData(isUnlocking: $isUnlocking, failure: $failure, failureStreak: $failureStreak, lockedUntil: $lockedUntil)';
 }
 
 

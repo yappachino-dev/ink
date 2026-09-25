@@ -10,11 +10,17 @@ List<RouteBase> get $appRoutes => [$authRoute];
 
 RouteBase get $authRoute => GoRouteData.$route(
   path: '/auth',
+  hasOverriddenOnExit: false,
   factory: $AuthRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'register', factory: $RegisterRoute._fromState),
+    GoRouteData.$route(
+      path: 'register',
+      hasOverriddenOnExit: false,
+      factory: $RegisterRoute._fromState,
+    ),
     GoRouteData.$route(
       path: 'email-verification',
+      hasOverriddenOnExit: false,
       factory: $EmailVerificationRoute._fromState,
     ),
   ],

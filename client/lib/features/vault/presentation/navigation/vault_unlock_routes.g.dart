@@ -10,18 +10,29 @@ List<RouteBase> get $appRoutes => [$unlockVaultRoute];
 
 RouteBase get $unlockVaultRoute => GoRouteData.$route(
   path: '/unlock',
+  hasOverriddenOnExit: false,
   factory: $UnlockVaultRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'pin', factory: $UnlockPinRoute._fromState),
+    GoRouteData.$route(
+      path: 'pin',
+      hasOverriddenOnExit: false,
+      factory: $UnlockPinRoute._fromState,
+    ),
     GoRouteData.$route(
       path: 'pattern',
+      hasOverriddenOnExit: false,
       factory: $UnlockPatternRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'recovery',
+      hasOverriddenOnExit: false,
       factory: $UnlockRecoveryRoute._fromState,
     ),
-    GoRouteData.$route(path: 'fatal', factory: $FatalRoute._fromState),
+    GoRouteData.$route(
+      path: 'fatal',
+      hasOverriddenOnExit: false,
+      factory: $FatalRoute._fromState,
+    ),
   ],
 );
 

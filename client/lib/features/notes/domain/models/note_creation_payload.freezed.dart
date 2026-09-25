@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'note_creation_payload.dart';
@@ -9,6 +9,7 @@ part of 'note_creation_payload.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $NoteCreationPayloadCopyWith<NoteCreationPayload> get copyWith => _$NoteCreation
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteCreationPayload&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.content, content)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
+  final _this = this as NoteCreationPayload;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteCreationPayload&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.content, _this.content)&&(identical(other.projectId, _this.projectId) || other.projectId == _this.projectId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.priority, _this.priority) || other.priority == _this.priority)&&(identical(other.reminderMinutesBefore, _this.reminderMinutesBefore) || other.reminderMinutesBefore == _this.reminderMinutesBefore));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(content),projectId,dueDate,dueTime,priority,reminderMinutesBefore);
+int get hashCode {
+  final _this = this as NoteCreationPayload;
+  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.content),_this.projectId,_this.dueDate,_this.dueTime,_this.priority,_this.reminderMinutesBefore);
+}
 
 @override
 String toString() {
-  return 'NoteCreationPayload(title: $title, content: $content, projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
+  final _this = this as NoteCreationPayload;
+  return 'NoteCreationPayload(title: ${_this.title}, content: ${_this.content}, projectId: ${_this.projectId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, priority: ${_this.priority}, reminderMinutesBefore: ${_this.reminderMinutesBefore})';
 }
 
 
@@ -63,7 +69,7 @@ class _$NoteCreationPayloadCopyWithImpl<$Res>
 /// Create a copy of NoteCreationPayload
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? content = null,Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(NoteCreationPayload(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as List<dynamic>,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
@@ -206,7 +212,7 @@ return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.du
 
 
 class _NoteCreationPayload implements NoteCreationPayload {
-  const _NoteCreationPayload({required this.title, required final  List<dynamic> content, this.projectId, this.dueDate, this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _content = content;
+  const _NoteCreationPayload({required this.title, required  List<dynamic> content, this.projectId, this.dueDate, this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _content = content;
   
 
 @override final  String title;
@@ -233,16 +239,18 @@ _$NoteCreationPayloadCopyWith<_NoteCreationPayload> get copyWith => __$NoteCreat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteCreationPayload&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other._content, _content)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteCreationPayload&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.content, _content)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_content),projectId,dueDate,dueTime,priority,reminderMinutesBefore);
+int get hashCode {
+    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_content),projectId,dueDate,dueTime,priority,reminderMinutesBefore);
+}
 
 @override
 String toString() {
-  return 'NoteCreationPayload(title: $title, content: $content, projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
+    return 'NoteCreationPayload(title: $title, content: $content, projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
 }
 
 

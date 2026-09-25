@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +47,7 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
       ),
     );
 
-    unawaited(_controller.forward());
+    _controller.forward();
   }
 
   @override

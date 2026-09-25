@@ -10,10 +10,12 @@ List<RouteBase> get $appRoutes => [$notesRoute];
 
 RouteBase get $notesRoute => GoRouteData.$route(
   path: '/notes',
+  hasOverriddenOnExit: false,
   factory: $NotesRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'calendar',
+      hasOverriddenOnExit: false,
       factory: $NotesCalendarRoute._fromState,
     ),
   ],

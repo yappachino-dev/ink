@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'project_creation_payload.dart';
@@ -9,6 +9,7 @@ part of 'project_creation_payload.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ProjectCreationPayloadCopyWith<ProjectCreationPayload> get copyWith => _$Projec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+  final _this = this as ProjectCreationPayload;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectCreationPayload&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.emoji, _this.emoji) || other.emoji == _this.emoji)&&(identical(other.colorValue, _this.colorValue) || other.colorValue == _this.colorValue));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,emoji,colorValue);
+int get hashCode {
+  final _this = this as ProjectCreationPayload;
+  return Object.hash(runtimeType,_this.title,_this.emoji,_this.colorValue);
+}
 
 @override
 String toString() {
-  return 'ProjectCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
+  final _this = this as ProjectCreationPayload;
+  return 'ProjectCreationPayload(title: ${_this.title}, emoji: ${_this.emoji}, colorValue: ${_this.colorValue})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ProjectCreationPayloadCopyWithImpl<$Res>
 /// Create a copy of ProjectCreationPayload
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? emoji = null,Object? colorValue = null,}) {
-  return _then(_self.copyWith(
+  return _then(ProjectCreationPayload(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,emoji: null == emoji ? _self.emoji : emoji // ignore: cast_nullable_to_non_nullable
 as String,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
@@ -219,16 +225,18 @@ _$ProjectCreationPayloadCopyWith<_ProjectCreationPayload> get copyWith => __$Pro
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,emoji,colorValue);
+int get hashCode {
+    return Object.hash(runtimeType,title,emoji,colorValue);
+}
 
 @override
 String toString() {
-  return 'ProjectCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
+    return 'ProjectCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
 }
 
 

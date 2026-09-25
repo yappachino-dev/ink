@@ -33,13 +33,13 @@ final class NotesNotifierProvider
   NotesNotifier create() => NotesNotifier();
 }
 
-String _$notesNotifierHash() => r'6bd4069267c995dd70ac86ccafcef0e216279fee';
+String _$notesNotifierHash() => r'0ab23b0fd87f2d9d09366e6db432a12a625a1f3e';
 
 abstract class _$NotesNotifier extends $AsyncNotifier<Map<String, Note>> {
   FutureOr<Map<String, Note>> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<AsyncValue<Map<String, Note>>, Map<String, Note>>;
     final element =
@@ -50,6 +50,6 @@ abstract class _$NotesNotifier extends $AsyncNotifier<Map<String, Note>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
