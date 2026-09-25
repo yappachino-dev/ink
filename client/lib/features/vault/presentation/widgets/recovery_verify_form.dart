@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -53,7 +52,7 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
     super.didUpdateWidget(oldWidget);
 
     if (widget.isError && !oldWidget.isError) {
-      unawaited(_shakeController.forward(from: 0));
+      _shakeController.forward(from: 0);
     }
   }
 

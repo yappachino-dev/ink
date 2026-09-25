@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/app_animations.dart';
@@ -42,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    unawaited(_controller.forward());
+    _controller.forward();
   }
 
   @override
