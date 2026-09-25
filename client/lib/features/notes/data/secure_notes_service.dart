@@ -78,9 +78,8 @@ class SecureNotesService implements NotesService {
       if (result case Failure(error: final e)) return Failure(e);
       final encryptedNote = result.unwrap;
 
+      _scheduleSync();
       final note = await _decryptNote(encryptedNote, masterKey);
-
-      unawaited(_sync.performSync());
 
       return Success(note);
     });
@@ -116,9 +115,11 @@ class SecureNotesService implements NotesService {
         encryptedContent: encryptedContent,
       );
 
-      unawaited(_sync.performSync());
+      final result = await _repository.saveNote(encryptedNote);
+      if (result case Failure(error: final e)) return Failure(e);
 
-      return _repository.saveNote(encryptedNote);
+      _scheduleSync();
+      return result;
     });
   }
 
@@ -165,8 +166,16 @@ class SecureNotesService implements NotesService {
   @override
   Future<Result<void, NotesFailure>> deleteNote(Note note) {
     return _guard(() async {
-      return _repository.deleteNote(note.id);
+      final result = await _repository.deleteNote(note.id);
+      if (result case Failure(error: final e)) return Failure(e);
+
+      _scheduleSync();
+      return result;
     });
+  }
+
+  void _scheduleSync() {
+    unawaited(_sync.performSync());
   }
 
   Future<Note> _decryptNote(
@@ -224,15 +233,14 @@ class SecureNotesService implements NotesService {
         masterKey,
       );
 
-      final result = await _repository.createProject(
-        encryptedContent,
-      );
+      final result = await _repository.createProject(encryptedContent);
       if (result case Failure(error: final e)) return Failure(e);
       final encryptedProject = result.unwrap;
 
-      final note = await _decryptProject(encryptedProject, masterKey);
+      _scheduleSync();
+      final project = await _decryptProject(encryptedProject, masterKey);
 
-      return Success(note);
+      return Success(project);
     });
   }
 
@@ -258,7 +266,11 @@ class SecureNotesService implements NotesService {
         encryptedContent: encryptedContent,
       );
 
-      return _repository.saveProject(encryptedProject);
+      final result = await _repository.saveProject(encryptedProject);
+      if (result case Failure(error: final e)) return Failure(e);
+
+      _scheduleSync();
+      return result;
     });
   }
 
@@ -309,7 +321,11 @@ class SecureNotesService implements NotesService {
   @override
   Future<Result<void, NotesFailure>> deleteProject(Project project) {
     return _guard(() async {
-      return _repository.deleteProject(project.id);
+      final result = await _repository.deleteProject(project.id);
+      if (result case Failure(error: final e)) return Failure(e);
+
+      _scheduleSync();
+      return result;
     });
   }
 

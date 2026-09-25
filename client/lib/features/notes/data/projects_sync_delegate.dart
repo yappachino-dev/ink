@@ -27,8 +27,10 @@ class ProjectsSyncDelegate implements Syncable {
   }
 
   @override
-  Future<Result<void, CoreFailure>> acknowledgePush(SyncChanges changes) async {
-    final acks = changes.projects
+  Future<Result<void, CoreFailure>> acknowledgePush(
+    SyncChanges pushedChanges,
+  ) async {
+    final acks = pushedChanges.projects
         .map(
           (project) => (
             id: project.id,
@@ -40,10 +42,7 @@ class ProjectsSyncDelegate implements Syncable {
 
     final result = await _engine.acknowledgePushedProjects(acks);
 
-    return result.fold(
-      Success.new,
-      (failure) => Failure(failure.toCore()),
-    );
+    return result.fold(Success.new, (failure) => Failure(failure.toCore()));
   }
 
   @override
@@ -54,9 +53,6 @@ class ProjectsSyncDelegate implements Syncable {
       changes.projects.map((project) => project.toDomain()).toList(),
     );
 
-    return result.fold(
-      Success.new,
-      (failure) => Failure(failure.toCore()),
-    );
+    return result.fold(Success.new, (failure) => Failure(failure.toCore()));
   }
 }

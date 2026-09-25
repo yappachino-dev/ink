@@ -6,6 +6,8 @@ abstract class Syncable {
   int get syncPriority;
 
   Future<Result<void, CoreFailure>> collectLocalChanges(SyncChanges changes);
-  Future<Result<void, CoreFailure>> acknowledgePush(SyncChanges changes);
+
+  /// Acknowledges only the changes included in the push request.
+  Future<Result<void, CoreFailure>> acknowledgePush(SyncChanges pushedChanges);
   Future<Result<void, CoreFailure>> applyRemoteChanges(SyncChanges changes);
 }

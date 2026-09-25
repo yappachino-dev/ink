@@ -59,10 +59,12 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
 
       final syncResponse = syncResult.unwrap;
 
+      // The response also contains changes fetched from the server. Only
+      // acknowledge the local changes that were actually included in this
+      // push request; remote-only rows must not be marked as pushed.
+      final pushedChanges = request.changes;
       for (final delegate in syncables) {
-        final ackResult = await delegate.acknowledgePush(
-          syncResponse.changes,
-        );
+        final ackResult = await delegate.acknowledgePush(pushedChanges);
         if (ackResult case Failure(error: final e)) {
           state = SyncError(e);
           return;
