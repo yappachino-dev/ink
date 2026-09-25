@@ -1,8 +1,39 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val signingPropertiesFile = rootProject.file("key.properties")
+val signingProperties = Properties()
+if (signingPropertiesFile.exists()) {
+    signingPropertiesFile.inputStream().use(signingProperties::load)
+}
+
+val releaseSigningKeys = listOf(
+    "storeFile",
+    "storePassword",
+    "keyAlias",
+    "keyPassword",
+)
+val missingReleaseSigningKeys = releaseSigningKeys.filter { key ->
+    signingProperties.getProperty(key)?.trim().isNullOrEmpty()
+}
+val releaseBuildRequested = gradle.startParameter.taskNames.any { task ->
+    task.contains("release", ignoreCase = true)
+}
+
+if (releaseBuildRequested && missingReleaseSigningKeys.isNotEmpty()) {
+    throw GradleException(
+        "Release signing is not configured. Create android/key.properties " +
+            "with: ${missingReleaseSigningKeys.joinToString()}",
+    )
+}
+
+fun releaseSigningProperty(name: String): String =
+    signingProperties.getProperty(name).trim()
 
 android {
     namespace = "com.ink.app"
@@ -25,11 +56,24 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (missingReleaseSigningKeys.isEmpty()) {
+            create("release") {
+                storeFile = file(releaseSigningProperty("storeFile"))
+                storePassword = releaseSigningProperty("storePassword")
+                keyAlias = releaseSigningProperty("keyAlias")
+                keyPassword = releaseSigningProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (missingReleaseSigningKeys.isEmpty()) {
+                signingConfigs.getByName("release")
+            } else {
+                null
+            }
         }
     }
 }
