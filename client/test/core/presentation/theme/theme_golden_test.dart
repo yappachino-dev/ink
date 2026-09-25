@@ -16,6 +16,7 @@ import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
+import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
@@ -149,7 +150,10 @@ Widget _notesApp({
   );
 
   return ProviderScope(
-    overrides: [notesServiceProvider.overrideWithValue(service)],
+    overrides: [
+      notesServiceProvider.overrideWithValue(service),
+      currentDateProvider.overrideWithValue(goldenCalendarDate),
+    ],
     child: MaterialApp.router(
       theme: _themeFor(brightness),
       localizationsDelegates: const [FlutterQuillLocalizations.delegate],
@@ -224,6 +228,8 @@ Future<Result<List<Note>, NotesFailure>> _allNotes(Invocation _) async =>
 
 Future<Result<List<Project>, NotesFailure>> _allProjects(Invocation _) async =>
     Success<List<Project>, NotesFailure>([goldenProject]);
+
+final goldenCalendarDate = DateTime(2026, 1, 14);
 
 final goldenNote = Note(
   id: 'golden-note',
