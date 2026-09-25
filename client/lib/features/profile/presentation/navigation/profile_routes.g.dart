@@ -10,10 +10,12 @@ List<RouteBase> get $appRoutes => [$profileRoute];
 
 RouteBase get $profileRoute => GoRouteData.$route(
   path: '/profile',
+  hasOverriddenOnExit: false,
   factory: $ProfileRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'personalization',
+      hasOverriddenOnExit: false,
       factory: $PersonalizationRoute._fromState,
     ),
   ],

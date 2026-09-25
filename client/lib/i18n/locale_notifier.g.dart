@@ -47,7 +47,7 @@ abstract class _$LocaleNotifier extends $Notifier<AppLocale> {
   AppLocale build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AppLocale, AppLocale>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$LocaleNotifier extends $Notifier<AppLocale> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

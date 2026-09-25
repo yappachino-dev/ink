@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'session_state.dart';
@@ -9,6 +9,7 @@ part of 'session_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SessionStateCopyWith<SessionState> get copyWith => _$SessionStateCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&(identical(other.isLoaded, isLoaded) || other.isLoaded == isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
+  final _this = this as SessionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionState&&(identical(other.isLoaded, _this.isLoaded) || other.isLoaded == _this.isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, _this.masterKey)&&(identical(other.accessToken, _this.accessToken) || other.accessToken == _this.accessToken)&&(identical(other.refreshToken, _this.refreshToken) || other.refreshToken == _this.refreshToken));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoaded,const DeepCollectionEquality().hash(masterKey),accessToken,refreshToken);
+int get hashCode {
+  final _this = this as SessionState;
+  return Object.hash(runtimeType,_this.isLoaded,const DeepCollectionEquality().hash(_this.masterKey),_this.accessToken,_this.refreshToken);
+}
 
 @override
 String toString() {
-  return 'SessionState(isLoaded: $isLoaded, masterKey: $masterKey, accessToken: $accessToken, refreshToken: $refreshToken)';
+  final _this = this as SessionState;
+  return 'SessionState(isLoaded: ${_this.isLoaded}, masterKey: ${_this.masterKey}, accessToken: ${_this.accessToken}, refreshToken: ${_this.refreshToken})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SessionStateCopyWithImpl<$Res>
 /// Create a copy of SessionState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? isLoaded = null,Object? masterKey = freezed,Object? accessToken = freezed,Object? refreshToken = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SessionState(
 isLoaded: null == isLoaded ? _self.isLoaded : isLoaded // ignore: cast_nullable_to_non_nullable
 as bool,masterKey: freezed == masterKey ? _self.masterKey : masterKey // ignore: cast_nullable_to_non_nullable
 as Uint8List?,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
@@ -221,16 +227,18 @@ _$SessionStateCopyWith<_SessionState> get copyWith => __$SessionStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&(identical(other.isLoaded, isLoaded) || other.isLoaded == isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionState&&(identical(other.isLoaded, isLoaded) || other.isLoaded == isLoaded)&&const DeepCollectionEquality().equals(other.masterKey, masterKey)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoaded,const DeepCollectionEquality().hash(masterKey),accessToken,refreshToken);
+int get hashCode {
+    return Object.hash(runtimeType,isLoaded,const DeepCollectionEquality().hash(masterKey),accessToken,refreshToken);
+}
 
 @override
 String toString() {
-  return 'SessionState(isLoaded: $isLoaded, masterKey: $masterKey, accessToken: $accessToken, refreshToken: $refreshToken)';
+    return 'SessionState(isLoaded: $isLoaded, masterKey: $masterKey, accessToken: $accessToken, refreshToken: $refreshToken)';
 }
 
 

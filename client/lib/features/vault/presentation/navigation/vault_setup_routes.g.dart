@@ -10,15 +10,29 @@ List<RouteBase> get $appRoutes => [$setupVaultRoute];
 
 RouteBase get $setupVaultRoute => GoRouteData.$route(
   path: '/setup',
+  hasOverriddenOnExit: false,
   factory: $SetupVaultRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'pin', factory: $SetupPinRoute._fromState),
-    GoRouteData.$route(path: 'pattern', factory: $SetupPatternRoute._fromState),
+    GoRouteData.$route(
+      path: 'pin',
+      hasOverriddenOnExit: false,
+      factory: $SetupPinRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: 'pattern',
+      hasOverriddenOnExit: false,
+      factory: $SetupPatternRoute._fromState,
+    ),
     GoRouteData.$route(
       path: 'recovery',
+      hasOverriddenOnExit: false,
       factory: $SetupRecoveryRoute._fromState,
     ),
-    GoRouteData.$route(path: 'verify', factory: $SetupVerifyRoute._fromState),
+    GoRouteData.$route(
+      path: 'verify',
+      hasOverriddenOnExit: false,
+      factory: $SetupVerifyRoute._fromState,
+    ),
   ],
 );
 

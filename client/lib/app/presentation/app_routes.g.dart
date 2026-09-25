@@ -8,8 +8,11 @@ part of 'app_routes.dart';
 
 List<RouteBase> get $appRoutes => [$splashRoute, $welcomeRoute];
 
-RouteBase get $splashRoute =>
-    GoRouteData.$route(path: '/splash', factory: $SplashRoute._fromState);
+RouteBase get $splashRoute => GoRouteData.$route(
+  path: '/splash',
+  hasOverriddenOnExit: false,
+  factory: $SplashRoute._fromState,
+);
 
 mixin $SplashRoute on GoRouteData {
   static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
@@ -31,8 +34,11 @@ mixin $SplashRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $welcomeRoute =>
-    GoRouteData.$route(path: '/welcome', factory: $WelcomeRoute._fromState);
+RouteBase get $welcomeRoute => GoRouteData.$route(
+  path: '/welcome',
+  hasOverriddenOnExit: false,
+  factory: $WelcomeRoute._fromState,
+);
 
 mixin $WelcomeRoute on GoRouteData {
   static WelcomeRoute _fromState(GoRouterState state) => const WelcomeRoute();

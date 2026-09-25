@@ -41,13 +41,13 @@ final class VaultNotifierProvider
   }
 }
 
-String _$vaultNotifierHash() => r'a95467d41af2d81ee9b2d183db5e010466fe2084';
+String _$vaultNotifierHash() => r'205c79c8c09ed75f331d6a88113708e9460f9476';
 
 abstract class _$VaultNotifier extends $Notifier<VaultState> {
   VaultState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<VaultState, VaultState>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$VaultNotifier extends $Notifier<VaultState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

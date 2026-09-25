@@ -83,13 +83,13 @@ final class SyncOrchestratorProvider
   }
 }
 
-String _$syncOrchestratorHash() => r'362876adcd5b80e71758fb76dd0bf5a111ea92df';
+String _$syncOrchestratorHash() => r'5ba807daa397dd5df46e86abbd8999fb91961fe5';
 
 abstract class _$SyncOrchestrator extends $Notifier<SyncState> {
   SyncState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SyncState, SyncState>;
     final element =
         ref.element
@@ -99,6 +99,6 @@ abstract class _$SyncOrchestrator extends $Notifier<SyncState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

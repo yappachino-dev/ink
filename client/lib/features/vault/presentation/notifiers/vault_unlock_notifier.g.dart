@@ -41,13 +41,13 @@ final class VaultUnlockProvider
   }
 }
 
-String _$vaultUnlockHash() => r'fd1925000954e588af81871ca233f65f2adc0914';
+String _$vaultUnlockHash() => r'a98d859f3e216e3f8fbdffa266fbf71907eb81e5';
 
 abstract class _$VaultUnlock extends $Notifier<VaultUnlockData> {
   VaultUnlockData build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<VaultUnlockData, VaultUnlockData>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$VaultUnlock extends $Notifier<VaultUnlockData> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -2785,7 +2785,16 @@ class $$KeySlotsTableTableManager
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$KeySlotsTable, KeySlotModel>(table),
+                  BaseReferences<_$AppDatabase, $KeySlotsTable, KeySlotModel>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -2842,7 +2851,7 @@ final class $$ProjectsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.notes,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.notes.projectId),
+    aliasName: 'projects__id__notes__project_id',
   );
 
   $$NotesTableProcessedTableManager get notesRefs {
@@ -2860,7 +2869,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$NoteConflictsTable, List<NoteConflictModel>>
   _noteConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.noteConflicts,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.noteConflicts.projectId),
+    aliasName: 'projects__id__note_conflicts__project_id',
   );
 
   $$NoteConflictsTableProcessedTableManager get noteConflictsRefs {
@@ -2878,7 +2887,7 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$ProjectConflictsTable, List<ProjectConflictModel>>
   _projectConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.projectConflicts,
-    aliasName: $_aliasNameGenerator(db.projects.id, db.projectConflicts.id),
+    aliasName: 'projects__id__project_conflicts__id',
   );
 
   $$ProjectConflictsTableProcessedTableManager get projectConflictsRefs {
@@ -3267,7 +3276,7 @@ class $$ProjectsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ProjectsTable, ProjectModel>(table),
                   $$ProjectsTableReferences(db, table, e),
                 ),
               )
@@ -3409,8 +3418,8 @@ final class $$NotesTableReferences
     extends BaseReferences<_$AppDatabase, $NotesTable, NoteModel> {
   $$NotesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) => db.projects
-      .createAlias($_aliasNameGenerator(db.notes.projectId, db.projects.id));
+  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
+      db.projects.createAlias('notes__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -3429,7 +3438,7 @@ final class $$NotesTableReferences
   static MultiTypedResultKey<$NoteConflictsTable, List<NoteConflictModel>>
   _noteConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.noteConflicts,
-    aliasName: $_aliasNameGenerator(db.notes.id, db.noteConflicts.id),
+    aliasName: 'notes__id__note_conflicts__id',
   );
 
   $$NoteConflictsTableProcessedTableManager get noteConflictsRefs {
@@ -3802,8 +3811,10 @@ class $$NotesTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$NotesTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$NotesTable, NoteModel>(table),
+                  $$NotesTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback:
@@ -3923,9 +3934,8 @@ final class $$NoteConflictsTableReferences
     super.$_typedResult,
   );
 
-  static $NotesTable _idTable(_$AppDatabase db) => db.notes.createAlias(
-    $_aliasNameGenerator(db.noteConflicts.id, db.notes.id),
-  );
+  static $NotesTable _idTable(_$AppDatabase db) =>
+      db.notes.createAlias('note_conflicts__id__notes__id');
 
   $$NotesTableProcessedTableManager get id {
     final $_column = $_itemColumn<String>('id')!;
@@ -3942,9 +3952,7 @@ final class $$NoteConflictsTableReferences
   }
 
   static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias(
-        $_aliasNameGenerator(db.noteConflicts.projectId, db.projects.id),
-      );
+      db.projects.createAlias('note_conflicts__project_id__projects__id');
 
   $$ProjectsTableProcessedTableManager? get projectId {
     final $_column = $_itemColumn<String>('project_id');
@@ -4284,7 +4292,7 @@ class $$NoteConflictsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$NoteConflictsTable, NoteConflictModel>(table),
                   $$NoteConflictsTableReferences(db, table, e),
                 ),
               )
@@ -4395,9 +4403,8 @@ final class $$ProjectConflictsTableReferences
     super.$_typedResult,
   );
 
-  static $ProjectsTable _idTable(_$AppDatabase db) => db.projects.createAlias(
-    $_aliasNameGenerator(db.projectConflicts.id, db.projects.id),
-  );
+  static $ProjectsTable _idTable(_$AppDatabase db) =>
+      db.projects.createAlias('project_conflicts__id__projects__id');
 
   $$ProjectsTableProcessedTableManager get id {
     final $_column = $_itemColumn<String>('id')!;
@@ -4647,7 +4654,9 @@ class $$ProjectConflictsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$ProjectConflictsTable, ProjectConflictModel>(
+                    table,
+                  ),
                   $$ProjectConflictsTableReferences(db, table, e),
                 ),
               )

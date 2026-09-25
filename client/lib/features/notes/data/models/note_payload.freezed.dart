@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'note_payload.dart';
@@ -9,6 +9,7 @@ part of 'note_payload.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $NotePayloadCopyWith<NotePayload> get copyWith => _$NotePayloadCopyWithImpl<Note
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotePayload&&const DeepCollectionEquality().equals(other.quillData, quillData)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
+  final _this = this as NotePayload;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotePayload&&const DeepCollectionEquality().equals(other.quillData, _this.quillData)&&(identical(other.isCompleted, _this.isCompleted) || other.isCompleted == _this.isCompleted)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.priority, _this.priority) || other.priority == _this.priority)&&(identical(other.reminderMinutesBefore, _this.reminderMinutesBefore) || other.reminderMinutesBefore == _this.reminderMinutesBefore));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(quillData),isCompleted,dueDate,dueTime,priority,reminderMinutesBefore);
+int get hashCode {
+  final _this = this as NotePayload;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.quillData),_this.isCompleted,_this.dueDate,_this.dueTime,_this.priority,_this.reminderMinutesBefore);
+}
 
 @override
 String toString() {
-  return 'NotePayload(quillData: $quillData, isCompleted: $isCompleted, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
+  final _this = this as NotePayload;
+  return 'NotePayload(quillData: ${_this.quillData}, isCompleted: ${_this.isCompleted}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, priority: ${_this.priority}, reminderMinutesBefore: ${_this.reminderMinutesBefore})';
 }
 
 
@@ -66,7 +72,7 @@ class _$NotePayloadCopyWithImpl<$Res>
 /// Create a copy of NotePayload
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? quillData = null,Object? isCompleted = null,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(NotePayload(
 quillData: null == quillData ? _self.quillData : quillData // ignore: cast_nullable_to_non_nullable
 as List<dynamic>,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
 as bool,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
@@ -208,7 +214,7 @@ return $default(_that.quillData,_that.isCompleted,_that.dueDate,_that.dueTime,_t
 @JsonSerializable()
 
 class _NotePayload implements NotePayload {
-  const _NotePayload({required final  List<dynamic> quillData, this.isCompleted = false, this.dueDate, @TimeOfDayConverter() this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _quillData = quillData;
+  const _NotePayload({required  List<dynamic> quillData, this.isCompleted = false, this.dueDate, @TimeOfDayConverter() this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _quillData = quillData;
   factory _NotePayload.fromJson(Map<String, dynamic> json) => _$NotePayloadFromJson(json);
 
  final  List<dynamic> _quillData;
@@ -237,16 +243,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotePayload&&const DeepCollectionEquality().equals(other._quillData, _quillData)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotePayload&&const DeepCollectionEquality().equals(other.quillData, _quillData)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_quillData),isCompleted,dueDate,dueTime,priority,reminderMinutesBefore);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_quillData),isCompleted,dueDate,dueTime,priority,reminderMinutesBefore);
+}
 
 @override
 String toString() {
-  return 'NotePayload(quillData: $quillData, isCompleted: $isCompleted, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
+    return 'NotePayload(quillData: $quillData, isCompleted: $isCompleted, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
 }
 
 

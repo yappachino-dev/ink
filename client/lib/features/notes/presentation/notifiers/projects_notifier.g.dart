@@ -33,13 +33,13 @@ final class ProjectsNotifierProvider
   ProjectsNotifier create() => ProjectsNotifier();
 }
 
-String _$projectsNotifierHash() => r'9ba2bd7036a28db853523f9736a4e49d0dbd88c1';
+String _$projectsNotifierHash() => r'f1382c0662b9c64c9c0ba75f0039bbcc182b2bea';
 
 abstract class _$ProjectsNotifier extends $AsyncNotifier<List<Project>> {
   FutureOr<List<Project>> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<List<Project>>, List<Project>>;
     final element =
         ref.element
@@ -49,6 +49,6 @@ abstract class _$ProjectsNotifier extends $AsyncNotifier<List<Project>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

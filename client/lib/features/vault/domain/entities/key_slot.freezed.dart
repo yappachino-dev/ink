@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'key_slot.dart';
@@ -9,6 +9,7 @@ part of 'key_slot.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -24,23 +25,29 @@ $KeySlotCopyWith<KeySlot> get copyWith => _$KeySlotCopyWithImpl<KeySlot>(this as
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as KeySlot;
   properties
     ..add(DiagnosticsProperty('type', 'KeySlot'))
-    ..add(DiagnosticsProperty('type', type))..add(DiagnosticsProperty('salt', salt))..add(DiagnosticsProperty('wrappedMasterKey', wrappedMasterKey))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('syncStatus', syncStatus));
+    ..add(DiagnosticsProperty('type', _this.type))..add(DiagnosticsProperty('salt', _this.salt))..add(DiagnosticsProperty('wrappedMasterKey', _this.wrappedMasterKey))..add(DiagnosticsProperty('updatedAt', _this.updatedAt))..add(DiagnosticsProperty('syncStatus', _this.syncStatus));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is KeySlot&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.salt, salt)&&const DeepCollectionEquality().equals(other.wrappedMasterKey, wrappedMasterKey)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.syncStatus, syncStatus) || other.syncStatus == syncStatus));
+  final _this = this as KeySlot;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is KeySlot&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.salt, _this.salt)&&const DeepCollectionEquality().equals(other.wrappedMasterKey, _this.wrappedMasterKey)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.syncStatus, _this.syncStatus) || other.syncStatus == _this.syncStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(salt),const DeepCollectionEquality().hash(wrappedMasterKey),updatedAt,syncStatus);
+int get hashCode {
+  final _this = this as KeySlot;
+  return Object.hash(runtimeType,_this.type,const DeepCollectionEquality().hash(_this.salt),const DeepCollectionEquality().hash(_this.wrappedMasterKey),_this.updatedAt,_this.syncStatus);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'KeySlot(type: $type, salt: $salt, wrappedMasterKey: $wrappedMasterKey, updatedAt: $updatedAt, syncStatus: $syncStatus)';
+  final _this = this as KeySlot;
+  return 'KeySlot(type: ${_this.type}, salt: ${_this.salt}, wrappedMasterKey: ${_this.wrappedMasterKey}, updatedAt: ${_this.updatedAt}, syncStatus: ${_this.syncStatus})';
 }
 
 
@@ -69,7 +76,7 @@ class _$KeySlotCopyWithImpl<$Res>
 /// Create a copy of KeySlot
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? salt = null,Object? wrappedMasterKey = null,Object? updatedAt = null,Object? syncStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(KeySlot(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as KeyType,salt: null == salt ? _self.salt : salt // ignore: cast_nullable_to_non_nullable
 as Uint8List,wrappedMasterKey: null == wrappedMasterKey ? _self.wrappedMasterKey : wrappedMasterKey // ignore: cast_nullable_to_non_nullable
@@ -228,23 +235,25 @@ _$KeySlotCopyWith<_KeySlot> get copyWith => __$KeySlotCopyWithImpl<_KeySlot>(thi
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
+    properties
     ..add(DiagnosticsProperty('type', 'KeySlot'))
     ..add(DiagnosticsProperty('type', type))..add(DiagnosticsProperty('salt', salt))..add(DiagnosticsProperty('wrappedMasterKey', wrappedMasterKey))..add(DiagnosticsProperty('updatedAt', updatedAt))..add(DiagnosticsProperty('syncStatus', syncStatus));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _KeySlot&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.salt, salt)&&const DeepCollectionEquality().equals(other.wrappedMasterKey, wrappedMasterKey)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.syncStatus, syncStatus) || other.syncStatus == syncStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _KeySlot&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.salt, salt)&&const DeepCollectionEquality().equals(other.wrappedMasterKey, wrappedMasterKey)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.syncStatus, syncStatus) || other.syncStatus == syncStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,const DeepCollectionEquality().hash(salt),const DeepCollectionEquality().hash(wrappedMasterKey),updatedAt,syncStatus);
+int get hashCode {
+    return Object.hash(runtimeType,type,const DeepCollectionEquality().hash(salt),const DeepCollectionEquality().hash(wrappedMasterKey),updatedAt,syncStatus);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'KeySlot(type: $type, salt: $salt, wrappedMasterKey: $wrappedMasterKey, updatedAt: $updatedAt, syncStatus: $syncStatus)';
+    return 'KeySlot(type: $type, salt: $salt, wrappedMasterKey: $wrappedMasterKey, updatedAt: $updatedAt, syncStatus: $syncStatus)';
 }
 
 
