@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
+	syncv1 "github.com/yappachino-dev/ink/gen/go/pb/sync/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

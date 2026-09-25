@@ -326,9 +326,9 @@ const file_vault_v1_vault_proto_rawDesc = "" +
 	"\x11KEY_TYPE_RECOVERY\x10\x032\xa9\x01\n" +
 	"\fVaultService\x12J\n" +
 	"\vGetKeySlots\x12\x1c.vault.v1.GetKeySlotsRequest\x1a\x1d.vault.v1.GetKeySlotsResponse\x12M\n" +
-	"\fSaveKeySlots\x12\x1d.vault.v1.SaveKeySlotsRequest\x1a\x1e.vault.v1.SaveKeySlotsResponseB\x9b\x01\n" +
+	"\fSaveKeySlots\x12\x1d.vault.v1.SaveKeySlotsRequest\x1a\x1e.vault.v1.SaveKeySlotsResponseB\x95\x01\n" +
 	"\fcom.vault.v1B\n" +
-	"VaultProtoP\x01Z>github.com/yappachino-dev/ink/services/gen/pb/vault/v1;vaultv1\xa2\x02\x03VXX\xaa\x02\bVault.V1\xca\x02\bVault\\V1\xe2\x02\x14Vault\\V1\\GPBMetadata\xea\x02\tVault::V1b\x06proto3"
+	"VaultProtoP\x01Z8github.com/yappachino-dev/ink/gen/go/pb/vault/v1;vaultv1\xa2\x02\x03VXX\xaa\x02\bVault.V1\xca\x02\bVault\\V1\xe2\x02\x14Vault\\V1\\GPBMetadata\xea\x02\tVault::V1b\x06proto3"
 
 var (
 	file_vault_v1_vault_proto_rawDescOnce sync.Once

@@ -1,7 +1,7 @@
 package vault
 
 import (
-	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
+	vaultv1 "github.com/yappachino-dev/ink/gen/go/pb/vault/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
