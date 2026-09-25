@@ -1,0 +1,6 @@
+# Copy to key.properties and fill with a locally managed release keystore.
+# Paths are resolved from client/android/app.
+storeFile=../keystore/ink-release.jks
+storePassword=replace-me
+keyAlias=ink
+keyPassword=replace-me
