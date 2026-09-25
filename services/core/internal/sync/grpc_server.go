@@ -4,8 +4,8 @@ import (
 	"context"
 	"log/slog"
 
+	syncv1 "github.com/yappachino-dev/ink/gen/go/pb/sync/v1"
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
-	syncv1 "github.com/yappachino-dev/ink/services/gen/pb/sync/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

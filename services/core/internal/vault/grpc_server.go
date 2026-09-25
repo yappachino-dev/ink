@@ -3,8 +3,8 @@ package vault
 import (
 	"context"
 
+	vaultv1 "github.com/yappachino-dev/ink/gen/go/pb/vault/v1"
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
-	vaultv1 "github.com/yappachino-dev/ink/services/gen/pb/vault/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

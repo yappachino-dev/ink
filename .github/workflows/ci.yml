@@ -32,6 +32,7 @@ jobs:
               - 'buf*.yaml'
             backend:
               - 'services/**'
+              - 'gen/go/**'
               - 'proto/**'
               - 'buf*.yaml'
             proto:
@@ -81,11 +82,7 @@ jobs:
           go-version-file: services/core/go.mod
           cache-dependency-path: |
             services/core/go.sum
-            services/gen/go.sum
-
-      # go.work is intentionally local-only; recreate it for module resolution.
-      - name: Init Go workspace
-        run: go work init ./services/core ./services/gen
+            gen/go/go.sum
 
       - name: Build
         working-directory: services/core

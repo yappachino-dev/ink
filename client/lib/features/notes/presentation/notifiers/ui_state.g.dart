@@ -304,7 +304,7 @@ final class CalendarSelectedDateProvider
 }
 
 String _$calendarSelectedDateHash() =>
-    r'f005f295af90f26db6465a94b2eaf8b63a1ae494';
+    r'9eb0684cf655afafb53b4cf05892da89dd0469b9';
 
 abstract class _$CalendarSelectedDate extends $Notifier<DateTime> {
   DateTime build();
@@ -357,7 +357,7 @@ final class CalendarFocusedDateProvider
 }
 
 String _$calendarFocusedDateHash() =>
-    r'ceff976707021f7885aa2ee64f9bbf1bcbdfe4dc';
+    r'57bd98db871b68c2bc3134fcf8e78dc3adcbfb28';
 
 abstract class _$CalendarFocusedDate extends $Notifier<DateTime> {
   DateTime build();

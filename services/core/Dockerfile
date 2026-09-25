@@ -5,14 +5,13 @@ RUN apk add --no-cache git
 
 WORKDIR /workspace
 
-COPY go.work go.work.sum ./
-COPY services/gen/go.mod services/gen/go.sum ./services/gen/
+COPY gen/go/go.mod gen/go/go.sum ./gen/go/
 COPY services/core/go.mod services/core/go.sum ./services/core/
 
 RUN --mount=type=cache,target=/go/pkg/mod \
     cd services/core && go mod download
 
-COPY services/gen ./services/gen
+COPY gen/go ./gen/go
 COPY services/core ./services/core
 
 WORKDIR /workspace/services/core

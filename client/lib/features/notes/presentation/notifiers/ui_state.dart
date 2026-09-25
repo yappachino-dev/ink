@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -59,10 +60,12 @@ class CalendarViewModeState extends _$CalendarViewModeState {
   set mode(CalendarViewMode mode) => state = mode;
 }
 
+final currentDateProvider = Provider<DateTime>((ref) => DateTime.now());
+
 @riverpod
 class CalendarSelectedDate extends _$CalendarSelectedDate {
   @override
-  DateTime build() => DateTime.now();
+  DateTime build() => ref.watch(currentDateProvider);
 
   // Same rationale as [SelectedProjectId.id]: no meaningful paired getter.
   // ignore: avoid_setters_without_getters
@@ -72,7 +75,7 @@ class CalendarSelectedDate extends _$CalendarSelectedDate {
 @riverpod
 class CalendarFocusedDate extends _$CalendarFocusedDate {
   @override
-  DateTime build() => DateTime.now();
+  DateTime build() => ref.watch(currentDateProvider);
 
   // Same rationale as [SelectedProjectId.id]: no meaningful paired getter.
   // ignore: avoid_setters_without_getters

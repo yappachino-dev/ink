@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	authv1 "github.com/yappachino-dev/ink/services/gen/pb/auth/v1"
+	authv1 "github.com/yappachino-dev/ink/gen/go/pb/auth/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

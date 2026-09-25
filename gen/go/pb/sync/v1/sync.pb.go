@@ -402,8 +402,8 @@ const file_sync_v1_sync_proto_rawDesc = "" +
 	"deleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAtB\r\n" +
 	"\v_project_id2B\n" +
 	"\vSyncService\x123\n" +
-	"\x04Sync\x12\x14.sync.v1.SyncRequest\x1a\x15.sync.v1.SyncResponseB\x93\x01\n" +
-	"\vcom.sync.v1B\tSyncProtoP\x01Z<github.com/yappachino-dev/ink/services/gen/pb/sync/v1;syncv1\xa2\x02\x03SXX\xaa\x02\aSync.V1\xca\x02\aSync\\V1\xe2\x02\x13Sync\\V1\\GPBMetadata\xea\x02\bSync::V1b\x06proto3"
+	"\x04Sync\x12\x14.sync.v1.SyncRequest\x1a\x15.sync.v1.SyncResponseB\x8d\x01\n" +
+	"\vcom.sync.v1B\tSyncProtoP\x01Z6github.com/yappachino-dev/ink/gen/go/pb/sync/v1;syncv1\xa2\x02\x03SXX\xaa\x02\aSync.V1\xca\x02\aSync\\V1\xe2\x02\x13Sync\\V1\\GPBMetadata\xea\x02\bSync::V1b\x06proto3"
 
 var (
 	file_sync_v1_sync_proto_rawDescOnce sync.Once
