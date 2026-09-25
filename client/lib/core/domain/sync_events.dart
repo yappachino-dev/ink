@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum SyncEvent { completed }
 
 /// Domain-facing command port for starting synchronization.
-// ignore: one_member_abstracts
 abstract interface class SyncController {
   Future<void> performSync();
 }

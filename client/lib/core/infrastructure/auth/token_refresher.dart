@@ -6,7 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'token_refresher.g.dart';
 
 // Used as a contract
-// ignore: one_member_abstracts
 abstract interface class TokenRefresher {
   Future<Result<TokenPayload, CoreFailure>> refreshTokens(String refreshToken);
 }

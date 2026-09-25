@@ -76,7 +76,7 @@ dev_dependencies:
   go_router_builder: ^4.5.0
 
   # Linting
-  very_good_analysis: ^10.3.0
+  very_good_analysis: ^11.0.0
 
 flutter:
   assets:

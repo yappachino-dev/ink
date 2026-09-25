@@ -11,6 +11,11 @@ analyzer:
     - build/**
     - android/**
 
+  errors:
+    # Existing ports intentionally return Futures without awaiting in their
+    # synchronous adapters; migrate those adapters separately.
+    async_return_with_no_await: ignore
+
   language:
     strict-casts: true
     strict-inference: true

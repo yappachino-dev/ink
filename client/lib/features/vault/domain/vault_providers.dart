@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 
 /// Source of cryptographically secure random bytes used during vault setup.
-// ignore: one_member_abstracts
 abstract interface class VaultRandomService {
   Uint8List generateBytes(int length);
 }
@@ -17,7 +16,6 @@ abstract interface class VaultSessionStatus {
 }
 
 /// Recovery operation for the fatal vault state.
-// ignore: one_member_abstracts
 abstract interface class VaultRecovery {
   Future<void> reset();
 }
