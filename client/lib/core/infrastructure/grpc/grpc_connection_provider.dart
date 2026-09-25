@@ -4,6 +4,7 @@ import 'package:grpc/grpc.dart';
 // ignore_for_file: implementation_imports
 import 'package:grpc/src/client/channel.dart' as grpc_internal;
 import 'package:ink/core/config/env_config.dart';
+import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/auth/jwt_decoder.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/grpc/client_channel_provider.dart';
@@ -53,19 +54,17 @@ GrpcConnection grpcAuthConnection(Ref ref) {
                 .read(tokenRefresherProvider)
                 .refreshTokens(refreshToken);
 
-            token = refreshResult.fold(
-              (tokens) {
-                ref
+            switch (refreshResult) {
+              case Success(:final value):
+                // Awaited so the rotated tokens are persisted before the RPC
+                // that needs them goes out.
+                await ref
                     .read(sessionControllerProvider)
-                    .setAuthTokens(tokens.accessToken, tokens.refreshToken);
-                return tokens.accessToken;
-              },
-              (failure) {
-                throw const GrpcError.unauthenticated(
-                  'Session expired',
-                );
-              },
-            );
+                    .setAuthTokens(value.accessToken, value.refreshToken);
+                token = value.accessToken;
+              case Failure():
+                throw const GrpcError.unauthenticated('Session expired');
+            }
           }
 
           if (token != null) {

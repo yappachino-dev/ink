@@ -10,6 +10,8 @@
         "delete": "Delete",
         "errorTitle": "Error",
         "loading": "Loading...",
+        "retry": "Try again",
+        "sessionLoadFailed": "Ink could not read your saved session. Your data is safe — try again.",
         "errors": {
             "network": "Unable to reach the server. Check your connection.",
             "timeout": "The server took too long to respond. Try again.",

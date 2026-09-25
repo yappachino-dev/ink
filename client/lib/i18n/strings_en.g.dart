@@ -90,6 +90,12 @@ class Translations$common$en {
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
 
+	/// en: 'Try again'
+	String get retry => 'Try again';
+
+	/// en: 'Ink could not read your saved session. Your data is safe — try again.'
+	String get sessionLoadFailed => 'Ink could not read your saved session. Your data is safe — try again.';
+
 	late final Translations$common$errors$en errors = Translations$common$errors$en.internal(_root);
 }
 
@@ -1029,6 +1035,8 @@ extension on Translations {
 			'common.delete' => 'Delete',
 			'common.errorTitle' => 'Error',
 			'common.loading' => 'Loading...',
+			'common.retry' => 'Try again',
+			'common.sessionLoadFailed' => 'Ink could not read your saved session. Your data is safe — try again.',
 			'common.errors.network' => 'Unable to reach the server. Check your connection.',
 			'common.errors.timeout' => 'The server took too long to respond. Try again.',
 			'common.errors.unknown' => 'Something went wrong. Please try again.',

@@ -37,6 +37,11 @@ GoRouter appRouter(Ref ref) {
       switch (vaultState) {
         case VaultInitializing():
           return location == '/splash' ? null : '/splash';
+        case VaultSessionLoadFailed():
+          // Stay on splash until a retry succeeds. Falling through here would
+          // treat a failed token read as "logged out" and discard a session
+          // that may still be perfectly valid.
+          return location == '/splash' ? null : '/splash';
         case VaultNotInitialized():
           if (isGoingToSetup || isGoingToWelcome || isGoingToAuth) return null;
           return const WelcomeRoute().location;

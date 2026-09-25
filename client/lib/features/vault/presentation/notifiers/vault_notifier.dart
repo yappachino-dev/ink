@@ -14,6 +14,7 @@ class VaultNotifier extends _$VaultNotifier {
   VaultState build() {
     final session = ref.watch(vaultSessionStatusProvider);
     if (!session.isLoaded) return const VaultInitializing();
+    if (session.hasLoadError) return const VaultSessionLoadFailed();
 
     if (session.hasMasterKey) return const VaultUnlocked();
 
