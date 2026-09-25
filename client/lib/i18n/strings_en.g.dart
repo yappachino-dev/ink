@@ -89,6 +89,8 @@ class Translations$common$en {
 
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
+
+	late final Translations$common$errors$en errors = Translations$common$errors$en.internal(_root);
 }
 
 // Path: welcome
@@ -281,6 +283,24 @@ class Translations$profile$en {
 	late final Translations$profile$settings$en settings = Translations$profile$settings$en.internal(_root);
 }
 
+// Path: common.errors
+class Translations$common$errors$en {
+	Translations$common$errors$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Unable to reach the server. Check your connection.'
+	String get network => 'Unable to reach the server. Check your connection.';
+
+	/// en: 'The server took too long to respond. Try again.'
+	String get timeout => 'The server took too long to respond. Try again.';
+
+	/// en: 'Something went wrong. Please try again.'
+	String get unknown => 'Something went wrong. Please try again.';
+}
+
 // Path: auth.login
 class Translations$auth$login$en {
 	Translations$auth$login$en.internal(this._root);
@@ -360,15 +380,6 @@ class Translations$auth$errors$en {
 
 	/// en: 'An account with this email already exists.'
 	String get emailAlreadyInUse => 'An account with this email already exists.';
-
-	/// en: 'Unable to reach the server. Check your connection.'
-	String get network => 'Unable to reach the server. Check your connection.';
-
-	/// en: 'The server took too long to respond. Try again.'
-	String get timeout => 'The server took too long to respond. Try again.';
-
-	/// en: 'Something went wrong. Please try again.'
-	String get unknown => 'Something went wrong. Please try again.';
 }
 
 // Path: auth.form
@@ -1015,6 +1026,9 @@ extension on Translations {
 			'common.delete' => 'Delete',
 			'common.errorTitle' => 'Error',
 			'common.loading' => 'Loading...',
+			'common.errors.network' => 'Unable to reach the server. Check your connection.',
+			'common.errors.timeout' => 'The server took too long to respond. Try again.',
+			'common.errors.unknown' => 'Something went wrong. Please try again.',
 			'welcome.createLocalStorage' => 'Create local storage',
 			'welcome.haveAccount' => 'Already have an account?',
 			'auth.tagline' => 'Your plans under reliable protection',
@@ -1034,9 +1048,6 @@ extension on Translations {
 			'auth.verify.resend' => 'Resend code',
 			'auth.errors.invalidCredentials' => 'Invalid email or password.',
 			'auth.errors.emailAlreadyInUse' => 'An account with this email already exists.',
-			'auth.errors.network' => 'Unable to reach the server. Check your connection.',
-			'auth.errors.timeout' => 'The server took too long to respond. Try again.',
-			'auth.errors.unknown' => 'Something went wrong. Please try again.',
 			'auth.form.email' => 'Email',
 			'auth.form.emailHint' => 'Email',
 			'auth.form.emailError' => 'Email is required',

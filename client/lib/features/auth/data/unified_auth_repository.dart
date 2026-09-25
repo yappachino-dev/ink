@@ -28,7 +28,7 @@ class UnifiedAuthRepository
   ) {
     return remoteRunner(
       call: () => _remote.login((email: email, password: password)),
-      mapCore: mapAuthCoreFailure,
+      mapCore: mapLoginFailure,
     );
   }
 
@@ -36,7 +36,7 @@ class UnifiedAuthRepository
   Future<Result<void, AuthFailure>> requestVerification(String email) {
     return remoteRunner(
       call: () => _remote.requestVerification((email: email)),
-      mapCore: mapAuthCoreFailure,
+      mapCore: mapAuthFailure,
     );
   }
 
@@ -49,7 +49,7 @@ class UnifiedAuthRepository
     return remoteRunner(
       call: () =>
           _remote.register((email: email, password: password, code: code)),
-      mapCore: mapAuthCoreFailure,
+      mapCore: mapRegisterFailure,
     );
   }
 
@@ -57,7 +57,7 @@ class UnifiedAuthRepository
   Future<Result<void, AuthFailure>> logout(String refreshToken) {
     return remoteRunner(
       call: () => _remote.logout(refreshToken),
-      mapCore: mapAuthCoreFailure,
+      mapCore: mapAuthFailure,
     );
   }
 

@@ -13,28 +13,36 @@ void main() {
     runner = _TestRunner();
   });
 
-  test('preserves gRPC status code and message', () async {
+  test('maps unavailable responses to a network failure', () async {
     final result = await runner.remoteRunner<void, CoreFailure>(
       call: () async => throw const GrpcError.unavailable('server is down'),
       mapCore: (failure) => failure,
     );
 
     final failure = result as Failure<void, CoreFailure>;
-    expect(failure.error, isA<ApiFailure>());
-    final apiFailure = failure.error as ApiFailure;
-    expect(apiFailure.statusCode, StatusCode.unavailable);
-    expect(apiFailure.message, 'server is down');
+    expect(failure.error, isA<NetworkFailure>());
   });
 
-  test('uses the gRPC code name when no message is present', () async {
+  test('maps deadline-exceeded responses to a timeout failure', () async {
     final result = await runner.remoteRunner<void, CoreFailure>(
       call: () async => throw const GrpcError.deadlineExceeded(),
       mapCore: (failure) => failure,
     );
 
     final failure = result as Failure<void, CoreFailure>;
+    expect(failure.error, isA<TimeoutFailure>());
+  });
+
+  test('preserves other gRPC status codes and messages', () async {
+    final result = await runner.remoteRunner<void, CoreFailure>(
+      call: () async => throw const GrpcError.unauthenticated('token expired'),
+      mapCore: (failure) => failure,
+    );
+
+    final failure = result as Failure<void, CoreFailure>;
+    expect(failure.error, isA<ApiFailure>());
     final apiFailure = failure.error as ApiFailure;
-    expect(apiFailure.statusCode, StatusCode.deadlineExceeded);
-    expect(apiFailure.message, StatusCode.name(StatusCode.deadlineExceeded));
+    expect(apiFailure.statusCode, StatusCode.unauthenticated);
+    expect(apiFailure.message, 'token expired');
   });
 }
