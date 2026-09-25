@@ -14,7 +14,7 @@ mixin DataSourceRunner {
       return Success(result);
     } on GrpcError catch (e, st) {
       logger.e('gRPC call failed in remoteRunner', error: e, stackTrace: st);
-      return Failure(mapCore(const NetworkFailure()));
+      return Failure(mapCore(ApiFailure(e.code, e.message ?? e.codeName)));
     } on Exception catch (e, st) {
       logger.e('Unhandled exception in remoteRunner', error: e, stackTrace: st);
       return Failure(mapCore(UnexpectedFailure(e)));

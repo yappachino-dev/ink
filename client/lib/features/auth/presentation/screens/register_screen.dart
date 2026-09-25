@@ -6,6 +6,7 @@ import 'package:ink/core/presentation/extensions/navigation_helper.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/validators.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
+import 'package:ink/features/auth/presentation/extensions/auth_failure_ui_extension.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:ink/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:ink/features/auth/presentation/widgets/email_form_field.dart';
@@ -45,10 +46,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     final result = await ref
         .read(authProvider.notifier)
-        .setupRegister(
-          email,
-          _passwordController.text.trim(),
-        );
+        .setupRegister(email, _passwordController.text.trim());
 
     if (!mounted) return;
 
@@ -65,7 +63,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       case RegisterResult.processing:
       case RegisterResult.failure:
         final failure = ref.read(authProvider).failure;
-        if (failure != null) context.showSnackbarError('$failure');
+        if (failure != null) {
+          context.showSnackbarError(failure.message(context.t));
+        }
     }
   }
 
