@@ -37,7 +37,7 @@ else
     exit 1
   fi
   TITLE=$1
-  BODY=$(git log "origin/$BASE_BRANCH..HEAD" --format="* %s")
+  BODY=$(git log --reverse "origin/$BASE_BRANCH..HEAD" --format="* %s")
 fi
 
 printf 'Creating PR for %s against origin/%s (%s commit(s))...\n' \
