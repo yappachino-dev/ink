@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/infrastructure/logger.dart';
 import 'package:ink/core/services/session/auth_session.dart';
 import 'package:ink/core/services/session/crypto_session.dart';
 import 'package:ink/core/services/session/session_controller.dart';
@@ -17,21 +18,49 @@ class SessionManager extends _$SessionManager
     implements AuthSession, CryptoSession, SessionController {
   @override
   SessionState build() {
-    unawaited(_loadTokens());
+    // Deferred to a microtask: assigning `state` while the element is still
+    // building throws, and a synchronous storage read could otherwise land the
+    // assignment inside build().
+    unawaited(Future<void>.microtask(_loadTokens));
     return const SessionState(isLoaded: false);
   }
 
+  /// Reads persisted tokens without ever throwing: a secure-storage failure
+  /// must not leave the app stuck on the splash screen with an unhandled async
+  /// error. On failure the session is still marked as loaded, with `loadError`
+  /// set, so the UI can offer a retry instead of hanging.
+  ///
+  /// Tokens are only published when *both* reads succeed. A partial read (for
+  /// example an access token read plus a failing refresh-token read) must never
+  /// reach [SessionState]: `hasAccessToken` would then report a usable session
+  /// that the backend cannot accept.
   Future<void> _loadTokens() async {
     final repo = ref.read(sessionRepositoryProvider);
 
-    final accessToken = await repo.readAccessToken();
-    final refreshToken = await repo.readRefreshToken();
+    try {
+      final accessToken = await repo.readAccessToken();
+      final refreshToken = await repo.readRefreshToken();
 
-    state = state.copyWith(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      isLoaded: true,
-    );
+      state = state.copyWith(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        isLoaded: true,
+        loadError: null,
+      );
+    } on Object catch (error, stackTrace) {
+      logger.e(
+        'Failed to read persisted session tokens',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
+      state = state.copyWith(
+        accessToken: null,
+        refreshToken: null,
+        isLoaded: true,
+        loadError: error,
+      );
+    }
   }
 
   @override
@@ -84,6 +113,17 @@ class SessionManager extends _$SessionManager
     }
 
     state = state.copyWith(masterKey: null);
+  }
+
+  @override
+  void retrySessionLoad() {
+    // Only meaningful in the load-failure state, and the guard also prevents a
+    // double tap (or a programmatic call) from starting two concurrent reads
+    // against secure storage.
+    if (!state.isLoaded || state.loadError == null) return;
+
+    state = state.copyWith(isLoaded: false, loadError: null);
+    unawaited(_loadTokens());
   }
 }
 

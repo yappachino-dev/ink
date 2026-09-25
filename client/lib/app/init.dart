@@ -159,6 +159,9 @@ class _VaultSessionStatusAdapter implements VaultSessionStatus {
   bool get isLoaded => _state.isLoaded;
 
   @override
+  bool get hasLoadError => _state.loadError != null;
+
+  @override
   bool get hasAccessToken => _state.accessToken != null;
 
   @override
@@ -182,9 +185,10 @@ class _VaultRecoveryAdapter implements VaultRecovery {
   Future<void> reset() async {
     await _database.resetDatabase();
     await _syncStorage.saveSyncCursor(0);
-    _session
-      ..clearAccessToken()
-      ..clearRefreshToken();
+    // Awaited: returning before the clears land would leave the access token
+    // readable by a restarted process, making the app look still signed in.
+    await _session.clearAccessToken();
+    await _session.clearRefreshToken();
   }
 }
 

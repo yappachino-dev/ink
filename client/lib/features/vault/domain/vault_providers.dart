@@ -11,6 +11,10 @@ abstract interface class VaultRandomService {
 /// Read-only session state needed by the vault presentation layer.
 abstract interface class VaultSessionStatus {
   bool get isLoaded;
+
+  /// True when the session finished loading but reading persisted tokens
+  /// failed, meaning a partial read cannot be trusted.
+  bool get hasLoadError;
   bool get hasAccessToken;
   bool get hasMasterKey;
 }
