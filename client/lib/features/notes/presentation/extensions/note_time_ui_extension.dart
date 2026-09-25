@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:ink/features/notes/domain/value_objects/note_time.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension NoteTimeUiExtension on NoteTime {
   TimeOfDay get timeOfDay => TimeOfDay(hour: hour, minute: minute);

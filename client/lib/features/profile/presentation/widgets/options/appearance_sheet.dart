@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
@@ -8,6 +7,7 @@ import 'package:ink/core/presentation/theme/theme_notifier.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppearanceSheet extends ConsumerWidget {
   const AppearanceSheet({super.key});

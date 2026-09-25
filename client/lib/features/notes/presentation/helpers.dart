@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 String reminderLabel(int minutes, Translations t) {
   if (minutes == 0) return t.note.reminder.atTime;

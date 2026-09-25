@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Available app palettes. Each palette is defined once and rendered in both
 /// brightnesses; the **dark** rendering is the design source of truth — the

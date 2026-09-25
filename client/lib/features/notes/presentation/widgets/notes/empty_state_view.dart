@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
+import 'package:material_ui/material_ui.dart';
 
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({required this.title, super.key});

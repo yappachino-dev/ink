@@ -1,9 +1,9 @@
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ink/core/presentation/theme/ink_colors.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Builds [ThemeData] for a palette in a given brightness.
 ///
@@ -125,5 +125,28 @@ abstract final class AppTheme {
     );
   }
 
-  static TextTheme get textTheme => GoogleFonts.interTextTheme();
+  static TextTheme get textTheme {
+    final googleTextTheme = GoogleFonts.interTextTheme();
+
+    // google_fonts currently exposes the SDK Material TextTheme, while
+    // flex_color_scheme 9 uses the decoupled material_ui TextTheme. TextStyle
+    // itself is shared, so copying the style slots is type-safe.
+    return TextTheme(
+      displayLarge: googleTextTheme.displayLarge,
+      displayMedium: googleTextTheme.displayMedium,
+      displaySmall: googleTextTheme.displaySmall,
+      headlineLarge: googleTextTheme.headlineLarge,
+      headlineMedium: googleTextTheme.headlineMedium,
+      headlineSmall: googleTextTheme.headlineSmall,
+      titleLarge: googleTextTheme.titleLarge,
+      titleMedium: googleTextTheme.titleMedium,
+      titleSmall: googleTextTheme.titleSmall,
+      bodyLarge: googleTextTheme.bodyLarge,
+      bodyMedium: googleTextTheme.bodyMedium,
+      bodySmall: googleTextTheme.bodySmall,
+      labelLarge: googleTextTheme.labelLarge,
+      labelMedium: googleTextTheme.labelMedium,
+      labelSmall: googleTextTheme.labelSmall,
+    );
+  }
 }

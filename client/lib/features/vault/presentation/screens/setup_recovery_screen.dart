@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -12,6 +11,7 @@ import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.da
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/recovery_phrase_display.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SetupRecoveryScreen extends ConsumerWidget {
   const SetupRecoveryScreen({super.key});

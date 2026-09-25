@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TileDivider extends StatelessWidget {
   const TileDivider({super.key});

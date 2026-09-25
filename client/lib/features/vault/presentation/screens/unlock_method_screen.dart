@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
@@ -12,6 +11,7 @@ import 'package:ink/features/vault/presentation/navigation/vault_unlock_routes.d
 import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/unlock_method.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class UnlockMethodScreen extends ConsumerStatefulWidget {
   const UnlockMethodScreen({super.key});

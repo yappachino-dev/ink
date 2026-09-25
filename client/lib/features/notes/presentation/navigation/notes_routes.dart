@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'notes_routes.g.dart';
 

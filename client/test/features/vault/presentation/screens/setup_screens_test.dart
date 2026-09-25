@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +13,7 @@ import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.d
 import 'package:ink/features/vault/presentation/screens/setup_recovery_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_verify_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

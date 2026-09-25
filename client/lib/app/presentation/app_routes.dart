@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/presentation/screens/splash_screen.dart';
 import 'package:ink/app/presentation/screens/welcome_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'app_routes.g.dart';
 

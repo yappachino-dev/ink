@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
@@ -9,6 +8,7 @@ import 'package:ink/features/notes/presentation/widgets/projects/create_project_
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_project_item.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/drawer_virtual_project_item.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ProjectsDrawer extends ConsumerWidget {
   const ProjectsDrawer({super.key});

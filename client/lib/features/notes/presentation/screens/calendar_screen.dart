@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
@@ -24,6 +23,7 @@ import 'package:ink/features/notes/presentation/widgets/calendar/task_list_view.
 import 'package:ink/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});

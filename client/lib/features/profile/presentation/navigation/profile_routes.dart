@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/profile/presentation/screens/personalization_screen.dart';
 import 'package:ink/features/profile/presentation/screens/profile_screen.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'profile_routes.g.dart';
 

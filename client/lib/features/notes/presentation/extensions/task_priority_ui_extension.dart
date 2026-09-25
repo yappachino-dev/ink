@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension TaskPriorityUiExtension on TaskPriority {
   String label(Translations t) {

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -25,6 +24,7 @@ import 'package:ink/features/notes/presentation/widgets/pickers/priority_picker_
 import 'package:ink/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NoteEditorSheet extends ConsumerStatefulWidget {
   const NoteEditorSheet({
