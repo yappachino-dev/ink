@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/yappachino-dev/ink/services/core/internal/appctx"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
@@ -133,6 +134,39 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 	}
 
 	return database.ExecBatch(r.db(ctx).UpsertNotes(ctx, params))
+}
+
+func (r *PostgresSyncRepository) FindProjectIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	return r.db(ctx).FindProjectIDsOwnedByOtherUsers(ctx, store.FindProjectIDsOwnedByOtherUsersParams{
+		Ids:    ids,
+		UserID: int32(userID),
+	})
+}
+
+func (r *PostgresSyncRepository) FindNoteIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	return r.db(ctx).FindNoteIDsOwnedByOtherUsers(ctx, store.FindNoteIDsOwnedByOtherUsersParams{
+		Ids:    ids,
+		UserID: int32(userID),
+	})
+}
+
+func (r *PostgresSyncRepository) FindProjectIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	return r.db(ctx).FindProjectIDsAvailableToUser(ctx, store.FindProjectIDsAvailableToUserParams{
+		Ids:    ids,
+		UserID: int32(userID),
+	})
 }
 
 func (r *PostgresSyncRepository) db(ctx context.Context) *store.Queries {

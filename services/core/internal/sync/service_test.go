@@ -19,6 +19,14 @@ type fakeSyncRepo struct {
 	notesFetchedAt    []int
 	cursorUpdates     []int
 	lockedCursorReads int
+
+	// Ownership fixtures: IDs the database reports as belonging to someone
+	// else, and IDs this account can actually use.
+	foreignProjectIDs []uuid.UUID
+	foreignNoteIDs    []uuid.UUID
+	availableProjects []uuid.UUID
+
+	lookupCalls int
 }
 
 func (f *fakeSyncRepo) GetUserCursor(context.Context, int) (int, error) {
@@ -58,6 +66,21 @@ func (f *fakeSyncRepo) GetProjectChanges(_ context.Context, _ int, cursor int) (
 func (f *fakeSyncRepo) GetNoteChanges(_ context.Context, _ int, cursor int) ([]Note, error) {
 	f.notesFetchedAt = append(f.notesFetchedAt, cursor)
 	return nil, nil
+}
+
+func (f *fakeSyncRepo) FindProjectIDsOwnedByOtherUsers(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
+	f.lookupCalls++
+	return f.foreignProjectIDs, nil
+}
+
+func (f *fakeSyncRepo) FindNoteIDsOwnedByOtherUsers(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
+	f.lookupCalls++
+	return f.foreignNoteIDs, nil
+}
+
+func (f *fakeSyncRepo) FindProjectIDsAvailableToUser(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
+	f.lookupCalls++
+	return f.availableProjects, nil
 }
 
 type fakeTransactor struct{}

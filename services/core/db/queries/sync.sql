@@ -38,3 +38,12 @@ WHERE notes.user_id = EXCLUDED.user_id;
 -- name: GetNoteChanges :many
 SELECT id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
 FROM notes WHERE user_id = $1 AND sync_sequence > $2;
+
+-- name: FindProjectIDsOwnedByOtherUsers :many
+SELECT id FROM projects WHERE id = ANY(@ids::uuid[]) AND user_id <> @user_id;
+
+-- name: FindNoteIDsOwnedByOtherUsers :many
+SELECT id FROM notes WHERE id = ANY(@ids::uuid[]) AND user_id <> @user_id;
+
+-- name: FindProjectIDsAvailableToUser :many
+SELECT id FROM projects WHERE id = ANY(@ids::uuid[]) AND user_id = @user_id;

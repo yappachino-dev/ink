@@ -12,6 +12,93 @@ import (
 	"github.com/google/uuid"
 )
 
+const findNoteIDsOwnedByOtherUsers = `-- name: FindNoteIDsOwnedByOtherUsers :many
+SELECT id FROM notes WHERE id = ANY($1::uuid[]) AND user_id <> $2
+`
+
+type FindNoteIDsOwnedByOtherUsersParams struct {
+	Ids    []uuid.UUID `json:"ids"`
+	UserID int32       `json:"user_id"`
+}
+
+func (q *Queries) FindNoteIDsOwnedByOtherUsers(ctx context.Context, arg FindNoteIDsOwnedByOtherUsersParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, findNoteIDsOwnedByOtherUsers, arg.Ids, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findProjectIDsAvailableToUser = `-- name: FindProjectIDsAvailableToUser :many
+SELECT id FROM projects WHERE id = ANY($1::uuid[]) AND user_id = $2
+`
+
+type FindProjectIDsAvailableToUserParams struct {
+	Ids    []uuid.UUID `json:"ids"`
+	UserID int32       `json:"user_id"`
+}
+
+func (q *Queries) FindProjectIDsAvailableToUser(ctx context.Context, arg FindProjectIDsAvailableToUserParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, findProjectIDsAvailableToUser, arg.Ids, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const findProjectIDsOwnedByOtherUsers = `-- name: FindProjectIDsOwnedByOtherUsers :many
+SELECT id FROM projects WHERE id = ANY($1::uuid[]) AND user_id <> $2
+`
+
+type FindProjectIDsOwnedByOtherUsersParams struct {
+	Ids    []uuid.UUID `json:"ids"`
+	UserID int32       `json:"user_id"`
+}
+
+func (q *Queries) FindProjectIDsOwnedByOtherUsers(ctx context.Context, arg FindProjectIDsOwnedByOtherUsersParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, findProjectIDsOwnedByOtherUsers, arg.Ids, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getNoteChanges = `-- name: GetNoteChanges :many
 SELECT id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
 FROM notes WHERE user_id = $1 AND sync_sequence > $2

@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
 )
 
@@ -14,6 +15,9 @@ type SyncRepository interface {
 	UpsertNotes(ctx context.Context, userID int, syncSequence int, notes []Note) error
 	GetProjectChanges(ctx context.Context, userID int, cursor int) ([]Project, error)
 	GetNoteChanges(ctx context.Context, userID int, cursor int) ([]Note, error)
+	FindProjectIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
+	FindNoteIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
+	FindProjectIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
 }
 
 type SyncService struct {
@@ -45,6 +49,12 @@ func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (Sy
 
 		newCursor = currentCursor
 		if hasChanges {
+			// Reject the whole batch before the cursor moves: a partial push
+			// would leave the client's cursor and the stored rows disagreeing.
+			if err = validateChanges(txCtx, userID, req.Changes, s.repo); err != nil {
+				return err
+			}
+
 			newCursor = newCursor + 1
 
 			if err = s.repo.UpdateUserCursor(txCtx, userID, newCursor); err != nil {

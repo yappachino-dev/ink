@@ -6,12 +6,17 @@ package store
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
 	CreateEmailVerification(ctx context.Context, arg CreateEmailVerificationParams) error
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	FindNoteIDsOwnedByOtherUsers(ctx context.Context, arg FindNoteIDsOwnedByOtherUsersParams) ([]uuid.UUID, error)
+	FindProjectIDsAvailableToUser(ctx context.Context, arg FindProjectIDsAvailableToUserParams) ([]uuid.UUID, error)
+	FindProjectIDsOwnedByOtherUsers(ctx context.Context, arg FindProjectIDsOwnedByOtherUsersParams) ([]uuid.UUID, error)
 	GetKeySlotsByUserID(ctx context.Context, userID int32) ([]GetKeySlotsByUserIDRow, error)
 	GetLatestEmailVerification(ctx context.Context, email string) (EmailVerification, error)
 	GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) ([]GetNoteChangesRow, error)
