@@ -47,8 +47,11 @@ Rules:
 
 ## GitHub PR lifecycle (explicit opt-in)
 
-Do not create, watch, or merge a pull request during ordinary implementation.
-When the owner explicitly asks for the full GitHub CLI lifecycle, use
+Do not push a branch, create a watch, or merge a pull request during ordinary
+implementation. Keep completed work local and report the branch, commit, and
+verification results. Push or run the full GitHub CLI lifecycle only when the
+owner explicitly asks. When the owner explicitly asks for the full GitHub CLI
+lifecycle, use
 `scripts/ship-pr.sh` rather than reconstructing `gh` commands manually:
 
 ```bash
