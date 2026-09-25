@@ -22,6 +22,11 @@ func (r *PostgresSyncRepository) GetUserCursor(ctx context.Context, userID int) 
 	return int(cursor), err
 }
 
+func (r *PostgresSyncRepository) GetUserCursorForUpdate(ctx context.Context, userID int) (int, error) {
+	cursor, err := r.db(ctx).GetUserCursorForUpdate(ctx, int32(userID))
+	return int(cursor), err
+}
+
 func (r *PostgresSyncRepository) UpdateUserCursor(ctx context.Context, userID int, cursor int) error {
 	return r.db(ctx).UpdateUserCursor(ctx, store.UpdateUserCursorParams{
 		ID:         int32(userID),

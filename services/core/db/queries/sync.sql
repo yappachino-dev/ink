@@ -1,4 +1,7 @@
 -- name: GetUserCursor :one
+SELECT sync_cursor FROM users WHERE id = $1;
+
+-- name: GetUserCursorForUpdate :one
 SELECT sync_cursor FROM users WHERE id = $1 FOR UPDATE;
 
 -- name: UpdateUserCursor :exec

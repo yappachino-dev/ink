@@ -113,11 +113,22 @@ func (q *Queries) GetProjectChanges(ctx context.Context, arg GetProjectChangesPa
 }
 
 const getUserCursor = `-- name: GetUserCursor :one
-SELECT sync_cursor FROM users WHERE id = $1 FOR UPDATE
+SELECT sync_cursor FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserCursor(ctx context.Context, id int32) (int32, error) {
 	row := q.db.QueryRow(ctx, getUserCursor, id)
+	var sync_cursor int32
+	err := row.Scan(&sync_cursor)
+	return sync_cursor, err
+}
+
+const getUserCursorForUpdate = `-- name: GetUserCursorForUpdate :one
+SELECT sync_cursor FROM users WHERE id = $1 FOR UPDATE
+`
+
+func (q *Queries) GetUserCursorForUpdate(ctx context.Context, id int32) (int32, error) {
+	row := q.db.QueryRow(ctx, getUserCursorForUpdate, id)
 	var sync_cursor int32
 	err := row.Scan(&sync_cursor)
 	return sync_cursor, err

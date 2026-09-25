@@ -20,6 +20,7 @@ type Querier interface {
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error)
 	GetUserCursor(ctx context.Context, id int32) (int32, error)
+	GetUserCursorForUpdate(ctx context.Context, id int32) (int32, error)
 	MarkAllEmailVerificationsAsUsedByEmail(ctx context.Context, email string) error
 	MarkEmailVerificationAsUsed(ctx context.Context, id int32) error
 	RevokeAllRefreshTokensByUserID(ctx context.Context, userID int32) error
