@@ -20,40 +20,41 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.en,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
 		  ) {
-		$meta.setFlatMapFunction(_flatMapFunction);
+		_meta.setFlatMapFunction(_flatMapFunction);
 	}
 
 	/// Metadata for the translations of <en>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	/// Access flat map
-	dynamic operator[](String key) => $meta.getTranslation(key);
+	dynamic operator[](String key) => _meta.getTranslation(key);
 
 	late final Translations _root = this; // ignore: unused_field
 
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
-	late final TranslationsCommonEn common = TranslationsCommonEn.internal(_root);
-	late final TranslationsWelcomeEn welcome = TranslationsWelcomeEn.internal(_root);
-	late final TranslationsAuthEn auth = TranslationsAuthEn.internal(_root);
-	late final TranslationsVaultEn vault = TranslationsVaultEn.internal(_root);
-	late final TranslationsHomeEn home = TranslationsHomeEn.internal(_root);
-	late final TranslationsCalendarEn calendar = TranslationsCalendarEn.internal(_root);
-	late final TranslationsNoteEn note = TranslationsNoteEn.internal(_root);
-	late final TranslationsProjectEn project = TranslationsProjectEn.internal(_root);
-	late final TranslationsProfileEn profile = TranslationsProfileEn.internal(_root);
+	late final Translations$common$en common = Translations$common$en.internal(_root);
+	late final Translations$welcome$en welcome = Translations$welcome$en.internal(_root);
+	late final Translations$auth$en auth = Translations$auth$en.internal(_root);
+	late final Translations$vault$en vault = Translations$vault$en.internal(_root);
+	late final Translations$home$en home = Translations$home$en.internal(_root);
+	late final Translations$calendar$en calendar = Translations$calendar$en.internal(_root);
+	late final Translations$note$en note = Translations$note$en.internal(_root);
+	late final Translations$project$en project = Translations$project$en.internal(_root);
+	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
 }
 
 // Path: common
-class TranslationsCommonEn {
-	TranslationsCommonEn.internal(this._root);
+class Translations$common$en {
+	Translations$common$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -88,11 +89,13 @@ class TranslationsCommonEn {
 
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
+
+	late final Translations$common$errors$en errors = Translations$common$errors$en.internal(_root);
 }
 
 // Path: welcome
-class TranslationsWelcomeEn {
-	TranslationsWelcomeEn.internal(this._root);
+class Translations$welcome$en {
+	Translations$welcome$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -106,8 +109,8 @@ class TranslationsWelcomeEn {
 }
 
 // Path: auth
-class TranslationsAuthEn {
-	TranslationsAuthEn.internal(this._root);
+class Translations$auth$en {
+	Translations$auth$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -119,28 +122,29 @@ class TranslationsAuthEn {
 	/// en: 'Choose how to use'
 	String get chooseMethod => 'Choose how to use';
 
-	late final TranslationsAuthLoginEn login = TranslationsAuthLoginEn.internal(_root);
-	late final TranslationsAuthRegisterEn register = TranslationsAuthRegisterEn.internal(_root);
-	late final TranslationsAuthVerifyEn verify = TranslationsAuthVerifyEn.internal(_root);
-	late final TranslationsAuthFormEn form = TranslationsAuthFormEn.internal(_root);
+	late final Translations$auth$login$en login = Translations$auth$login$en.internal(_root);
+	late final Translations$auth$register$en register = Translations$auth$register$en.internal(_root);
+	late final Translations$auth$verify$en verify = Translations$auth$verify$en.internal(_root);
+	late final Translations$auth$errors$en errors = Translations$auth$errors$en.internal(_root);
+	late final Translations$auth$form$en form = Translations$auth$form$en.internal(_root);
 }
 
 // Path: vault
-class TranslationsVaultEn {
-	TranslationsVaultEn.internal(this._root);
+class Translations$vault$en {
+	Translations$vault$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsVaultFatalEn fatal = TranslationsVaultFatalEn.internal(_root);
-	late final TranslationsVaultMethodsEn methods = TranslationsVaultMethodsEn.internal(_root);
-	late final TranslationsVaultSetupEn setup = TranslationsVaultSetupEn.internal(_root);
-	late final TranslationsVaultUnlockEn unlock = TranslationsVaultUnlockEn.internal(_root);
+	late final Translations$vault$fatal$en fatal = Translations$vault$fatal$en.internal(_root);
+	late final Translations$vault$methods$en methods = Translations$vault$methods$en.internal(_root);
+	late final Translations$vault$setup$en setup = Translations$vault$setup$en.internal(_root);
+	late final Translations$vault$unlock$en unlock = Translations$vault$unlock$en.internal(_root);
 }
 
 // Path: home
-class TranslationsHomeEn {
-	TranslationsHomeEn.internal(this._root);
+class Translations$home$en {
+	Translations$home$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -157,8 +161,8 @@ class TranslationsHomeEn {
 }
 
 // Path: calendar
-class TranslationsCalendarEn {
-	TranslationsCalendarEn.internal(this._root);
+class Translations$calendar$en {
+	Translations$calendar$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -176,7 +180,7 @@ class TranslationsCalendarEn {
 	/// en: 'Calendar view'
 	String get view => 'Calendar view';
 
-	late final TranslationsCalendarModesEn modes = TranslationsCalendarModesEn.internal(_root);
+	late final Translations$calendar$modes$en modes = Translations$calendar$modes$en.internal(_root);
 	List<String> get months => [
 		'January',
 		'February',
@@ -197,8 +201,8 @@ class TranslationsCalendarEn {
 }
 
 // Path: note
-class TranslationsNoteEn {
-	TranslationsNoteEn.internal(this._root);
+class Translations$note$en {
+	Translations$note$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -231,14 +235,14 @@ class TranslationsNoteEn {
 	/// en: 'All projects'
 	String get allProjects => 'All projects';
 
-	late final TranslationsNoteDeleteEn delete = TranslationsNoteDeleteEn.internal(_root);
-	late final TranslationsNotePriorityEn priority = TranslationsNotePriorityEn.internal(_root);
-	late final TranslationsNoteReminderEn reminder = TranslationsNoteReminderEn.internal(_root);
+	late final Translations$note$delete$en delete = Translations$note$delete$en.internal(_root);
+	late final Translations$note$priority$en priority = Translations$note$priority$en.internal(_root);
+	late final Translations$note$reminder$en reminder = Translations$note$reminder$en.internal(_root);
 }
 
 // Path: project
-class TranslationsProjectEn {
-	TranslationsProjectEn.internal(this._root);
+class Translations$project$en {
+	Translations$project$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -259,13 +263,13 @@ class TranslationsProjectEn {
 	/// en: 'Edit project'
 	String get edit => 'Edit project';
 
-	late final TranslationsProjectDeleteEn delete = TranslationsProjectDeleteEn.internal(_root);
-	late final TranslationsProjectFormEn form = TranslationsProjectFormEn.internal(_root);
+	late final Translations$project$delete$en delete = Translations$project$delete$en.internal(_root);
+	late final Translations$project$form$en form = Translations$project$form$en.internal(_root);
 }
 
 // Path: profile
-class TranslationsProfileEn {
-	TranslationsProfileEn.internal(this._root);
+class Translations$profile$en {
+	Translations$profile$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -274,14 +278,32 @@ class TranslationsProfileEn {
 	/// en: 'Profile'
 	String get title => 'Profile';
 
-	late final TranslationsProfilePersonalEn personal = TranslationsProfilePersonalEn.internal(_root);
-	late final TranslationsProfileAccountEn account = TranslationsProfileAccountEn.internal(_root);
-	late final TranslationsProfileSettingsEn settings = TranslationsProfileSettingsEn.internal(_root);
+	late final Translations$profile$personal$en personal = Translations$profile$personal$en.internal(_root);
+	late final Translations$profile$account$en account = Translations$profile$account$en.internal(_root);
+	late final Translations$profile$settings$en settings = Translations$profile$settings$en.internal(_root);
+}
+
+// Path: common.errors
+class Translations$common$errors$en {
+	Translations$common$errors$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Unable to reach the server. Check your connection.'
+	String get network => 'Unable to reach the server. Check your connection.';
+
+	/// en: 'The server took too long to respond. Try again.'
+	String get timeout => 'The server took too long to respond. Try again.';
+
+	/// en: 'Something went wrong. Please try again.'
+	String get unknown => 'Something went wrong. Please try again.';
 }
 
 // Path: auth.login
-class TranslationsAuthLoginEn {
-	TranslationsAuthLoginEn.internal(this._root);
+class Translations$auth$login$en {
+	Translations$auth$login$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -301,8 +323,8 @@ class TranslationsAuthLoginEn {
 }
 
 // Path: auth.register
-class TranslationsAuthRegisterEn {
-	TranslationsAuthRegisterEn.internal(this._root);
+class Translations$auth$register$en {
+	Translations$auth$register$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -322,8 +344,8 @@ class TranslationsAuthRegisterEn {
 }
 
 // Path: auth.verify
-class TranslationsAuthVerifyEn {
-	TranslationsAuthVerifyEn.internal(this._root);
+class Translations$auth$verify$en {
+	Translations$auth$verify$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -345,9 +367,27 @@ class TranslationsAuthVerifyEn {
 	String get resend => 'Resend code';
 }
 
+// Path: auth.errors
+class Translations$auth$errors$en {
+	Translations$auth$errors$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Invalid email or password.'
+	String get invalidCredentials => 'Invalid email or password.';
+
+	/// en: 'An account with this email already exists.'
+	String get emailAlreadyInUse => 'An account with this email already exists.';
+
+	/// en: 'Password does not meet the security requirements.'
+	String get invalidPassword => 'Password does not meet the security requirements.';
+}
+
 // Path: auth.form
-class TranslationsAuthFormEn {
-	TranslationsAuthFormEn.internal(this._root);
+class Translations$auth$form$en {
+	Translations$auth$form$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -385,8 +425,8 @@ class TranslationsAuthFormEn {
 }
 
 // Path: vault.fatal
-class TranslationsVaultFatalEn {
-	TranslationsVaultFatalEn.internal(this._root);
+class Translations$vault$fatal$en {
+	Translations$vault$fatal$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -400,8 +440,8 @@ class TranslationsVaultFatalEn {
 }
 
 // Path: vault.methods
-class TranslationsVaultMethodsEn {
-	TranslationsVaultMethodsEn.internal(this._root);
+class Translations$vault$methods$en {
+	Translations$vault$methods$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -413,47 +453,47 @@ class TranslationsVaultMethodsEn {
 	/// en: 'Choose a quick login method. A secret phrase will be mandatory in the next step.'
 	String get subtitle => 'Choose a quick login method. A secret phrase will be mandatory in the next step.';
 
-	late final TranslationsVaultMethodsPinEn pin = TranslationsVaultMethodsPinEn.internal(_root);
-	late final TranslationsVaultMethodsPatternEn pattern = TranslationsVaultMethodsPatternEn.internal(_root);
-	late final TranslationsVaultMethodsSeedEn seed = TranslationsVaultMethodsSeedEn.internal(_root);
-	late final TranslationsVaultMethodsWordEn word = TranslationsVaultMethodsWordEn.internal(_root);
-	late final TranslationsVaultMethodsVerificationEn verification = TranslationsVaultMethodsVerificationEn.internal(_root);
-	late final TranslationsVaultMethodsOptionsEn options = TranslationsVaultMethodsOptionsEn.internal(_root);
+	late final Translations$vault$methods$pin$en pin = Translations$vault$methods$pin$en.internal(_root);
+	late final Translations$vault$methods$pattern$en pattern = Translations$vault$methods$pattern$en.internal(_root);
+	late final Translations$vault$methods$seed$en seed = Translations$vault$methods$seed$en.internal(_root);
+	late final Translations$vault$methods$word$en word = Translations$vault$methods$word$en.internal(_root);
+	late final Translations$vault$methods$verification$en verification = Translations$vault$methods$verification$en.internal(_root);
+	late final Translations$vault$methods$options$en options = Translations$vault$methods$options$en.internal(_root);
 }
 
 // Path: vault.setup
-class TranslationsVaultSetupEn {
-	TranslationsVaultSetupEn.internal(this._root);
+class Translations$vault$setup$en {
+	Translations$vault$setup$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsVaultSetupPinEn pin = TranslationsVaultSetupPinEn.internal(_root);
-	late final TranslationsVaultSetupPatternEn pattern = TranslationsVaultSetupPatternEn.internal(_root);
-	late final TranslationsVaultSetupWordEn word = TranslationsVaultSetupWordEn.internal(_root);
-	late final TranslationsVaultSetupSeedEn seed = TranslationsVaultSetupSeedEn.internal(_root);
-	late final TranslationsVaultSetupSeedVerifyEn seedVerify = TranslationsVaultSetupSeedVerifyEn.internal(_root);
+	late final Translations$vault$setup$pin$en pin = Translations$vault$setup$pin$en.internal(_root);
+	late final Translations$vault$setup$pattern$en pattern = Translations$vault$setup$pattern$en.internal(_root);
+	late final Translations$vault$setup$word$en word = Translations$vault$setup$word$en.internal(_root);
+	late final Translations$vault$setup$seed$en seed = Translations$vault$setup$seed$en.internal(_root);
+	late final Translations$vault$setup$seedVerify$en seedVerify = Translations$vault$setup$seedVerify$en.internal(_root);
 }
 
 // Path: vault.unlock
-class TranslationsVaultUnlockEn {
-	TranslationsVaultUnlockEn.internal(this._root);
+class Translations$vault$unlock$en {
+	Translations$vault$unlock$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-	late final TranslationsVaultUnlockPinEn pin = TranslationsVaultUnlockPinEn.internal(_root);
-	late final TranslationsVaultUnlockPatternEn pattern = TranslationsVaultUnlockPatternEn.internal(_root);
-	late final TranslationsVaultUnlockWordEn word = TranslationsVaultUnlockWordEn.internal(_root);
-	late final TranslationsVaultUnlockSeedEn seed = TranslationsVaultUnlockSeedEn.internal(_root);
+	late final Translations$vault$unlock$pin$en pin = Translations$vault$unlock$pin$en.internal(_root);
+	late final Translations$vault$unlock$pattern$en pattern = Translations$vault$unlock$pattern$en.internal(_root);
+	late final Translations$vault$unlock$word$en word = Translations$vault$unlock$word$en.internal(_root);
+	late final Translations$vault$unlock$seed$en seed = Translations$vault$unlock$seed$en.internal(_root);
 
 	/// en: 'Too many attempts. Try again in ${seconds}s.'
 	String throttled({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.';
 }
 
 // Path: calendar.modes
-class TranslationsCalendarModesEn {
-	TranslationsCalendarModesEn.internal(this._root);
+class Translations$calendar$modes$en {
+	Translations$calendar$modes$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -473,8 +513,8 @@ class TranslationsCalendarModesEn {
 }
 
 // Path: note.delete
-class TranslationsNoteDeleteEn {
-	TranslationsNoteDeleteEn.internal(this._root);
+class Translations$note$delete$en {
+	Translations$note$delete$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -491,8 +531,8 @@ class TranslationsNoteDeleteEn {
 }
 
 // Path: note.priority
-class TranslationsNotePriorityEn {
-	TranslationsNotePriorityEn.internal(this._root);
+class Translations$note$priority$en {
+	Translations$note$priority$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -515,8 +555,8 @@ class TranslationsNotePriorityEn {
 }
 
 // Path: note.reminder
-class TranslationsNoteReminderEn {
-	TranslationsNoteReminderEn.internal(this._root);
+class Translations$note$reminder$en {
+	Translations$note$reminder$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -551,8 +591,8 @@ class TranslationsNoteReminderEn {
 }
 
 // Path: project.delete
-class TranslationsProjectDeleteEn {
-	TranslationsProjectDeleteEn.internal(this._root);
+class Translations$project$delete$en {
+	Translations$project$delete$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -569,8 +609,8 @@ class TranslationsProjectDeleteEn {
 }
 
 // Path: project.form
-class TranslationsProjectFormEn {
-	TranslationsProjectFormEn.internal(this._root);
+class Translations$project$form$en {
+	Translations$project$form$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -587,8 +627,8 @@ class TranslationsProjectFormEn {
 }
 
 // Path: profile.personal
-class TranslationsProfilePersonalEn {
-	TranslationsProfilePersonalEn.internal(this._root);
+class Translations$profile$personal$en {
+	Translations$profile$personal$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -614,8 +654,8 @@ class TranslationsProfilePersonalEn {
 }
 
 // Path: profile.account
-class TranslationsProfileAccountEn {
-	TranslationsProfileAccountEn.internal(this._root);
+class Translations$profile$account$en {
+	Translations$profile$account$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -638,8 +678,8 @@ class TranslationsProfileAccountEn {
 }
 
 // Path: profile.settings
-class TranslationsProfileSettingsEn {
-	TranslationsProfileSettingsEn.internal(this._root);
+class Translations$profile$settings$en {
+	Translations$profile$settings$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -651,7 +691,7 @@ class TranslationsProfileSettingsEn {
 	/// en: 'Language'
 	String get language => 'Language';
 
-	late final TranslationsProfileSettingsAppearanceEn appearance = TranslationsProfileSettingsAppearanceEn.internal(_root);
+	late final Translations$profile$settings$appearance$en appearance = Translations$profile$settings$appearance$en.internal(_root);
 
 	/// en: 'Choose timezone'
 	String get timezone => 'Choose timezone';
@@ -664,8 +704,8 @@ class TranslationsProfileSettingsEn {
 }
 
 // Path: vault.methods.pin
-class TranslationsVaultMethodsPinEn {
-	TranslationsVaultMethodsPinEn.internal(this._root);
+class Translations$vault$methods$pin$en {
+	Translations$vault$methods$pin$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -677,12 +717,12 @@ class TranslationsVaultMethodsPinEn {
 	/// en: 'Quick access via 4-digit code'
 	String get subtitle => 'Quick access via 4-digit code';
 
-	late final TranslationsVaultMethodsPinKeyPadEn keyPad = TranslationsVaultMethodsPinKeyPadEn.internal(_root);
+	late final Translations$vault$methods$pin$keyPad$en keyPad = Translations$vault$methods$pin$keyPad$en.internal(_root);
 }
 
 // Path: vault.methods.pattern
-class TranslationsVaultMethodsPatternEn {
-	TranslationsVaultMethodsPatternEn.internal(this._root);
+class Translations$vault$methods$pattern$en {
+	Translations$vault$methods$pattern$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -696,8 +736,8 @@ class TranslationsVaultMethodsPatternEn {
 }
 
 // Path: vault.methods.seed
-class TranslationsVaultMethodsSeedEn {
-	TranslationsVaultMethodsSeedEn.internal(this._root);
+class Translations$vault$methods$seed$en {
+	Translations$vault$methods$seed$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -711,8 +751,8 @@ class TranslationsVaultMethodsSeedEn {
 }
 
 // Path: vault.methods.word
-class TranslationsVaultMethodsWordEn {
-	TranslationsVaultMethodsWordEn.internal(this._root);
+class Translations$vault$methods$word$en {
+	Translations$vault$methods$word$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -726,8 +766,8 @@ class TranslationsVaultMethodsWordEn {
 }
 
 // Path: vault.methods.verification
-class TranslationsVaultMethodsVerificationEn {
-	TranslationsVaultMethodsVerificationEn.internal(this._root);
+class Translations$vault$methods$verification$en {
+	Translations$vault$methods$verification$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -741,8 +781,8 @@ class TranslationsVaultMethodsVerificationEn {
 }
 
 // Path: vault.methods.options
-class TranslationsVaultMethodsOptionsEn {
-	TranslationsVaultMethodsOptionsEn.internal(this._root);
+class Translations$vault$methods$options$en {
+	Translations$vault$methods$options$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -762,8 +802,8 @@ class TranslationsVaultMethodsOptionsEn {
 }
 
 // Path: vault.setup.pin
-class TranslationsVaultSetupPinEn {
-	TranslationsVaultSetupPinEn.internal(this._root);
+class Translations$vault$setup$pin$en {
+	Translations$vault$setup$pin$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -777,8 +817,8 @@ class TranslationsVaultSetupPinEn {
 }
 
 // Path: vault.setup.pattern
-class TranslationsVaultSetupPatternEn {
-	TranslationsVaultSetupPatternEn.internal(this._root);
+class Translations$vault$setup$pattern$en {
+	Translations$vault$setup$pattern$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -795,8 +835,8 @@ class TranslationsVaultSetupPatternEn {
 }
 
 // Path: vault.setup.word
-class TranslationsVaultSetupWordEn {
-	TranslationsVaultSetupWordEn.internal(this._root);
+class Translations$vault$setup$word$en {
+	Translations$vault$setup$word$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -810,8 +850,8 @@ class TranslationsVaultSetupWordEn {
 }
 
 // Path: vault.setup.seed
-class TranslationsVaultSetupSeedEn {
-	TranslationsVaultSetupSeedEn.internal(this._root);
+class Translations$vault$setup$seed$en {
+	Translations$vault$setup$seed$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -834,8 +874,8 @@ class TranslationsVaultSetupSeedEn {
 }
 
 // Path: vault.setup.seedVerify
-class TranslationsVaultSetupSeedVerifyEn {
-	TranslationsVaultSetupSeedVerifyEn.internal(this._root);
+class Translations$vault$setup$seedVerify$en {
+	Translations$vault$setup$seedVerify$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -858,8 +898,8 @@ class TranslationsVaultSetupSeedVerifyEn {
 }
 
 // Path: vault.unlock.pin
-class TranslationsVaultUnlockPinEn {
-	TranslationsVaultUnlockPinEn.internal(this._root);
+class Translations$vault$unlock$pin$en {
+	Translations$vault$unlock$pin$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -873,8 +913,8 @@ class TranslationsVaultUnlockPinEn {
 }
 
 // Path: vault.unlock.pattern
-class TranslationsVaultUnlockPatternEn {
-	TranslationsVaultUnlockPatternEn.internal(this._root);
+class Translations$vault$unlock$pattern$en {
+	Translations$vault$unlock$pattern$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -891,8 +931,8 @@ class TranslationsVaultUnlockPatternEn {
 }
 
 // Path: vault.unlock.word
-class TranslationsVaultUnlockWordEn {
-	TranslationsVaultUnlockWordEn.internal(this._root);
+class Translations$vault$unlock$word$en {
+	Translations$vault$unlock$word$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -909,8 +949,8 @@ class TranslationsVaultUnlockWordEn {
 }
 
 // Path: vault.unlock.seed
-class TranslationsVaultUnlockSeedEn {
-	TranslationsVaultUnlockSeedEn.internal(this._root);
+class Translations$vault$unlock$seed$en {
+	Translations$vault$unlock$seed$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -936,8 +976,8 @@ class TranslationsVaultUnlockSeedEn {
 }
 
 // Path: profile.settings.appearance
-class TranslationsProfileSettingsAppearanceEn {
-	TranslationsProfileSettingsAppearanceEn.internal(this._root);
+class Translations$profile$settings$appearance$en {
+	Translations$profile$settings$appearance$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -957,8 +997,8 @@ class TranslationsProfileSettingsAppearanceEn {
 }
 
 // Path: vault.methods.pin.keyPad
-class TranslationsVaultMethodsPinKeyPadEn {
-	TranslationsVaultMethodsPinKeyPadEn.internal(this._root);
+class Translations$vault$methods$pin$keyPad$en {
+	Translations$vault$methods$pin$keyPad$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -989,6 +1029,9 @@ extension on Translations {
 			'common.delete' => 'Delete',
 			'common.errorTitle' => 'Error',
 			'common.loading' => 'Loading...',
+			'common.errors.network' => 'Unable to reach the server. Check your connection.',
+			'common.errors.timeout' => 'The server took too long to respond. Try again.',
+			'common.errors.unknown' => 'Something went wrong. Please try again.',
 			'welcome.createLocalStorage' => 'Create local storage',
 			'welcome.haveAccount' => 'Already have an account?',
 			'auth.tagline' => 'Your plans under reliable protection',
@@ -1006,6 +1049,9 @@ extension on Translations {
 			'auth.verify.codeHint' => 'Enter verification code',
 			'auth.verify.codeError' => 'Invalid code',
 			'auth.verify.resend' => 'Resend code',
+			'auth.errors.invalidCredentials' => 'Invalid email or password.',
+			'auth.errors.emailAlreadyInUse' => 'An account with this email already exists.',
+			'auth.errors.invalidPassword' => 'Password does not meet the security requirements.',
 			'auth.form.email' => 'Email',
 			'auth.form.emailHint' => 'Email',
 			'auth.form.emailError' => 'Email is required',

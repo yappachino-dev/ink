@@ -3,6 +3,7 @@ import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/auth/token_refresher.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
+import 'package:ink/features/auth/data/mappers/auth_failure_mapper.dart';
 import 'package:ink/features/auth/data/sources/auth_remote_data_source.dart';
 import 'package:ink/features/auth/domain/auth_repository.dart';
 import 'package:ink/features/auth/domain/failures/auth_failure.dart';
@@ -27,7 +28,7 @@ class UnifiedAuthRepository
   ) {
     return remoteRunner(
       call: () => _remote.login((email: email, password: password)),
-      mapCore: AuthCoreFailure.new,
+      mapCore: mapLoginFailure,
     );
   }
 
@@ -35,7 +36,7 @@ class UnifiedAuthRepository
   Future<Result<void, AuthFailure>> requestVerification(String email) {
     return remoteRunner(
       call: () => _remote.requestVerification((email: email)),
-      mapCore: AuthCoreFailure.new,
+      mapCore: mapRequestVerificationFailure,
     );
   }
 
@@ -48,7 +49,7 @@ class UnifiedAuthRepository
     return remoteRunner(
       call: () =>
           _remote.register((email: email, password: password, code: code)),
-      mapCore: AuthCoreFailure.new,
+      mapCore: mapRegisterFailure,
     );
   }
 
@@ -56,7 +57,7 @@ class UnifiedAuthRepository
   Future<Result<void, AuthFailure>> logout(String refreshToken) {
     return remoteRunner(
       call: () => _remote.logout(refreshToken),
-      mapCore: AuthCoreFailure.new,
+      mapCore: mapAuthFailure,
     );
   }
 
@@ -68,9 +69,9 @@ class UnifiedAuthRepository
   ) async {
     if (_ongoingRefresh != null) return _ongoingRefresh!;
 
-    _ongoingRefresh = _performRefresh(refreshToken).whenComplete(
-      () => _ongoingRefresh = null,
-    );
+    _ongoingRefresh = _performRefresh(
+      refreshToken,
+    ).whenComplete(() => _ongoingRefresh = null);
 
     return _ongoingRefresh!;
   }

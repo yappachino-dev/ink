@@ -12,6 +12,14 @@ class EmailAlreadyInUse extends AuthFailure {
   const EmailAlreadyInUse();
 }
 
+class InvalidVerificationCode extends AuthFailure {
+  const InvalidVerificationCode();
+}
+
+class InvalidPassword extends AuthFailure {
+  const InvalidPassword();
+}
+
 class AuthCoreFailure extends AuthFailure {
   const AuthCoreFailure(this.core);
 

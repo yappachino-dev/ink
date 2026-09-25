@@ -3,6 +3,7 @@ import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/features/auth/domain/auth_preferences.dart';
+import 'package:ink/features/auth/presentation/extensions/auth_failure_ui_extension.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_navigator.dart';
 import 'package:ink/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:ink/features/auth/presentation/widgets/code_form_field.dart';
@@ -50,7 +51,9 @@ class _EmailVerificationScreenState
       }
     } else {
       final failure = ref.read(authProvider).failure;
-      if (failure != null) context.showSnackbarError('$failure');
+      if (failure != null) {
+        context.showSnackbarError(failure.message(context.t));
+      }
     }
   }
 
@@ -65,7 +68,9 @@ class _EmailVerificationScreenState
       );
     } else {
       final failure = ref.read(authProvider).failure;
-      if (failure != null) context.showSnackbarError('$failure');
+      if (failure != null) {
+        context.showSnackbarError(failure.message(context.t));
+      }
     }
   }
 

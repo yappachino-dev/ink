@@ -6,6 +6,10 @@ class NetworkFailure extends CoreFailure {
   const NetworkFailure();
 }
 
+class TimeoutFailure extends CoreFailure {
+  const TimeoutFailure();
+}
+
 class ApiFailure extends CoreFailure {
   const ApiFailure(this.statusCode, this.message);
 
