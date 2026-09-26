@@ -4,6 +4,7 @@ import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 
 class NotesFixtures {
   static Uint8List generateBytes(int length, int fill) =>
@@ -117,11 +118,21 @@ class NotesFixtures {
     int? localVersion,
     int? lastSyncedVersion,
     SyncStatus? syncStatus,
+    String? titlePreview,
+    String? bodyPreview,
+    bool? hasUncompletedTasks,
+    DateTime? dueDateDay,
+    int? metadataVersion,
   }) {
     return NoteModel(
       id: id ?? 'note_1',
       encryptedTitle: defaultBytes,
       encryptedContent: defaultBytes,
+      titlePreview: titlePreview ?? '',
+      bodyPreview: bodyPreview ?? '',
+      hasUncompletedTasks: hasUncompletedTasks ?? false,
+      dueDateDay: dueDateDay,
+      metadataVersion: metadataVersion ?? noteMetadataVersion,
       localVersion: localVersion ?? 1,
       lastSyncedVersion: lastSyncedVersion ?? 0,
       syncStatus: syncStatus ?? SyncStatus.synced,

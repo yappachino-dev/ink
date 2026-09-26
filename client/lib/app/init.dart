@@ -23,8 +23,10 @@ import 'package:ink/features/auth/data/auth_service_impl.dart';
 import 'package:ink/features/auth/data/unified_auth_repository.dart';
 import 'package:ink/features/auth/domain/auth_preferences.dart';
 import 'package:ink/features/auth/domain/auth_providers.dart';
+import 'package:ink/features/notes/data/note_decryptor.dart';
 import 'package:ink/features/notes/data/notes_sync_delegate.dart';
 import 'package:ink/features/notes/data/projects_sync_delegate.dart';
+import 'package:ink/features/notes/data/remote_note_metadata_enricher.dart';
 import 'package:ink/features/notes/data/secure_notes_service.dart';
 import 'package:ink/features/notes/data/sources/notes_local_store_provider.dart';
 import 'package:ink/features/notes/data/sources/projects_local_store_provider.dart';
@@ -120,9 +122,19 @@ List<Override> buildOverrides(SharedPreferences sharedPrefs) {
       (ref) {
         final concreteNotesRepo = ref.watch(unifiedNotesRepositoryProvider);
 
+        // Sync applies carry ciphertext only, so the derived-metadata cache has
+        // to be filled on this side of the repository. Without it, synced notes
+        // land with an empty title preview and no filterable day, and every
+        // list filter silently misses them.
+        final notesEngine = RemoteNoteMetadataEnricher(
+          inner: concreteNotesRepo,
+          cryptoSession: ref.watch(cryptoSessionProvider),
+          decryptor: NoteDecryptor(ref.watch(encryptionServiceProvider)),
+        );
+
         return [
           ProjectsSyncDelegate(engine: concreteNotesRepo),
-          NotesSyncDelegate(engine: concreteNotesRepo),
+          NotesSyncDelegate(engine: notesEngine),
         ];
       },
     ),

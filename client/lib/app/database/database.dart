@@ -50,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration {
@@ -61,6 +61,20 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (m, from, to) async {
         if (from < 2) {
           await m.createTable(projectConflicts);
+        }
+        if (from < 3) {
+          // Locally derived plaintext mirrors of data inside the encrypted
+          // payload. Existing rows get the default (empty, version 0) and are
+          // repaired once, after unlock, by NoteMetadataBackfill: this layer
+          // has no key and must not be handed one just to fill a cache.
+          await m.addColumn(notes, notes.titlePreview);
+          await m.addColumn(notes, notes.bodyPreview);
+          await m.addColumn(notes, notes.hasUncompletedTasks);
+          await m.addColumn(notes, notes.dueDateDay);
+          await m.addColumn(notes, notes.metadataVersion);
+          // The index arrives with the column it covers: the table predates
+          // both, so creating the index alone would not compile.
+          await m.createIndex(notesMetadataVersion);
         }
       },
       beforeOpen: (details) async {

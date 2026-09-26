@@ -11,6 +11,7 @@ import 'package:ink/features/notes/data/sources/notes_local_store_provider.dart'
 import 'package:ink/features/notes/data/sources/projects_local_store_provider.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -133,6 +134,26 @@ class UnifiedNotesRepository
   ) {
     return localRunner(
       call: () => _localNotes.acknowledgePushedNotes(acknowledgements),
+      mapCore: NotesCoreFailure.new,
+    );
+  }
+
+  @override
+  Future<Result<List<String>, NotesFailure>> findStaleMetadataNoteIds(
+    int currentVersion,
+  ) {
+    return localRunner(
+      call: () => _localNotes.findStaleMetadataNoteIds(currentVersion),
+      mapCore: NotesCoreFailure.new,
+    );
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> writeNoteMetadata(
+    Map<String, NoteMetadata> byNoteId,
+  ) {
+    return localRunner(
+      call: () => _localNotes.writeNoteMetadata(byNoteId),
       mapCore: NotesCoreFailure.new,
     );
   }

@@ -1,8 +1,10 @@
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/app/database/daos/notes_dao.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/domain/sync_status.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 
 import '../../../../fixtures/notes_fixtures.dart';
 
@@ -27,6 +29,91 @@ void main() {
       final result = await dao.getNote('test_1');
       expect(result, isNotNull);
       expect(result!.id, equals('test_1'));
+    });
+
+    group('derived metadata', () {
+      // The cache is what lets lists filter in SQL. These tests pin the two
+      // properties that matter: stale rows are findable, and repairing one
+      // cannot disturb the sync bookkeeping around it.
+      test('a row written by an older build is reported as stale', () async {
+        await dao.insertNote(
+          NotesFixtures.buildNoteCompanion(id: 'old_1'),
+        );
+
+        final stale = await dao.findStaleMetadataNoteIds(noteMetadataVersion);
+
+        expect(stale, contains('old_1'));
+      });
+
+      test('a current row is not reported as stale', () async {
+        final companion =
+            NotesFixtures.buildNoteCompanion(id: 'new_1').copyWith(
+              titlePreview: const Value('T'),
+              metadataVersion: const Value(noteMetadataVersion),
+            );
+        await dao.insertNote(companion);
+
+        final stale = await dao.findStaleMetadataNoteIds(noteMetadataVersion);
+
+        expect(stale, isNot(contains('new_1')));
+      });
+
+      test('writeNoteMetadata stores the derived columns', () async {
+        await dao.insertNote(NotesFixtures.buildNoteCompanion(id: 'n_1'));
+
+        await dao.writeNoteMetadata({
+          'n_1': NoteMetadata(
+            titlePreview: 'Repaired title',
+            bodyPreview: 'Repaired body',
+            hasUncompletedTasks: true,
+            dueDateDay: DateTime(2026, 8, 9),
+          ),
+        });
+
+        final row = await dao.getNote('n_1');
+        expect(row!.titlePreview, 'Repaired title');
+        expect(row.bodyPreview, 'Repaired body');
+        expect(row.hasUncompletedTasks, isTrue);
+        expect(row.dueDateDay, DateTime(2026, 8, 9));
+        expect(
+          await dao.findStaleMetadataNoteIds(noteMetadataVersion),
+          isEmpty,
+        );
+      });
+
+      test('writeNoteMetadata does not touch ciphertext or sync state',
+          () async {
+        // A repair that bumped localVersion or flipped syncStatus would queue
+        // every repaired note for push, turning a cache fix into a sync storm.
+        await dao.insertNote(
+          NotesFixtures.buildNoteCompanion(
+            id: 'n_1',
+            localVersion: 4,
+            lastSyncedVersion: 4,
+            syncStatus: SyncStatus.synced,
+          ),
+        );
+
+        await dao.writeNoteMetadata({
+          'n_1': const NoteMetadata(titlePreview: 'Only this changes'),
+        });
+
+        final row = await dao.getNote('n_1');
+        expect(row!.encryptedContent, NotesFixtures.defaultBytes);
+        expect(row.localVersion, 4);
+        expect(row.lastSyncedVersion, 4);
+        expect(row.syncStatus, SyncStatus.synced);
+        // Still synced, so it is not sitting in the pending-push queue.
+        expect(await dao.getPending(), isEmpty);
+      });
+
+      test('writeNoteMetadata for an unknown id is a no-op', () async {
+        await dao.writeNoteMetadata({
+          'ghost': const NoteMetadata(titlePreview: 'nope'),
+        });
+
+        expect(await dao.getNote('ghost'), isNull);
+      });
     });
 
     test('getPending returns only modified or deleted notes', () async {
