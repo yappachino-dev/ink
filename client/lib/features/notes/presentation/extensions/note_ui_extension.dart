@@ -1,9 +1,13 @@
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
+import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/i18n/strings.g.dart';
 
 extension NoteUiExtension on Note {
-  String get subtitle => Document.fromJson(content).toPlainText().trim();
+  /// Display text for a card. Never throws (F-24).
+  ///
+  /// Capped and lossy by design, so it must never be used to decide whether a
+  /// note changed. Compare `content` directly for that.
+  String get subtitle => notePreviewText(content);
 
   String timeLabel(Translations t) {
     if (dueTime != null) {

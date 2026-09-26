@@ -19,6 +19,7 @@ import 'package:ink/features/notes/presentation/notifiers/note_form_notifier.dar
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/features/notes/presentation/quill_document.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/meta_icon_button.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/priority_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
@@ -74,7 +75,8 @@ class _NoteEditorSheetState extends ConsumerState<NoteEditorSheet> {
 
       _titleController = TextEditingController(text: init.title);
       _quillController = QuillController(
-        document: Document.fromJson(init.content),
+        // Never throws, so a note with malformed synced content still opens.
+        document: parseQuillDocument(init.content),
         selection: const TextSelection.collapsed(offset: 0),
       );
 
