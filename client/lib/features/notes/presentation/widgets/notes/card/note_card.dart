@@ -15,11 +15,23 @@ class NoteCard extends ConsumerWidget {
   const NoteCard({
     required this.note,
     this.projectName,
+    this.showCompletion = true,
+    this.showPriority = true,
     super.key,
   });
 
   final Note note;
   final String? projectName;
+
+  /// Whether to lead the row with a completion checkbox.
+  ///
+  /// Task-forward surfaces (Today, Overdue) keep this on. A journalled day's
+  /// entries turn it off: the calendar answers "what did I write here", and a
+  /// per-row completion control answers a question that view was not asked.
+  final bool showCompletion;
+
+  /// Whether to show the priority flag.
+  final bool showPriority;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,25 +39,28 @@ class NoteCard extends ConsumerWidget {
 
     return Row(
       children: [
-        SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            value: note.isCompleted,
-            onChanged: (_) => ref.read(notesProvider.notifier).toggleNote(note),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            activeColor: context.colorScheme.primary,
-            side: BorderSide(
-              color: context.colorScheme.primary,
-              width: 1.5,
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: AppRadius.xsRadius,
+        if (showCompletion) ...[
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: note.isCompleted,
+              onChanged: (_) =>
+                  ref.read(notesProvider.notifier).toggleNote(note),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              activeColor: context.colorScheme.primary,
+              side: BorderSide(
+                color: context.colorScheme.primary,
+                width: 1.5,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: AppRadius.xsRadius,
+              ),
             ),
           ),
-        ),
 
-        const SizedBox(width: 12),
+          const SizedBox(width: 12),
+        ],
 
         Expanded(
           child: Column(
@@ -54,7 +69,7 @@ class NoteCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  if (note.priority != TaskPriority.none) ...[
+                  if (showPriority && note.priority != TaskPriority.none) ...[
                     Icon(
                       Icons.flag,
                       size: sizes.iconSmall,
@@ -67,12 +82,16 @@ class NoteCard extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       note.title,
-                      style: !note.isCompleted
-                          ? context.textTheme.titleMedium
-                          : context.textTheme.titleMedium?.copyWith(
+                      // Completion styling belongs to the task presentation.
+                      // When [showCompletion] is off the journal is not
+                      // reporting completion at all, so it must not hint at it
+                      // with a strikethrough either.
+                      style: showCompletion && note.isCompleted
+                          ? context.textTheme.titleMedium?.copyWith(
                               color: context.theme.hintColor,
                               decoration: TextDecoration.lineThrough,
-                            ),
+                            )
+                          : context.textTheme.titleMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

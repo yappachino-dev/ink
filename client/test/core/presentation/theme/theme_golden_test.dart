@@ -9,6 +9,7 @@ import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
+import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
@@ -73,6 +74,28 @@ void main() {
     );
   });
 
+  testWidgets('calendar journal day light and dark', (tester) async {
+    await _pumpScreenPair(
+      tester,
+      filename: 'calendar-journal.png',
+      notes: [journalFirstNote, journalSecondNote],
+      light: (service) => _notesApp(
+        brightness: Brightness.light,
+        service: service,
+        location: AppDestinations.calendar,
+        screen: const CalendarScreen(),
+        selectAllNotebooks: true,
+      ),
+      dark: (service) => _notesApp(
+        brightness: Brightness.dark,
+        service: service,
+        location: AppDestinations.calendar,
+        screen: const CalendarScreen(),
+        selectAllNotebooks: true,
+      ),
+    );
+  });
+
   testWidgets('note editor light and dark', (tester) async {
     await _pumpScreenPair(
       tester,
@@ -103,12 +126,13 @@ Future<void> _pumpScreenPair(
   required String filename,
   required _NotesScreenBuilder light,
   required _NotesScreenBuilder dark,
+  List<Note>? notes,
 }) async {
   tester.view.physicalSize = const Size(1600, 1600);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  final service = _NotesService();
+  final service = _NotesService(notes ?? [goldenNote]);
   await tester.pumpWidget(
     TranslationProvider(
       child: _GoldenPair(
@@ -130,6 +154,7 @@ Widget _notesApp({
   required _NotesService service,
   required String location,
   required Widget screen,
+  bool selectAllNotebooks = false,
 }) {
   final router = GoRouter(
     initialLocation: location,
@@ -153,6 +178,8 @@ Widget _notesApp({
     overrides: [
       notesServiceProvider.overrideWithValue(service),
       currentDateProvider.overrideWithValue(goldenCalendarDate),
+      if (selectAllNotebooks)
+        selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
     ],
     child: MaterialApp.router(
       theme: _themeFor(brightness),
@@ -217,14 +244,63 @@ class _GoldenPair extends StatelessWidget {
 typedef _NotesScreenBuilder = Widget Function(_NotesService service);
 
 class _NotesService extends Mock implements NotesService {
-  _NotesService() {
-    when(getAllNotes).thenAnswer(_allNotes);
+  _NotesService([List<Note>? notes])
+      : notes = notes ?? [goldenNote] {
+    when(getAllNotes).thenAnswer((_) async => _allNotes(this.notes));
     when(getAllProjects).thenAnswer(_allProjects);
   }
+
+  final List<Note> notes;
 }
 
-Future<Result<List<Note>, NotesFailure>> _allNotes(Invocation _) async =>
-    Success<List<Note>, NotesFailure>([goldenNote]);
+Future<Result<List<Note>, NotesFailure>> _allNotes(List<Note> notes) async =>
+    Success<List<Note>, NotesFailure>(notes);
+
+/// Selects every notebook. The real provider defaults to `todayProjectId`,
+/// which is a sentinel and would filter every fixture note out of the journal.
+class _AllProjectsSelected extends SelectedProjectId {
+  @override
+  String build() => allProjectsId;
+}
+
+/// Journal fixtures are written on [goldenCalendarDate], the day the golden
+/// selects. `goldenNote` is deliberately not reused here: it was created on the
+/// 1st and is due on the 14th, so under journal semantics it must not appear on
+/// the 14th.
+final journalFirstNote = Note(
+  id: 'journal-one',
+  title: 'Review architecture',
+  content: [
+    {'insert': 'Review architecture\n'},
+  ],
+  localVersion: 1,
+  lastSyncedVersion: 1,
+  syncStatus: SyncStatus.synced,
+  createdAt: goldenCalendarDate,
+  updatedAt: goldenCalendarDate,
+  projectId: 'golden-project',
+);
+
+/// Completed and high priority, so the golden proves the journal renders no
+/// completion checkbox and no priority flag even when the note carries them.
+final journalSecondNote = Note(
+  id: 'journal-two',
+  title: 'Sketch the sync contract',
+  content: [
+    {'insert': 'Cursor semantics first, then the conflict policy.\n'},
+  ],
+  localVersion: 1,
+  lastSyncedVersion: 1,
+  syncStatus: SyncStatus.synced,
+  createdAt: goldenCalendarDate,
+  updatedAt: goldenCalendarDate,
+  projectId: 'golden-project',
+  // Due later than the day it was written: the journal keys on neither, but a
+  // future due-date view will need it.
+  dueDate: DateTime(2026, 1, 20),
+  priority: TaskPriority.high,
+  isCompleted: true,
+);
 
 Future<Result<List<Project>, NotesFailure>> _allProjects(Invocation _) async =>
     Success<List<Project>, NotesFailure>([goldenProject]);

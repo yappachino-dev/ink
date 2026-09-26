@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,18 +7,16 @@ import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
-import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/calendar_card.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/day_header.dart';
+import 'package:ink/features/notes/presentation/widgets/calendar/journal_day_list.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/list_filter_sheet.dart';
-import 'package:ink/features/notes/presentation/widgets/calendar/task_list_view.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -83,8 +80,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Widget build(BuildContext context) {
     final allLists = ref.watch(projectsProvider).value ?? [];
 
-    final calendarNotes = ref.watch(calendarNotesProvider);
-
     final selectedProjectId = ref.watch(selectedProjectIdProvider);
     final showDescription = ref.watch(showDescriptionProvider);
     final viewMode = ref.watch(calendarViewModeStateProvider);
@@ -96,24 +91,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            if (calendarNotes.isEmpty)
-              Positioned.fill(
-                bottom: 110,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(
-                      sigmaX: AppEffects.blurSm,
-                      sigmaY: AppEffects.blurSm,
-                    ),
-                    child: const Opacity(
-                      opacity: 0.25,
-                      child: AppLogo(size: LogoSize.large),
-                    ),
-                  ),
-                ),
-              ),
-
             Column(
               children: [
                 Padding(
@@ -218,11 +195,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
                 const SizedBox(height: 16),
 
-                Expanded(
-                  child: calendarNotes.isNotEmpty
-                      ? const TaskListView()
-                      : const SizedBox.shrink(),
-                ),
+                const Expanded(child: JournalDayList()),
               ],
             ),
           ],
