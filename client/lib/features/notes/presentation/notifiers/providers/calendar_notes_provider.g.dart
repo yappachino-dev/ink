@@ -82,12 +82,23 @@ final class CalendarNotesProvider
   }
 }
 
-String _$calendarNotesHash() => r'a00c17f5e6c2519577a8ca0765ecd402ebcac710';
+String _$calendarNotesHash() => r'23405dc47a040a9910ade2724479c52526247544';
 
 /// Days in the visible range that hold at least one entry.
 ///
 /// Precomputed per range rather than filtering the whole note set for each
 /// cell the grid paints, which `TableCalendar` asks for on every visible day.
+///
+/// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
+/// recorded year/month/day and returns local midnight. `DateTime.==` compares
+/// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
+/// two sides disagreed on either. Normalizing both sides to a local midnight
+/// makes the comparison exact.
+///
+/// Deliberately **not** `.toLocal()`. Converting to the device zone first would
+/// re-date an entry whenever the stored time sits near midnight, so the same
+/// note would land on different days on different devices, and would move days
+/// if the user travelled. A journal records the day as written.
 
 @ProviderFor(journalEntryCounts)
 final journalEntryCountsProvider = JournalEntryCountsProvider._();
@@ -96,6 +107,17 @@ final journalEntryCountsProvider = JournalEntryCountsProvider._();
 ///
 /// Precomputed per range rather than filtering the whole note set for each
 /// cell the grid paints, which `TableCalendar` asks for on every visible day.
+///
+/// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
+/// recorded year/month/day and returns local midnight. `DateTime.==` compares
+/// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
+/// two sides disagreed on either. Normalizing both sides to a local midnight
+/// makes the comparison exact.
+///
+/// Deliberately **not** `.toLocal()`. Converting to the device zone first would
+/// re-date an entry whenever the stored time sits near midnight, so the same
+/// note would land on different days on different devices, and would move days
+/// if the user travelled. A journal records the day as written.
 
 final class JournalEntryCountsProvider
     extends
@@ -109,6 +131,17 @@ final class JournalEntryCountsProvider
   ///
   /// Precomputed per range rather than filtering the whole note set for each
   /// cell the grid paints, which `TableCalendar` asks for on every visible day.
+  ///
+  /// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
+  /// recorded year/month/day and returns local midnight. `DateTime.==` compares
+  /// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
+  /// two sides disagreed on either. Normalizing both sides to a local midnight
+  /// makes the comparison exact.
+  ///
+  /// Deliberately **not** `.toLocal()`. Converting to the device zone first would
+  /// re-date an entry whenever the stored time sits near midnight, so the same
+  /// note would land on different days on different devices, and would move days
+  /// if the user travelled. A journal records the day as written.
   JournalEntryCountsProvider._()
     : super(
         from: null,
@@ -144,4 +177,4 @@ final class JournalEntryCountsProvider
 }
 
 String _$journalEntryCountsHash() =>
-    r'537a8069543ce3a7aa416cd0a5813a3ee26e718b';
+    r'2be75cb1f041cbc16d72d4050a7719117c9081c1';

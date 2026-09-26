@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 
 extension NoteModelToEncrypted on NoteModel {
   EncryptedNote toDomain() => EncryptedNote(
@@ -18,6 +19,17 @@ extension NoteModelToEncrypted on NoteModel {
     deletedAt: deletedAt,
 
     projectId: projectId,
+
+    // Rebuilt from the stored columns rather than re-derived: this is a read
+    // path, and deriving here would mean decrypting on every list paint, which
+    // is the cost these columns exist to remove.
+    metadata: NoteMetadata(
+      titlePreview: titlePreview,
+      bodyPreview: bodyPreview,
+      hasUncompletedTasks: hasUncompletedTasks,
+      dueDateDay: dueDateDay,
+      version: metadataVersion,
+    ),
   );
 }
 
@@ -37,6 +49,12 @@ extension EncryptedNoteToCompanion on EncryptedNote {
     deletedAt: Value(deletedAt),
 
     projectId: Value(projectId),
+
+    titlePreview: Value(metadata.titlePreview),
+    bodyPreview: Value(metadata.bodyPreview),
+    hasUncompletedTasks: Value(metadata.hasUncompletedTasks),
+    dueDateDay: Value(metadata.dueDateDay),
+    metadataVersion: Value(metadata.version),
   );
 
   NoteConflictsCompanion toConflictCompanion() => NoteConflictsCompanion.insert(

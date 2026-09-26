@@ -70,6 +70,9 @@ class SessionManager extends _$SessionManager
   String? get refreshToken => state.refreshToken;
 
   @override
+  bool get hasKey => state.masterKey != null;
+
+  @override
   Uint8List get masterKey {
     if (state.masterKey == null) throw const SessionLockedException();
     // Return a clone so consumers can never mutate or retain a reference to the
@@ -139,9 +142,8 @@ SessionController sessionController(Ref ref) =>
     ref.watch(sessionManagerProvider.notifier);
 
 @Riverpod(keepAlive: true)
-bool isSessionLoaded(Ref ref) => ref.watch(
-  sessionManagerProvider.select((state) => state.isLoaded),
-);
+bool isSessionLoaded(Ref ref) =>
+    ref.watch(sessionManagerProvider.select((state) => state.isLoaded));
 
 @Riverpod(keepAlive: true)
 bool isMasterKeyPresent(Ref ref) => ref.watch(

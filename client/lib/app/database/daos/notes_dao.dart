@@ -5,6 +5,7 @@ import 'package:ink/core/services/sync/sync_indexes.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/data/tables/note_conflicts.dart';
 import 'package:ink/features/notes/data/tables/notes.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 
 part 'notes_dao.g.dart';
 
@@ -84,6 +85,34 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
             (tbl) => tbl.syncStatus.isIn(syncPendingPushIndexes),
           ))
           .get();
+
+  Future<List<String>> findStaleMetadataNoteIds(int currentVersion) {
+    final query = select(notes)
+      ..where((tbl) => tbl.metadataVersion.equals(currentVersion).not());
+
+    return query.get().then((rows) => [for (final row in rows) row.id]);
+  }
+
+  /// Updates only the derived columns. Deliberately not a companion built from
+  /// a full model, so a repair can never alter ciphertext, versions, or the
+  /// sync status and accidentally queue a note for push.
+  Future<void> writeNoteMetadata(Map<String, NoteMetadata> byNoteId) =>
+      batch((b) {
+        for (final entry in byNoteId.entries) {
+          final metadata = entry.value;
+          b.update(
+            notes,
+            NotesCompanion(
+              titlePreview: Value(metadata.titlePreview),
+              bodyPreview: Value(metadata.bodyPreview),
+              hasUncompletedTasks: Value(metadata.hasUncompletedTasks),
+              dueDateDay: Value(metadata.dueDateDay),
+              metadataVersion: Value(metadata.version),
+            ),
+            where: (tbl) => tbl.id.equals(entry.key),
+          );
+        }
+      });
 
   /// Marks the note as locally deleted instead of removing it: the tombstone
   /// row stays in the pending-push queue so the deletion reaches the server

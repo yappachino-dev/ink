@@ -12,10 +12,12 @@ import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/features/notes/data/models/note_payload.dart';
 import 'package:ink/features/notes/data/models/project_payload.dart';
+import 'package:ink/features/notes/data/note_decryptor.dart';
 import 'package:ink/features/notes/data/unified_notes_repository.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/mappers/notes_mapper.dart';
@@ -36,15 +38,20 @@ class SecureNotesService implements NotesService {
     required CryptoSession cryptoSession,
     required NotesRepository repository,
     required SyncOrchestrator sync,
+    NoteDecryptor? decryptor,
   }) : _encryption = encryption,
        _cryptoSession = cryptoSession,
        _repository = repository,
-       _sync = sync;
+       _sync = sync,
+       _decryptor = decryptor ?? NoteDecryptor(encryption);
 
   final EncryptionService _encryption;
   final CryptoSession _cryptoSession;
   final NotesRepository _repository;
   final SyncOrchestrator _sync;
+
+  /// Shared with the sync path so both decrypt identically.
+  final NoteDecryptor _decryptor;
 
   @override
   Future<Result<Note, NotesFailure>> createNote(NoteCreationPayload payload) {
@@ -155,12 +162,64 @@ class SecureNotesService implements NotesService {
 
       if (encryptedNotes.isEmpty) return const Success([]);
 
+      // Repairs rows that predate the derived columns, before they are read, so
+      // a filter never sees a half-populated cache. No-op once every row is
+      // current, and the guard query is a single indexed lookup.
+      await _backfillMetadata(encryptedNotes, masterKey);
+
       final notes = await Future.wait(
         encryptedNotes.map((e) => _decryptNote(e, masterKey)),
       );
 
       return Success(notes);
     });
+  }
+
+  /// Fills the derived-metadata cache for rows written by an older build.
+  ///
+  /// Runs here rather than in the migration because the derivation needs the
+  /// key, and `app/database` must not hold one. Reads the rows already loaded
+  /// for the caller's read, so it costs no extra query beyond the staleness
+  /// check itself.
+  Future<void> _backfillMetadata(
+    List<EncryptedNote> notes,
+    Uint8List masterKey,
+  ) async {
+    final staleResult = await _repository.findStaleMetadataNoteIds(
+      noteMetadataVersion,
+    );
+    if (staleResult case Failure(:final error)) {
+      // A read must not fail because a cache is behind: the notes are still
+      // readable without it, they just filter poorly until the next attempt.
+      logger.w('note metadata backfill lookup failed', error: error);
+      return;
+    }
+
+    final stale = staleResult.unwrap.toSet();
+    if (stale.isEmpty) return;
+
+    final repaired = <String, NoteMetadata>{};
+    for (final note in notes.where((n) => stale.contains(n.id))) {
+      try {
+        final decrypted = await _decryptNote(note, masterKey);
+        repaired[note.id] = NoteMetadataDerivation.derive(
+          title: decrypted.title,
+          content: decrypted.content,
+          dueDate: decrypted.dueDate,
+        );
+      } on Object {
+        // Unreadable content still gets a current-version row, or the next
+        // read would retry it forever. The payload is left untouched.
+        repaired[note.id] = const NoteMetadata();
+      }
+    }
+
+    if (repaired.isEmpty) return;
+
+    final writeResult = await _repository.writeNoteMetadata(repaired);
+    if (writeResult case Failure(:final error)) {
+      logger.w('note metadata backfill write failed', error: error);
+    }
   }
 
   @override
@@ -181,37 +240,8 @@ class SecureNotesService implements NotesService {
   Future<Note> _decryptNote(
     EncryptedNote encryptedNote,
     Uint8List masterKey,
-  ) async {
-    final title = await _encryption.decryptString(
-      encryptedNote.encryptedTitle,
-      masterKey,
-    );
-    final plainContent = await _encryption.decryptString(
-      encryptedNote.encryptedContent,
-      masterKey,
-    );
-
-    final notePayload = NotePayload.fromJson(
-      jsonDecode(plainContent) as Map<String, dynamic>,
-    );
-
-    final note = encryptedNote.toNote(
-      title: title,
-      content: notePayload.quillData,
-      isCompleted: notePayload.isCompleted,
-      priority: notePayload.priority,
-      dueDate: notePayload.dueDate,
-      dueTime: notePayload.dueTime == null
-          ? null
-          : (
-              hour: notePayload.dueTime!.hour,
-              minute: notePayload.dueTime!.minute,
-            ),
-      reminderMinutesBefore: notePayload.reminderMinutesBefore,
-    );
-
-    return note;
-  }
+  ) =>
+      _decryptor.decrypt(encryptedNote, masterKey);
 
   @override
   Future<Result<Project, NotesFailure>> createProject(

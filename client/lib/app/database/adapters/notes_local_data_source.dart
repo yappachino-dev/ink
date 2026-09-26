@@ -7,6 +7,7 @@ import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/data/ports/notes_local_store.dart';
 import 'package:ink/features/notes/data/sync_delta_resolution.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
+import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notes_local_data_source.g.dart';
@@ -87,6 +88,14 @@ class NotesLocalDataSource implements NotesLocalStore {
   @override
   Future<void> acknowledgePushedNotes(List<SyncAck> acknowledgements) =>
       _notesDao.acknowledgePushed(acknowledgements);
+
+  @override
+  Future<List<String>> findStaleMetadataNoteIds(int currentVersion) =>
+      _notesDao.findStaleMetadataNoteIds(currentVersion);
+
+  @override
+  Future<void> writeNoteMetadata(Map<String, NoteMetadata> byNoteId) =>
+      _notesDao.writeNoteMetadata(byNoteId);
 
   @override
   Future<void> applyRemoteNotes(List<EncryptedNote> remoteData) async {
