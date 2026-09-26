@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/entities/note.dart';
+
 import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
-import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
+import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -13,12 +13,9 @@ import 'package:table_calendar/table_calendar.dart';
 class CalendarCard extends ConsumerWidget {
   const CalendarCard({super.key});
 
-  bool hasTasksForDay(DateTime day, List<Note> notes) =>
-      notes.any((n) => isSameDay(n.dueDate, day));
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesProvider).value ?? {};
+    final entryCounts = ref.watch(journalEntryCountsProvider);
 
     final selectedDay = ref.watch(calendarSelectedDateProvider);
     final focusedDay = ref.watch(calendarFocusedDateProvider);
@@ -67,8 +64,12 @@ class CalendarCard extends ConsumerWidget {
           },
           onPageChanged: (date) =>
               ref.read(calendarFocusedDateProvider.notifier).date = date,
-          eventLoader: (day) =>
-              hasTasksForDay(day, notes.values.toList()) ? [true] : [],
+          // Normalized to match the provider's keys: `DateTime.==` compares
+          // the instant and the `isUtc` flag, so an unnormalized day misses.
+          eventLoader: (day) {
+            final count = entryCounts[DateUtils.dateOnly(day)] ?? 0;
+            return count > 0 ? [true] : [];
+          },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleTextStyle: headerStyle,
