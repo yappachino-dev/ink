@@ -65,7 +65,9 @@
     "vault": {
         "fatal": {
             "title": "App crashed fatally",
-            "subtitle": "Failed to load keys both locally and remotely"
+            "subtitle": "Failed to load keys both locally and remotely",
+            "devReset": "Reset the app state (debug only)",
+            "releaseHint": "Close and reopen Ink. Your data on this device is untouched. If the app keeps failing, reinstall it from your app store."
         },
         "methods": {
             "title": "Security Method",
