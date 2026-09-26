@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -89,13 +90,31 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
 
                   const SizedBox(height: 48),
 
-                  WideFilledButton(
-                    onPressed: () async {
-                      await ref.read(vaultRecoveryProvider).reset();
-                      ref.invalidate(vaultProvider);
-                    },
-                    child: const Text('Reset the app state'),
-                  ),
+                  // `VaultRecovery.reset()` drops the local database, zeroes
+                  // the sync cursor, and clears both tokens. Note content is
+                  // end-to-end encrypted, so there is no server-side copy and
+                  // this cannot be undone. That makes it a destructive action,
+                  // and a fatal screen is exactly where a user lands and taps
+                  // whatever is offered.
+                  //
+                  // It stays available in debug builds for local recovery
+                  // during development. In release builds it is compiled out
+                  // entirely (`kDebugMode` is a compile-time constant) and the
+                  // screen offers a non-destructive instruction instead.
+                  if (kDebugMode)
+                    WideFilledButton(
+                      onPressed: () async {
+                        await ref.read(vaultRecoveryProvider).reset();
+                        ref.invalidate(vaultProvider);
+                      },
+                      child: Text(context.t.vault.fatal.devReset),
+                    )
+                  else
+                    Text(
+                      context.t.vault.fatal.releaseHint,
+                      style: context.textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
                 ],
               ),
             ),

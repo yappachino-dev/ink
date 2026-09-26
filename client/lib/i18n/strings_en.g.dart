@@ -443,6 +443,12 @@ class Translations$vault$fatal$en {
 
 	/// en: 'Failed to load keys both locally and remotely'
 	String get subtitle => 'Failed to load keys both locally and remotely';
+
+	/// en: 'Reset the app state (debug only)'
+	String get devReset => 'Reset the app state (debug only)';
+
+	/// en: 'Close and reopen Ink. Your data on this device is untouched. If the app keeps failing, reinstall it from your app store.'
+	String get releaseHint => 'Close and reopen Ink. Your data on this device is untouched. If the app keeps failing, reinstall it from your app store.';
 }
 
 // Path: vault.methods
@@ -1072,6 +1078,8 @@ extension on Translations {
 			'auth.form.passwordsNotMatch' => 'Passwords do not match',
 			'vault.fatal.title' => 'App crashed fatally',
 			'vault.fatal.subtitle' => 'Failed to load keys both locally and remotely',
+			'vault.fatal.devReset' => 'Reset the app state (debug only)',
+			'vault.fatal.releaseHint' => 'Close and reopen Ink. Your data on this device is untouched. If the app keeps failing, reinstall it from your app store.',
 			'vault.methods.title' => 'Security Method',
 			'vault.methods.subtitle' => 'Choose a quick login method. A secret phrase will be mandatory in the next step.',
 			'vault.methods.pin.title' => 'PIN-code',

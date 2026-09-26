@@ -82,7 +82,11 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/images/
-    - assets/fonts/inter/
+    # Declared per file so an unused asset is never silently bundled.
+    - assets/fonts/inter/Inter-Regular.ttf
+    - assets/fonts/inter/Inter-Medium.ttf
+    - assets/fonts/inter/Inter-SemiBold.ttf
+    - assets/fonts/inter/Inter-Bold.ttf
+    - assets/fonts/inter/OFL.txt
 
   uses-material-design: true
