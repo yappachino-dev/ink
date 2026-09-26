@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/domain/result.dart';
@@ -126,6 +127,97 @@ void main() {
       );
 
       expect(container.read(calendarNotesProvider).single.id, 'in-a');
+    });
+  });
+
+  group('day keys are normalized and timezone-stable', () {
+    // `DateTime.==` compares the instant AND the `isUtc` flag, so a raw map
+    // lookup misses whenever the two sides disagree on either. Both sides are
+    // normalized with `DateUtils.dateOnly`.
+    // NOTE: this test discriminates only outside UTC. Under a UTC clock the
+    // recorded day and the local day coincide, so both implementations pass.
+    // CI and local runs here are not UTC, which is also the normal case for the
+    // consumer app this ships to.
+    test('a UTC entry is keyed on the day it was recorded, not the local day',
+        () async {
+      // 23:00 UTC on the 14th. In any zone east of UTC this converts to the
+      // 15th, which is exactly the re-dating that must not happen.
+      final container = await containerWith([
+        _note(
+          id: 'late-utc',
+          createdAt: DateTime.utc(2026, 3, 14, 23),
+        ),
+      ]);
+
+      final counts = container.read(journalEntryCountsProvider);
+
+      expect(counts[DateTime(2026, 3, 14)], 1);
+      expect(counts[DateTime(2026, 3, 15)], isNull);
+    });
+
+    test('keys are local midnight, so an exact lookup succeeds', () async {
+      final container = await containerWith([
+        _note(id: 'a', createdAt: DateTime.utc(2026, 3, 14, 6)),
+      ]);
+
+      final counts = container.read(journalEntryCountsProvider);
+
+      // Mirrors what CalendarCard does for every painted cell.
+      expect(counts[DateUtils.dateOnly(DateTime(2026, 3, 14))], 1);
+    });
+
+    test('a day carrying a time component still resolves', () async {
+      final container = await containerWith([
+        _note(id: 'a', createdAt: DateTime(2026, 3, 14, 22, 30)),
+      ]);
+
+      final counts = container.read(journalEntryCountsProvider);
+
+      expect(counts[DateUtils.dateOnly(DateTime(2026, 3, 14, 8))], 1);
+    });
+  });
+
+  group('calendarNotes is chronologically ordered', () {
+    test('entries read morning to evening', () async {
+      final container = await containerWith([
+        _note(id: 'c', createdAt: _selectedDay.add(const Duration(hours: 18))),
+        _note(id: 'a', createdAt: _selectedDay.add(const Duration(hours: 7))),
+        _note(id: 'b', createdAt: _selectedDay.add(const Duration(hours: 12))),
+      ]);
+
+      expect(
+        container.read(calendarNotesProvider).map((n) => n.id).toList(),
+        ['a', 'b', 'c'],
+      );
+    });
+
+    test('order is independent of map insertion order', () async {
+      final forwards = await containerWith([
+        _note(id: 'a', createdAt: _selectedDay.add(const Duration(hours: 7))),
+        _note(id: 'b', createdAt: _selectedDay.add(const Duration(hours: 12))),
+      ]);
+      final backwards = await containerWith([
+        _note(id: 'b', createdAt: _selectedDay.add(const Duration(hours: 12))),
+        _note(id: 'a', createdAt: _selectedDay.add(const Duration(hours: 7))),
+      ]);
+
+      expect(
+        forwards.read(calendarNotesProvider).map((n) => n.id).toList(),
+        backwards.read(calendarNotesProvider).map((n) => n.id).toList(),
+      );
+    });
+
+    test('ties break on id so the order is total', () async {
+      final sameInstant = _selectedDay.add(const Duration(hours: 9));
+      final container = await containerWith([
+        _note(id: 'z', createdAt: sameInstant),
+        _note(id: 'a', createdAt: sameInstant),
+      ]);
+
+      expect(
+        container.read(calendarNotesProvider).map((n) => n.id).toList(),
+        ['a', 'z'],
+      );
     });
   });
 

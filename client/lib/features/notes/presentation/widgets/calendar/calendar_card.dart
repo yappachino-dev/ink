@@ -64,7 +64,12 @@ class CalendarCard extends ConsumerWidget {
           },
           onPageChanged: (date) =>
               ref.read(calendarFocusedDateProvider.notifier).date = date,
-          eventLoader: (day) => (entryCounts[day] ?? 0) > 0 ? [true] : [],
+          // Normalized to match the provider's keys: `DateTime.==` compares
+          // the instant and the `isUtc` flag, so an unnormalized day misses.
+          eventLoader: (day) {
+            final count = entryCounts[DateUtils.dateOnly(day)] ?? 0;
+            return count > 0 ? [true] : [];
+          },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleTextStyle: headerStyle,

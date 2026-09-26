@@ -81,21 +81,30 @@ class _JournalEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: context.ink.container,
-          borderRadius: AppRadius.lgRadius,
-          border: Border.all(color: context.colorScheme.outlineVariant),
-        ),
-        child: NoteCard(
-          note: note,
-          projectName: notebookName,
-          showCompletion: false,
-          showPriority: false,
+    // Material + InkWell rather than a bare GestureDetector: the audit (F-15)
+    // flags tappable surfaces with no press feedback and no focus. Material
+    // supplies the ink splash, the focus/hover states, and the button semantics
+    // a screen reader needs.
+    return Material(
+      color: context.ink.container,
+      borderRadius: AppRadius.lgRadius,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.lgRadius,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.lgRadius,
+            border: Border.all(color: context.colorScheme.outlineVariant),
+          ),
+          child: NoteCard(
+            note: note,
+            projectName: notebookName,
+            showCompletion: false,
+            showPriority: false,
+          ),
         ),
       ),
     );

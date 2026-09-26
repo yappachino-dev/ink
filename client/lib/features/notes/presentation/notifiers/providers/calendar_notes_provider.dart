@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show DateUtils;
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
@@ -30,13 +31,32 @@ List<Note> calendarNotes(Ref ref) {
         selectedNotebookId == note.projectId;
 
     return writtenOnDay && matchesNotebook;
-  }).toList();
+  }).toList()
+    // `allNotes` is a Map, so iteration order follows insertion, not time. A
+    // journal that reshuffles when an unrelated note syncs is not a journal.
+    // Ascending reads as a diary; id breaks ties so two notes written in the
+    // same millisecond keep a stable relative order.
+    ..sort((a, b) {
+      final byTime = a.createdAt.compareTo(b.createdAt);
+      return byTime != 0 ? byTime : a.id.compareTo(b.id);
+    });
 }
 
 /// Days in the visible range that hold at least one entry.
 ///
 /// Precomputed per range rather than filtering the whole note set for each
 /// cell the grid paints, which `TableCalendar` asks for on every visible day.
+///
+/// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
+/// recorded year/month/day and returns local midnight. `DateTime.==` compares
+/// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
+/// two sides disagreed on either. Normalizing both sides to a local midnight
+/// makes the comparison exact.
+///
+/// Deliberately **not** `.toLocal()`. Converting to the device zone first would
+/// re-date an entry whenever the stored time sits near midnight, so the same
+/// note would land on different days on different devices, and would move days
+/// if the user travelled. A journal records the day as written.
 @riverpod
 Map<DateTime, int> journalEntryCounts(Ref ref) {
   final allNotes = ref.watch(notesProvider).value ?? {};
@@ -50,11 +70,7 @@ Map<DateTime, int> journalEntryCounts(Ref ref) {
         selectedNotebookId == note.projectId;
     if (!matchesNotebook) continue;
 
-    final day = DateTime(
-      note.createdAt.year,
-      note.createdAt.month,
-      note.createdAt.day,
-    );
+    final day = DateUtils.dateOnly(note.createdAt);
 
     counts[day] = (counts[day] ?? 0) + 1;
   }
