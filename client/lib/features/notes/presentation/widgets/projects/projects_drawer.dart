@@ -53,14 +53,6 @@ class ProjectsDrawer extends ConsumerWidget {
               color: context.colorScheme.primary,
             ),
 
-            DrawerVirtualProjectItem(
-              id: inboxProjectId,
-              count: null,
-              title: context.t.home.inbox,
-              emoji: '📥',
-              color: context.colorScheme.primary,
-            ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Divider(height: 1, color: context.theme.dividerColor),

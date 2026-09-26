@@ -14,14 +14,9 @@ import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CreateProjectSheet extends ConsumerStatefulWidget {
-  const CreateProjectSheet({
-    this.initialProject,
-    this.colorOnly = false,
-    super.key,
-  });
+  const CreateProjectSheet({this.initialProject, super.key});
 
   final Project? initialProject;
-  final bool colorOnly;
 
   @override
   ConsumerState<CreateProjectSheet> createState() => _CreateListSheetState();
@@ -35,8 +30,6 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   late String _selectedEmoji;
 
   bool get _isEditing => widget.initialProject != null;
-  bool get _colorOnly => widget.colorOnly;
-
   @override
   void initState() {
     super.initState();
@@ -47,11 +40,9 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
     _selectedEmoji = initial?.emoji ?? '📋';
 
-    if (!_colorOnly) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _nameFocus.requestFocus(),
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _nameFocus.requestFocus(),
+    );
   }
 
   bool _isColorInitialized = false;
@@ -79,13 +70,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   void _confirm() {
     final notifier = ref.read(projectsProvider.notifier);
 
-    if (_colorOnly) {
-      final project = widget.initialProject!.copyWith(
-        colorValue: _selectedColor.toARGB32(),
-      );
-
-      unawaited(notifier.saveProject(project));
-    } else {
+    {
       final name = _nameController.text.trim();
       if (name.isEmpty) return;
 
@@ -133,11 +118,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
           Expanded(
             child: Text(
-              _colorOnly
-                  ? context.t.project.form.color
-                  : _isEditing
-                  ? context.t.project.edit
-                  : context.t.project.create,
+              _isEditing ? context.t.project.edit : context.t.project.create,
               textAlign: TextAlign.center,
               style: context.textTheme.headlineMedium,
             ),
@@ -154,44 +135,39 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
         ],
       ),
       children: [
-        if (!_colorOnly) ...[
-          TextField(
-            controller: _nameController,
-            style: context.textTheme.bodyLarge,
-            decoration: InputDecoration(
-              prefixIcon: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 10),
-                child: Text(
-                  _selectedEmoji,
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ),
-              prefixIconConstraints: const BoxConstraints(),
-
-              hintText: context.t.project.form.name,
-              hintStyle: context.textTheme.bodyLarge?.copyWith(
-                color: context.theme.hintColor,
-              ),
-
-              filled: true,
-              fillColor: context.colorScheme.surfaceBright,
-
-              border: borderStyle,
-              enabledBorder: borderStyle,
-              focusedBorder: borderStyle,
-
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              isDense: true,
+        TextField(
+          controller: _nameController,
+          style: context.textTheme.bodyLarge,
+          decoration: InputDecoration(
+            prefixIcon: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 10),
+              child: Text(_selectedEmoji, style: const TextStyle(fontSize: 18)),
             ),
-            textInputAction: TextInputAction.next,
-            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-          ),
+            prefixIconConstraints: const BoxConstraints(),
 
-          const SizedBox(height: 16),
-        ],
+            hintText: context.t.project.form.name,
+            hintStyle: context.textTheme.bodyLarge?.copyWith(
+              color: context.theme.hintColor,
+            ),
+
+            filled: true,
+            fillColor: context.colorScheme.surfaceBright,
+
+            border: borderStyle,
+            enabledBorder: borderStyle,
+            focusedBorder: borderStyle,
+
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+            isDense: true,
+          ),
+          textInputAction: TextInputAction.next,
+          onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        ),
+
+        const SizedBox(height: 16),
 
         Container(
           width: double.infinity,
@@ -275,65 +251,59 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
         const SizedBox(height: 12),
 
-        if (!_colorOnly)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.ink.container,
-              borderRadius: AppRadius.lgRadius,
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    context.t.project.form.icon,
-                    style: context.textTheme.titleMedium,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    ...projectEmojis.map((emoji) {
-                      final isSelected = _selectedEmoji == emoji;
-                      return GestureDetector(
-                        onTap: () => setState(() => _selectedEmoji = emoji),
-                        child: AnimatedContainer(
-                          duration: AppDurations.fast,
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? _selectedColor.withValues(
-                                    alpha: AppAlpha.soft,
-                                  )
-                                : context.colorScheme.surfaceContainer,
-                            borderRadius: AppRadius.xsRadius,
-                            border: isSelected
-                                ? Border.all(
-                                    color: _selectedColor,
-                                    width: 1.5,
-                                  )
-                                : null,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            emoji,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-              ],
-            ),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: context.ink.container,
+            borderRadius: AppRadius.lgRadius,
           ),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  context.t.project.form.icon,
+                  style: context.textTheme.titleMedium,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  ...projectEmojis.map((emoji) {
+                    final isSelected = _selectedEmoji == emoji;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedEmoji = emoji),
+                      child: AnimatedContainer(
+                        duration: AppDurations.fast,
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? _selectedColor.withValues(alpha: AppAlpha.soft)
+                              : context.colorScheme.surfaceContainer,
+                          borderRadius: AppRadius.xsRadius,
+                          border: isSelected
+                              ? Border.all(color: _selectedColor, width: 1.5)
+                              : null,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          emoji,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

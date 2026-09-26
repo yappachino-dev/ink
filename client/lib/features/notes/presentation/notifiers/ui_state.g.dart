@@ -94,7 +94,7 @@ final class SelectedProjectTitleProvider
 }
 
 String _$selectedProjectTitleHash() =>
-    r'd0d51e3c16d872a3de40a99c3f353a4f2fcda7ff';
+    r'd63919c984a178786c8daa1df61ac69796840131';
 
 abstract class _$SelectedProjectTitle extends $Notifier<String> {
   String build();

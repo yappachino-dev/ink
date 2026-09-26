@@ -22,12 +22,6 @@ List<Note> projectNotes(Ref ref) {
     }).toList();
   }
 
-  if (selectedProjectId == inboxProjectId) {
-    return allNotes.values
-        .where((note) => note.dueDate != null || note.dueTime != null)
-        .toList();
-  }
-
   return allNotes.values
       .where((note) => note.projectId == selectedProjectId)
       .toList();
