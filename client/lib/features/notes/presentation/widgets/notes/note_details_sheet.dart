@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
@@ -8,13 +9,14 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
+import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
-import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dart';
 import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/features/notes/presentation/quill_document.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -49,13 +51,13 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
   }
 
   void _initQuillController(Note note) {
-    if (note.subtitle.isEmpty) {
+    if (!hasNoteContent(note.content)) {
       _readOnlyController = null;
       return;
     }
 
     _readOnlyController = QuillController(
-      document: Document.fromJson(note.content),
+      document: parseQuillDocument(note.content),
       selection: const TextSelection.collapsed(offset: 0),
     );
   }
@@ -88,7 +90,10 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
       final oldNote = prev?.value?[widget.note.id] ?? widget.note;
       final newNote = next.value?[widget.note.id] ?? widget.note;
 
-      if (oldNote.subtitle != newNote.subtitle) {
+      // Compare the delta, not the derived preview: the preview is capped, so
+      // an edit past the cap would go unnoticed, and a formatting-only change
+      // produces identical text and would never rebuild.
+      if (!listEquals(oldNote.content, newNote.content)) {
         final oldController = _readOnlyController;
         _initQuillController(newNote);
         oldController?.dispose();
@@ -160,7 +165,8 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
         ],
       ),
       children: [
-        if (currentNote.subtitle.isNotEmpty && _readOnlyController != null) ...[
+        if (hasNoteContent(currentNote.content) &&
+          _readOnlyController != null) ...[
           _DetailSection(
             icon: Icons.notes_outlined,
             child: AbsorbPointer(
