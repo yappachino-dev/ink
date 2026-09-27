@@ -6,7 +6,10 @@ class BottomSheetLayout extends StatelessWidget {
   const BottomSheetLayout({
     required this.children,
     this.header,
-    this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 16),
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.lg,
+      vertical: AppSpacing.md,
+    ),
     this.padForKeyboard = false,
     this.showDivider = false,
     super.key,
@@ -40,15 +43,9 @@ class BottomSheetLayout extends StatelessWidget {
               const _BottomSheetLayoutDragHandle(),
               AppSpacing.gapLg,
 
-              if (header != null) ...[
-                header!,
-                AppSpacing.gapSm,
-              ],
+              if (header != null) ...[header!, AppSpacing.gapSm],
 
-              if (showDivider) ...[
-                const _Divider(),
-                AppSpacing.gapMd,
-              ],
+              if (showDivider) ...[const _Divider(), AppSpacing.gapMd],
 
               ...children,
             ],

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/back_app_bar.dart';
 import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
@@ -69,7 +69,7 @@ class _Header extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: sizes.betweenTitleAndSub),
+        const SizedBox(height: AppSpacing.xs),
 
         Text(
           context.t.vault.unlock.pin.description,

@@ -1,5 +1,4 @@
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/vault/domain/constants.dart';
@@ -12,11 +11,7 @@ const _buttonVSpacing = 16.0;
 const _buttonHSpacing = 24.0;
 
 class PinPadView extends StatelessWidget {
-  const PinPadView({
-    required this.pin,
-    required this.onPinChanged,
-    super.key,
-  });
+  const PinPadView({required this.pin, required this.onPinChanged, super.key});
 
   final String pin;
   final ValueChanged<String> onPinChanged;
@@ -41,10 +36,7 @@ class PinPadView extends StatelessWidget {
 
         const SizedBox(height: 32),
 
-        _Keypad(
-          onDigitTap: _addDigit,
-          onBackspaceTap: _removeDigit,
-        ),
+        _Keypad(onDigitTap: _addDigit, onBackspaceTap: _removeDigit),
       ],
     );
   }
@@ -184,7 +176,7 @@ class _BackspaceKey extends StatelessWidget {
             child: Icon(
               Icons.backspace_outlined,
               color: context.colorScheme.primary,
-              size: sizes.iconLarge,
+              size: AppSize.iconLarge,
             ),
           ),
         ),

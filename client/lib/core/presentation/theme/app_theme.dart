@@ -47,9 +47,22 @@ abstract final class AppTheme {
       brightness,
     );
 
+    final tokens = _tokens(accessibleScheme, brightness);
+
     return base.copyWith(
       colorScheme: accessibleScheme,
-      extensions: [_tokens(accessibleScheme, brightness)],
+      // `flutter_quill` reads `Theme.of(context).canvasColor` for the editor
+      // chrome and falls back to the light default, which is how a bright
+      // toolbar strip ended up inside the dark editor. Theming the role fixes
+      // the widget without the toolbar having to know about it.
+      canvasColor: accessibleScheme.surface,
+      extensions: [tokens],
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          disabledBackgroundColor: tokens.disabledBackground,
+          disabledForegroundColor: tokens.disabledForeground,
+        ),
+      ),
     );
   }
 
@@ -122,6 +135,13 @@ abstract final class AppTheme {
       shadow: (isDark ? Colors.black : cs.shadow).withValues(
         alpha: isDark ? 0.4 : 0.16,
       ),
+      // A visible recess rather than Material's near-invisible wash. The label
+      // is `onSurface`, the strongest role, so a disabled action still reads as
+      // an action that is merely not available yet (F-12).
+      disabledBackground: isDark
+          ? cs.surfaceContainerHighest
+          : cs.surfaceContainerHigh,
+      disabledForeground: cs.onSurface,
     );
   }
 

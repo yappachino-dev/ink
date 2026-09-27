@@ -20,11 +20,17 @@ class CompletedNoteCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return SwipableCardWrapper(
       note: note,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-          child: NoteCard(note: note, projectName: projectName),
+      child: Semantics(
+        button: true,
+        label: note.title,
+        // A tappable row announced only as "button" told a screen reader user
+        // nothing about which note it was.
+        child: GestureDetector(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: NoteCard(note: note, projectName: projectName),
+          ),
         ),
       ),
     );

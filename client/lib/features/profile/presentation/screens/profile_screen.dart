@@ -48,7 +48,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       backgroundColor: context.ink.surface,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.xxl,
+          ),
           children: [
             const SecurityCard(),
 

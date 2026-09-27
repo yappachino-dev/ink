@@ -36,7 +36,10 @@ class ProjectsDrawer extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.xl,
+              ),
               child: Text(
                 context.t.project.title,
                 style: context.textTheme.titleLarge,
@@ -86,7 +89,10 @@ class ProjectsDrawer extends ConsumerWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs,
+              ),
               child: TextButton.icon(
                 onPressed: () => context.showAppBottomSheetLayout<void>(
                   child: const CreateProjectSheet(),

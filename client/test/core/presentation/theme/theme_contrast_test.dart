@@ -40,6 +40,27 @@ void main() {
           foreground: colors.onSurface,
           background: ink.container,
         );
+        // F-12. The disabled primary action was grey-on-grey: Material's
+        // default composites to 1.2:1 in light and 2.7:1 in dark against
+        // its own fill, which is why the vault PIN button was invisible.
+        _expectContrast(
+          '$label disabled action',
+          foreground: ink.disabledForeground,
+          background: ink.disabledBackground,
+        );
+        // The tokens existing is not the same as buttons using them; without
+        // this the test passed even with the theme wiring removed.
+        final style = theme.filledButtonTheme.style;
+        expect(
+          style?.backgroundColor?.resolve(const {WidgetState.disabled}),
+          ink.disabledBackground,
+          reason: '$label filled buttons ignore the disabled fill token',
+        );
+        expect(
+          style?.foregroundColor?.resolve(const {WidgetState.disabled}),
+          ink.disabledForeground,
+          reason: '$label filled buttons ignore the disabled label token',
+        );
         _expectContrast(
           label,
           foreground: colors.onSurfaceVariant,

@@ -103,6 +103,9 @@ class Translations$common$en {
 	String get sessionLoadFailed => 'Ink could not read your saved session. Your data is safe — try again.';
 
 	late final Translations$common$errors$en errors = Translations$common$errors$en.internal(_root);
+
+	/// en: 'Remove'
+	String get remove => 'Remove';
 }
 
 // Path: welcome
@@ -155,6 +158,18 @@ class Translations$vault$en {
 	late final Translations$vault$methods$en methods = Translations$vault$methods$en.internal(_root);
 	late final Translations$vault$setup$en setup = Translations$vault$setup$en.internal(_root);
 	late final Translations$vault$unlock$en unlock = Translations$vault$unlock$en.internal(_root);
+
+	/// en: 'Step ${current} of ${total}'
+	String progressStep({required Object current, required Object total}) => 'Step ${current} of ${total}';
+
+	/// en: '${count} left'
+	String progressRemaining({required Object count}) => '${count} left';
+
+	/// en: 'Last step'
+	String get progressLast => 'Last step';
+
+	/// en: 'Step ${current} of ${total}'
+	String progressSemantic({required Object current, required Object total}) => 'Step ${current} of ${total}';
 }
 
 // Path: notes
@@ -291,6 +306,12 @@ class Translations$calendar$en {
 
 	/// en: 'Choose timezone'
 	String get timezone => 'Choose timezone';
+
+	/// en: 'Previous day'
+	String get previousDay => 'Previous day';
+
+	/// en: 'Next day'
+	String get nextDay => 'Next day';
 }
 
 // Path: note
@@ -340,6 +361,12 @@ class Translations$note$en {
 	late final Translations$note$delete$en delete = Translations$note$delete$en.internal(_root);
 	late final Translations$note$priority$en priority = Translations$note$priority$en.internal(_root);
 	late final Translations$note$reminder$en reminder = Translations$note$reminder$en.internal(_root);
+
+	/// en: 'Due date'
+	String get dueDate => 'Due date';
+
+	/// en: 'Notebook'
+	String get notebook => 'Notebook';
 }
 
 // Path: project
@@ -1180,6 +1207,7 @@ extension on Translations {
 			'common.errors.network' => 'Unable to reach the server. Check your connection.',
 			'common.errors.timeout' => 'The server took too long to respond. Try again.',
 			'common.errors.unknown' => 'Something went wrong. Please try again.',
+			'common.remove' => 'Remove',
 			'welcome.thesis' => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.',
 			'welcome.createLocalStorage' => 'Create local storage',
 			'welcome.haveAccount' => 'Already have an account?',
@@ -1265,6 +1293,10 @@ extension on Translations {
 			'vault.unlock.seed.verifyError' => 'Words do not match. Try again!',
 			'vault.unlock.seed.verifySuccess' => 'Verification successful',
 			'vault.unlock.throttled' => ({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.',
+			'vault.progressStep' => ({required Object current, required Object total}) => 'Step ${current} of ${total}',
+			'vault.progressRemaining' => ({required Object count}) => '${count} left',
+			'vault.progressLast' => 'Last step',
+			'vault.progressSemantic' => ({required Object current, required Object total}) => 'Step ${current} of ${total}',
 			'notes.emptyTitle' => 'No notes yet',
 			'notes.emptyBody' => 'Everything you write is encrypted on this device first.',
 			'notes.emptyByFilterTitle' => 'Nothing here',
@@ -1309,6 +1341,8 @@ extension on Translations {
 			'calendar.months.10' => 'November',
 			'calendar.months.11' => 'December',
 			'calendar.timezone' => 'Choose timezone',
+			'calendar.previousDay' => 'Previous day',
+			'calendar.nextDay' => 'Next day',
 			'note.title' => 'Notes',
 			'note.create' => 'New note',
 			'note.edit' => 'Edit note',
@@ -1335,6 +1369,8 @@ extension on Translations {
 			'note.reminder.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 minute', other: '{n} minutes', ), 
 			'note.reminder.hours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '{n} hours', ), 
 			'note.reminder.days' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '{n} days', ), 
+			'note.dueDate' => 'Due date',
+			'note.notebook' => 'Notebook',
 			'project.title' => 'My projects',
 			'project.select' => 'Select a project',
 			'project.none' => 'No project',

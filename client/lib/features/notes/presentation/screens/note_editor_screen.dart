@@ -373,6 +373,7 @@ class _MetaActionBar extends ConsumerWidget {
         children: [
           MetaIconButton(
             icon: Icons.calendar_today_outlined,
+            tooltip: t.note.dueDate,
             label: state.dueDate != null
                 ? formatDateTime(state.dueDate!, state.dueTime?.toNoteTime(), t)
                 : null,
@@ -385,6 +386,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.folder_outlined,
+            tooltip: t.note.notebook,
             label: projectName(projects, state.projectId),
             isActive: state.projectId != null,
             onTap: () => _pickProject(context, ref, projects),
@@ -396,6 +398,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.flag_outlined,
+            tooltip: t.note.priority.select,
             label: state.priority != TaskPriority.none
                 ? state.priority.label(t)
                 : null,
@@ -411,6 +414,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.notifications_none_outlined,
+            tooltip: t.note.reminder.select,
             label: state.reminderMinutes != null
                 ? reminderLabel(state.reminderMinutes!, t)
                 : null,
@@ -442,7 +446,10 @@ class _QuillToolbar extends StatelessWidget {
       ),
       child: QuillSimpleToolbar(
         controller: quillController,
-        config: const QuillSimpleToolbarConfig(
+        config: QuillSimpleToolbarConfig(
+          // Belt and braces: `canvasColor` is themed too, but the toolbar
+          // reads its own `color` first and that one is never inherited.
+          color: context.colorScheme.surface,
           showStrikeThrough: false,
           showColorButton: false,
           showBackgroundColorButton: false,

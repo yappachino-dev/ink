@@ -1,4 +1,3 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
@@ -43,7 +42,7 @@ class SettingsTile extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  size: sizes.iconMedium,
+                  size: AppSize.iconMedium,
                   color: context.colorScheme.primary,
                 ),
               ),
@@ -73,7 +72,7 @@ class SettingsTile extends StatelessWidget {
             if (showArrow)
               Icon(
                 Icons.chevron_right,
-                size: sizes.iconMedium,
+                size: AppSize.iconMedium,
                 color: context.theme.hintColor,
               ),
           ],

@@ -17,7 +17,21 @@ class InkColors extends ThemeExtension<InkColors> {
     required this.scrim,
     required this.highlight,
     required this.shadow,
+    required this.disabledBackground,
+    required this.disabledForeground,
   });
+
+  /// Fill of a control that cannot be used yet.
+  ///
+  /// Material's default is `onSurface` at 12% alpha, which composites to a
+  /// value close to the surface itself; the label then measures 1.2:1 in light
+  /// and 2.7:1 in dark against it. A control you cannot see is a control you
+  /// cannot tell apart from the page.
+  final Color disabledBackground;
+
+  /// Label of a control that cannot be used yet. Meets the same 4.5:1 bar the
+  /// theme contrast test enforces for every other content role.
+  final Color disabledForeground;
 
   /// Page-level canvas behind everything.
   final Color scaffold;
@@ -58,6 +72,8 @@ class InkColors extends ThemeExtension<InkColors> {
     Color? scrim,
     Color? highlight,
     Color? shadow,
+    Color? disabledBackground,
+    Color? disabledForeground,
   }) {
     return InkColors(
       scaffold: scaffold ?? this.scaffold,
@@ -69,6 +85,8 @@ class InkColors extends ThemeExtension<InkColors> {
       scrim: scrim ?? this.scrim,
       highlight: highlight ?? this.highlight,
       shadow: shadow ?? this.shadow,
+      disabledBackground: disabledBackground ?? this.disabledBackground,
+      disabledForeground: disabledForeground ?? this.disabledForeground,
     );
   }
 
@@ -89,6 +107,16 @@ class InkColors extends ThemeExtension<InkColors> {
       scrim: Color.lerp(scrim, other.scrim, t)!,
       highlight: Color.lerp(highlight, other.highlight, t)!,
       shadow: Color.lerp(shadow, other.shadow, t)!,
+      disabledBackground: Color.lerp(
+        disabledBackground,
+        other.disabledBackground,
+        t,
+      )!,
+      disabledForeground: Color.lerp(
+        disabledForeground,
+        other.disabledForeground,
+        t,
+      )!,
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -8,6 +7,15 @@ import 'package:material_ui/material_ui.dart';
 
 class DayHeader extends ConsumerWidget {
   const DayHeader({super.key});
+
+  void _step(BuildContext context, WidgetRef ref, int days) {
+    final next = selectedDateOf(ref).add(Duration(days: days));
+    ref.read(calendarSelectedDateProvider.notifier).date = next;
+    ref.read(calendarFocusedDateProvider.notifier).date = next;
+  }
+
+  DateTime selectedDateOf(WidgetRef ref) =>
+      ref.watch(calendarSelectedDateProvider);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,18 +30,15 @@ class DayHeader extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () {
-              ref.read(calendarSelectedDateProvider.notifier).date =
-                  selectedDate.subtract(const Duration(days: 1));
-              ref.read(calendarFocusedDateProvider.notifier).date = selectedDate
-                  .subtract(const Duration(days: 1));
-            },
-            child: Icon(
-              Icons.chevron_left,
-              size: sizes.iconMedium,
-              color: context.theme.hintColor,
-            ),
+          // Icon-only, so the tooltip is the accessible name. A bare
+          // GestureDetector here announced as an unlabelled button and had no
+          // ripple or keyboard focus.
+          IconButton(
+            onPressed: () => _step(context, ref, -1),
+            icon: const Icon(Icons.chevron_left, size: AppSize.iconMedium),
+            color: context.theme.hintColor,
+            tooltip: context.t.calendar.previousDay,
+            visualDensity: VisualDensity.compact,
           ),
 
           Expanded(
@@ -44,18 +49,12 @@ class DayHeader extends ConsumerWidget {
             ),
           ),
 
-          GestureDetector(
-            onTap: () {
-              ref.read(calendarSelectedDateProvider.notifier).date =
-                  selectedDate.add(const Duration(days: 1));
-              ref.read(calendarFocusedDateProvider.notifier).date = selectedDate
-                  .add(const Duration(days: 1));
-            },
-            child: Icon(
-              Icons.chevron_right,
-              size: sizes.iconMedium,
-              color: context.theme.hintColor,
-            ),
+          IconButton(
+            onPressed: () => _step(context, ref, 1),
+            icon: const Icon(Icons.chevron_right, size: AppSize.iconMedium),
+            color: context.theme.hintColor,
+            tooltip: context.t.calendar.nextDay,
+            visualDensity: VisualDensity.compact,
           ),
         ],
       ),

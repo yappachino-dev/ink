@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
@@ -78,7 +77,7 @@ class DrawerProjectItem extends ConsumerWidget {
             children: [
               Icon(
                 Icons.edit_outlined,
-                size: sizes.iconMedium,
+                size: AppSize.iconMedium,
                 color: context.colorScheme.onSurface,
               ),
 
@@ -98,7 +97,7 @@ class DrawerProjectItem extends ConsumerWidget {
             children: [
               Icon(
                 Icons.delete_outline,
-                size: sizes.iconMedium,
+                size: AppSize.iconMedium,
                 color: context.colorScheme.error,
               ),
 

@@ -35,21 +35,27 @@ class ActiveNoteCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return SwipableCardWrapper(
       note: note,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.ink.container,
-            borderRadius: AppRadius.lgRadius,
-            border: Border.all(color: context.colorScheme.outlineVariant),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: NoteCard(
-              note: note,
-              projectName: projectName,
-              showCompletion: showCompletion,
-              showPriority: showPriority,
+      child: Semantics(
+        button: true,
+        label: note.title,
+        // A tappable row announced only as "button" told a screen reader user
+        // nothing about which note it was.
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.ink.container,
+              borderRadius: AppRadius.lgRadius,
+              border: Border.all(color: context.colorScheme.outlineVariant),
+            ),
+            child: Padding(
+              padding: AppSpacing.card,
+              child: NoteCard(
+                note: note,
+                projectName: projectName,
+                showCompletion: showCompletion,
+                showPriority: showPriority,
+              ),
             ),
           ),
         ),

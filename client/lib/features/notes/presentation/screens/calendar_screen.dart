@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
@@ -57,6 +56,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
     final isFilterActive = selectedProjectId != allProjectsId;
+    // Resolved once so the semantic label and the visible text cannot drift.
+    final filterLabel = _filterLabel(allLists, selectedProjectId);
 
     return Scaffold(
       backgroundColor: context.colorScheme.surfaceContainer,
@@ -76,7 +77,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       IconButton(
                         icon: Icon(
                           viewMode.icon,
-                          size: sizes.iconLarge,
+                          size: AppSize.iconLarge,
                           color: context.colorScheme.onSurface,
                         ),
                         tooltip: viewMode.label(t),
@@ -92,47 +93,57 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       // target, not just the styling. It also left
                       // [_filterLabel]'s unfiltered branch unreachable, so
                       // "Filter" was a string the user could never see.
-                      GestureDetector(
-                        onTap: _openFilterSheet,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isFilterActive
-                                ? context.ink.highlight
-                                : Colors.transparent,
-                            borderRadius: AppRadius.lgRadius,
-                            border: Border.all(
-                              color: isFilterActive
-                                  ? context.colorScheme.primary
-                                  : context.colorScheme.outlineVariant,
+                      // Was a bare GestureDetector: no focus, no ripple, and
+                      // no semantic role, so a screen reader saw an unlabelled
+                      // box where the only way to change the notebook filter
+                      // lived.
+                      Semantics(
+                        button: true,
+                        label: filterLabel,
+                        excludeSemantics: true,
+                        child: InkWell(
+                          onTap: _openFilterSheet,
+                          borderRadius: AppRadius.lgRadius,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _filterLabel(allLists, selectedProjectId),
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(
-                                      color: isFilterActive
-                                          ? context.colorScheme.primary
-                                          : context
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                    ),
+                            decoration: BoxDecoration(
+                              color: isFilterActive
+                                  ? context.ink.highlight
+                                  : Colors.transparent,
+                              borderRadius: AppRadius.lgRadius,
+                              border: Border.all(
+                                color: isFilterActive
+                                    ? context.colorScheme.primary
+                                    : context.colorScheme.outlineVariant,
                               ),
-                              if (isFilterActive) ...[
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.close,
-                                  size: sizes.iconSmall,
-                                  color: context.colorScheme.primary,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  filterLabel,
+                                  style: context.textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: isFilterActive
+                                            ? context.colorScheme.primary
+                                            : context
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                      ),
                                 ),
+                                if (isFilterActive) ...[
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Icon(
+                                    Icons.close,
+                                    size: AppSize.iconSmall,
+                                    color: context.colorScheme.primary,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -159,7 +170,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           IconButton(
                             icon: Icon(
                               Icons.filter_alt_outlined,
-                              size: sizes.iconLarge,
+                              size: AppSize.iconLarge,
                               color: isFilterActive
                                   ? context.colorScheme.primary
                                   : context.colorScheme.onSurface,
@@ -204,7 +215,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         foregroundColor: context.colorScheme.surface,
         elevation: 4,
         shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: sizes.iconXLarge),
+        child: const Icon(Icons.add, size: AppSize.iconXLarge),
       ),
     );
   }

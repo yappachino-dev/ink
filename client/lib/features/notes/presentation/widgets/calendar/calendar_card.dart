@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart' as sdk_material;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 
@@ -79,12 +78,12 @@ class CalendarCard extends ConsumerWidget {
             ),
             leftChevronIcon: Icon(
               Icons.chevron_left,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.theme.hintColor,
             ),
             rightChevronIcon: Icon(
               Icons.chevron_right,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.theme.hintColor,
             ),
             leftChevronMargin: EdgeInsets.zero,
@@ -96,7 +95,7 @@ class CalendarCard extends ConsumerWidget {
           ),
           daysOfWeekHeight: 24,
           calendarStyle: CalendarStyle(
-            cellMargin: const EdgeInsets.all(4),
+            cellMargin: const EdgeInsets.all(AppSpacing.xs),
             selectedDecoration: BoxDecoration(
               color: context.ink.highlight,
               shape: BoxShape.circle,

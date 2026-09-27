@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -21,10 +20,7 @@ import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
 class NoteDetailsSheet extends ConsumerStatefulWidget {
-  const NoteDetailsSheet({
-    required this.note,
-    super.key,
-  });
+  const NoteDetailsSheet({required this.note, super.key});
 
   final Note note;
 
@@ -111,10 +107,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
                   ref.read(notesProvider.notifier).toggleNote(currentNote),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               activeColor: context.colorScheme.primary,
-              side: BorderSide(
-                color: context.colorScheme.primary,
-                width: 1.5,
-              ),
+              side: BorderSide(color: context.colorScheme.primary, width: 1.5),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.xsRadius,
               ),
@@ -141,7 +134,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             onPressed: () => _openEditSheet(currentNote),
             icon: Icon(
               Icons.edit_outlined,
-              size: sizes.iconLarge,
+              size: AppSize.iconLarge,
               color: context.colorScheme.primary,
             ),
             tooltip: context.t.note.edit,
@@ -152,7 +145,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             onPressed: () => _confirmAndDelete(currentNote),
             icon: Icon(
               Icons.delete_outline,
-              size: sizes.iconLarge,
+              size: AppSize.iconLarge,
               color: context.colorScheme.error,
             ),
             tooltip: context.t.note.delete.tooltip,
@@ -162,7 +155,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
       ),
       children: [
         if (hasNoteContent(currentNote.content) &&
-          _readOnlyController != null) ...[
+            _readOnlyController != null) ...[
           _DetailSection(
             icon: Icons.notes_outlined,
             child: AbsorbPointer(
@@ -264,7 +257,7 @@ class _DetailSection extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: sizes.iconMedium,
+          size: AppSize.iconMedium,
           color: iconColor ?? context.theme.hintColor,
         ),
 

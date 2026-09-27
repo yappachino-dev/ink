@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -18,7 +18,10 @@ class ListFilterSheet extends ConsumerWidget {
     final projects = ref.watch(projectsProvider).value ?? [];
     final selectedProjectId = ref.watch(selectedProjectIdProvider);
     return BottomSheetLayout(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl,
+        vertical: AppSpacing.md,
+      ),
       header: Text(context.t.note.project, style: context.textTheme.titleLarge),
       children: [
         _ProjectTile(
@@ -70,7 +73,7 @@ class _ProjectTile extends StatelessWidget {
       trailing: isSelected
           ? Icon(
               Icons.check,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,

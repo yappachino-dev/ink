@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
@@ -106,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               const OfflineBanner(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                  padding: AppSpacing.screenBottom,
                   child: AnimatedSwitcher(
                     duration: AppDurations.sheet,
                     // Keyed on the state *type*, never the instance: see
@@ -137,7 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   foregroundColor: context.colorScheme.surface,
                   elevation: 0,
                   shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: sizes.iconXLarge),
+                  child: const Icon(Icons.add, size: AppSize.iconXLarge),
                 ),
               ),
             ),

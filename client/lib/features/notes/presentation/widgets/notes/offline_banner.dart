@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
@@ -26,7 +25,7 @@ class OfflineBanner extends ConsumerWidget {
         children: [
           Icon(
             Icons.cloud_off_outlined,
-            size: sizes.iconSmall,
+            size: AppSize.iconSmall,
             color: context.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(width: AppSpacing.sm),

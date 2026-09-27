@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -116,13 +115,12 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
       padForKeyboard: true,
       header: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Icon(
-              Icons.cancel_outlined,
-              size: sizes.iconLarge,
-              color: context.theme.hintColor,
-            ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.cancel_outlined, size: AppSize.iconLarge),
+            color: context.theme.hintColor,
+            tooltip: context.t.common.cancel,
+            visualDensity: VisualDensity.compact,
           ),
 
           Expanded(
@@ -133,13 +131,12 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             ),
           ),
 
-          GestureDetector(
-            onTap: _confirm,
-            child: Icon(
-              Icons.check,
-              size: sizes.iconLarge,
-              color: context.colorScheme.primary,
-            ),
+          IconButton(
+            onPressed: _confirm,
+            icon: const Icon(Icons.check, size: AppSize.iconLarge),
+            color: context.colorScheme.primary,
+            tooltip: context.t.common.confirm,
+            visualDensity: VisualDensity.compact,
           ),
         ],
       ),
@@ -187,7 +184,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: context.ink.container,
             borderRadius: AppRadius.lgRadius,
@@ -228,7 +225,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       ),
                       child: Icon(
                         Icons.format_color_reset_outlined,
-                        size: sizes.iconMedium,
+                        size: AppSize.iconMedium,
                         color: _isPaletteColor
                             ? context.theme.hintColor
                             : context.colorScheme.onSurface,
@@ -260,7 +257,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         child: isSelected
                             ? Icon(
                                 Icons.check,
-                                size: sizes.iconSmall,
+                                size: AppSize.iconSmall,
                                 color: _readableOn(color),
                               )
                             : null,
@@ -277,7 +274,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: context.ink.container,
             borderRadius: AppRadius.lgRadius,
@@ -319,7 +316,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         alignment: Alignment.center,
                         child: Icon(
                           isSelected ? candidate.selectedIcon : candidate.icon,
-                          size: sizes.iconMedium,
+                          size: AppSize.iconMedium,
                           color: isSelected
                               ? _selectedColor
                               : context.colorScheme.onSurfaceVariant,

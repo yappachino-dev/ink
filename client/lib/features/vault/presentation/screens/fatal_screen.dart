@@ -1,9 +1,8 @@
-
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
@@ -80,7 +79,7 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: sizes.betweenTitleAndSub),
+                  const SizedBox(height: AppSpacing.xs),
 
                   Text(
                     context.t.vault.fatal.subtitle,

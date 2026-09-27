@@ -1,4 +1,4 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
 
 class WideFilledButton extends StatelessWidget {
@@ -15,9 +15,7 @@ class WideFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton(
       onPressed: onPressed,
-      style: FilledButton.styleFrom(
-        minimumSize: sizes.wideButtonLarge,
-      ),
+      style: FilledButton.styleFrom(minimumSize: AppSize.buttonHeightLarge),
       child: child,
     );
   }
