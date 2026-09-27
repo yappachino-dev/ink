@@ -11,6 +11,7 @@ import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
+import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/calendar_card.dart';
@@ -18,7 +19,6 @@ import 'package:ink/features/notes/presentation/widgets/calendar/day_header.dart
 import 'package:ink/features/notes/presentation/widgets/calendar/journal_day_list.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/list_filter_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -55,11 +55,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
-  Future<void> _openAddTaskSheet() async {
-    await context.showAppBottomSheetLayout<void>(
-      child: const NoteEditorSheet(),
-    );
-  }
+  Future<void> _openAddTaskSheet() =>
+      const NoteNewRoute().push<void>(context);
 
   void _onDestinationSelected(int index) {
     switch (index) {

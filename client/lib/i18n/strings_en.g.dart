@@ -83,6 +83,9 @@ class Translations$common$en {
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
 
+	/// en: 'That note is no longer available.'
+	String get notFound => 'That note is no longer available.';
+
 	/// en: 'Delete'
 	String get delete => 'Delete';
 
@@ -308,6 +311,15 @@ class Translations$note$en {
 
 	/// en: 'What needs to be done?'
 	String get whatToDo => 'What needs to be done?';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'That note is no longer available.'
+	String get notFound => 'That note is no longer available.';
 
 	/// en: 'Add details...'
 	String get addDetails => 'Add details...';
@@ -1121,6 +1133,7 @@ extension on Translations {
 			'common.confirm' => 'Confirm',
 			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
+			'common.notFound' => 'That note is no longer available.',
 			'common.delete' => 'Delete',
 			'common.errorTitle' => 'Error',
 			'common.loading' => 'Loading...',
@@ -1262,6 +1275,9 @@ extension on Translations {
 			'note.create' => 'New note',
 			'note.edit' => 'Edit note',
 			'note.whatToDo' => 'What needs to be done?',
+			'note.save' => 'Save',
+			'note.cancel' => 'Cancel',
+			'note.notFound' => 'That note is no longer available.',
 			'note.addDetails' => 'Add details...',
 			'note.showDetails' => 'Show note details',
 			'note.hideDetails' => 'Hide note details',

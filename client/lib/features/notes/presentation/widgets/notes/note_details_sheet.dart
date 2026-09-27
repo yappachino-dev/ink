@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
-import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -13,11 +12,11 @@ import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
+import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/quill_document.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -62,11 +61,8 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
     );
   }
 
-  Future<void> _openEditSheet(Note currentNote) async {
-    await context.showAppBottomSheetLayout<void>(
-      child: NoteEditorSheet(existingNote: currentNote),
-    );
-  }
+  Future<void> _openEditSheet(Note currentNote) =>
+      NoteEditRoute(noteId: currentNote.id).push<void>(context);
 
   Future<void> _confirmAndDelete(Note currentNote) async {
     final confirmed = await confirmDeletion(

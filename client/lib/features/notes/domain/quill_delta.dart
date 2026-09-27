@@ -117,3 +117,22 @@ List<Object?> normalizeNoteDelta(List<dynamic>? content) {
 
   return ops;
 }
+
+/// The note's title: the first line of the document (D-2).
+///
+/// A separate title field duplicates the first line and costs viewport above
+/// the keyboard. Returns an empty string when there is no text, so callers can
+/// decide their own fallback rather than having one imposed here.
+String noteTitleFromContent(List<dynamic>? content) {
+  for (final op in usableNoteOps(content)) {
+    final insert = op['insert'];
+    if (insert is! String) continue;
+
+    final line = insert.split('\n').firstWhere(
+      (candidate) => candidate.trim().isNotEmpty,
+      orElse: () => '',
+    );
+    if (line.trim().isNotEmpty) return line.trim();
+  }
+  return '';
+}
