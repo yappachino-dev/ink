@@ -24,6 +24,7 @@ import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
 import 'package:ink/features/notes/presentation/screens/note_editor_screen.dart';
+import 'package:ink/features/profile/presentation/screens/profile_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -123,6 +124,17 @@ void main() {
       filename: 'welcome.png',
       light: (_) => _welcomeApp(Brightness.light),
       dark: (_) => _welcomeApp(Brightness.dark),
+    );
+  });
+
+  // §11.1 recorded profile as an uncovered surface. Step 9b rewrote it, so it
+  // needs a baseline like every other screen it changes.
+  testWidgets('profile light and dark', (tester) async {
+    await _pumpScreenPair(
+      tester,
+      filename: 'profile.png',
+      light: (_) => _profileApp(Brightness.light),
+      dark: (_) => _profileApp(Brightness.dark),
     );
   });
 
@@ -243,6 +255,20 @@ Widget _welcomeApp(Brightness brightness) {
     child: MaterialApp(
       theme: _themeFor(brightness),
       home: const WelcomeScreen(),
+    ),
+  );
+}
+
+Widget _profileApp(Brightness brightness) {
+  return ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(_prefs),
+      isOfflineProvider.overrideWithValue(false),
+      syncActivityProvider.overrideWithValue(SyncActivity.idle),
+    ],
+    child: MaterialApp(
+      theme: _themeFor(brightness),
+      home: const ProfileScreen(),
     ),
   );
 }

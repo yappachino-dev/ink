@@ -44,10 +44,7 @@ class _WidgetsSheetState extends State<WidgetsSheet> {
 
             onChanged: (val) {
               setState(() {
-                _widgets[entry.key] = (
-                  title: entry.value.title,
-                  enabled: val,
-                );
+                _widgets[entry.key] = (title: entry.value.title, enabled: val);
               });
             },
           ),
