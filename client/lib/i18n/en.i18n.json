@@ -286,9 +286,11 @@
             "changeEncryption": "Change encryption method",
             "logout": "Log Out"
         },
+        "security": {
+            "encryption": "Encryption",
+            "sync": "Sync"
+        },
         "account": {
-            "create": "Create account",
-            "createSubtitle": "Create an account so you don't lose your data",
             "delete": "Delete account",
             "deleteSubtitle": "Data will be lost",
             "deleteConfirm": "Are you sure you want to delete your account?"

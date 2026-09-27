@@ -6,29 +6,17 @@ part of 'notes_routes.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$notesRoute, $noteNewRoute, $noteEditRoute];
+List<RouteBase> get $appRoutes => [
+  $notesRoute,
+  $notesCalendarRoute,
+  $noteNewRoute,
+  $noteEditRoute,
+];
 
 RouteBase get $notesRoute => GoRouteData.$route(
   path: '/notes',
   hasOverriddenOnExit: false,
   factory: $NotesRoute._fromState,
-  routes: [
-    GoRouteData.$route(
-      path: 'calendar',
-      hasOverriddenOnExit: false,
-      factory: $NotesCalendarRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'new',
-      hasOverriddenOnExit: false,
-      factory: $NoteNewRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: ':noteId',
-      hasOverriddenOnExit: false,
-      factory: $NoteEditRoute._fromState,
-    ),
-  ],
 );
 
 mixin $NotesRoute on GoRouteData {
@@ -51,12 +39,18 @@ mixin $NotesRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $notesCalendarRoute => GoRouteData.$route(
+  path: '/calendar',
+  hasOverriddenOnExit: false,
+  factory: $NotesCalendarRoute._fromState,
+);
+
 mixin $NotesCalendarRoute on GoRouteData {
   static NotesCalendarRoute _fromState(GoRouterState state) =>
       const NotesCalendarRoute();
 
   @override
-  String get location => GoRouteData.$location('/notes/calendar');
+  String get location => GoRouteData.$location('/calendar');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -71,6 +65,12 @@ mixin $NotesCalendarRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+RouteBase get $noteNewRoute => GoRouteData.$route(
+  path: '/notes/new',
+  hasOverriddenOnExit: false,
+  factory: $NoteNewRoute._fromState,
+);
 
 mixin $NoteNewRoute on GoRouteData {
   static NoteNewRoute _fromState(GoRouterState state) => const NoteNewRoute();
@@ -91,6 +91,12 @@ mixin $NoteNewRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+RouteBase get $noteEditRoute => GoRouteData.$route(
+  path: '/notes/:noteId',
+  hasOverriddenOnExit: false,
+  factory: $NoteEditRoute._fromState,
+);
 
 mixin $NoteEditRoute on GoRouteData {
   static NoteEditRoute _fromState(GoRouterState state) =>
@@ -115,15 +121,3 @@ mixin $NoteEditRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
-
-RouteBase get $noteNewRoute => GoRouteData.$route(
-  path: '/notes/new',
-  hasOverriddenOnExit: false,
-  factory: $NoteNewRoute._fromState,
-);
-
-RouteBase get $noteEditRoute => GoRouteData.$route(
-  path: '/notes/:noteId',
-  hasOverriddenOnExit: false,
-  factory: $NoteEditRoute._fromState,
-);

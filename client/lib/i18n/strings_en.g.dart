@@ -380,6 +380,7 @@ class Translations$profile$en {
 	String get title => 'Profile';
 
 	late final Translations$profile$personal$en personal = Translations$profile$personal$en.internal(_root);
+	late final Translations$profile$security$en security = Translations$profile$security$en.internal(_root);
 	late final Translations$profile$account$en account = Translations$profile$account$en.internal(_root);
 	late final Translations$profile$settings$en settings = Translations$profile$settings$en.internal(_root);
 }
@@ -760,6 +761,21 @@ class Translations$profile$personal$en {
 	String get logout => 'Log Out';
 }
 
+// Path: profile.security
+class Translations$profile$security$en {
+	Translations$profile$security$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Encryption'
+	String get encryption => 'Encryption';
+
+	/// en: 'Sync'
+	String get sync => 'Sync';
+}
+
 // Path: profile.account
 class Translations$profile$account$en {
 	Translations$profile$account$en.internal(this._root);
@@ -767,12 +783,6 @@ class Translations$profile$account$en {
 	final Translations _root; // ignore: unused_field
 
 	// Translations
-
-	/// en: 'Create account'
-	String get create => 'Create account';
-
-	/// en: 'Create an account so you don't lose your data'
-	String get createSubtitle => 'Create an account so you don\'t lose your data';
 
 	/// en: 'Delete account'
 	String get delete => 'Delete account';
@@ -1315,8 +1325,8 @@ extension on Translations {
 			'profile.personal.changePassword' => 'Change password',
 			'profile.personal.changeEncryption' => 'Change encryption method',
 			'profile.personal.logout' => 'Log Out',
-			'profile.account.create' => 'Create account',
-			'profile.account.createSubtitle' => 'Create an account so you don\'t lose your data',
+			'profile.security.encryption' => 'Encryption',
+			'profile.security.sync' => 'Sync',
 			'profile.account.delete' => 'Delete account',
 			'profile.account.deleteSubtitle' => 'Data will be lost',
 			'profile.account.deleteConfirm' => 'Are you sure you want to delete your account?',

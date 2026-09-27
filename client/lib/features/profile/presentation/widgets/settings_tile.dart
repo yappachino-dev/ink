@@ -9,6 +9,7 @@ class SettingsTile extends StatelessWidget {
     required this.onTap,
     this.icon,
     this.subtitle,
+    this.subtitleColor,
     this.showArrow = true,
     super.key,
   });
@@ -16,6 +17,10 @@ class SettingsTile extends StatelessWidget {
   final IconData? icon;
   final String title;
   final String? subtitle;
+
+  /// Overrides the muted subtitle colour, for a status that has to read as a
+  /// status rather than as an aside.
+  final Color? subtitleColor;
   final VoidCallback onTap;
   final bool showArrow;
 
@@ -54,7 +59,12 @@ class SettingsTile extends StatelessWidget {
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
 
-                    Text(subtitle!, style: context.textTheme.bodySmall),
+                    Text(
+                      subtitle!,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: subtitleColor,
+                      ),
+                    ),
                   ],
                 ],
               ),

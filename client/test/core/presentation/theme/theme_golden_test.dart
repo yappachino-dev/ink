@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ink/app/navigation/widgets/app_shell.dart';
 import 'package:ink/app/presentation/screens/welcome_screen.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
@@ -23,6 +24,7 @@ import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
 import 'package:ink/features/notes/presentation/screens/note_editor_screen.dart';
+import 'package:ink/features/profile/presentation/screens/profile_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -125,6 +127,17 @@ void main() {
     );
   });
 
+  // §11.1 recorded profile as an uncovered surface. Step 9b rewrote it, so it
+  // needs a baseline like every other screen it changes.
+  testWidgets('profile light and dark', (tester) async {
+    await _pumpScreenPair(
+      tester,
+      filename: 'profile.png',
+      light: (_) => _profileApp(Brightness.light),
+      dark: (_) => _profileApp(Brightness.dark),
+    );
+  });
+
   testWidgets('vault setup light and dark', (tester) async {
     await _pumpScreenPair(
       tester,
@@ -167,14 +180,37 @@ Widget _notesApp({
   required Widget screen,
   bool selectAllNotebooks = false,
 }) {
+  // The real [AppShell] is used rather than a bare screen, so the golden shows
+  // the navigation bar the user actually sees. F-09 changed that bar; a golden
+  // that omitted it would not have caught the change.
   final router = GoRouter(
     initialLocation: location,
     routes: [
-      GoRoute(path: AppDestinations.notes, builder: (_, _) => screen),
-      GoRoute(path: AppDestinations.calendar, builder: (_, _) => screen),
-      GoRoute(
-        path: AppDestinations.profile,
-        builder: (_, _) => const SizedBox.shrink(),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(navigationShell: shell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: AppDestinations.notes, builder: (_, _) => screen),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppDestinations.calendar,
+                builder: (_, _) => screen,
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppDestinations.profile,
+                builder: (_, _) => const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );
@@ -219,6 +255,20 @@ Widget _welcomeApp(Brightness brightness) {
     child: MaterialApp(
       theme: _themeFor(brightness),
       home: const WelcomeScreen(),
+    ),
+  );
+}
+
+Widget _profileApp(Brightness brightness) {
+  return ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(_prefs),
+      isOfflineProvider.overrideWithValue(false),
+      syncActivityProvider.overrideWithValue(SyncActivity.idle),
+    ],
+    child: MaterialApp(
+      theme: _themeFor(brightness),
+      home: const ProfileScreen(),
     ),
   );
 }

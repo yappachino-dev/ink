@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:ink/app/navigation/widgets/app_shell.dart';
 import 'package:ink/app/presentation/app_routes.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
@@ -21,8 +22,21 @@ GoRouter appRouter(Ref ref) {
       $authRoute,
       $setupVaultRoute,
       $unlockVaultRoute,
-      $notesRoute,
-      $profileRoute,
+      // The editor is a root route rather than a `/notes` subroute, so the
+      // shell's navigation bar does not follow the user into a full-screen
+      // writing surface.
+      $noteNewRoute,
+      $noteEditRoute,
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AppShell(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(routes: [$notesRoute]),
+          StatefulShellBranch(routes: [$notesCalendarRoute]),
+          StatefulShellBranch(routes: [$profileRoute]),
+        ],
+      ),
     ],
     redirect: (context, state) {
       final vaultState = ref.read(vaultProvider);
