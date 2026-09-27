@@ -13,7 +13,7 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
     required this.id,
     required this.count,
     required this.title,
-    required this.emoji,
+    required this.icon,
     required this.color,
     super.key,
   });
@@ -21,14 +21,14 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
   final String id;
   final int? count;
   final String title;
-  final String emoji;
+  final String icon;
   final Color color;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ProjectItem(
       title: title,
-      emoji: emoji,
+      icon: icon,
       color: color,
       onTap: () => ref.read(selectedProjectIdProvider.notifier).id = id,
       isSelected: ref.watch(selectedProjectIdProvider) == id,

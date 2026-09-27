@@ -1,18 +1,32 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
-class TimezoneSheet extends StatefulWidget {
+class TimezoneSheet extends ConsumerStatefulWidget {
   const TimezoneSheet({super.key});
 
   @override
-  State<TimezoneSheet> createState() => _TimezoneSheetState();
+  ConsumerState<TimezoneSheet> createState() => _TimezoneSheetState();
 }
 
-class _TimezoneSheetState extends State<TimezoneSheet> {
-  late String _selected;
+class _TimezoneSheetState extends ConsumerState<TimezoneSheet> {
+  /// Read by `build`, so it cannot be `late`: the first frame happened before
+  /// the sheet threw, which is the crash this replaces.
+  String _selected = _timezones.first;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final stored = ref.read(userPreferencesProvider).selectedTimezone;
+    if (stored != null && _timezones.contains(stored)) _selected = stored;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +70,12 @@ class _TimezoneSheetState extends State<TimezoneSheet> {
         const SizedBox(height: 16),
 
         FilledButton(
-          onPressed: () => Navigator.pop(context, _selected),
+          onPressed: () {
+            unawaited(
+              ref.read(userPreferencesProvider).setSelectedTimezone(_selected),
+            );
+            Navigator.pop(context, _selected);
+          },
           style: FilledButton.styleFrom(
             foregroundColor: context.colorScheme.surface,
             minimumSize: const Size(double.infinity, 48),
@@ -76,11 +95,14 @@ class _TimezoneSheetState extends State<TimezoneSheet> {
   }
 }
 
+/// IANA zone ids, with a display label in the catalogue. The previous list was
+/// country names that had no translation entry at all, so every option rendered
+/// as a blank row.
 const List<String> _timezones = [
-  'ukraine',
-  'poland',
-  'germany',
-  'usaNy',
-  'usaLa',
-  'greatBritain',
+  'utc',
+  'london',
+  'warsaw',
+  'newYork',
+  'losAngeles',
+  'tokyo',
 ];

@@ -5,40 +5,34 @@ import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
-const _allProjectsEmoji = '🗂️';
+const _allProjectsIcon = 'book';
 
 class ListFilterSheet extends ConsumerWidget {
   const ListFilterSheet({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projects = ref.watch(projectsProvider).value ?? [];
     final selectedProjectId = ref.watch(selectedProjectIdProvider);
-
     return BottomSheetLayout(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-      header: Text(
-        context.t.note.project,
-        style: context.textTheme.titleLarge,
-      ),
+      header: Text(context.t.note.project, style: context.textTheme.titleLarge),
       children: [
         _ProjectTile(
           title: context.t.note.allProjects,
-          emoji: _allProjectsEmoji,
+          icon: _allProjectsIcon,
           isSelected: selectedProjectId == allProjectsId,
           onTap: () =>
               ref.read(selectedProjectIdProvider.notifier).id = allProjectsId,
         ),
-
         if (projects.isNotEmpty) const Divider(),
-
         ...projects.map(
           (project) => _ProjectTile(
             title: project.title,
-            emoji: project.emoji,
+            icon: project.emoji,
             isSelected: selectedProjectId == project.id,
             onTap: () =>
                 ref.read(selectedProjectIdProvider.notifier).id = project.id,
@@ -52,21 +46,19 @@ class ListFilterSheet extends ConsumerWidget {
 class _ProjectTile extends StatelessWidget {
   const _ProjectTile({
     required this.title,
-    required this.emoji,
+    required this.icon,
     required this.isSelected,
     required this.onTap,
   });
-
   final String title;
-  final String emoji;
+  final String icon;
   final bool isSelected;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Text(emoji, style: const TextStyle(fontSize: 20)),
+      leading: ProjectIconView(value: icon),
       title: Text(
         title,
         style: context.textTheme.titleMedium?.copyWith(

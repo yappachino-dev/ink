@@ -14,6 +14,7 @@
 //     is the part a title-only change would have missed.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
@@ -32,7 +33,10 @@ import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dar
 import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'package:mocktail/mocktail.dart';
+
+import '../../../helpers/test_helpers.dart';
 
 class _Svc extends Mock implements NotesService {}
 
@@ -96,6 +100,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
+        userPreferencesProvider.overrideWithValue(await mockUserConfig()),
         currentDateProvider.overrideWithValue(_today),
         if (lens != null)
           selectedProjectIdProvider.overrideWith(() => _LensSelected(lens)),

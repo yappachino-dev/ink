@@ -42,7 +42,10 @@ class DrawerProjectItem extends ConsumerWidget {
       await ref.read(projectsProvider.notifier).deleteProject(project);
 
       if (ref.read(selectedProjectIdProvider) == project.id) {
-        ref.read(selectedProjectIdProvider.notifier).id = todayProjectId;
+        // All notes is the landing view, so it is the honest place to land
+        // when the notebook you were reading no longer exists. It also avoids
+        // the title lookup throwing on a deleted id.
+        ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
       }
     }
   }
@@ -123,7 +126,7 @@ class DrawerProjectItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ProjectItem(
       title: project.title,
-      emoji: project.emoji,
+      icon: project.emoji,
       color: Color(project.colorValue),
       onTap: () => ref.read(selectedProjectIdProvider.notifier).id = project.id,
       onLongPress: () => _showContextMenu(context, ref),

@@ -142,7 +142,10 @@ void main() {
         (_) async => const Failure<List<Note>, NotesFailure>(SessionLocked()),
       );
       final c = ProviderContainer(
-        overrides: [notesServiceProvider.overrideWithValue(svc)],
+        overrides: [
+          notesServiceProvider.overrideWithValue(svc),
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
+        ],
       );
       addTearDown(c.dispose);
 

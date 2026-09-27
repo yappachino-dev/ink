@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' show DateUtils;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/notes/domain/constants.dart';
@@ -12,7 +13,10 @@ import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+
 import 'package:mocktail/mocktail.dart';
+
+import '../../../helpers/test_helpers.dart';
 
 class _Svc extends Mock implements NotesService {}
 
@@ -50,16 +54,17 @@ void main() {
   }) async {
     final notebook = selectedProjectId ?? allProjectsId;
     final svc = _Svc();
-    when(svc.getAllNotes).thenAnswer(
-      (_) async => Success<List<Note>, NotesFailure>(notes),
-    );
-    when(svc.getAllProjects).thenAnswer(
-      (_) async => const Success<List<Project>, NotesFailure>([]),
-    );
+    when(
+      svc.getAllNotes,
+    ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
+    when(
+      svc.getAllProjects,
+    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
 
     final container = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
+        userPreferencesProvider.overrideWithValue(await mockUserConfig()),
         currentDateProvider.overrideWithValue(_selectedDay),
       ],
     );
@@ -102,12 +107,13 @@ void main() {
     test(
       'includes completed notes: a journal records what was written',
       () async {
-      final container = await containerWith([
-        _note(id: 'done', createdAt: _selectedDay, isCompleted: true),
-      ]);
+        final container = await containerWith([
+          _note(id: 'done', createdAt: _selectedDay, isCompleted: true),
+        ]);
 
-      expect(container.read(calendarNotesProvider).single.id, 'done');
-    });
+        expect(container.read(calendarNotesProvider).single.id, 'done');
+      },
+    );
 
     test('ignores the time of day when matching a day', () async {
       final container = await containerWith([
@@ -118,13 +124,10 @@ void main() {
     });
 
     test('still respects the selected notebook', () async {
-      final container = await containerWith(
-        [
-          _note(id: 'in-a', createdAt: _selectedDay, projectId: 'a'),
-          _note(id: 'in-b', createdAt: _selectedDay, projectId: 'b'),
-        ],
-        selectedProjectId: 'a',
-      );
+      final container = await containerWith([
+        _note(id: 'in-a', createdAt: _selectedDay, projectId: 'a'),
+        _note(id: 'in-b', createdAt: _selectedDay, projectId: 'b'),
+      ], selectedProjectId: 'a');
 
       expect(container.read(calendarNotesProvider).single.id, 'in-a');
     });
@@ -138,22 +141,21 @@ void main() {
     // recorded day and the local day coincide, so both implementations pass.
     // CI and local runs here are not UTC, which is also the normal case for the
     // consumer app this ships to.
-    test('a UTC entry is keyed on the day it was recorded, not the local day',
-        () async {
-      // 23:00 UTC on the 14th. In any zone east of UTC this converts to the
-      // 15th, which is exactly the re-dating that must not happen.
-      final container = await containerWith([
-        _note(
-          id: 'late-utc',
-          createdAt: DateTime.utc(2026, 3, 14, 23),
-        ),
-      ]);
+    test(
+      'a UTC entry is keyed on the day it was recorded, not the local day',
+      () async {
+        // 23:00 UTC on the 14th. In any zone east of UTC this converts to the
+        // 15th, which is exactly the re-dating that must not happen.
+        final container = await containerWith([
+          _note(id: 'late-utc', createdAt: DateTime.utc(2026, 3, 14, 23)),
+        ]);
 
-      final counts = container.read(journalEntryCountsProvider);
+        final counts = container.read(journalEntryCountsProvider);
 
-      expect(counts[DateTime(2026, 3, 14)], 1);
-      expect(counts[DateTime(2026, 3, 15)], isNull);
-    });
+        expect(counts[DateTime(2026, 3, 14)], 1);
+        expect(counts[DateTime(2026, 3, 15)], isNull);
+      },
+    );
 
     test('keys are local midnight, so an exact lookup succeeds', () async {
       final container = await containerWith([
@@ -185,10 +187,11 @@ void main() {
         _note(id: 'b', createdAt: _selectedDay.add(const Duration(hours: 12))),
       ]);
 
-      expect(
-        container.read(calendarNotesProvider).map((n) => n.id).toList(),
-        ['a', 'b', 'c'],
-      );
+      expect(container.read(calendarNotesProvider).map((n) => n.id).toList(), [
+        'a',
+        'b',
+        'c',
+      ]);
     });
 
     test('order is independent of map insertion order', () async {
@@ -214,10 +217,10 @@ void main() {
         _note(id: 'a', createdAt: sameInstant),
       ]);
 
-      expect(
-        container.read(calendarNotesProvider).map((n) => n.id).toList(),
-        ['a', 'z'],
-      );
+      expect(container.read(calendarNotesProvider).map((n) => n.id).toList(), [
+        'a',
+        'z',
+      ]);
     });
   });
 
@@ -238,18 +241,19 @@ void main() {
     test(
       'counts a note on the day it was written, not the day it is due',
       () async {
-      final container = await containerWith([
-        _note(
-          id: 'due-only',
-          createdAt: DateTime(2026, 3),
-          dueDate: _selectedDay,
-        ),
-      ]);
+        final container = await containerWith([
+          _note(
+            id: 'due-only',
+            createdAt: DateTime(2026, 3),
+            dueDate: _selectedDay,
+          ),
+        ]);
 
-      final counts = container.read(journalEntryCountsProvider);
+        final counts = container.read(journalEntryCountsProvider);
 
-      expect(counts[DateTime(2026, 3)], 1);
-      expect(counts[_selectedDay], isNull);
-    });
+        expect(counts[DateTime(2026, 3)], 1);
+        expect(counts[_selectedDay], isNull);
+      },
+    );
   });
 }

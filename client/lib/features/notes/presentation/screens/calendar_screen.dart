@@ -182,7 +182,17 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
                 const SizedBox(height: 16),
 
-                const Expanded(child: JournalDayList()),
+                // The journal rows sat flush to both screen edges while the
+                // calendar directly above them was inset, so the same note
+                // read as a full-bleed band in one place and a card in the
+                // other. Matched to the grid's own margin so the column reads
+                // as one edge.
+                const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: JournalDayList(),
+                  ),
+                ),
               ],
             ),
           ],

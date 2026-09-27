@@ -10,6 +10,7 @@ import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
 import 'package:ink/features/notes/presentation/constants/project_constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -38,7 +39,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
     _nameController = TextEditingController(text: initial?.title ?? '');
 
-    _selectedEmoji = initial?.emoji ?? '📋';
+    _selectedEmoji = initial?.emoji ?? ProjectIcon.book.key;
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => _nameFocus.requestFocus(),
@@ -46,6 +47,14 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   }
 
   bool _isColorInitialized = false;
+
+  /// Whether the colour is one of the eight fixed swatches rather than the
+  /// theme default, which the two rows previously compared inconsistently.
+  bool get _isPaletteColor => projectColors.contains(_selectedColor);
+
+  /// Contrast-safe ink for a swatch of arbitrary colour.
+  Color _readableOn(Color background) =>
+      background.computeLuminance() > 0.45 ? Colors.black87 : Colors.white;
 
   @override
   void didChangeDependencies() {
@@ -141,7 +150,14 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           decoration: InputDecoration(
             prefixIcon: Padding(
               padding: const EdgeInsets.only(left: 16, right: 10),
-              child: Text(_selectedEmoji, style: const TextStyle(fontSize: 18)),
+              // The live preview used to print the stored value straight into
+              // the field, so a new notebook showed the word "book" in front of
+              // its name.
+              child: ProjectIconView(
+                value: _selectedEmoji,
+                size: 18,
+                color: _selectedColor,
+              ),
             ),
             prefixIconConstraints: const BoxConstraints(),
 
@@ -204,20 +220,18 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         color: context.colorScheme.surface,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: _selectedColor == context.colorScheme.primary
-                              ? context.colorScheme.onSurface
-                              : context.theme.dividerColor,
-                          width: _selectedColor == context.colorScheme.primary
-                              ? 1.5
-                              : 1.0,
+                          color: _isPaletteColor
+                              ? context.theme.dividerColor
+                              : context.colorScheme.onSurface,
+                          width: _isPaletteColor ? 1 : 2,
                         ),
                       ),
                       child: Icon(
                         Icons.format_color_reset_outlined,
                         size: sizes.iconMedium,
-                        color: _selectedColor == context.colorScheme.primary
-                            ? context.colorScheme.onSurface
-                            : context.theme.hintColor,
+                        color: _isPaletteColor
+                            ? context.theme.hintColor
+                            : context.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -230,16 +244,26 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         duration: AppDurations.fast,
                         width: 32,
                         height: 32,
+                        // The swatch was painted with the surface colour and
+                        // never with the colour it stood for, so the whole row
+                        // rendered as identical empty circles.
                         decoration: BoxDecoration(
-                          color: context.ink.surface,
+                          color: color,
                           shape: BoxShape.circle,
-                          border: isSelected
-                              ? Border.all(
-                                  color: context.colorScheme.primary,
-                                  width: 1.5,
-                                )
-                              : null,
+                          border: Border.all(
+                            color: isSelected
+                                ? context.colorScheme.onSurface
+                                : context.theme.dividerColor,
+                            width: isSelected ? 2 : 1,
+                          ),
                         ),
+                        child: isSelected
+                            ? Icon(
+                                Icons.check,
+                                size: sizes.iconSmall,
+                                color: _readableOn(color),
+                              )
+                            : null,
                       ),
                     );
                   }),
@@ -274,10 +298,11 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 spacing: 12,
                 runSpacing: 12,
                 children: [
-                  ...projectEmojis.map((emoji) {
-                    final isSelected = _selectedEmoji == emoji;
+                  ...projectIcons.map((candidate) {
+                    final isSelected = _selectedEmoji == candidate.key;
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedEmoji = emoji),
+                      onTap: () =>
+                          setState(() => _selectedEmoji = candidate.key),
                       child: AnimatedContainer(
                         duration: AppDurations.fast,
                         width: 40,
@@ -292,9 +317,12 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                               : null,
                         ),
                         alignment: Alignment.center,
-                        child: Text(
-                          emoji,
-                          style: const TextStyle(fontSize: 20),
+                        child: Icon(
+                          isSelected ? candidate.selectedIcon : candidate.icon,
+                          size: sizes.iconMedium,
+                          color: isSelected
+                              ? _selectedColor
+                              : context.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     );

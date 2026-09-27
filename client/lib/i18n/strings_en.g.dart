@@ -52,6 +52,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$note$en note = Translations$note$en.internal(_root);
 	late final Translations$project$en project = Translations$project$en.internal(_root);
 	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
+	late final Translations$timezones$en timezones = Translations$timezones$en.internal(_root);
 }
 
 // Path: common
@@ -383,6 +384,33 @@ class Translations$profile$en {
 	late final Translations$profile$security$en security = Translations$profile$security$en.internal(_root);
 	late final Translations$profile$account$en account = Translations$profile$account$en.internal(_root);
 	late final Translations$profile$settings$en settings = Translations$profile$settings$en.internal(_root);
+}
+
+// Path: timezones
+class Translations$timezones$en {
+	Translations$timezones$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'UTC'
+	String get utc => 'UTC';
+
+	/// en: 'London (GMT)'
+	String get london => 'London (GMT)';
+
+	/// en: 'Warsaw (CET)'
+	String get warsaw => 'Warsaw (CET)';
+
+	/// en: 'New York (ET)'
+	String get newYork => 'New York (ET)';
+
+	/// en: 'Los Angeles (PT)'
+	String get losAngeles => 'Los Angeles (PT)';
+
+	/// en: 'Tokyo (JST)'
+	String get tokyo => 'Tokyo (JST)';
 }
 
 // Path: common.errors
@@ -1339,6 +1367,12 @@ extension on Translations {
 			'profile.settings.timezone' => 'Choose timezone',
 			'profile.settings.dateTime' => 'Date and time',
 			'profile.settings.widgets' => 'Widgets',
+			'timezones.utc' => 'UTC',
+			'timezones.london' => 'London (GMT)',
+			'timezones.warsaw' => 'Warsaw (CET)',
+			'timezones.newYork' => 'New York (ET)',
+			'timezones.losAngeles' => 'Los Angeles (PT)',
+			'timezones.tokyo' => 'Tokyo (JST)',
 			_ => null,
 		};
 	}
