@@ -45,6 +45,16 @@ class ProjectsDrawer extends ConsumerWidget {
 
             const SizedBox(height: 8),
 
+            // All notes first, because it is the default view and, until this
+            // row existed, the only way out of a notebook was to switch tabs.
+            DrawerVirtualProjectItem(
+              id: allProjectsId,
+              count: null,
+              title: context.t.home.all,
+              emoji: '📓',
+              color: context.colorScheme.primary,
+            ),
+
             DrawerVirtualProjectItem(
               id: todayProjectId,
               count: null,

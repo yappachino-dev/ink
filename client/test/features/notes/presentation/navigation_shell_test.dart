@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_shell.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
@@ -15,6 +16,8 @@ import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
+
+import '../../../helpers/test_helpers.dart';
 
 class _NoNotebookSelected extends SelectedProjectId {
   @override
@@ -137,6 +140,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         selectedProjectIdProvider.overrideWith(_NoNotebookSelected.new),
+        userPreferencesProvider.overrideWithValue(await mockUserConfig()),
       ],
     );
     addTearDown(container.dispose);

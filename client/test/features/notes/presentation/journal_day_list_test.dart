@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
@@ -17,7 +18,10 @@ import 'package:ink/features/notes/presentation/widgets/calendar/journal_day_lis
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'package:mocktail/mocktail.dart';
+
+import '../../../helpers/test_helpers.dart';
 
 class _Svc extends Mock implements NotesService {}
 
@@ -50,16 +54,17 @@ Note _note({
 void main() {
   Future<void> pumpList(WidgetTester tester, List<Note> notes) async {
     final svc = _Svc();
-    when(svc.getAllNotes).thenAnswer(
-      (_) async => Success<List<Note>, NotesFailure>(notes),
-    );
-    when(svc.getAllProjects).thenAnswer(
-      (_) async => const Success<List<Project>, NotesFailure>([]),
-    );
+    when(
+      svc.getAllNotes,
+    ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
+    when(
+      svc.getAllProjects,
+    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
 
     final container = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
+        userPreferencesProvider.overrideWithValue(await mockUserConfig()),
         currentDateProvider.overrideWithValue(_day),
       ],
     );
@@ -86,10 +91,7 @@ void main() {
   }
 
   testWidgets('renders every entry written that day', (tester) async {
-    await pumpList(tester, [
-      _note(id: 'a'),
-      _note(id: 'b'),
-    ]);
+    await pumpList(tester, [_note(id: 'a'), _note(id: 'b')]);
 
     expect(find.text('Entry a'), findsOneWidget);
     expect(find.text('Entry b'), findsOneWidget);

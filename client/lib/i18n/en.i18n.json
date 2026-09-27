@@ -308,5 +308,13 @@
             "dateTime": "Date and time",
             "widgets": "Widgets"
         }
+    },
+    "timezones": {
+        "utc": "UTC",
+        "london": "London (GMT)",
+        "warsaw": "Warsaw (CET)",
+        "newYork": "New York (ET)",
+        "losAngeles": "Los Angeles (PT)",
+        "tokyo": "Tokyo (JST)"
     }
 }

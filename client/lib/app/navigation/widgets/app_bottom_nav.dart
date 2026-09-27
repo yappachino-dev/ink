@@ -34,6 +34,10 @@ class AppBottomNav extends ConsumerWidget {
         onDestinationSelected(index);
       },
       indicatorColor: context.colorScheme.secondaryContainer,
+      // The Material 3 default of 80 is sized for five destinations and a
+      // two-line label. Three single-word labels do not need it, and the
+      // reclaimed height goes back to the content above.
+      height: 68,
       destinations: [
         // Not a checkbox: the note-first product has tasks as a contextual
         // capability, not as its identity.

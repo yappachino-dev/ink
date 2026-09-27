@@ -13,6 +13,8 @@ class UserConfig {
   static const _themeModeKey = 'themeMode';
   static const _paletteIdKey = 'paletteId';
   static const _localeCodeKey = 'localeCode';
+  static const _selectedNotebookKey = 'selectedNotebook';
+  static const _selectedTimezoneKey = 'selectedTimezone';
 
   bool get localOnly => _sharedPrefs.getBool(_localOnlyKey) ?? true;
 
@@ -33,6 +35,19 @@ class UserConfig {
 
   Future<void> setLocaleCode(String code) async =>
       _sharedPrefs.setString(_localeCodeKey, code);
+
+  /// The notebook last opened, so returning to the app resumes where the user
+  /// left off rather than dumping them back on the default list.
+  String? get selectedNotebookId =>
+      _sharedPrefs.getString(_selectedNotebookKey);
+
+  Future<void> setSelectedNotebookId(String id) async =>
+      _sharedPrefs.setString(_selectedNotebookKey, id);
+
+  String? get selectedTimezone => _sharedPrefs.getString(_selectedTimezoneKey);
+
+  Future<void> setSelectedTimezone(String id) async =>
+      _sharedPrefs.setString(_selectedTimezoneKey, id);
 }
 
 @Riverpod(keepAlive: true)

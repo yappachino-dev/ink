@@ -30,12 +30,13 @@ class AppShell extends ConsumerWidget {
   }
 
   void _select(WidgetRef ref, int index) {
-    // Home and Calendar read the same lens. Leaving a task lens like "Today"
-    // and landing on the journal would filter it by a pseudo-notebook that
-    // exists in neither, so entering Calendar returns the shared selection to
-    // "everything". The reset used to live in each screen's tab handler, which
-    // the shell removed; the coupling itself predates it.
-    if (index == _calendarBranch) {
+    // Home and Calendar read the same lens. A task lens is a pseudo-notebook
+    // that the journal has no notion of, so entering Calendar clears it. A
+    // real notebook is a valid filter for both, so it is kept - otherwise the
+    // only way back to your notes was to leave the tab and return, which
+    // silently reset the selection as a side effect.
+    if (index == _calendarBranch &&
+        ref.read(selectedProjectIdProvider) == todayProjectId) {
       ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
     }
 

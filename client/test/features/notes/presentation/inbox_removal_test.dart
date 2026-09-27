@@ -11,6 +11,7 @@
 // reach a null project, and the drawer no longer offers an action for a lens.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
@@ -27,6 +28,8 @@ import 'package:ink/features/notes/presentation/widgets/projects/project_item.da
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../../helpers/test_helpers.dart';
 
 class _Svc extends Mock implements NotesService {}
 
@@ -51,20 +54,24 @@ void main() {
 
   setUp(() {
     svc = _Svc();
-    when(svc.getAllNotes).thenAnswer(
-      (_) async => const Success<List<Note>, NotesFailure>([]),
-    );
-    when(svc.getAllProjects).thenAnswer(
-      (_) async => const Success<List<Project>, NotesFailure>([]),
-    );
-    when(() => svc.saveProject(any()))
-        .thenAnswer((_) async => const Success<void, NotesFailure>(null));
+    when(
+      svc.getAllNotes,
+    ).thenAnswer((_) async => const Success<List<Note>, NotesFailure>([]));
+    when(
+      svc.getAllProjects,
+    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+    when(
+      () => svc.saveProject(any()),
+    ).thenAnswer((_) async => const Success<void, NotesFailure>(null));
   });
 
   Future<void> pumpSheet(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [notesServiceProvider.overrideWithValue(svc)],
+        overrides: [
+          notesServiceProvider.overrideWithValue(svc),
+          userPreferencesProvider.overrideWithValue(await mockUserConfig()),
+        ],
         child: TranslationProvider(
           child: MaterialApp(
             theme: AppTheme.light(InkPalette.forest),
@@ -109,7 +116,10 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [notesServiceProvider.overrideWithValue(svc)],
+          overrides: [
+            notesServiceProvider.overrideWithValue(svc),
+            userPreferencesProvider.overrideWithValue(await mockUserConfig()),
+          ],
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
@@ -126,9 +136,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      final saved = verify(() => svc.saveProject(captureAny()))
-          .captured
-          .single as Project;
+      final saved =
+          verify(() => svc.saveProject(captureAny())).captured.single
+              as Project;
       expect(saved.title, 'Groceries');
       expect(saved.emoji, '🛒');
       expect(saved.id, 'p1');
@@ -141,7 +151,10 @@ void main() {
     testWidgets('no long-press action is offered', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [notesServiceProvider.overrideWithValue(svc)],
+          overrides: [
+            notesServiceProvider.overrideWithValue(svc),
+            userPreferencesProvider.overrideWithValue(await mockUserConfig()),
+          ],
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
@@ -174,7 +187,10 @@ void main() {
     testWidgets('tapping a virtual row selects it', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [notesServiceProvider.overrideWithValue(svc)],
+          overrides: [
+            notesServiceProvider.overrideWithValue(svc),
+            userPreferencesProvider.overrideWithValue(await mockUserConfig()),
+          ],
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
@@ -205,10 +221,10 @@ void main() {
       // Guards against it being reintroduced: the only two sentinels are the
       // "all" lens and "today".
       expect(todayProjectId, '__today__');
-      expect(
-        <String>[allProjectsId, todayProjectId],
-        isNot(contains('__inbox__')),
-      );
+      expect(<String>[
+        allProjectsId,
+        todayProjectId,
+      ], isNot(contains('__inbox__')));
     });
   });
 }
