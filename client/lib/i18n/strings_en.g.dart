@@ -156,6 +156,9 @@ class Translations$home$en {
 
 	// Translations
 
+	/// en: 'All notes'
+	String get all => 'All notes';
+
 	/// en: 'Today'
 	String get today => 'Today';
 
@@ -1127,6 +1130,7 @@ extension on Translations {
 			'vault.unlock.seed.verifyError' => 'Words do not match. Try again!',
 			'vault.unlock.seed.verifySuccess' => 'Verification successful',
 			'vault.unlock.throttled' => ({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.',
+			'home.all' => 'All notes',
 			'home.today' => 'Today',
 			'home.completed' => 'Completed',
 			'calendar.title' => 'Calendar',

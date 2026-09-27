@@ -80,9 +80,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void _onDestinationSelected(int index) {
     switch (index) {
       case 0:
-        if (ref.read(selectedProjectIdProvider) == allProjectsId) {
-          ref.read(selectedProjectIdProvider.notifier).id = todayProjectId;
-        }
+        // The lens is shared with the calendar, where `allProjectsId` means "no
+        // notebook filter". This used to reset it to Today on the way back,
+        // because All notes was not a real Home lens and leaving it selected
+        // would have shown an empty list. Now that it is the default view, the
+        // coercion would throw away the user's chosen lens on every tab switch.
         context.go(AppDestinations.notes);
       case 1:
         ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;

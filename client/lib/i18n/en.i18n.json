@@ -159,6 +159,7 @@
         }
     },
     "home": {
+        "all": "All notes",
         "today": "Today",
         "completed": "Completed"
     },

@@ -41,7 +41,7 @@ final class SelectedProjectIdProvider
   }
 }
 
-String _$selectedProjectIdHash() => r'59c59c9969afdb9384c438791d6b9517119e7dbf';
+String _$selectedProjectIdHash() => r'1f190661565b7ec44e39cd795f6ba12c8557af58';
 
 abstract class _$SelectedProjectId extends $Notifier<String> {
   String build();
@@ -94,7 +94,7 @@ final class SelectedProjectTitleProvider
 }
 
 String _$selectedProjectTitleHash() =>
-    r'd63919c984a178786c8daa1df61ac69796840131';
+    r'fee43e1255ffbe80c045157de0472b93c6e1cdba';
 
 abstract class _$SelectedProjectTitle extends $Notifier<String> {
   String build();

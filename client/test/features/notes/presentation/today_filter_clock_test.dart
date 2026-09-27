@@ -23,6 +23,11 @@ import 'package:mocktail/mocktail.dart';
 
 class _Svc extends Mock implements NotesService {}
 
+class _TodaySelected extends SelectedProjectId {
+  @override
+  String build() => todayProjectId;
+}
+
 /// A date no test should collide with by accident: it is in the past and is
 /// not the day the suite happens to run.
 final _injected = DateTime(2026, 1, 14);
@@ -55,6 +60,10 @@ void main() {
   });
 
   Future<List<Note>> todayNotes(List<Note> notes, DateTime clock) async {
+    // Pin the lens explicitly. These tests are about the Today filter, so they
+    // must not depend on which lens happens to be the default; when All notes
+    // became the landing view (D-10) the default moved out from under them and
+    // the guard below caught it.
     when(
       svc.getAllNotes,
     ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
@@ -66,13 +75,11 @@ void main() {
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
         currentDateProvider.overrideWithValue(clock),
+        selectedProjectIdProvider.overrideWith(_TodaySelected.new),
       ],
     );
     addTearDown(container.dispose);
 
-    // The default selected project is todayProjectId, which is the branch under
-    // test. Assert that rather than assuming it, so a change to the default
-    // selection fails loudly instead of silently skipping the filter.
     expect(container.read(selectedProjectIdProvider), todayProjectId);
 
     // `notesProvider` is async and `projectNotesProvider` derives from it, so
