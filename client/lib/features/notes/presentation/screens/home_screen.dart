@@ -11,11 +11,12 @@ import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
-import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
+import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/notes_view.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/offline_banner.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/sync_trust_indicator.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -96,9 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final notes = ref.watch(projectNotesProvider);
-    final selectedProjectId = ref.watch(selectedProjectIdProvider);
-    final selectedProjectTitle = ref.watch(selectedProjectTitleProvider);
+    final viewState = ref.watch(notesViewStateProvider);
     final showDescription = ref.watch(showDescriptionProvider);
 
     return Scaffold(
@@ -113,6 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   onPressed: _openDrawer,
                 ),
                 actions: [
+                  const SyncTrustIndicator(),
                   IconButton(
                     icon: Icon(
                       showDescription
@@ -135,20 +135,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 scrolledUnderElevation: 0,
               ),
 
+              const OfflineBanner(),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
                   child: AnimatedSwitcher(
                     duration: AppDurations.sheet,
-                    child: notes.isNotEmpty
-                        ? TaskListView(
-                            key: ValueKey('list-$selectedProjectId'),
-                            title: selectedProjectTitle,
-                          )
-                        : EmptyStateView(
-                            key: const ValueKey('empty'),
-                            title: selectedProjectTitle,
-                          ),
+                    // Keyed on the state *type*, never the instance: see
+                    // [NotesViewState.switcherKey].
+                    child: NotesView(
+                      key: ValueKey(viewState.switcherKey),
+                      state: viewState,
+                    ),
                   ),
                 ),
               ),

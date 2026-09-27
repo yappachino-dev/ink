@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
+import 'package:ink/core/infrastructure/storage/shared_prefs.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
+import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
@@ -24,6 +26,9 @@ import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+late SharedPreferences _prefs;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +39,9 @@ void main() {
     final materialIcons = FontLoader('MaterialIcons')
       ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
     await materialIcons.load();
+
+    SharedPreferences.setMockInitialValues({});
+    _prefs = await SharedPreferences.getInstance();
   });
 
   testWidgets('home screen light and dark', (tester) async {
@@ -178,6 +186,12 @@ Widget _notesApp({
     overrides: [
       notesServiceProvider.overrideWithValue(service),
       currentDateProvider.overrideWithValue(goldenCalendarDate),
+      // Connectivity has no meaning in a golden; record the connected state so
+      // the baseline is not permanently an offline banner.
+      isOfflineProvider.overrideWithValue(false),
+      // `sharedPreferencesProvider` throws unless main() overrides it, and the
+      // trust indicator reads the free/sync gate out of it.
+      sharedPreferencesProvider.overrideWithValue(_prefs),
       if (selectAllNotebooks)
         selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
     ],
