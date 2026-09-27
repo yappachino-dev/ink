@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The Ink mark, drawn rather than shipped as a raster.
 ///
@@ -91,8 +91,10 @@ class _LogoPainter extends CustomPainter {
 
     canvas.drawPath(body, outline);
 
-    // Binder rings.
-    for (final fraction in [0.26, 0.62]) {
+    // Binder rings. The pair sums to 1.0 so it straddles the body's midpoint;
+    // at [0.26, 0.62] it summed to 0.88 and sat 4.8% of the canvas left of
+    // centre, which reads as a misalignment rather than a design.
+    for (final fraction in [0.32, 0.68]) {
       final x = bodyRect.left + bodyRect.width * fraction;
       canvas.drawLine(
         Offset(x, bodyRect.top - unit * 0.05),
