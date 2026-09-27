@@ -126,7 +126,7 @@ class DrawerProjectItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ProjectItem(
       title: project.title,
-      emoji: project.emoji,
+      icon: project.emoji,
       color: Color(project.colorValue),
       onTap: () => ref.read(selectedProjectIdProvider.notifier).id = project.id,
       onLongPress: () => _showContextMenu(context, ref),

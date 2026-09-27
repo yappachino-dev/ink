@@ -1,12 +1,13 @@
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ProjectItem extends StatelessWidget {
   const ProjectItem({
     required this.title,
-    required this.emoji,
+    required this.icon,
     required this.color,
     required this.onTap,
     required this.isSelected,
@@ -16,7 +17,9 @@ class ProjectItem extends StatelessWidget {
   });
 
   final String title;
-  final String emoji;
+
+  /// An icon key, or a legacy emoji glyph string.
+  final String icon;
   final Color color;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
@@ -42,7 +45,7 @@ class ProjectItem extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 20)),
+              ProjectIconView(value: icon, color: color),
 
               const SizedBox(width: 12),
 

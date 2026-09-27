@@ -51,7 +51,7 @@ class ProjectsDrawer extends ConsumerWidget {
               id: allProjectsId,
               count: null,
               title: context.t.home.all,
-              emoji: '📓',
+              icon: 'book',
               color: context.colorScheme.primary,
             ),
 
@@ -59,7 +59,7 @@ class ProjectsDrawer extends ConsumerWidget {
               id: todayProjectId,
               count: null,
               title: context.t.home.today,
-              emoji: '📅',
+              icon: 'target',
               color: context.colorScheme.primary,
             ),
 

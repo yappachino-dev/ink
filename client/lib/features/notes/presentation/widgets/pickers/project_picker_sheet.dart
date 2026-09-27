@@ -2,6 +2,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -12,11 +13,9 @@ class ProjectPickerSheet extends StatelessWidget {
     required this.onSelected,
     super.key,
   });
-
   final List<Project> projects;
   final String? selectedProjectId;
   final ValueChanged<String?> onSelected;
-
   @override
   Widget build(BuildContext context) {
     return BottomSheetLayout(
@@ -28,17 +27,15 @@ class ProjectPickerSheet extends StatelessWidget {
       children: [
         _ProjectTile(
           title: context.t.project.none,
-          emoji: '📋',
+          icon: 'book',
           isSelected: selectedProjectId == null,
           onTap: () => onSelected(null),
         ),
-
         if (projects.isNotEmpty) Divider(color: context.theme.dividerColor),
-
         ...projects.map(
           (project) => _ProjectTile(
             title: project.title,
-            emoji: project.emoji,
+            icon: project.emoji,
             isSelected: selectedProjectId == project.id,
             onTap: () => onSelected(project.id),
           ),
@@ -51,21 +48,19 @@ class ProjectPickerSheet extends StatelessWidget {
 class _ProjectTile extends StatelessWidget {
   const _ProjectTile({
     required this.title,
-    required this.emoji,
+    required this.icon,
     required this.isSelected,
     required this.onTap,
   });
-
   final String title;
-  final String emoji;
+  final String icon;
   final bool isSelected;
   final VoidCallback onTap;
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Text(emoji, style: const TextStyle(fontSize: 20)),
+      leading: ProjectIconView(value: icon),
       title: Text(
         title,
         style: context.textTheme.titleMedium?.copyWith(
