@@ -11,12 +11,25 @@ class ActiveNoteCard extends ConsumerWidget {
     required this.note,
     required this.onTap,
     this.projectName,
+    this.showCompletion = true,
+    this.showPriority = true,
     super.key,
   });
 
   final Note note;
   final VoidCallback onTap;
   final String? projectName;
+
+  /// Whether the row leads with a completion checkbox.
+  ///
+  /// Task-forward surfaces keep this on. The All notes lens turns it off, for
+  /// the same reason the calendar journal does: the view answers "what do I
+  /// have here", and a per-row completion control answers a question that view
+  /// was not asked.
+  final bool showCompletion;
+
+  /// Whether the row shows the priority flag.
+  final bool showPriority;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +45,12 @@ class ActiveNoteCard extends ConsumerWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: NoteCard(note: note, projectName: projectName),
+            child: NoteCard(
+              note: note,
+              projectName: projectName,
+              showCompletion: showCompletion,
+              showPriority: showPriority,
+            ),
           ),
         ),
       ),

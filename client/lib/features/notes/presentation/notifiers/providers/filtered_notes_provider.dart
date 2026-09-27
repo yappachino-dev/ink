@@ -27,6 +27,23 @@ List<Note> projectNotes(Ref ref) {
     }).toList();
   }
 
+  if (isContentForwardLens(selectedProjectId)) {
+    // Reverse-chronological by last touch: the note you were last working on
+    // belongs at the top, which is what makes this a notes list rather than a
+    // diary. `allNotes` is a Map, so iteration order follows insertion and
+    // would reshuffle whenever an unrelated note synced. `id` breaks ties so
+    // two notes written in the same millisecond keep a stable relative order.
+    final all = allNotes.values.toList()
+      ..sort((a, b) {
+        final byUpdated = b.updatedAt.compareTo(a.updatedAt);
+        if (byUpdated != 0) return byUpdated;
+        final byCreated = b.createdAt.compareTo(a.createdAt);
+        if (byCreated != 0) return byCreated;
+        return a.id.compareTo(b.id);
+      });
+    return all;
+  }
+
   return allNotes.values
       .where((note) => note.projectId == selectedProjectId)
       .toList();

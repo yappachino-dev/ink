@@ -9,8 +9,12 @@ part 'ui_state.g.dart';
 
 @riverpod
 class SelectedProjectId extends _$SelectedProjectId {
+  /// All notes is the landing view (D-10). The app opens on a flat,
+  /// reverse-chronological list of everything, because it is note-first: the
+  /// note is the thing, and due dates are a lens over it rather than the
+  /// primary axis. Today stays reachable as a task-forward lens.
   @override
-  String build() => todayProjectId;
+  String build() => allProjectsId;
 
   // Riverpod notifiers hold state in the base class; a paired getter is
   // not meaningful here.
@@ -26,7 +30,10 @@ class SelectedProjectTitle extends _$SelectedProjectTitle {
     final projects = ref.watch(projectsProvider).value ?? [];
 
     return switch (selectedProjectId) {
-      _ when selectedProjectId == allProjectsId => t.home.today,
+      // Previously All notes was labelled "Today", because it was not a real
+      // Home lens and borrowing the label was the cheapest way to avoid a
+      // second string. Now that it is the default view, it needs its own.
+      _ when isContentForwardLens(selectedProjectId) => t.home.all,
       _ when selectedProjectId == todayProjectId => t.home.today,
       _ => projects.firstWhere((p) => p.id == selectedProjectId).title,
     };

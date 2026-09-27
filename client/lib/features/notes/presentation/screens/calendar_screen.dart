@@ -64,9 +64,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   void _onDestinationSelected(int index) {
     switch (index) {
       case 0:
-        if (ref.read(selectedProjectIdProvider) == allProjectsId) {
-          ref.read(selectedProjectIdProvider.notifier).id = todayProjectId;
-        }
+        // See the matching note in `home_screen.dart`: All notes is a real Home
+        // lens now, so returning from the calendar must not reset the lens.
         context.go(AppDestinations.notes);
       case 1:
         ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
@@ -111,31 +110,50 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         onPressed: _openViewModePicker,
                       ),
 
-                      if (isFilterActive)
-                        GestureDetector(
-                          onTap: _openFilterSheet,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                      // Always rendered. This used to be hidden when no
+                      // notebook filter was applied, on the assumption that the
+                      // app never started in the unfiltered state — which was
+                      // true only because the default lens was Today. Now that
+                      // All notes is the landing view, hiding it made the
+                      // notebook filter unreachable: the guard wrapped the tap
+                      // target, not just the styling. It also left
+                      // [_filterLabel]'s unfiltered branch unreachable, so
+                      // "Filter" was a string the user could never see.
+                      GestureDetector(
+                        onTap: _openFilterSheet,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isFilterActive
+                                ? context.ink.highlight
+                                : Colors.transparent,
+                            borderRadius: AppRadius.lgRadius,
+                            border: Border.all(
+                              color: isFilterActive
+                                  ? context.colorScheme.primary
+                                  : context.colorScheme.outlineVariant,
                             ),
-                            decoration: BoxDecoration(
-                              color: context.ink.highlight,
-                              borderRadius: AppRadius.lgRadius,
-                              border: Border.all(
-                                color: context.colorScheme.primary,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _filterLabel(allLists, selectedProjectId),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                      color: isFilterActive
+                                          ? context.colorScheme.primary
+                                          : context
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                    ),
                               ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  _filterLabel(allLists, selectedProjectId),
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: context.colorScheme.primary,
-                                      ),
-                                ),
+                              if (isFilterActive) ...[
                                 const SizedBox(width: 4),
                                 Icon(
                                   Icons.close,
@@ -143,12 +161,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   color: context.colorScheme.primary,
                                 ),
                               ],
-                            ),
+                            ],
                           ),
-                        )
-                      else
-                        const SizedBox.shrink(),
-
+                        ),
+                      ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
