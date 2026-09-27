@@ -56,17 +56,29 @@ lifecycle, use
 
 ```bash
 ./scripts/ship-pr.sh 'chore(scope): summarize the complete change'
-# Optional, short PR context for a genuinely complex change:
+# The PR description is independent of the commit count, so it may be added to
+# any PR — one commit or several — whenever the change deserves explanation:
 ./scripts/ship-pr.sh --pr-body 'Short explanation of the core design.' \
   'chore(scope): summarize the complete change'
 ```
 
 The script derives the default branch from `origin/HEAD`, fetches it, and
-counts commits relative to that branch. The PR description is empty by
-default; use `--pr-body` only when a complex PR needs a concise explanation.
-One-commit PRs use the exact commit title and an empty squash body. Multi-commit
-PRs use a single-spaced bullet list of commit titles in oldest-to-newest order
-as the squash body. The script pushes the branch, creates the PR, watches CI with
+counts commits relative to that branch. Two bodies are involved and the commit
+count governs only one of them:
+
+- **PR description** — empty unless `--pr-body` is passed. Independent of the
+  commit count: add it to a one-commit PR whenever the change warrants it, and
+  omit it from a multi-commit PR whose title list already says everything.
+- **Squash-commit body**, i.e. the message left in `main` history — this is
+  where the count applies. A one-commit PR takes the exact commit subject with an
+  empty body; a multi-commit PR takes the supplied title with a single-spaced
+  bullet list of commit titles, oldest to newest.
+
+Multi-commit PRs must be given a high-level title argument. On a one-commit PR
+that argument is ignored: the commit subject is used verbatim, so the commit
+message and PR title cannot diverge by accident.
+
+The script pushes the branch, creates the PR, watches CI with
 `--fail-fast`, and squash merges only after checks pass. It never bypasses
 branch protection or uses `--admin`. The agent must not run this script unless
 the owner explicitly requests the lifecycle.
