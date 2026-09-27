@@ -1,7 +1,4 @@
-import 'package:go_router/go_router.dart';
-import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
-import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
@@ -21,9 +18,7 @@ class PersonalizationScreen extends StatelessWidget {
       barrierColor: context.ink.scrim,
       builder: (ctx) {
         return Dialog(
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.lgRadius,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
           backgroundColor: context.ink.surface,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
@@ -67,9 +62,7 @@ class PersonalizationScreen extends StatelessWidget {
                         onPressed: () => Navigator.of(ctx).pop(true),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: context.colorScheme.error,
-                          side: BorderSide(
-                            color: context.colorScheme.error,
-                          ),
+                          side: BorderSide(color: context.colorScheme.error),
                           minimumSize: const Size(double.infinity, 46),
                           shape: const RoundedRectangleBorder(
                             borderRadius: AppRadius.lgRadius,
@@ -105,10 +98,7 @@ class PersonalizationScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -177,18 +167,6 @@ class PersonalizationScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: AppBottomNav(
-        onDestinationSelected: (index) {
-          switch (index) {
-            case 0:
-              context.go(AppDestinations.notes);
-            case 1:
-              context.go(AppDestinations.calendar);
-            case 2:
-              context.go(AppDestinations.profile);
-          }
-        },
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ink/app/navigation/widgets/app_shell.dart';
 import 'package:ink/app/presentation/screens/welcome_screen.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
@@ -167,14 +168,37 @@ Widget _notesApp({
   required Widget screen,
   bool selectAllNotebooks = false,
 }) {
+  // The real [AppShell] is used rather than a bare screen, so the golden shows
+  // the navigation bar the user actually sees. F-09 changed that bar; a golden
+  // that omitted it would not have caught the change.
   final router = GoRouter(
     initialLocation: location,
     routes: [
-      GoRoute(path: AppDestinations.notes, builder: (_, _) => screen),
-      GoRoute(path: AppDestinations.calendar, builder: (_, _) => screen),
-      GoRoute(
-        path: AppDestinations.profile,
-        builder: (_, _) => const SizedBox.shrink(),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(navigationShell: shell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: AppDestinations.notes, builder: (_, _) => screen),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppDestinations.calendar,
+                builder: (_, _) => screen,
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppDestinations.profile,
+                builder: (_, _) => const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

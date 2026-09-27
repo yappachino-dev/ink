@@ -4,7 +4,7 @@
 /// should not import another feature's route or presentation implementation.
 abstract final class AppDestinations {
   static const notes = '/notes';
-  static const calendar = '/notes/calendar';
+  static const calendar = '/calendar';
   static const profile = '/profile';
   static const authInApp = '/auth?source=inApp';
 }

@@ -1,10 +1,6 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
-import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
@@ -30,10 +26,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
-  String _filterLabel(
-    List<Project> allProjects,
-    String selectedProjectId,
-  ) {
+  String _filterLabel(List<Project> allProjects, String selectedProjectId) {
     if (selectedProjectId == allProjectsId) return context.t.calendar.filter;
 
     final list = allProjects
@@ -44,9 +37,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> _openViewModePicker() async {
-    await context.showAppBottomSheetLayout<void>(
-      child: const ViewModeSheet(),
-    );
+    await context.showAppBottomSheetLayout<void>(child: const ViewModeSheet());
   }
 
   Future<void> _openFilterSheet() async {
@@ -55,22 +46,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
-  Future<void> _openAddTaskSheet() =>
-      const NoteNewRoute().push<void>(context);
-
-  void _onDestinationSelected(int index) {
-    switch (index) {
-      case 0:
-        // See the matching note in `home_screen.dart`: All notes is a real Home
-        // lens now, so returning from the calendar must not reset the lens.
-        context.go(AppDestinations.notes);
-      case 1:
-        ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
-        context.go(AppDestinations.calendar);
-      case 2:
-        context.go(AppDestinations.profile);
-    }
-  }
+  Future<void> _openAddTaskSheet() => const NoteNewRoute().push<void>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +115,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             children: [
                               Text(
                                 _filterLabel(allLists, selectedProjectId),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
+                                style: Theme.of(context).textTheme.labelMedium
                                     ?.copyWith(
                                       color: isFilterActive
                                           ? context.colorScheme.primary
@@ -221,9 +195,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         elevation: 4,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: sizes.iconXLarge),
-      ),
-      bottomNavigationBar: AppBottomNav(
-        onDestinationSelected: _onDestinationSelected,
       ),
     );
   }

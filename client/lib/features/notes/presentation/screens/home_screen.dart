@@ -1,14 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
-import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -66,23 +62,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   Future<void> _openAddTask() => const NoteNewRoute().push<void>(context);
-
-  void _onDestinationSelected(int index) {
-    switch (index) {
-      case 0:
-        // The lens is shared with the calendar, where `allProjectsId` means "no
-        // notebook filter". This used to reset it to Today on the way back,
-        // because All notes was not a real Home lens and leaving it selected
-        // would have shown an empty list. Now that it is the default view, the
-        // coercion would throw away the user's chosen lens on every tab switch.
-        context.go(AppDestinations.notes);
-      case 1:
-        ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
-        context.go(AppDestinations.calendar);
-      case 2:
-        context.go(AppDestinations.profile);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,9 +177,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: const ProjectsDrawer(),
             ),
         ],
-      ),
-      bottomNavigationBar: AppBottomNav(
-        onDestinationSelected: _onDestinationSelected,
       ),
     );
   }

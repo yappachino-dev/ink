@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
@@ -36,23 +35,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _openAppearance() async =>
       context.showAppBottomSheetLayout<void>(child: const AppearanceSheet());
 
-  Future<void> _openTimezone() async => context.showAppBottomSheetLayout<void>(
-    child: const TimezoneSheet(),
-  );
+  Future<void> _openTimezone() async =>
+      context.showAppBottomSheetLayout<void>(child: const TimezoneSheet());
 
   Future<void> _openWidgets() async =>
       context.showAppBottomSheetLayout<void>(child: const WidgetsSheet());
-
-  void _onDestinationSelected(int index) {
-    switch (index) {
-      case 0:
-        context.go(AppDestinations.notes);
-      case 1:
-        context.go(AppDestinations.calendar);
-      case 2:
-        context.go(AppDestinations.profile);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +62,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   unawaited(ref.read(authServiceProvider).logout());
                 },
               ),
-      ),
-      bottomNavigationBar: AppBottomNav(
-        onDestinationSelected: _onDestinationSelected,
       ),
     );
   }
@@ -238,9 +222,7 @@ class _LocalView extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        SettingsCard(
-          children: [_LogoutTile(onTap: onLogout)],
-        ),
+        SettingsCard(children: [_LogoutTile(onTap: onLogout)]),
       ],
     );
   }
