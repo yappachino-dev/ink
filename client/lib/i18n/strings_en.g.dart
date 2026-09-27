@@ -109,6 +109,9 @@ class Translations$welcome$en {
 
 	// Translations
 
+	/// en: 'Your notes are encrypted on this device. Ink's servers can't read them.'
+	String get thesis => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.';
+
 	/// en: 'Create local storage'
 	String get createLocalStorage => 'Create local storage';
 
@@ -1126,6 +1129,7 @@ extension on Translations {
 			'common.errors.network' => 'Unable to reach the server. Check your connection.',
 			'common.errors.timeout' => 'The server took too long to respond. Try again.',
 			'common.errors.unknown' => 'Something went wrong. Please try again.',
+			'welcome.thesis' => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.',
 			'welcome.createLocalStorage' => 'Create local storage',
 			'welcome.haveAccount' => 'Already have an account?',
 			'auth.tagline' => 'Your plans under reliable protection',
