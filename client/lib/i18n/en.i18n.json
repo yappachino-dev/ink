@@ -159,7 +159,6 @@
         }
     },
     "home": {
-        "inbox": "Inbox",
         "today": "Today",
         "completed": "Completed"
     },

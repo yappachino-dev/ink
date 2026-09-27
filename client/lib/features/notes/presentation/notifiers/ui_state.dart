@@ -28,7 +28,6 @@ class SelectedProjectTitle extends _$SelectedProjectTitle {
     return switch (selectedProjectId) {
       _ when selectedProjectId == allProjectsId => t.home.today,
       _ when selectedProjectId == todayProjectId => t.home.today,
-      _ when selectedProjectId == inboxProjectId => t.home.inbox,
       _ => projects.firstWhere((p) => p.id == selectedProjectId).title,
     };
   }

@@ -48,4 +48,4 @@ final class ProjectNotesProvider
   }
 }
 
-String _$projectNotesHash() => r'69e4898a330f79e0f660417862d52e3bbd7876a0';
+String _$projectNotesHash() => r'3aa08c4cb81bed7ab21c0301bb44b93f43985658';

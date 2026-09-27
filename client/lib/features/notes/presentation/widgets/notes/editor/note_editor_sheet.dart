@@ -57,7 +57,6 @@ class _NoteEditorSheetState extends ConsumerState<NoteEditorSheet> {
       final projectId = switch (selectedProjectId) {
         _ when selectedProjectId == allProjectsId => null,
         _ when selectedProjectId == todayProjectId => null,
-        _ when selectedProjectId == inboxProjectId => null,
         _ => selectedProjectId,
       };
 

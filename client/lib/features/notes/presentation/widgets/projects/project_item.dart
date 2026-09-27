@@ -9,8 +9,8 @@ class ProjectItem extends StatelessWidget {
     required this.emoji,
     required this.color,
     required this.onTap,
-    required this.onLongPress,
     required this.isSelected,
+    this.onLongPress,
     this.count,
     super.key,
   });
