@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/presentation/helpers.dart';
+import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
@@ -13,10 +15,7 @@ import 'package:ink/features/notes/presentation/widgets/notes/note_details_sheet
 import 'package:material_ui/material_ui.dart';
 
 class TaskListView extends ConsumerWidget {
-  const TaskListView({
-    required this.title,
-    super.key,
-  });
+  const TaskListView({required this.title, super.key});
 
   final String? title;
 
@@ -48,6 +47,9 @@ class _ContentForwardList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notes = ref.watch(projectNotesProvider);
+    // A flat cross-notebook list has no other place to say which notebook a
+    // note belongs to, so the card carries it.
+    final notebooks = ref.watch(projectsProvider).value ?? const [];
 
     return CustomScrollView(
       slivers: [
@@ -68,6 +70,7 @@ class _ContentForwardList extends ConsumerWidget {
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
+                projectName: projectName(notebooks, note.projectId),
                 showCompletion: false,
                 showPriority: false,
                 onTap: () => context.showAppBottomSheetLayout<void>(
@@ -130,9 +133,7 @@ class _TaskForwardList extends ConsumerWidget {
                       key: ValueKey(note.id),
                       note: note,
                       onTap: () => context.showAppBottomSheetLayout<void>(
-                        child: NoteDetailsSheet(
-                          note: note,
-                        ),
+                        child: NoteDetailsSheet(note: note),
                       ),
                     ),
                   ),

@@ -52,6 +52,9 @@ extension EncryptedToNote on EncryptedNote {
     id: id,
     title: title,
     content: content,
+    // Carried through from the cached column so lists do not re-parse the
+    // delta on every build.
+    preview: metadata.bodyPreview,
 
     localVersion: localVersion,
     lastSyncedVersion: lastSyncedVersion,
