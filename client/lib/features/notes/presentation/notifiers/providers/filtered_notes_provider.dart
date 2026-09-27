@@ -12,7 +12,12 @@ List<Note> projectNotes(Ref ref) {
   final selectedProjectId = ref.watch(selectedProjectIdProvider);
 
   if (selectedProjectId == todayProjectId) {
-    final now = DateTime.now();
+    // The injected clock, not the wall clock. `currentDateProvider` is the seam
+    // the calendar goldens already rely on; the Today filter was the one view
+    // that read `DateTime.now()` directly, which made it untestable and left
+    // the Home golden rendering an empty list whenever the fixture's due date
+    // did not happen to match the day the suite ran.
+    final now = ref.watch(currentDateProvider);
     return allNotes.values.where((note) {
       if (note.dueDate == null) return false;
 
