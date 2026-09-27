@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ink/app/presentation/screens/welcome_screen.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/storage/shared_prefs.dart';
@@ -108,14 +109,19 @@ void main() {
     await _pumpScreenPair(
       tester,
       filename: 'note-editor.png',
-      light: (service) => _editorApp(
-        brightness: Brightness.light,
-        service: service,
-      ),
-      dark: (service) => _editorApp(
-        brightness: Brightness.dark,
-        service: service,
-      ),
+      light: (service) =>
+          _editorApp(brightness: Brightness.light, service: service),
+      dark: (service) =>
+          _editorApp(brightness: Brightness.dark, service: service),
+    );
+  });
+
+  testWidgets('welcome screen light and dark', (tester) async {
+    await _pumpScreenPair(
+      tester,
+      filename: 'welcome.png',
+      light: (_) => _welcomeApp(Brightness.light),
+      dark: (_) => _welcomeApp(Brightness.dark),
     );
   });
 
@@ -143,10 +149,7 @@ Future<void> _pumpScreenPair(
   final service = _NotesService(notes ?? [goldenNote]);
   await tester.pumpWidget(
     TranslationProvider(
-      child: _GoldenPair(
-        light: light(service),
-        dark: dark(service),
-      ),
+      child: _GoldenPair(light: light(service), dark: dark(service)),
     ),
   );
   await tester.pumpAndSettle();
@@ -167,14 +170,8 @@ Widget _notesApp({
   final router = GoRouter(
     initialLocation: location,
     routes: [
-      GoRoute(
-        path: AppDestinations.notes,
-        builder: (_, _) => screen,
-      ),
-      GoRoute(
-        path: AppDestinations.calendar,
-        builder: (_, _) => screen,
-      ),
+      GoRoute(path: AppDestinations.notes, builder: (_, _) => screen),
+      GoRoute(path: AppDestinations.calendar, builder: (_, _) => screen),
       GoRoute(
         path: AppDestinations.profile,
         builder: (_, _) => const SizedBox.shrink(),
@@ -212,9 +209,16 @@ Widget _editorApp({
     child: MaterialApp(
       theme: _themeFor(brightness),
       localizationsDelegates: const [FlutterQuillLocalizations.delegate],
-      home: Scaffold(
-        body: NoteEditorSheet(existingNote: goldenNote),
-      ),
+      home: Scaffold(body: NoteEditorSheet(existingNote: goldenNote)),
+    ),
+  );
+}
+
+Widget _welcomeApp(Brightness brightness) {
+  return ProviderScope(
+    child: MaterialApp(
+      theme: _themeFor(brightness),
+      home: const WelcomeScreen(),
     ),
   );
 }
@@ -258,8 +262,7 @@ class _GoldenPair extends StatelessWidget {
 typedef _NotesScreenBuilder = Widget Function(_NotesService service);
 
 class _NotesService extends Mock implements NotesService {
-  _NotesService([List<Note>? notes])
-      : notes = notes ?? [goldenNote] {
+  _NotesService([List<Note>? notes]) : notes = notes ?? [goldenNote] {
     when(getAllNotes).thenAnswer((_) async => _allNotes(this.notes));
     when(getAllProjects).thenAnswer(_allProjects);
   }

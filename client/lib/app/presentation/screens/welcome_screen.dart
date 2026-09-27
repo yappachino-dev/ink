@@ -1,4 +1,5 @@
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
@@ -31,12 +32,18 @@ class WelcomeScreen extends StatelessWidget {
 
               const Spacer(flex: 2),
 
+              // The thesis, stated before the user has invested anything.
+              // This replaces the previous "your plans under reliable
+              // protection" tagline, which described a backup product and
+              // never mentioned encryption.
               Text(
-                context.t.auth.tagline,
+                context.t.welcome.thesis,
                 textAlign: TextAlign.center,
+                style: context.textTheme.titleMedium?.copyWith(height: 1.45),
               ),
-
-              const SizedBox(height: 8),
+              // Enough separation that "Choose how to use" reads as a label
+              // for the buttons rather than a caption to the thesis.
+              const SizedBox(height: AppSpacing.xxxl),
 
               Text(
                 context.t.auth.chooseMethod,

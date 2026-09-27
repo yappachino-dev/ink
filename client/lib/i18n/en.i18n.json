@@ -19,6 +19,7 @@
         }
     },
     "welcome": {
+        "thesis": "Your notes are encrypted on this device. Ink's servers can't read them.",
         "createLocalStorage": "Create local storage",
         "haveAccount": "Already have an account?"
     },
