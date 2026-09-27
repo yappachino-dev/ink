@@ -1,4 +1,5 @@
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/auth/presentation/navigation/auth_routes.dart';
@@ -42,9 +43,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               // Enough separation that "Choose how to use" reads as a label
               // for the buttons rather than a caption to the thesis.
-              const SizedBox(height: 28),
-
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.xxxl),
 
               Text(
                 context.t.auth.chooseMethod,
