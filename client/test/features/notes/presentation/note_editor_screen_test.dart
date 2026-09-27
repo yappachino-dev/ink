@@ -199,5 +199,72 @@ void main() {
         'Title',
       );
     });
+
+    test('joins styled operations on the first line', () {
+      // Quill splits a formatted line across several inserts. Reading only the
+      // first returned "Important" for "Important: Buy groceries".
+      expect(
+        noteTitleFromContent([
+          {
+            'insert': 'Important',
+            'attributes': {'bold': true},
+          },
+          {'insert': ': Buy groceries'},
+          {'insert': '\n'},
+        ]),
+        'Important: Buy groceries',
+      );
+    });
+
+    test('joins a link attribute without losing the rest of the line', () {
+      expect(
+        noteTitleFromContent([
+          {'insert': 'Read '},
+          {
+            'insert': 'the docs',
+            'attributes': <String, dynamic>{'link': 'https://example.com'},
+          },
+          {'insert': ' later\nbody\n'},
+        ]),
+        'Read the docs later',
+      );
+    });
+
+    test('finds the first line after leading newlines across operations', () {
+      expect(
+        noteTitleFromContent([
+          {'insert': '\n'},
+          {'insert': '\n'},
+          {'insert': 'Real title\n'},
+        ]),
+        'Real title',
+      );
+    });
+
+    test('falls back to a final line with no trailing newline', () {
+      expect(
+        noteTitleFromContent([
+          {'insert': 'No trailing break'},
+        ]),
+        'No trailing break',
+      );
+    });
+
+    test('ignores attributes and non-insert entries mid-line', () {
+      expect(
+        noteTitleFromContent([
+          {
+            'insert': 'Ke',
+            'attributes': {'italic': true},
+          },
+          {
+            'retain': 1,
+            'attributes': {'bold': true},
+          },
+          {'insert': 'pt\n'},
+        ]),
+        'Kept',
+      );
+    });
   });
 }
