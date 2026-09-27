@@ -29,6 +29,13 @@ sealed class Note with _$Note {
 
     @Default(TaskPriority.none) TaskPriority priority,
     @Default(false) bool isCompleted,
+
+    /// Cached plain-text preview, derived once at write time.
+    ///
+    /// Empty when the note was not read through the local store, so callers
+    /// must fall back to deriving it. Display only: it is capped and lossy, and
+    /// must never be used to decide whether a note changed.
+    @Default('') String preview,
   }) = _Note;
 
   const Note._();

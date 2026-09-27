@@ -22,7 +22,7 @@ import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
+import 'package:ink/features/notes/presentation/screens/note_editor_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -209,7 +209,7 @@ Widget _editorApp({
     child: MaterialApp(
       theme: _themeFor(brightness),
       localizationsDelegates: const [FlutterQuillLocalizations.delegate],
-      home: Scaffold(body: NoteEditorSheet(existingNote: goldenNote)),
+      home: const NoteEditorScreen(noteId: 'golden-note'),
     ),
   );
 }

@@ -3,6 +3,7 @@ import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
+import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/note_ui_extension.dart';
 import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
@@ -17,6 +18,7 @@ class NoteCard extends ConsumerWidget {
     this.projectName,
     this.showCompletion = true,
     this.showPriority = true,
+    this.showMeta = true,
     super.key,
   });
 
@@ -33,9 +35,18 @@ class NoteCard extends ConsumerWidget {
   /// Whether to show the priority flag.
   final bool showPriority;
 
+  /// Whether to show the due / notebook / priority row at all.
+  final bool showMeta;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showDescription = ref.watch(showDescriptionProvider);
+
+    // The cached preview when the note came from the local store, derived only
+    // as a fallback for notes built in memory.
+    final preview = note.preview.isNotEmpty
+        ? note.preview
+        : notePreviewText(note.content);
 
     return Row(
       children: [
@@ -49,10 +60,7 @@ class NoteCard extends ConsumerWidget {
                   ref.read(notesProvider.notifier).toggleNote(note),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               activeColor: context.colorScheme.primary,
-              side: BorderSide(
-                color: context.colorScheme.primary,
-                width: 1.5,
-              ),
+              side: BorderSide(color: context.colorScheme.primary, width: 1.5),
               shape: const RoundedRectangleBorder(
                 borderRadius: AppRadius.xsRadius,
               ),
@@ -69,16 +77,6 @@ class NoteCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  if (showPriority && note.priority != TaskPriority.none) ...[
-                    Icon(
-                      Icons.flag,
-                      size: sizes.iconSmall,
-                      color: note.priority.color,
-                    ),
-
-                    const SizedBox(width: 4),
-                  ],
-
                   Expanded(
                     child: Text(
                       note.title,
@@ -99,47 +97,93 @@ class NoteCard extends ConsumerWidget {
                 ],
               ),
 
-              if (showDescription && note.subtitle.isNotEmpty) ...[
-                const SizedBox(height: 2),
+              if (showDescription && preview.isNotEmpty) ...[
+                const SizedBox(height: 4),
 
                 Text(
-                  note.subtitle,
+                  preview,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: context.theme.hintColor,
                   ),
-                  maxLines: 1,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
+                ),
+              ],
+
+              if (showMeta &&
+                  (note.dueDate != null ||
+                      (projectName?.isNotEmpty ?? false) ||
+                      (showPriority &&
+                          note.priority != TaskPriority.none))) ...[
+                const SizedBox(height: 6),
+
+                NoteMetaRow(
+                  note: note,
+                  projectName: projectName,
+                  showPriority: showPriority,
                 ),
               ],
             ],
           ),
         ),
+      ],
+    );
+  }
+}
 
-        const SizedBox(width: 8),
+/// The due date, notebook and priority, in one row beneath the content.
+///
+/// These are the signals the editor's meta bar already exposes, so a note reads
+/// the same way wherever it is shown. Priority used to lead the title as an
+/// icon; it is task metadata, and this is where task metadata belongs.
+class NoteMetaRow extends StatelessWidget {
+  const NoteMetaRow({
+    required this.note,
+    this.projectName,
+    this.showPriority = true,
+    super.key,
+  });
 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (note.dueDate != null)
+  final Note note;
+  final String? projectName;
+  final bool showPriority;
+
+  @override
+  Widget build(BuildContext context) {
+    final hint = context.theme.hintColor;
+    final parts = <(IconData, String, Color?)>[
+      if (note.dueDate != null)
+        (Icons.event_outlined, note.timeLabel(context.t), null),
+      if (projectName != null && projectName!.isNotEmpty)
+        (Icons.folder_outlined, projectName!, null),
+      if (showPriority && note.priority != TaskPriority.none)
+        (
+          Icons.flag_outlined,
+          note.priority.label(context.t),
+          note.priority.color,
+        ),
+    ];
+
+    if (parts.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 12,
+      runSpacing: 4,
+      children: [
+        for (final (icon, text, color) in parts)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: sizes.iconSmall, color: color ?? hint),
+              const SizedBox(width: 4),
               Text(
-                note.timeLabel(context.t),
-                style: context.textTheme.bodySmall,
-              ),
-
-            if (projectName != null && projectName!.isNotEmpty) ...[
-              if (note.dueDate != null) const SizedBox(height: 2),
-
-              Text(
-                projectName!,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.theme.hintColor,
+                text,
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: color ?? hint,
                 ),
               ),
             ],
-          ],
-        ),
+          ),
       ],
     );
   }

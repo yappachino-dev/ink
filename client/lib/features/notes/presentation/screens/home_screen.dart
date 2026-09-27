@@ -1,19 +1,17 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/app_sizes.dart' as sizes;
-import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/notes_view.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/offline_banner.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/sync_trust_indicator.dart';
@@ -30,7 +28,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
-  bool _isBottomSheetLayoutOpen = false;
   bool _isDrawerOpen = false;
 
   late AnimationController _drawerController;
@@ -68,15 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Future<void> _openAddTask() async {
-    setState(() => _isBottomSheetLayoutOpen = true);
-
-    await context
-        .showAppBottomSheetLayout<void>(
-          child: const NoteEditorSheet(),
-        )
-        .whenComplete(() => setState(() => _isBottomSheetLayoutOpen = false));
-  }
+  Future<void> _openAddTask() => const NoteNewRoute().push<void>(context);
 
   void _onDestinationSelected(int index) {
     switch (index) {
@@ -174,19 +163,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
           ),
-
-          if (_isBottomSheetLayoutOpen)
-            Positioned.fill(
-              child: IgnorePointer(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: AppEffects.blurSm,
-                    sigmaY: AppEffects.blurSm,
-                  ),
-                  child: ColoredBox(color: context.ink.shadow),
-                ),
-              ),
-            ),
 
           if (_isDrawerOpen)
             Positioned.fill(
