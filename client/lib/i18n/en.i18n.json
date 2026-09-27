@@ -158,6 +158,30 @@
             "throttled": "Too many attempts. Try again in ${seconds}s."
         }
     },
+    "notes": {
+        "emptyTitle": "No notes yet",
+        "emptyBody": "Everything you write is encrypted on this device first.",
+        "emptyByFilterTitle": "Nothing here",
+        "emptyByFilterBody": "No notes match this view. Try another notebook or lens.",
+        "errorTitle": "Could not load your notes",
+        "errorBody": "Your notes are still on this device. Try again.",
+        "retry": "Try again",
+        "offline": "Offline. Your notes are safe on this device and will sync when you reconnect."
+    },
+    "trust": {
+        "onDevice": "On device",
+        "onDeviceMessage": "Encrypted on this device only. Syncing is available on Ink Pro.",
+        "queued": "Pending",
+        "queuedMessage": "Changes are encrypted and waiting to sync.",
+        "syncing": "Syncing",
+        "syncingMessage": "Encrypting and sending your changes.",
+        "synced": "Synced",
+        "syncedMessage": "Every note is encrypted and up to date on your other devices.",
+        "failed": "Sync failed",
+        "failedMessage": "Your notes are safe on this device. Syncing will retry.",
+        "conflicted": "Conflict",
+        "conflictedMessage": "A note changed on two devices. Nothing has been overwritten."
+    },
     "home": {
         "all": "All notes",
         "today": "Today",

@@ -45,6 +45,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$welcome$en welcome = Translations$welcome$en.internal(_root);
 	late final Translations$auth$en auth = Translations$auth$en.internal(_root);
 	late final Translations$vault$en vault = Translations$vault$en.internal(_root);
+	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
+	late final Translations$trust$en trust = Translations$trust$en.internal(_root);
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$calendar$en calendar = Translations$calendar$en.internal(_root);
 	late final Translations$note$en note = Translations$note$en.internal(_root);
@@ -146,6 +148,84 @@ class Translations$vault$en {
 	late final Translations$vault$methods$en methods = Translations$vault$methods$en.internal(_root);
 	late final Translations$vault$setup$en setup = Translations$vault$setup$en.internal(_root);
 	late final Translations$vault$unlock$en unlock = Translations$vault$unlock$en.internal(_root);
+}
+
+// Path: notes
+class Translations$notes$en {
+	Translations$notes$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'No notes yet'
+	String get emptyTitle => 'No notes yet';
+
+	/// en: 'Everything you write is encrypted on this device first.'
+	String get emptyBody => 'Everything you write is encrypted on this device first.';
+
+	/// en: 'Nothing here'
+	String get emptyByFilterTitle => 'Nothing here';
+
+	/// en: 'No notes match this view. Try another notebook or lens.'
+	String get emptyByFilterBody => 'No notes match this view. Try another notebook or lens.';
+
+	/// en: 'Could not load your notes'
+	String get errorTitle => 'Could not load your notes';
+
+	/// en: 'Your notes are still on this device. Try again.'
+	String get errorBody => 'Your notes are still on this device. Try again.';
+
+	/// en: 'Try again'
+	String get retry => 'Try again';
+
+	/// en: 'Offline. Your notes are safe on this device and will sync when you reconnect.'
+	String get offline => 'Offline. Your notes are safe on this device and will sync when you reconnect.';
+}
+
+// Path: trust
+class Translations$trust$en {
+	Translations$trust$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'On device'
+	String get onDevice => 'On device';
+
+	/// en: 'Encrypted on this device only. Syncing is available on Ink Pro.'
+	String get onDeviceMessage => 'Encrypted on this device only. Syncing is available on Ink Pro.';
+
+	/// en: 'Pending'
+	String get queued => 'Pending';
+
+	/// en: 'Changes are encrypted and waiting to sync.'
+	String get queuedMessage => 'Changes are encrypted and waiting to sync.';
+
+	/// en: 'Syncing'
+	String get syncing => 'Syncing';
+
+	/// en: 'Encrypting and sending your changes.'
+	String get syncingMessage => 'Encrypting and sending your changes.';
+
+	/// en: 'Synced'
+	String get synced => 'Synced';
+
+	/// en: 'Every note is encrypted and up to date on your other devices.'
+	String get syncedMessage => 'Every note is encrypted and up to date on your other devices.';
+
+	/// en: 'Sync failed'
+	String get failed => 'Sync failed';
+
+	/// en: 'Your notes are safe on this device. Syncing will retry.'
+	String get failedMessage => 'Your notes are safe on this device. Syncing will retry.';
+
+	/// en: 'Conflict'
+	String get conflicted => 'Conflict';
+
+	/// en: 'A note changed on two devices. Nothing has been overwritten.'
+	String get conflictedMessage => 'A note changed on two devices. Nothing has been overwritten.';
 }
 
 // Path: home
@@ -1130,6 +1210,26 @@ extension on Translations {
 			'vault.unlock.seed.verifyError' => 'Words do not match. Try again!',
 			'vault.unlock.seed.verifySuccess' => 'Verification successful',
 			'vault.unlock.throttled' => ({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.',
+			'notes.emptyTitle' => 'No notes yet',
+			'notes.emptyBody' => 'Everything you write is encrypted on this device first.',
+			'notes.emptyByFilterTitle' => 'Nothing here',
+			'notes.emptyByFilterBody' => 'No notes match this view. Try another notebook or lens.',
+			'notes.errorTitle' => 'Could not load your notes',
+			'notes.errorBody' => 'Your notes are still on this device. Try again.',
+			'notes.retry' => 'Try again',
+			'notes.offline' => 'Offline. Your notes are safe on this device and will sync when you reconnect.',
+			'trust.onDevice' => 'On device',
+			'trust.onDeviceMessage' => 'Encrypted on this device only. Syncing is available on Ink Pro.',
+			'trust.queued' => 'Pending',
+			'trust.queuedMessage' => 'Changes are encrypted and waiting to sync.',
+			'trust.syncing' => 'Syncing',
+			'trust.syncingMessage' => 'Encrypting and sending your changes.',
+			'trust.synced' => 'Synced',
+			'trust.syncedMessage' => 'Every note is encrypted and up to date on your other devices.',
+			'trust.failed' => 'Sync failed',
+			'trust.failedMessage' => 'Your notes are safe on this device. Syncing will retry.',
+			'trust.conflicted' => 'Conflict',
+			'trust.conflictedMessage' => 'A note changed on two devices. Nothing has been overwritten.',
 			'home.all' => 'All notes',
 			'home.today' => 'Today',
 			'home.completed' => 'Completed',
