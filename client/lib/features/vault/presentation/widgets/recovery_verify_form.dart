@@ -87,7 +87,7 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
 
         AnimatedBuilder(
           animation: _shakeController,

@@ -53,7 +53,7 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
           children: [
             const _Header(),
 
-            const SizedBox(height: 48),
+            const SizedBox(height: AppSpacing.huge),
 
             if (methods.contains(KeyType.pin))
               UnlockMethod(

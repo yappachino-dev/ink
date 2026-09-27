@@ -48,7 +48,7 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
           children: [
             const _Header(),
 
-            const SizedBox(height: 48),
+            const SizedBox(height: AppSpacing.huge),
 
             UnlockMethod(
               title: context.t.vault.methods.pin.title,

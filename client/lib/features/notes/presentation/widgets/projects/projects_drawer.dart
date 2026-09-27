@@ -46,7 +46,7 @@ class ProjectsDrawer extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
 
             // All notes first, because it is the default view and, until this
             // row existed, the only way out of a notebook was to switch tabs.
@@ -81,7 +81,7 @@ class ProjectsDrawer extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

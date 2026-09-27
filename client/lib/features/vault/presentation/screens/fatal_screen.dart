@@ -71,7 +71,7 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
                 children: [
                   const AppLogo(size: LogoSize.small),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.xxl),
 
                   Text(
                     context.t.vault.fatal.title,
@@ -87,7 +87,7 @@ class _FatalScreenState extends ConsumerState<FatalScreen>
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.huge),
 
                   // `VaultRecovery.reset()` drops the local database, zeroes
                   // the sync cursor, and clears both tokens. Note content is

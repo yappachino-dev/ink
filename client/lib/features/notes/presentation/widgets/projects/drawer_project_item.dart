@@ -81,7 +81,7 @@ class DrawerProjectItem extends ConsumerWidget {
                 color: context.colorScheme.onSurface,
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
 
               Text(
                 context.t.project.edit,
@@ -101,7 +101,7 @@ class DrawerProjectItem extends ConsumerWidget {
                 color: context.colorScheme.error,
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
 
               Text(
                 context.t.project.delete.tooltip,

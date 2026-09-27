@@ -47,7 +47,7 @@ class ProjectItem extends StatelessWidget {
             children: [
               ProjectIconView(value: icon, color: color),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
 
               Expanded(
                 child: Text(
@@ -60,7 +60,7 @@ class ProjectItem extends StatelessWidget {
               ),
 
               if (count != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   '$count',
                   style: context.textTheme.bodySmall?.copyWith(

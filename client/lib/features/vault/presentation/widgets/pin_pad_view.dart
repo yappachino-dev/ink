@@ -34,7 +34,7 @@ class PinPadView extends StatelessWidget {
       children: [
         _PinDots(pin.length),
 
-        const SizedBox(height: 32),
+        const SizedBox(height: AppSpacing.xxxl),
 
         _Keypad(onDigitTap: _addDigit, onBackspaceTap: _removeDigit),
       ],

@@ -46,7 +46,7 @@ class SettingsTile extends StatelessWidget {
                   color: context.colorScheme.primary,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: AppSpacing.md),
             ],
 
             Expanded(
@@ -56,7 +56,7 @@ class SettingsTile extends StatelessWidget {
                   Text(title, style: context.textTheme.titleMedium),
 
                   if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xs),
 
                     Text(
                       subtitle!,

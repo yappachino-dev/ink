@@ -66,7 +66,7 @@ class NoteCard extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
         ],
 
         Expanded(
@@ -97,7 +97,7 @@ class NoteCard extends ConsumerWidget {
               ),
 
               if (showDescription && preview.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
 
                 Text(
                   preview,
@@ -174,7 +174,7 @@ class NoteMetaRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: AppSize.iconSmall, color: color ?? hint),
-              const SizedBox(width: 4),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 text,
                 style: context.textTheme.labelSmall?.copyWith(

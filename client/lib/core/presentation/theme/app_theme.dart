@@ -1,6 +1,7 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ink/core/presentation/theme/contrast.dart';
 import 'package:ink/core/presentation/theme/ink_colors.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:material_ui/material_ui.dart';
@@ -82,29 +83,11 @@ abstract final class AppTheme {
 
     return scheme.copyWith(
       primary: primary,
-      onPrimary: _readableOn(primary),
-      onSecondary: _readableOn(scheme.secondary),
-      onTertiary: _readableOn(scheme.tertiary),
-      onError: _readableOn(scheme.error),
+      onPrimary: readableInkOn(primary),
+      onSecondary: readableInkOn(scheme.secondary),
+      onTertiary: readableInkOn(scheme.tertiary),
+      onError: readableInkOn(scheme.error),
     );
-  }
-
-  static Color _readableOn(Color background) {
-    final onBlack = _contrastRatio(Colors.black, background);
-    final onWhite = _contrastRatio(Colors.white, background);
-    return onBlack >= onWhite ? Colors.black : Colors.white;
-  }
-
-  static double _contrastRatio(Color foreground, Color background) {
-    final foregroundLuminance = foreground.computeLuminance();
-    final backgroundLuminance = background.computeLuminance();
-    final lighter = foregroundLuminance > backgroundLuminance
-        ? foregroundLuminance
-        : backgroundLuminance;
-    final darker = foregroundLuminance > backgroundLuminance
-        ? backgroundLuminance
-        : foregroundLuminance;
-    return (lighter + 0.05) / (darker + 0.05);
   }
 
   static const _subThemes = FlexSubThemesData(

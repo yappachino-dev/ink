@@ -52,7 +52,7 @@ class UnlockMethod extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
 
                 Text(
                   subtitle,

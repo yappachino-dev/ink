@@ -33,7 +33,7 @@ class PersonalizationScreen extends StatelessWidget {
                   style: textTheme.titleLarge,
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xxl),
 
                 Row(
                   children: [
@@ -57,7 +57,7 @@ class PersonalizationScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.md),
 
                     Expanded(
                       child: OutlinedButton(
@@ -143,7 +143,7 @@ class PersonalizationScreen extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
 
                   SettingsCard(
                     children: [

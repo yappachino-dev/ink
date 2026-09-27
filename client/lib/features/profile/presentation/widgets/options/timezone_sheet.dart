@@ -67,7 +67,7 @@ class _TimezoneSheetState extends ConsumerState<TimezoneSheet> {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
 
         FilledButton(
           onPressed: () {

@@ -114,7 +114,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
 
           Expanded(
             child: Text(
@@ -177,7 +177,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (currentNote.dueDate != null) ...[
@@ -191,7 +191,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (projectName.isNotEmpty) ...[
@@ -205,7 +205,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (currentNote.priority != TaskPriority.none) ...[
@@ -220,7 +220,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (currentNote.reminderMinutesBefore != null) ...[
@@ -261,7 +261,7 @@ class _DetailSection extends StatelessWidget {
           color: iconColor ?? context.theme.hintColor,
         ),
 
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.md),
 
         Expanded(child: child),
       ],

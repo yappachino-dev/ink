@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
+import 'package:ink/core/presentation/theme/contrast.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -50,10 +50,6 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   /// Whether the colour is one of the eight fixed swatches rather than the
   /// theme default, which the two rows previously compared inconsistently.
   bool get _isPaletteColor => projectColors.contains(_selectedColor);
-
-  /// Contrast-safe ink for a swatch of arbitrary colour.
-  Color _readableOn(Color background) =>
-      background.computeLuminance() > 0.45 ? Colors.black87 : Colors.white;
 
   @override
   void didChangeDependencies() {
@@ -180,7 +176,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           onSubmitted: (_) => FocusScope.of(context).nextFocus(),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
 
         Container(
           width: double.infinity,
@@ -199,7 +195,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
               Wrap(
                 spacing: 12,
@@ -258,7 +254,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                             ? Icon(
                                 Icons.check,
                                 size: AppSize.iconSmall,
-                                color: _readableOn(color),
+                                color: readableInkOn(color, dimAlpha: 0.87),
                               )
                             : null,
                       ),
@@ -270,7 +266,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
 
         Container(
           width: double.infinity,
@@ -289,7 +285,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
               Wrap(
                 spacing: 12,

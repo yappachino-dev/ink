@@ -73,7 +73,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             WideFilledButton(
               onPressed: () => const SetupVerifyRoute().push<void>(context),

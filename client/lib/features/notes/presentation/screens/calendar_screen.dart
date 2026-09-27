@@ -191,7 +191,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       : const CalendarCard(),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
 
                 // The journal rows sat flush to both screen edges while the
                 // calendar directly above them was inset, so the same note

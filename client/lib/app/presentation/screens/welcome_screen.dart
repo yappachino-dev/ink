@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: context.textTheme.displayLarge,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xxl),
 
               const AppLogo(size: LogoSize.large),
 
@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: Text(context.t.welcome.createLocalStorage),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
 
               OutlinedButton(
                 onPressed: () => const AuthRoute().push<void>(context),
