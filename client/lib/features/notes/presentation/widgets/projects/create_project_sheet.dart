@@ -142,7 +142,10 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           style: context.textTheme.bodyLarge,
           decoration: InputDecoration(
             prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 10),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.lg,
+                right: AppSpacing.sm,
+              ),
               // The live preview used to print the stored value straight into
               // the field, so a new notebook showed the word "book" in front of
               // its name.
@@ -167,8 +170,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             focusedBorder: borderStyle,
 
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
             ),
             isDense: true,
           ),

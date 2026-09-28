@@ -25,7 +25,7 @@ class UnlockMethod extends StatelessWidget {
         : context.colorScheme.primary.withValues(alpha: AppAlpha.soft);
 
     return AnimatedContainer(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.md),
       duration: AppDurations.base,
       width: double.infinity,
       decoration: BoxDecoration(
@@ -39,7 +39,10 @@ class UnlockMethod extends StatelessWidget {
           onTap: onTap,
           borderRadius: AppRadius.lgRadius,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.xl,
+              horizontal: AppSpacing.lg,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

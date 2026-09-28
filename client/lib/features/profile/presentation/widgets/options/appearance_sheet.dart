@@ -128,7 +128,7 @@ class _PaletteSwatch extends StatelessWidget {
         borderRadius: AppRadius.lgRadius,
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
+          margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
           padding: const EdgeInsets.all(AppSpacing.sm),
           decoration: BoxDecoration(
             borderRadius: AppRadius.smRadius,

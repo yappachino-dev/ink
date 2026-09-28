@@ -26,7 +26,7 @@ class SwipableCardWrapper extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(right: AppSpacing.xl),
         decoration: BoxDecoration(
           color: context.colorScheme.onError,
           borderRadius: AppRadius.mdRadius,

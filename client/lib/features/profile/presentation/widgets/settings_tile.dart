@@ -29,7 +29,10 @@ class SettingsTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: AppRadius.lgRadius,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
         child: Row(
           children: [
             if (icon != null) ...[

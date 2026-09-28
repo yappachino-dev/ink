@@ -37,7 +37,11 @@ class CalendarCard extends ConsumerWidget {
     );
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
+      padding: const EdgeInsets.only(
+        bottom: AppSpacing.md,
+        left: AppSpacing.sm,
+        right: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: context.ink.container,
         borderRadius: AppRadius.lgRadius,
@@ -73,8 +77,8 @@ class CalendarCard extends ConsumerWidget {
             formatButtonVisible: false,
             titleTextStyle: headerStyle,
             headerPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 8,
+              vertical: AppSpacing.md,
+              horizontal: AppSpacing.sm,
             ),
             leftChevronIcon: Icon(
               Icons.chevron_left,
@@ -121,7 +125,7 @@ class CalendarCard extends ConsumerWidget {
             ),
             markersMaxCount: 1,
             markerSize: 5,
-            markerMargin: const EdgeInsets.only(top: 1),
+            markerMargin: const EdgeInsets.only(top: AppSpacing.xs),
           ),
         ),
       ),

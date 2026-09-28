@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: context.ink.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: Column(
             children: [
               const Spacer(flex: 3),

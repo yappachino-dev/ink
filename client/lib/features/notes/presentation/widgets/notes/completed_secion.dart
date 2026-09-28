@@ -30,7 +30,10 @@ class CompletedSection extends ConsumerWidget {
             onTap: ref.read(completedExpnadedProvider.notifier).toggle,
             borderRadius: AppRadius.lgRadius,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
               child: Row(
                 children: [
                   Text(

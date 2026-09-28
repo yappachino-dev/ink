@@ -123,7 +123,10 @@ class _LogoutTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: AppRadius.lgRadius,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
         child: Center(
           child: Text(
             context.t.profile.personal.logout,

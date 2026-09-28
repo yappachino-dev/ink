@@ -67,7 +67,10 @@ class ProjectsDrawer extends ConsumerWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.md,
+              ),
               child: Divider(height: 1, color: context.theme.dividerColor),
             ),
 
@@ -84,7 +87,10 @@ class ProjectsDrawer extends ConsumerWidget {
             const SizedBox(height: AppSpacing.sm),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.sm,
+              ),
               child: Divider(height: 1, color: context.theme.dividerColor),
             ),
 
@@ -105,8 +111,8 @@ class ProjectsDrawer extends ConsumerWidget {
                     color: context.colorScheme.primary,
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 12,
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.md,
                   ),
                 ),
               ),

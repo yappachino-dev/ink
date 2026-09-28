@@ -23,7 +23,10 @@ class DayHeader extends ConsumerWidget {
     final title = _formatDayTitle(selectedDate, context.t);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: context.colorScheme.surfaceContainer,
         borderRadius: AppRadius.lgRadius,

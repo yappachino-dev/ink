@@ -102,7 +102,7 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
           child: Column(
             children: List.generate(widget.indices.length, (index) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 child: _NumberedField(
                   number: widget.indices[index] + 1,
                   isError: widget.isError,

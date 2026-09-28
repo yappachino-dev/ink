@@ -68,8 +68,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,7 +185,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
                   child: viewMode == CalendarViewMode.day
                       ? const DayHeader()
                       : const CalendarCard(),
@@ -200,7 +202,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 // as one edge.
                 const Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                     child: JournalDayList(),
                   ),
                 ),

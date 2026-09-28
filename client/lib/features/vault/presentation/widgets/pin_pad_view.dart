@@ -53,7 +53,7 @@ class _PinDots extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(maxPinLength, (index) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: AnimatedContainer(
             duration: AppDurations.base,
             width: 24,

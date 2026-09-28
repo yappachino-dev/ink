@@ -64,7 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       backgroundColor: context.ink.surface,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: ScaleTransition(

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -56,7 +57,7 @@ class _ContentForwardList extends ConsumerWidget {
         if (title != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Text(title!, style: context.textTheme.headlineSmall),
             ),
           ),
@@ -66,7 +67,7 @@ class _ContentForwardList extends ConsumerWidget {
           itemBuilder: (ctx, index) {
             final note = notes[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
@@ -100,7 +101,7 @@ class _TaskForwardList extends ConsumerWidget {
         if (title != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Text(title!, style: context.textTheme.headlineSmall),
             ),
           ),
@@ -110,7 +111,7 @@ class _TaskForwardList extends ConsumerWidget {
           itemBuilder: (ctx, index) {
             final note = activeNotes[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
@@ -125,7 +126,7 @@ class _TaskForwardList extends ConsumerWidget {
         if (completedNotes.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: CompletedSection(
                 children: [
                   ...completedNotes.map(
