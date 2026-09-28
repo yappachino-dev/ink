@@ -114,7 +114,7 @@ class NoteCard extends ConsumerWidget {
                       (projectName?.isNotEmpty ?? false) ||
                       (showPriority &&
                           note.priority != TaskPriority.none))) ...[
-                const SizedBox(height: 6),
+                AppSpacing.gapSm,
 
                 NoteMetaRow(
                   note: note,

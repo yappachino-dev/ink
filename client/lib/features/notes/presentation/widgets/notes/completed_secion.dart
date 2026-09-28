@@ -50,7 +50,7 @@ class CompletedSection extends ConsumerWidget {
                     style: context.textTheme.bodySmall,
                   ),
 
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.sm),
 
                   AnimatedRotation(
                     turns: isExpanded ? 0 : -0.5,

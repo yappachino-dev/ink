@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';
@@ -28,7 +29,12 @@ class CompletedNoteCard extends ConsumerWidget {
         child: GestureDetector(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              0,
+              AppSpacing.md,
+              AppSpacing.md,
+            ),
             child: NoteCard(note: note, projectName: projectName),
           ),
         ),
