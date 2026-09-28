@@ -464,7 +464,11 @@ class _QuillToolbar extends StatelessWidget {
     // into a single block.
     return Container(
       decoration: BoxDecoration(
-        color: context.ink.surface,
+        // The one place this token is consumed. The bar is the boundary
+        // between the note - the only editable surface in the app - and the
+        // controls below it, so it is tinted rather than divided by a hairline
+        // alone.
+        color: context.ink.chrome,
         border: Border(
           top: BorderSide(color: context.colorScheme.outlineVariant),
         ),
@@ -498,9 +502,11 @@ class _QuillToolbar extends StatelessWidget {
                 config: QuillSimpleToolbarConfig(
                   // Belt and braces: `canvasColor` is themed too, but the
                   // toolbar reads its own `color` first and that one is
-                  // never inherited. Set to the bar's own surface so the
-                  // toolbar's background cannot read as a band inside it.
-                  color: context.ink.surface,
+                  // never inherited. The same token as the bar around it:
+                  // quill paints its own background, so a different value here
+                  // is a band inside the bar, which is the defect this token
+                  // exists to prevent.
+                  color: context.ink.chrome,
                   showStrikeThrough: false,
                   showColorButton: false,
                   showBackgroundColorButton: false,

@@ -109,6 +109,20 @@ abstract final class AppTheme {
     return InkColors(
       scaffold: isDark ? cs.surface : cs.surfaceContainer,
       surface: isDark ? cs.surfaceContainer : cs.surface,
+      // Editor chrome: the one surface that sits against editable content.
+      // A named token rather than a reach for `colorScheme.surfaceContainer`
+      // at the call site, because reaching for the raw role in one place and
+      // `ink.*` in another is exactly how the toolbar and the scaffold ended
+      // up disagreeing in dark only.
+      //
+      // It is chosen per brightness against [surface] rather than fixed,
+      // because `surface` is not one raw role either: in dark it is already
+      // `surfaceContainer`, so a fixed `surfaceContainer` chrome would have
+      // been *identical* to the note surface in dark - an invisible tint in
+      // exactly the theme where the band bug was visible. One step further out
+      // in each, which also keeps the direction right: chrome is darker than
+      // the page in light and lighter in dark, so it lifts off in both.
+      chrome: isDark ? cs.surfaceContainerHigh : cs.surfaceContainer,
       container: isDark ? cs.surfaceContainerHigh : cs.surfaceContainerLow,
       onSurface: cs.onSurface,
       onSurfaceMuted: cs.onSurfaceVariant,
