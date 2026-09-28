@@ -734,22 +734,22 @@ class Translations$note$reminder$en {
 	/// en: 'Remind at time'
 	String get atTime => 'Remind at time';
 
-	/// en: '(one) {1 minute} (other) {{n} minutes}'
+	/// en: '(one) {1 minute} (other) {$n minutes}'
 	String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: '1 minute',
-		other: '{n} minutes',
+		other: '${n} minutes',
 	);
 
-	/// en: '(one) {1 hour} (other) {{n} hours}'
+	/// en: '(one) {1 hour} (other) {$n hours}'
 	String hours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: '1 hour',
-		other: '{n} hours',
+		other: '${n} hours',
 	);
 
-	/// en: '(one) {1 day} (other) {{n} days}'
+	/// en: '(one) {1 day} (other) {$n days}'
 	String days({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: '1 day',
-		other: '{n} days',
+		other: '${n} days',
 	);
 }
 
@@ -1366,9 +1366,9 @@ extension on Translations {
 			'note.reminder.select' => 'Select a reminder',
 			'note.reminder.none' => 'No reminder',
 			'note.reminder.atTime' => 'Remind at time',
-			'note.reminder.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 minute', other: '{n} minutes', ), 
-			'note.reminder.hours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '{n} hours', ), 
-			'note.reminder.days' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '{n} days', ), 
+			'note.reminder.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 minute', other: '${n} minutes', ), 
+			'note.reminder.hours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '${n} hours', ), 
+			'note.reminder.days' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '${n} days', ), 
 			'note.dueDate' => 'Due date',
 			'note.notebook' => 'Notebook',
 			'project.title' => 'My projects',

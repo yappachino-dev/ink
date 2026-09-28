@@ -21,11 +21,11 @@ class ReminderPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomSheetLayout(
       padding: const EdgeInsets.only(
-  left: AppSpacing.xl,
-  right: AppSpacing.xl,
-  top: AppSpacing.md,
-  bottom: AppSpacing.lg,
-),
+        left: AppSpacing.xl,
+        right: AppSpacing.xl,
+        top: AppSpacing.md,
+        bottom: AppSpacing.lg,
+      ),
       header: Text(
         context.t.note.reminder.select,
         style: context.textTheme.titleLarge,
@@ -56,35 +56,43 @@ class _ReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(
-        option == null
-            ? Icons.notifications_off_outlined
-            : Icons.notifications_outlined,
-        size: AppSize.iconLarge,
-        color: isSelected
-            ? context.colorScheme.primary
-            : context.theme.hintColor,
-      ),
-      title: Text(
-        option == null
-            ? context.t.note.reminder.none
-            : reminderLabel(option!, context.t),
-        style: context.textTheme.titleMedium?.copyWith(
+    // A [Material] of its own. [BottomSheetLayout] paints the sheet through a
+    // [DecoratedBox], and a [ListTile] paints its background and ink splash on
+    // the nearest [Material] ancestor - so without this the tap ripple was
+    // drawn on the sheet's own background and never seen. Flutter asserts on
+    // it in debug builds; the ripple was quietly missing in release too.
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(
+          option == null
+              ? Icons.notifications_off_outlined
+              : Icons.notifications_outlined,
+          size: AppSize.iconLarge,
           color: isSelected
               ? context.colorScheme.primary
-              : context.colorScheme.onSurface,
+              : context.theme.hintColor,
         ),
+        title: Text(
+          option == null
+              ? context.t.note.reminder.none
+              : reminderLabel(option!, context.t),
+          style: context.textTheme.titleMedium?.copyWith(
+            color: isSelected
+                ? context.colorScheme.primary
+                : context.colorScheme.onSurface,
+          ),
+        ),
+        trailing: isSelected
+            ? Icon(
+                Icons.check,
+                size: AppSize.iconMedium,
+                color: context.colorScheme.primary,
+              )
+            : null,
+        onTap: onTap,
       ),
-      trailing: isSelected
-          ? Icon(
-              Icons.check,
-              size: AppSize.iconMedium,
-              color: context.colorScheme.primary,
-            )
-          : null,
-      onTap: onTap,
     );
   }
 }

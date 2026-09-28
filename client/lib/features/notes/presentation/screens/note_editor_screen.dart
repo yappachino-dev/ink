@@ -1,5 +1,9 @@
 import 'dart:async';
 
+// Stock Material, prefixed. `flutter_quill` is built from stock widgets, so
+// the toolbar needs a stock `Theme` to read. Everything the app itself draws
+// goes through the decoupled `material_ui` fork.
+import 'package:flutter/material.dart' as flutter;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
@@ -368,8 +372,11 @@ class _MetaActionBar extends ConsumerWidget {
     return Center(
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 16,
-        runSpacing: 12,
+        // Denser than the default generous Wrap spacing so the meta bar reads
+        // as one strip of editor chrome, at the same rhythm as the Quill
+        // toolbar directly above it, rather than as a row of spaced chips.
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
         children: [
           MetaIconButton(
             icon: Icons.calendar_today_outlined,
@@ -444,28 +451,49 @@ class _QuillToolbar extends StatelessWidget {
           top: BorderSide(color: context.colorScheme.outlineVariant),
         ),
       ),
-      child: QuillSimpleToolbar(
-        controller: quillController,
-        config: QuillSimpleToolbarConfig(
-          // Belt and braces: `canvasColor` is themed too, but the toolbar
-          // reads its own `color` first and that one is never inherited.
-          color: context.colorScheme.surface,
-          showStrikeThrough: false,
-          showColorButton: false,
-          showBackgroundColorButton: false,
-          showClearFormat: false,
-          showLink: false,
-          showHeaderStyle: false,
-          showCodeBlock: false,
-          showQuote: false,
-          showIndent: false,
-          showSearchButton: false,
-          showSubscript: false,
-          showSuperscript: false,
-          showDividers: false,
-          multiRowsDisplay: false,
-        ),
-      ),
+      child:
+          // `flutter_quill` builds its toolbar out of stock
+          // `package:flutter/material.dart` widgets, but this app themes
+          // through the decoupled `material_ui` fork, which has its own
+          // `Theme`, `ThemeData` and `ColorScheme` types. Stock widgets
+          // therefore resolved Flutter's *default* light theme no matter what
+          // the app was set to, so in dark mode the font-family and
+          // font-size previews and the disabled undo/redo arrows painted dark
+          // ink on the dark surface: measured at 1.0-1.2:1, i.e. invisible.
+          // Passing a stock theme with the right brightness is the shim. Same
+          // defect as the logo reading the wrong theme in #75, reached here
+          // through a dependency rather than an import.
+          flutter.Theme(
+            data: flutter.ThemeData(
+              brightness: context.isDark ? Brightness.dark : Brightness.light,
+              colorScheme: flutter.ColorScheme.fromSeed(
+                seedColor: context.colorScheme.primary,
+                brightness: context.isDark ? Brightness.dark : Brightness.light,
+              ),
+            ),
+            child: QuillSimpleToolbar(
+              controller: quillController,
+              config: QuillSimpleToolbarConfig(
+                // Belt and braces: `canvasColor` is themed too, but the toolbar
+                // reads its own `color` first and that one is never inherited.
+                color: context.colorScheme.surface,
+                showStrikeThrough: false,
+                showColorButton: false,
+                showBackgroundColorButton: false,
+                showClearFormat: false,
+                showLink: false,
+                showHeaderStyle: false,
+                showCodeBlock: false,
+                showQuote: false,
+                showIndent: false,
+                showSearchButton: false,
+                showSubscript: false,
+                showSuperscript: false,
+                showDividers: false,
+                multiRowsDisplay: false,
+              ),
+            ),
+          ),
     );
   }
 }

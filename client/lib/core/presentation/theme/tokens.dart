@@ -115,6 +115,14 @@ abstract final class AppSize {
   /// dense rows this app uses, so interactive glyphs are floored here instead.
   static const double minTapTarget = 44;
 
+  /// Tap target for a control nested *inside* another target.
+  ///
+  /// The [minTapTarget] floor assumes the control is the only way to reach
+  /// its action. A clear button inside a chip is not: the chip's whole area
+  /// opens the picker. At 44 the chip grows to 52 tall - taller than the
+  /// editor chrome it sits above - so the row stopped reading as one bar.
+  static const double compactTapTarget = 28;
+
   /// A full-width action button.
   static const Size buttonHeight = Size(double.infinity, 48);
 

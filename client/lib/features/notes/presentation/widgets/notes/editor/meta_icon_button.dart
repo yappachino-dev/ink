@@ -10,6 +10,11 @@ import 'package:material_ui/material_ui.dart';
 /// in the editor's meta bar. [tooltip] is therefore required: it is the name,
 /// and Material supplies focus, a ripple and the minimum tap target that a
 /// bare [GestureDetector] did not.
+///
+/// When the field *is* set the chip carries a second action, a clear button.
+/// The two are separate semantics nodes: they are two actions, and collapsing
+/// them into one labelled node is how the clear control ended up unreachable
+/// by name.
 class MetaIconButton extends StatelessWidget {
   const MetaIconButton({
     required this.icon,
@@ -39,84 +44,116 @@ class MetaIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveColor = isActive
+    final color = isActive
         ? (activeColor ?? context.colorScheme.primary)
         : context.colorScheme.primary;
 
-    final button = label == null
-        ? IconButton(
-            onPressed: onTap,
-            icon: Icon(icon, size: AppSize.iconMedium),
-            color: effectiveColor,
-            tooltip: tooltip,
-            // IconButton defaults to 48dp, which is taller than this bar; the
-            // density keeps the row compact without going under the floor.
-            visualDensity: VisualDensity.compact,
-            constraints: const BoxConstraints(
-              minWidth: AppSize.minTapTarget,
-              minHeight: AppSize.minTapTarget,
-            ),
-          )
-        : Tooltip(
-            message: tooltip,
+    final unset = Semantics(
+      button: true,
+      label: tooltip,
+      excludeSemantics: true,
+      child: IconButton(
+        onPressed: onTap,
+        icon: Icon(icon, size: AppSize.iconMedium),
+        color: color,
+        tooltip: tooltip,
+        // IconButton defaults to 48dp, which is taller than this bar; the
+        // density keeps the row compact without going under the floor.
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints(
+          minWidth: AppSize.minTapTarget,
+          minHeight: AppSize.minTapTarget,
+        ),
+      ),
+    );
+
+    if (label == null) return unset;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: AppAlpha.soft),
+        borderRadius: AppRadius.smRadius,
+        border: Border.all(color: color.withValues(alpha: AppAlpha.medium)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Siblings, not nested. The chip's node must not swallow the clear
+          // button's, or the clear control is invisible to a screen reader
+          // even though it is a separate tap target. Equally the [InkWell]
+          // sits *inside* the labelled node rather than around it: wrapping
+          // the whole chip in an [InkWell] gave the chip its own unlabelled
+          // focus stop ahead of the real one.
+          Semantics(
+            button: true,
+            label: '$tooltip: $label',
+            // Declared here rather than inherited: `excludeSemantics` below
+            // drops descendant semantics, and with it the [InkWell]'s tap
+            // action, which left the chip announced as a button that did
+            // nothing when activated.
+            onTap: onTap,
+            excludeSemantics: true,
             child: InkWell(
               onTap: onTap,
               borderRadius: AppRadius.smRadius,
-              child: Container(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
                   vertical: AppSpacing.xs,
                 ),
-                decoration: BoxDecoration(
-                  color: effectiveColor.withValues(alpha: AppAlpha.soft),
-                  borderRadius: AppRadius.smRadius,
-                  border: Border.all(
-                    color: effectiveColor.withValues(alpha: AppAlpha.medium),
-                  ),
-                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(icon, size: AppSize.iconSmall, color: effectiveColor),
-
+                    Icon(icon, size: AppSize.iconSmall, color: color),
                     const SizedBox(width: AppSpacing.xs),
-
                     Text(
                       label!,
                       style: context.textTheme.labelSmall?.copyWith(
-                        color: effectiveColor,
+                        color: color,
                       ),
                     ),
-
-                    if (onClear != null) ...[
-                      const SizedBox(width: AppSpacing.xs),
-
-                      // A separate control, not a tap target nested inside the
-                      // parent's: a single tap has to resolve to one action.
-                      IconButton(
-                        onPressed: onClear,
-                        icon: const Icon(Icons.close, size: AppSize.iconSmall),
-                        color: effectiveColor,
-                        tooltip: context.t.common.remove,
-                        visualDensity: VisualDensity.compact,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: AppSize.minTapTarget,
-                          minHeight: AppSize.minTapTarget,
-                        ),
-                      ),
-                    ],
                   ],
                 ),
               ),
             ),
-          );
+          ),
 
-    return Semantics(
-      button: true,
-      label: label == null ? tooltip : '$tooltip: $label',
-      excludeSemantics: true,
-      child: button,
+          if (onClear != null) ...[
+            const SizedBox(width: AppSpacing.xs),
+
+            // Deliberately not an [IconButton]. The chip sizes to its tallest
+            // child and `IconButton` has a hard 40px floor in this fork -
+            // `constraints` and `styleFrom(minimumSize: 32)` both still
+            // measure 40 - so an icon-only clear button made every *set*
+            // field 50px tall against the 32px Quill toolbar button directly
+            // above it. Unset buttons keep the full target; this one sits
+            // inside a chip that is already the primary target.
+            Semantics(
+              button: true,
+              label: context.t.common.remove,
+              child: Tooltip(
+                message: context.t.common.remove,
+                // The tooltip must not become the node a screen reader lands
+                // on; the explicit label here is the name.
+                excludeFromSemantics: true,
+                child: InkWell(
+                  onTap: onClear,
+                  borderRadius: AppRadius.smRadius,
+                  child: SizedBox(
+                    width: AppSize.compactTapTarget,
+                    height: AppSize.compactTapTarget,
+                    child: Icon(
+                      Icons.close,
+                      size: AppSize.iconSmall,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

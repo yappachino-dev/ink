@@ -254,15 +254,15 @@
             "atTime": "Remind at time",
             "minutes": {
                 "one": "1 minute",
-                "other": "{n} minutes"
+                "other": "$n minutes"
             },
             "hours": {
                 "one": "1 hour",
-                "other": "{n} hours"
+                "other": "$n hours"
             },
             "days": {
                 "one": "1 day",
-                "other": "{n} days"
+                "other": "$n days"
             }
         },
         "dueDate": "Due date",
