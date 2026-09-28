@@ -20,9 +20,11 @@ class PersonalizationScreen extends StatelessWidget {
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
           backgroundColor: context.ink.surface,
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xxl,
-              vertical: AppSpacing.xxl,
+            padding: const EdgeInsets.only(
+              left: AppSpacing.xxl,
+              right: AppSpacing.xxl,
+              top: AppSpacing.xxl,
+              bottom: AppSpacing.xl,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

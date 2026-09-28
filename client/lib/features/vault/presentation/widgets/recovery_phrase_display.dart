@@ -34,7 +34,7 @@ class RecoveryPhraseDisplay extends StatelessWidget {
             ],
           ),
 
-          if (rowIndex < 3) const SizedBox(height: AppSpacing.xs),
+          if (rowIndex < 3) const SizedBox(height: AppSpacing.xl),
         ],
       ],
     );

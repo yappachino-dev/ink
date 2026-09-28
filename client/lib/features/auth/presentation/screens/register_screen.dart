@@ -89,7 +89,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xxxl),
 
             EmailFormField(controller: _emailController),
 

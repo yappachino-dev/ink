@@ -73,7 +73,7 @@ class _RecoveryPhraseInputState extends State<RecoveryPhraseInput> {
             ],
           ),
 
-          if (rowIndex < 3) const SizedBox(height: AppSpacing.xs),
+          if (rowIndex < 3) const SizedBox(height: AppSpacing.xl),
         ],
       ],
     );

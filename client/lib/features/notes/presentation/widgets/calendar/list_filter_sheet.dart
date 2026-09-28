@@ -18,10 +18,12 @@ class ListFilterSheet extends ConsumerWidget {
     final projects = ref.watch(projectsProvider).value ?? [];
     final selectedProjectId = ref.watch(selectedProjectIdProvider);
     return BottomSheetLayout(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.md,
-      ),
+      padding: const EdgeInsets.only(
+  left: AppSpacing.xl,
+  right: AppSpacing.xl,
+  top: AppSpacing.md,
+  bottom: AppSpacing.lg,
+),
       header: Text(context.t.note.project, style: context.textTheme.titleLarge),
       children: [
         _ProjectTile(

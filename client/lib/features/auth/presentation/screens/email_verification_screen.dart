@@ -93,7 +93,7 @@ class _EmailVerificationScreenState
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xxxl),
 
             CodeFormField(controller: _codeController),
 

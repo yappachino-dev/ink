@@ -6,10 +6,12 @@ class BottomSheetLayout extends StatelessWidget {
   const BottomSheetLayout({
     required this.children,
     this.header,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: AppSpacing.lg,
-      vertical: AppSpacing.md,
-    ),
+    this.padding = const EdgeInsets.only(
+  left: AppSpacing.lg,
+  right: AppSpacing.lg,
+  top: AppSpacing.md,
+  bottom: AppSpacing.lg,
+),
     this.padForKeyboard = false,
     this.showDivider = false,
     super.key,

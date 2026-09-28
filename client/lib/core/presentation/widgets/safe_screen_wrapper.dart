@@ -4,10 +4,12 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 class SafeScreenWrapper extends StatelessWidget {
   const SafeScreenWrapper({
     required this.child,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: AppSpacing.xxl,
-      vertical: AppSpacing.xl,
-    ),
+    this.padding = const EdgeInsets.only(
+  left: AppSpacing.xxl,
+  right: AppSpacing.xxl,
+  top: AppSpacing.xl,
+  bottom: AppSpacing.xxl,
+),
     super.key,
   });
 
