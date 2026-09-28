@@ -82,8 +82,19 @@ final RegExp _symbolicSize = RegExp(
 );
 
 void main(List<String> args) {
-  final base = args.isNotEmpty ? args[0] : 'origin/main';
-  final head = args.length > 1 ? args[1] : 'worktree';
+  // A blank argument is not a ref. `make check-spacing BASE=""` expands to
+  // nothing, but a direct invocation can pass an empty string, and `git show
+  // :path` - which is what an empty ref produces - reads the *staging index*
+  // rather than a commit. That compares the worktree against itself and
+  // reports success without checking anything.
+  String refOr(List<String> args, int index, String fallback) {
+    if (index >= args.length) return fallback;
+    final value = args[index].trim();
+    return value.isEmpty ? fallback : value;
+  }
+
+  final base = refOr(args, 0, 'origin/main');
+  final head = refOr(args, 1, 'worktree');
 
   final prefix = _git(['rev-parse', '--show-prefix']).trim();
   final problems = <String>[];

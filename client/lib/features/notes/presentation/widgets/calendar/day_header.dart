@@ -9,12 +9,24 @@ class DayHeader extends ConsumerWidget {
   const DayHeader({super.key});
 
   void _step(BuildContext context, WidgetRef ref, int days) {
-    // ref.read, not the ref.watch in [selectedDateOf]: this runs from an
-    // onPressed callback, not from build, so a watch here would re-subscribe
-    // on every tap and never dispose.
-    final next = ref
-        .read(calendarSelectedDateProvider)
-        .add(Duration(days: days));
+    final current = ref.read(calendarSelectedDateProvider);
+
+    // Calendar arithmetic, not `add(Duration(days: days))`.
+    //
+    // The provider is seeded from `DateTime.now()`, so this value carries a
+    // real time of day, and `Duration(days: 1)` is exactly 24 hours. On a
+    // daylight-saving boundary that is not one day: in America/New_York, a
+    // 00:30 on 1 Nov 2026 (a 25-hour day) plus 24 hours is 23:30 the *same*
+    // day, so the button did nothing; and 23:30 on 7 Mar 2026 (a 23-hour day)
+    // plus 24 hours is 00:30 on the 9th, so it skipped a day. Both cases
+    // behave under UTC, which is why a UTC test runner never saw it.
+    //
+    // The result is midnight, so the state becomes a canonical date. Every
+    // consumer treats it as one - `isSameDay` in the journal query, `.day` in
+    // the header and the grid - so nothing reads the time, and a canonical
+    // value is comparable with `==` and cannot drift again.
+    final next = DateTime(current.year, current.month, current.day + days);
+
     ref.read(calendarSelectedDateProvider.notifier).date = next;
     ref.read(calendarFocusedDateProvider.notifier).date = next;
   }

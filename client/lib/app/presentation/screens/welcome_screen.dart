@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: context.ink.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: AppSpacing.screen,
           child: Column(
             children: [
               const Spacer(flex: 3),
@@ -45,10 +45,7 @@ class WelcomeScreen extends StatelessWidget {
               // for the buttons rather than a caption to the thesis.
               const SizedBox(height: AppSpacing.xxxl),
 
-              Text(
-                context.t.auth.chooseMethod,
-                textAlign: TextAlign.center,
-              ),
+              Text(context.t.auth.chooseMethod, textAlign: TextAlign.center),
 
               const Spacer(flex: 3),
 
