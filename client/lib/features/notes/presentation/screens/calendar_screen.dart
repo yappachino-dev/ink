@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
@@ -211,14 +212,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openAddTaskSheet,
-        backgroundColor: context.colorScheme.primary,
-        foregroundColor: context.colorScheme.surface,
-        elevation: 4,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: AppSize.iconXLarge),
-      ),
+      // The same widget and the same location as Notes. These were two
+      // hand-built buttons whose insets differed by 4px, so the button jumped
+      // when switching tabs; the elevation differed too.
+      floatingActionButtonLocation: const AppFabLocation(),
+      floatingActionButton: AppFab(onPressed: _openAddTaskSheet),
     );
   }
 }

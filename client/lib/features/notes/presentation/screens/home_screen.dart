@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -127,32 +128,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
 
-          Positioned(
-            right: AppSpacing.gutter,
-            bottom: AppSpacing.gutter,
-            child: AnimatedScale(
-              scale: _isDrawerOpen ? 0.0 : 1.0,
-              duration: AppDurations.base,
-              curve: Curves.easeInOut,
-              child: AnimatedOpacity(
-                opacity: _isDrawerOpen ? 0.0 : 1.0,
-                duration: AppDurations.base,
-                child: FloatingActionButton(
-                  // Its diameter is the framework default, which is what
-                  // [AppSize.fab] states for the list's scroll clearance.
-                  // This fork exposes no size parameter to pin it to, so if the
-                  // button is ever resized the clearance has to move with it.
-                  onPressed: _isDrawerOpen ? null : _openAddTask,
-                  backgroundColor: context.colorScheme.primary,
-                  foregroundColor: context.colorScheme.surface,
-                  elevation: 0,
-                  shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: AppSize.iconXLarge),
-                ),
-              ),
-            ),
-          ),
-
           if (_isDrawerOpen)
             Positioned.fill(
               child: AnimatedBuilder(
@@ -187,6 +162,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: const ProjectsDrawer(),
             ),
         ],
+      ),
+      // In the Scaffold's slot rather than `Positioned` in the Stack above, so
+      // it lands identically to Calendar's. The drawer animation comes along
+      // for the ride: at scale 0 the button has no hit area, so the open
+      // drawer cannot have it swallow taps meant for the scrim.
+      floatingActionButtonLocation: const AppFabLocation(),
+      floatingActionButton: AnimatedScale(
+        scale: _isDrawerOpen ? 0.0 : 1.0,
+        duration: AppDurations.base,
+        curve: Curves.easeInOut,
+        child: AnimatedOpacity(
+          opacity: _isDrawerOpen ? 0.0 : 1.0,
+          duration: AppDurations.base,
+          child: AppFab(onPressed: _isDrawerOpen ? null : _openAddTask),
+        ),
       ),
     );
   }

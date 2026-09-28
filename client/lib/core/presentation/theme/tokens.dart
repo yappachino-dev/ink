@@ -52,6 +52,14 @@ abstract final class AppSpacing {
   static const SizedBox gapXl = SizedBox(height: xl);
   static const SizedBox gapXxl = SizedBox(height: xxl);
 
+  /// Inset from the trailing and bottom edges for the floating action button.
+  ///
+  /// Notes and Calendar each placed their own button and the two disagreed by
+  /// 4px, so the button visibly jumped when switching tabs. The Scaffold's
+  /// built-in end-float location hard-codes its own margin, so `AppFabLocation`
+  /// reads this instead and every screen's button moves together.
+  static const double fabInset = gutter;
+
   /// The app's single screen gutter.
   ///
   /// Three screens had their own horizontal margins - the notes list used 16,
