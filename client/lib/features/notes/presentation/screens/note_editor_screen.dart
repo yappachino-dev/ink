@@ -297,9 +297,16 @@ class _EditorSurface extends StatelessWidget {
             ),
           ),
         ),
-        // Was 24 above and 16 below: 80px of chrome wrapped around a 40px row,
-        // which is what made the strip read as tall rather than as a toolbar.
-        Divider(height: AppSpacing.sm, color: context.theme.dividerColor),
+        // The only marker of where the editable region ends. The tint on the
+        // toolbar below does not do this job - the toolbar sits *under* this
+        // line, not at the boundary - so this hairline has to carry it alone.
+        // It was `dividerColor`, which measured 1.14:1 against the surface and
+        // came out fainter than the border between the two non-editable rows
+        // below it. `outlineVariant` gives both boundaries equal weight.
+        Divider(
+          height: AppSpacing.sm,
+          color: context.colorScheme.outlineVariant,
+        ),
         const _MetaActionBar(),
         const SizedBox(height: AppSpacing.sm),
       ],

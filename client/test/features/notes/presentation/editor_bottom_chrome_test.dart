@@ -118,4 +118,63 @@ void main() {
       );
     });
   }
+
+  testWidgets('the meta row stays on the note surface, not the chrome', (
+    tester,
+  ) async {
+    await pumpEditor(tester, await _service(), brightness: Brightness.dark);
+
+    // Two zones only: the note (editable) and the toolbar (chrome). The meta
+    // row shows note structure but is a row of buttons, and it was chosen to
+    // sit on the note's own surface so the note reads as one continuous
+    // rectangle from its text through its metadata. If it ever grows real
+    // content - a preview, tags, a summary - that choice should flip, and
+    // this test is the thing that makes the flip deliberate.
+    final metaRow = find.byType(Wrap).first;
+
+    final tintedAncestors = find
+        .ancestor(
+          of: metaRow,
+          matching: find.byWidgetPredicate(
+            (w) =>
+                w is Container &&
+                w.decoration is BoxDecoration &&
+                (w.decoration! as BoxDecoration).color != null,
+          ),
+        )
+        .evaluate();
+
+    expect(
+      tintedAncestors,
+      isEmpty,
+      reason:
+          'the meta row gained a surface of its own, which makes three '
+          'zones; it belongs to the note',
+    );
+  });
+
+  testWidgets('the editable boundary is not fainter than the one below it', (
+    tester,
+  ) async {
+    await pumpEditor(tester, await _service(), brightness: Brightness.dark);
+
+    // Both lines divide the editor's bottom into zones, so they are held to the
+    // same token rather than to "roughly similar": the meta row's was
+    // `dividerColor`, which measured 1.14:1 against the surface and came out
+    // fainter than the toolbar's `outlineVariant` border. Asserting equality
+    // with the scheme role says the intent; comparing rendered pixels would
+    // only restate it.
+    final dividers = find.byType(Divider);
+    expect(dividers, findsOneWidget);
+
+    final boundary = tester.widget<Divider>(dividers.first);
+    final context = tester.element(dividers.first);
+    expect(
+      boundary.color,
+      Theme.of(context).colorScheme.outlineVariant,
+      reason:
+          'the editable boundary should not be the faintest line in the '
+          'editor',
+    );
+  });
 }
