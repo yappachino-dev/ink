@@ -51,18 +51,30 @@ class MetaIconButton extends StatelessWidget {
     final unset = Semantics(
       button: true,
       label: tooltip,
+      // Declared rather than inherited: `excludeSemantics` drops descendant
+      // actions, and with them the [InkWell]'s tap action, which left the
+      // control announced as a button that did nothing when activated.
+      onTap: onTap,
       excludeSemantics: true,
-      child: IconButton(
-        onPressed: onTap,
-        icon: Icon(icon, size: AppSize.iconMedium),
-        color: color,
-        tooltip: tooltip,
-        // IconButton defaults to 48dp, which is taller than this bar; the
-        // density keeps the row compact without going under the floor.
-        visualDensity: VisualDensity.compact,
-        constraints: const BoxConstraints(
-          minWidth: AppSize.minTapTarget,
-          minHeight: AppSize.minTapTarget,
+      child: Tooltip(
+        message: tooltip,
+        // The tooltip must not become the node a screen reader lands on; the
+        // explicit label here is the name.
+        excludeFromSemantics: true,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: AppRadius.smRadius,
+          // Not an [IconButton]. It has a hard 40px floor in this fork -
+          // `constraints` and `styleFrom(minimumSize: 32)` both still measure
+          // 40 - which made this row 40 tall against the 32px chip beside it,
+          // so unset and set fields did not line up. 28 is below Material's
+          // 48 preference but clears the WCAG 2.2 AA target-size floor of 24,
+          // and each control keeps a name, a tooltip and a focus stop.
+          child: SizedBox(
+            width: AppSize.compactTapTarget,
+            height: AppSize.compactTapTarget,
+            child: Icon(icon, size: AppSize.iconMedium, color: color),
+          ),
         ),
       ),
     );

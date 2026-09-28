@@ -39,11 +39,26 @@ void main() {
         ),
       );
 
-      // Material supplies focus, a ripple, a tooltip and the minimum tap
-      // target. A bare GestureDetector wrapping the Icon supplied none of them,
-      // which is why the tooltip is now a required argument.
-      expect(find.byType(IconButton), findsOneWidget);
-      expect(find.byTooltip('Due date'), findsOneWidget);
+      // Focus, a ripple, a tooltip and a real tap target. A bare
+      // GestureDetector wrapping the Icon supplied none of them, which is why
+      // the tooltip is now a required argument. The control is no longer an
+      // IconButton - this fork floors those at 40px, which held the whole row
+      // 40 tall against the 32px chip beside it - so it is checked through its
+      // tooltip, its semantics and its size.
+      // `find.byTooltip` does not match in this fork, so the tooltip is
+      // matched by its message directly.
+      expect(
+        find.byWidgetPredicate((w) => w is Tooltip && w.message == 'Due date'),
+        findsOneWidget,
+      );
+      final unset = tester.getSemantics(find.bySemanticsLabel('Due date'));
+      expect(unset.getSemanticsData().flagsCollection.isButton, isTrue);
+      expect(unset.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+      expect(
+        tester.getSize(find.byType(MetaIconButton)).height,
+        lessThanOrEqualTo(32),
+        reason: 'an unset field is taller than the chip it sits beside',
+      );
 
       final node = tester.getSemantics(find.byType(MetaIconButton));
       expect(node.label, contains('Due date'));

@@ -212,21 +212,28 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Expanded(
+      body: Column(
+        children: [
+          // The bottom inset is deliberately *not* applied around this whole
+          // column. Doing so reserved a strip below the toolbar that showed
+          // the scaffold background while the toolbar painted
+          // `colorScheme.surface`; the two differ in dark, so closing the
+          // keyboard left a second, darker band under the toolbar. The
+          // toolbar owns its own inset and paints its background through it.
+          Expanded(
+            child: SafeArea(
+              top: false,
+              bottom: false,
               child: _EditorSurface(
                 quillController: _quillController,
                 focusNode: _editorFocus,
               ),
             ),
-            // Pinned: a formatting toolbar that scrolls away is useless while
-            // you are formatting.
-            _QuillToolbar(quillController: _quillController),
-          ],
-        ),
+          ),
+          // Pinned: a formatting toolbar that scrolls away is useless while
+          // you are formatting.
+          _QuillToolbar(quillController: _quillController),
+        ],
       ),
     );
   }
@@ -290,9 +297,11 @@ class _EditorSurface extends StatelessWidget {
             ),
           ),
         ),
-        Divider(height: AppSpacing.xxl, color: context.theme.dividerColor),
+        // Was 24 above and 16 below: 80px of chrome wrapped around a 40px row,
+        // which is what made the strip read as tall rather than as a toolbar.
+        Divider(height: AppSpacing.sm, color: context.theme.dividerColor),
         const _MetaActionBar(),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.sm),
       ],
     );
   }
@@ -444,56 +453,72 @@ class _QuillToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The background is painted *outside* the [SafeArea] so it runs through
+    // the bottom inset, giving one surface from the meta row to the bottom
+    // edge. Painting inside the inset would leave the inset showing whatever
+    // is behind it, which is the same band again.
+    // A [Container], not a bare [DecoratedBox]: Container insets its child by
+    // the decoration's border width, so the top border below is actually
+    // visible. DecoratedBox does not, the toolbar's own background painted
+    // straight over the one-pixel line, and the meta row and the toolbar fused
+    // into a single block.
     return Container(
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
+        color: context.ink.surface,
         border: Border(
           top: BorderSide(color: context.colorScheme.outlineVariant),
         ),
       ),
-      child:
-          // `flutter_quill` builds its toolbar out of stock
-          // `package:flutter/material.dart` widgets, but this app themes
-          // through the decoupled `material_ui` fork, which has its own
-          // `Theme`, `ThemeData` and `ColorScheme` types. Stock widgets
-          // therefore resolved Flutter's *default* light theme no matter what
-          // the app was set to, so in dark mode the font-family and
-          // font-size previews and the disabled undo/redo arrows painted dark
-          // ink on the dark surface: measured at 1.0-1.2:1, i.e. invisible.
-          // Passing a stock theme with the right brightness is the shim. Same
-          // defect as the logo reading the wrong theme in #75, reached here
-          // through a dependency rather than an import.
-          flutter.Theme(
-            data: flutter.ThemeData(
-              brightness: context.isDark ? Brightness.dark : Brightness.light,
-              colorScheme: flutter.ColorScheme.fromSeed(
-                seedColor: context.colorScheme.primary,
+      child: SafeArea(
+        top: false,
+        child:
+            // `flutter_quill` builds its toolbar out of stock
+            // `package:flutter/material.dart` widgets, but this app themes
+            // through the decoupled `material_ui` fork, which has its own
+            // `Theme`, `ThemeData` and `ColorScheme` types. Stock widgets
+            // therefore resolved Flutter's *default* light theme no matter what
+            // the app was set to, so in dark mode the font-family and
+            // font-size previews and the disabled undo/redo arrows painted dark
+            // ink on the dark surface: measured at 1.0-1.2:1, i.e. invisible.
+            // Passing a stock theme with the right brightness is the shim. Same
+            // defect as the logo reading the wrong theme in #75, reached here
+            // through a dependency rather than an import.
+            flutter.Theme(
+              data: flutter.ThemeData(
                 brightness: context.isDark ? Brightness.dark : Brightness.light,
+                colorScheme: flutter.ColorScheme.fromSeed(
+                  seedColor: context.colorScheme.primary,
+                  brightness: context.isDark
+                      ? Brightness.dark
+                      : Brightness.light,
+                ),
+              ),
+              child: QuillSimpleToolbar(
+                controller: quillController,
+                config: QuillSimpleToolbarConfig(
+                  // Belt and braces: `canvasColor` is themed too, but the
+                  // toolbar reads its own `color` first and that one is
+                  // never inherited. Set to the bar's own surface so the
+                  // toolbar's background cannot read as a band inside it.
+                  color: context.ink.surface,
+                  showStrikeThrough: false,
+                  showColorButton: false,
+                  showBackgroundColorButton: false,
+                  showClearFormat: false,
+                  showLink: false,
+                  showHeaderStyle: false,
+                  showCodeBlock: false,
+                  showQuote: false,
+                  showIndent: false,
+                  showSearchButton: false,
+                  showSubscript: false,
+                  showSuperscript: false,
+                  showDividers: false,
+                  multiRowsDisplay: false,
+                ),
               ),
             ),
-            child: QuillSimpleToolbar(
-              controller: quillController,
-              config: QuillSimpleToolbarConfig(
-                // Belt and braces: `canvasColor` is themed too, but the toolbar
-                // reads its own `color` first and that one is never inherited.
-                color: context.colorScheme.surface,
-                showStrikeThrough: false,
-                showColorButton: false,
-                showBackgroundColorButton: false,
-                showClearFormat: false,
-                showLink: false,
-                showHeaderStyle: false,
-                showCodeBlock: false,
-                showQuote: false,
-                showIndent: false,
-                showSearchButton: false,
-                showSubscript: false,
-                showSuperscript: false,
-                showDividers: false,
-                multiRowsDisplay: false,
-              ),
-            ),
-          ),
+      ),
     );
   }
 }

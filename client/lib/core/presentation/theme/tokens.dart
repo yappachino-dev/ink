@@ -121,7 +121,7 @@ abstract final class AppSize {
   /// its action. A clear button inside a chip is not: the chip's whole area
   /// opens the picker. At 44 the chip grows to 52 tall - taller than the
   /// editor chrome it sits above - so the row stopped reading as one bar.
-  static const double compactTapTarget = 28;
+  static const double compactTapTarget = 30;
 
   /// A full-width action button.
   static const Size buttonHeight = Size(double.infinity, 48);
