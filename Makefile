@@ -72,3 +72,11 @@ projects:
 
 tokens:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from refresh_tokens;"
+
+.PHONY: check-architecture check-spacing
+## Local-only quality gates. Both need a base ref to diff against, so they are
+## not CI steps: actions/checkout uses fetch-depth 1 and has no origin/main.
+check-architecture:
+	cd client && dart run tool/check_architecture.dart
+check-spacing:
+	cd client && dart run tool/verify_spacing_tokens.dart $(BASE)
