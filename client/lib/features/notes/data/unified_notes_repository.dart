@@ -3,14 +3,14 @@ import 'dart:typed_data';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
+import 'package:ink/features/notes/data/notebooks_sync_engine.dart';
 import 'package:ink/features/notes/data/notes_sync_engine.dart';
+import 'package:ink/features/notes/data/ports/notebooks_local_store.dart';
 import 'package:ink/features/notes/data/ports/notes_local_store.dart';
-import 'package:ink/features/notes/data/ports/projects_local_store.dart';
-import 'package:ink/features/notes/data/projects_sync_engine.dart';
+import 'package:ink/features/notes/data/sources/notebooks_local_store_provider.dart';
 import 'package:ink/features/notes/data/sources/notes_local_store_provider.dart';
-import 'package:ink/features/notes/data/sources/projects_local_store_provider.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
-import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
@@ -20,28 +20,25 @@ part 'unified_notes_repository.g.dart';
 
 class UnifiedNotesRepository
     with DataSourceRunner
-    implements NotesRepository, NotesSyncEngine, ProjectsSyncEngine {
+    implements NotesRepository, NotesSyncEngine, NotebooksSyncEngine {
   UnifiedNotesRepository({
     required NotesLocalStore localNotes,
-    required ProjectsLocalStore localProjects,
+    required NotebooksLocalStore localNotebooks,
   }) : _localNotes = localNotes,
-       _localProjects = localProjects;
+       _localNotebooks = localNotebooks;
 
   final NotesLocalStore _localNotes;
-  final ProjectsLocalStore _localProjects;
+  final NotebooksLocalStore _localNotebooks;
 
   @override
   Future<Result<EncryptedNote, NotesFailure>> createNote(
     Uint8List encryptedTitle,
     Uint8List encryptedContent,
-    String? projectId,
+    String? notebookId,
   ) {
     return localRunner(
-      call: () => _localNotes.createNote(
-        encryptedTitle,
-        encryptedContent,
-        projectId,
-      ),
+      call: () =>
+          _localNotes.createNote(encryptedTitle, encryptedContent, notebookId),
       mapCore: NotesCoreFailure.new,
     );
   }
@@ -79,43 +76,43 @@ class UnifiedNotesRepository
   }
 
   @override
-  Future<Result<EncryptedProject, NotesFailure>> createProject(
+  Future<Result<EncryptedNotebook, NotesFailure>> createNotebook(
     Uint8List encryptedContent,
   ) {
     return localRunner(
-      call: () => _localProjects.createProject(encryptedContent),
+      call: () => _localNotebooks.createNotebook(encryptedContent),
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<void, NotesFailure>> saveProject(EncryptedProject project) {
+  Future<Result<void, NotesFailure>> saveNotebook(EncryptedNotebook notebook) {
     return localRunner(
-      call: () => _localProjects.saveProject(project),
+      call: () => _localNotebooks.saveNotebook(notebook),
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<EncryptedProject?, NotesFailure>> getProject(String id) {
+  Future<Result<EncryptedNotebook?, NotesFailure>> getNotebook(String id) {
     return localRunner(
-      call: () => _localProjects.getProject(id),
+      call: () => _localNotebooks.getNotebook(id),
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<List<EncryptedProject>, NotesFailure>> getAllProjects() {
+  Future<Result<List<EncryptedNotebook>, NotesFailure>> getAllNotebooks() {
     return localRunner(
-      call: _localProjects.getAllProjects,
+      call: _localNotebooks.getAllNotebooks,
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<void, NotesFailure>> deleteProject(String id) {
+  Future<Result<void, NotesFailure>> deleteNotebook(String id) {
     return localRunner(
-      call: () => _localProjects.deleteProject(id),
+      call: () => _localNotebooks.deleteNotebook(id),
       mapCore: NotesCoreFailure.new,
     );
   }
@@ -169,29 +166,29 @@ class UnifiedNotesRepository
   }
 
   @override
-  Future<Result<List<EncryptedProject>, NotesFailure>> getPendingProjects() {
+  Future<Result<List<EncryptedNotebook>, NotesFailure>> getPendingNotebooks() {
     return localRunner(
-      call: _localProjects.getPendingProjects,
+      call: _localNotebooks.getPendingNotebooks,
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<void, NotesFailure>> acknowledgePushedProjects(
+  Future<Result<void, NotesFailure>> acknowledgePushedNotebooks(
     List<SyncAck> acknowledgements,
   ) {
     return localRunner(
-      call: () => _localProjects.acknowledgePushedProjects(acknowledgements),
+      call: () => _localNotebooks.acknowledgePushedNotebooks(acknowledgements),
       mapCore: NotesCoreFailure.new,
     );
   }
 
   @override
-  Future<Result<void, NotesFailure>> applyRemoteProjects(
-    List<EncryptedProject> remoteData,
+  Future<Result<void, NotesFailure>> applyRemoteNotebooks(
+    List<EncryptedNotebook> remoteData,
   ) {
     return localRunner(
-      call: () => _localProjects.applyRemoteProjects(remoteData),
+      call: () => _localNotebooks.applyRemoteNotebooks(remoteData),
       mapCore: NotesCoreFailure.new,
     );
   }
@@ -205,5 +202,5 @@ NotesRepository notesRepository(Ref ref) =>
 UnifiedNotesRepository unifiedNotesRepository(Ref ref) =>
     UnifiedNotesRepository(
       localNotes: ref.watch(notesLocalStoreProvider),
-      localProjects: ref.watch(projectsLocalStoreProvider),
+      localNotebooks: ref.watch(notebooksLocalStoreProvider),
     );

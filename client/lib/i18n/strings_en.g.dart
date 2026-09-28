@@ -50,7 +50,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$calendar$en calendar = Translations$calendar$en.internal(_root);
 	late final Translations$note$en note = Translations$note$en.internal(_root);
-	late final Translations$project$en project = Translations$project$en.internal(_root);
+	late final Translations$notebook$en notebook = Translations$notebook$en.internal(_root);
 	late final Translations$profile$en profile = Translations$profile$en.internal(_root);
 	late final Translations$timezones$en timezones = Translations$timezones$en.internal(_root);
 }
@@ -352,11 +352,11 @@ class Translations$note$en {
 	/// en: 'Hide note details'
 	String get hideDetails => 'Hide note details';
 
-	/// en: 'Note's project'
-	String get project => 'Note\'s project';
+	/// en: 'Notebook'
+	String get notebook => 'Notebook';
 
-	/// en: 'All projects'
-	String get allProjects => 'All projects';
+	/// en: 'All notebooks'
+	String get allNotebooks => 'All notebooks';
 
 	late final Translations$note$delete$en delete = Translations$note$delete$en.internal(_root);
 	late final Translations$note$priority$en priority = Translations$note$priority$en.internal(_root);
@@ -364,36 +364,33 @@ class Translations$note$en {
 
 	/// en: 'Due date'
 	String get dueDate => 'Due date';
-
-	/// en: 'Notebook'
-	String get notebook => 'Notebook';
 }
 
-// Path: project
-class Translations$project$en {
-	Translations$project$en.internal(this._root);
+// Path: notebook
+class Translations$notebook$en {
+	Translations$notebook$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
 
-	/// en: 'My projects'
-	String get title => 'My projects';
+	/// en: 'My notebooks'
+	String get title => 'My notebooks';
 
-	/// en: 'Select a project'
-	String get select => 'Select a project';
+	/// en: 'Select a notebook'
+	String get select => 'Select a notebook';
 
-	/// en: 'No project'
-	String get none => 'No project';
+	/// en: 'No notebook'
+	String get none => 'No notebook';
 
-	/// en: 'Add a project'
-	String get create => 'Add a project';
+	/// en: 'Add a notebook'
+	String get create => 'Add a notebook';
 
-	/// en: 'Edit project'
-	String get edit => 'Edit project';
+	/// en: 'Edit notebook'
+	String get edit => 'Edit notebook';
 
-	late final Translations$project$delete$en delete = Translations$project$delete$en.internal(_root);
-	late final Translations$project$form$en form = Translations$project$form$en.internal(_root);
+	late final Translations$notebook$delete$en delete = Translations$notebook$delete$en.internal(_root);
+	late final Translations$notebook$form$en form = Translations$notebook$form$en.internal(_root);
 }
 
 // Path: profile
@@ -753,27 +750,27 @@ class Translations$note$reminder$en {
 	);
 }
 
-// Path: project.delete
-class Translations$project$delete$en {
-	Translations$project$delete$en.internal(this._root);
+// Path: notebook.delete
+class Translations$notebook$delete$en {
+	Translations$notebook$delete$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
 	// Translations
 
-	/// en: 'Delete project?'
-	String get title => 'Delete project?';
+	/// en: 'Delete notebook?'
+	String get title => 'Delete notebook?';
 
-	/// en: 'Delete project'
-	String get tooltip => 'Delete project';
+	/// en: 'Delete notebook'
+	String get tooltip => 'Delete notebook';
 
-	/// en: 'The project will be permanently deleted.'
-	String get message => 'The project will be permanently deleted.';
+	/// en: 'The notebook will be permanently deleted.'
+	String get message => 'The notebook will be permanently deleted.';
 }
 
-// Path: project.form
-class Translations$project$form$en {
-	Translations$project$form$en.internal(this._root);
+// Path: notebook.form
+class Translations$notebook$form$en {
+	Translations$notebook$form$en.internal(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -782,8 +779,8 @@ class Translations$project$form$en {
 	/// en: 'Name'
 	String get name => 'Name';
 
-	/// en: 'Project color'
-	String get color => 'Project color';
+	/// en: 'Notebook color'
+	String get color => 'Notebook color';
 
 	/// en: 'Icon'
 	String get icon => 'Icon';
@@ -1353,8 +1350,8 @@ extension on Translations {
 			'note.addDetails' => 'Add details...',
 			'note.showDetails' => 'Show note details',
 			'note.hideDetails' => 'Hide note details',
-			'note.project' => 'Note\'s project',
-			'note.allProjects' => 'All projects',
+			'note.notebook' => 'Notebook',
+			'note.allNotebooks' => 'All notebooks',
 			'note.delete.title' => 'Delete note?',
 			'note.delete.tooltip' => 'Delete note',
 			'note.delete.message' => 'This note will be permanently deleted.',
@@ -1370,18 +1367,17 @@ extension on Translations {
 			'note.reminder.hours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '${n} hours', ), 
 			'note.reminder.days' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '${n} days', ), 
 			'note.dueDate' => 'Due date',
-			'note.notebook' => 'Notebook',
-			'project.title' => 'My projects',
-			'project.select' => 'Select a project',
-			'project.none' => 'No project',
-			'project.create' => 'Add a project',
-			'project.edit' => 'Edit project',
-			'project.delete.title' => 'Delete project?',
-			'project.delete.tooltip' => 'Delete project',
-			'project.delete.message' => 'The project will be permanently deleted.',
-			'project.form.name' => 'Name',
-			'project.form.color' => 'Project color',
-			'project.form.icon' => 'Icon',
+			'notebook.title' => 'My notebooks',
+			'notebook.select' => 'Select a notebook',
+			'notebook.none' => 'No notebook',
+			'notebook.create' => 'Add a notebook',
+			'notebook.edit' => 'Edit notebook',
+			'notebook.delete.title' => 'Delete notebook?',
+			'notebook.delete.tooltip' => 'Delete notebook',
+			'notebook.delete.message' => 'The notebook will be permanently deleted.',
+			'notebook.form.name' => 'Name',
+			'notebook.form.color' => 'Notebook color',
+			'notebook.form.icon' => 'Icon',
 			'profile.title' => 'Profile',
 			'profile.personal.name' => 'Name',
 			'profile.personal.email' => 'Email',

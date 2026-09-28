@@ -13,10 +13,7 @@ void main() {
   test('pending-push queue covers modified and deleted only', () {
     expect(
       syncPendingPushIndexes,
-      unorderedEquals([
-        SyncStatus.modified.index,
-        SyncStatus.deleted.index,
-      ]),
+      unorderedEquals([SyncStatus.modified.index, SyncStatus.deleted.index]),
     );
     expect(syncPendingPushIndexes, isNot(contains(SyncStatus.synced.index)));
     expect(

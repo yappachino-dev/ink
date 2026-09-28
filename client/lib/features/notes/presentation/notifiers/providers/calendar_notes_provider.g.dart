@@ -82,7 +82,7 @@ final class CalendarNotesProvider
   }
 }
 
-String _$calendarNotesHash() => r'23405dc47a040a9910ade2724479c52526247544';
+String _$calendarNotesHash() => r'990905cba3a7620352be8b07555bdb5719cac166';
 
 /// Days in the visible range that hold at least one entry.
 ///
@@ -177,4 +177,4 @@ final class JournalEntryCountsProvider
 }
 
 String _$journalEntryCountsHash() =>
-    r'2be75cb1f041cbc16d72d4050a7719117c9081c1';
+    r'ffea3d1f6928dcf3ab4e62ca4edbcfc6353d6977';

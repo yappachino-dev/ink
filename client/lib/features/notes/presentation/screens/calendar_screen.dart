@@ -5,10 +5,10 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/presentation/extensions/calendar_view_mode_ui_extension.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
-import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/calendar_card.dart';
 import 'package:ink/features/notes/presentation/widgets/calendar/day_header.dart';
@@ -26,11 +26,11 @@ class CalendarScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
-  String _filterLabel(List<Project> allProjects, String selectedProjectId) {
-    if (selectedProjectId == allProjectsId) return context.t.calendar.filter;
+  String _filterLabel(List<Notebook> allNotebooks, String selectedNotebookId) {
+    if (selectedNotebookId == allNotebooksId) return context.t.calendar.filter;
 
-    final list = allProjects
-        .where((p) => p.id == selectedProjectId)
+    final list = allNotebooks
+        .where((p) => p.id == selectedNotebookId)
         .firstOrNull;
 
     return list?.title ?? context.t.calendar.filter;
@@ -50,15 +50,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allLists = ref.watch(projectsProvider).value ?? [];
+    final allLists = ref.watch(notebooksProvider).value ?? [];
 
-    final selectedProjectId = ref.watch(selectedProjectIdProvider);
+    final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
     final showDescription = ref.watch(showDescriptionProvider);
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
-    final isFilterActive = selectedProjectId != allProjectsId;
+    final isFilterActive = selectedNotebookId != allNotebooksId;
     // Resolved once so the semantic label and the visible text cannot drift.
-    final filterLabel = _filterLabel(allLists, selectedProjectId);
+    final filterLabel = _filterLabel(allLists, selectedNotebookId);
 
     return Scaffold(
       backgroundColor: context.colorScheme.surfaceContainer,

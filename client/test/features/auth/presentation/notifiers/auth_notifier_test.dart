@@ -26,10 +26,7 @@ void main() {
         .setupRegister('person@example.com', 'password123');
 
     expect(result, RegisterResult.failure);
-    expect(
-      container.read(authProvider).failure,
-      const InvalidCredentials(),
-    );
+    expect(container.read(authProvider).failure, const InvalidCredentials());
     expect(container.read(authProvider).isProcessing, isFalse);
   });
 
@@ -88,10 +85,7 @@ void main() {
     final confirmed = await notifier.confirmRegister('123456');
 
     expect(confirmed, isFalse);
-    expect(
-      container.read(authProvider).failure,
-      const EmailAlreadyInUse(),
-    );
+    expect(container.read(authProvider).failure, const EmailAlreadyInUse());
     expect(container.read(authProvider).isProcessing, isFalse);
   });
 }
@@ -114,10 +108,7 @@ class _FakeAuthService implements AuthService {
   }
 
   @override
-  Future<Result<void, AuthFailure>> login(
-    String email,
-    String password,
-  ) async {
+  Future<Result<void, AuthFailure>> login(String email, String password) async {
     loginCalls++;
     return _loginCompleter.future;
   }

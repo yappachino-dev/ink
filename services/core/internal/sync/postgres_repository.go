@@ -35,8 +35,8 @@ func (r *PostgresSyncRepository) UpdateUserCursor(ctx context.Context, userID in
 	})
 }
 
-func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, userID int, cursor int) ([]Project, error) {
-	rows, err := r.db(ctx).GetProjectChanges(ctx, store.GetProjectChangesParams{
+func (r *PostgresSyncRepository) GetNotebookChanges(ctx context.Context, userID int, cursor int) ([]Notebook, error) {
+	rows, err := r.db(ctx).GetNotebookChanges(ctx, store.GetNotebookChangesParams{
 		UserID:       int32(userID),
 		SyncSequence: int32(cursor),
 	})
@@ -44,9 +44,9 @@ func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, userID i
 		return nil, err
 	}
 
-	projects := make([]Project, 0, len(rows))
+	notebooks := make([]Notebook, 0, len(rows))
 	for _, row := range rows {
-		projects = append(projects, Project{
+		notebooks = append(notebooks, Notebook{
 			ID:               row.ID,
 			UserID:           userID,
 			EncryptedContent: row.EncryptedContent,
@@ -58,17 +58,17 @@ func (r *PostgresSyncRepository) GetProjectChanges(ctx context.Context, userID i
 		})
 	}
 
-	return projects, nil
+	return notebooks, nil
 }
 
-func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, userID int, syncSequence int, projects []Project) error {
-	if len(projects) == 0 {
+func (r *PostgresSyncRepository) UpsertNotebooks(ctx context.Context, userID int, syncSequence int, notebooks []Notebook) error {
+	if len(notebooks) == 0 {
 		return nil
 	}
 
-	params := make([]store.UpsertProjectsParams, 0, len(projects))
-	for _, p := range projects {
-		params = append(params, store.UpsertProjectsParams{
+	params := make([]store.UpsertNotebooksParams, 0, len(notebooks))
+	for _, p := range notebooks {
+		params = append(params, store.UpsertNotebooksParams{
 			ID:               p.ID,
 			UserID:           int32(userID),
 			EncryptedContent: p.EncryptedContent,
@@ -80,7 +80,7 @@ func (r *PostgresSyncRepository) UpsertProjects(ctx context.Context, userID int,
 		})
 	}
 
-	return database.ExecBatch(r.db(ctx).UpsertProjects(ctx, params))
+	return database.ExecBatch(r.db(ctx).UpsertNotebooks(ctx, params))
 }
 
 func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int, cursor int) ([]Note, error) {
@@ -98,7 +98,7 @@ func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int,
 		notes = append(notes, Note{
 			ID:               row.ID,
 			UserID:           userID,
-			ProjectID:        row.ProjectID,
+			NotebookID:        row.NotebookID,
 			EncryptedTitle:   row.EncryptedTitle,
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
@@ -122,7 +122,7 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 		params = append(params, store.UpsertNotesParams{
 			ID:               n.ID,
 			UserID:           int32(userID),
-			ProjectID:        n.ProjectID,
+			NotebookID:        n.NotebookID,
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
@@ -136,12 +136,12 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 	return database.ExecBatch(r.db(ctx).UpsertNotes(ctx, params))
 }
 
-func (r *PostgresSyncRepository) FindProjectIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
+func (r *PostgresSyncRepository) FindNotebookIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
-	return r.db(ctx).FindProjectIDsOwnedByOtherUsers(ctx, store.FindProjectIDsOwnedByOtherUsersParams{
+	return r.db(ctx).FindNotebookIDsOwnedByOtherUsers(ctx, store.FindNotebookIDsOwnedByOtherUsersParams{
 		Ids:    ids,
 		UserID: int32(userID),
 	})
@@ -158,12 +158,12 @@ func (r *PostgresSyncRepository) FindNoteIDsOwnedByOtherUsers(ctx context.Contex
 	})
 }
 
-func (r *PostgresSyncRepository) FindProjectIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
+func (r *PostgresSyncRepository) FindNotebookIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
 
-	return r.db(ctx).FindProjectIDsAvailableToUser(ctx, store.FindProjectIDsAvailableToUserParams{
+	return r.db(ctx).FindNotebookIDsAvailableToUser(ctx, store.FindNotebookIDsAvailableToUserParams{
 		Ids:    ids,
 		UserID: int32(userID),
 	})

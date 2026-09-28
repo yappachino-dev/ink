@@ -21,9 +21,8 @@ class NotesLocalDataSource implements NotesLocalStore {
 
   Future<void> save(NotesCompanion note) => _notesDao.updateNote(note);
 
-  Future<void> acknowledgePushed(
-    List<SyncAck> acknowledgements,
-  ) => _notesDao.acknowledgePushed(acknowledgements);
+  Future<void> acknowledgePushed(List<SyncAck> acknowledgements) =>
+      _notesDao.acknowledgePushed(acknowledgements);
 
   Future<NoteModel?> get(String id) => _notesDao.getNote(id);
 
@@ -50,13 +49,13 @@ class NotesLocalDataSource implements NotesLocalStore {
   Future<EncryptedNote> createNote(
     Uint8List encryptedTitle,
     Uint8List encryptedContent,
-    String? projectId,
+    String? notebookId,
   ) async {
     final model = await _notesDao.insertNote(
       NotesCompanion.insert(
         encryptedTitle: encryptedTitle,
         encryptedContent: encryptedContent,
-        projectId: Value(projectId),
+        notebookId: Value(notebookId),
       ),
     );
     return model.toDomain();

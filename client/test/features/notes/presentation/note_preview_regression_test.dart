@@ -19,15 +19,15 @@ import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
 Note _noteWith(List<dynamic> content, {String title = 'Title'}) => Note(
-      id: 'n1',
-      title: title,
-      content: content,
-      localVersion: 1,
-      lastSyncedVersion: 1,
-      syncStatus: SyncStatus.synced,
-      createdAt: DateTime(2026),
-      updatedAt: DateTime(2026),
-    );
+  id: 'n1',
+  title: title,
+  content: content,
+  localVersion: 1,
+  lastSyncedVersion: 1,
+  syncStatus: SyncStatus.synced,
+  createdAt: DateTime(2026),
+  updatedAt: DateTime(2026),
+);
 
 void main() {
   group('notePreviewText', () {
@@ -105,7 +105,9 @@ void main() {
       expect(
         notePreviewText([
           {'insert': 'Caption\n'},
-          {'insert': {'image': 'x.png'}},
+          {
+            'insert': {'image': 'x.png'},
+          },
         ]),
         'Caption',
       );
@@ -131,8 +133,18 @@ void main() {
 
   group('hasNoteContent', () {
     test('is true for text and false for blank documents', () {
-      expect(hasNoteContent([{'insert': 'x\n'}]), isTrue);
-      expect(hasNoteContent([{'insert': '\n\n'}]), isFalse);
+      expect(
+        hasNoteContent([
+          {'insert': 'x\n'},
+        ]),
+        isTrue,
+      );
+      expect(
+        hasNoteContent([
+          {'insert': '\n\n'},
+        ]),
+        isFalse,
+      );
       expect(hasNoteContent([]), isFalse);
       expect(hasNoteContent(null), isFalse);
     });
@@ -194,11 +206,15 @@ void main() {
       expect(
         normalizeNoteDelta([
           {'insert': 'text\n'},
-          {'insert': {'image': 'x.png'}},
+          {
+            'insert': {'image': 'x.png'},
+          },
         ]),
         [
           {'insert': 'text\n'},
-          {'insert': {'image': 'x.png'}},
+          {
+            'insert': {'image': 'x.png'},
+          },
           {'insert': '\n'},
         ],
       );
@@ -268,7 +284,9 @@ void main() {
           {'insert': 'no trailing newline'},
         ],
         [
-          {'insert': {'image': 'x.png'}},
+          {
+            'insert': {'image': 'x.png'},
+          },
         ],
       ]) {
         expect(

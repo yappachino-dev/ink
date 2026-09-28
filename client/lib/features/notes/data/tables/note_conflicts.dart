@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:ink/features/notes/data/tables/notebooks.dart';
 import 'package:ink/features/notes/data/tables/notes.dart';
-import 'package:ink/features/notes/data/tables/projects.dart';
 
 @DataClassName('NoteConflictModel')
 class NoteConflicts extends Table {
@@ -20,8 +20,8 @@ class NoteConflicts extends Table {
   DateTimeColumn get updatedAt => dateTime()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
-  TextColumn get projectId => text().nullable().references(
-    Projects,
+  TextColumn get notebookId => text().nullable().references(
+    Notebooks,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

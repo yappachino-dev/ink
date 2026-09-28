@@ -52,7 +52,7 @@ func syncErrorCode(err error) (codes.Code, bool) {
 	var (
 		duplicateErr *DuplicateEntityIDsError
 		ownershipErr *OwnershipConflictError
-		referenceErr *ProjectReferenceError
+		referenceErr *NotebookReferenceError
 	)
 
 	switch {

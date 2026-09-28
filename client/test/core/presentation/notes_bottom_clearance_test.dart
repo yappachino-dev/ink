@@ -12,7 +12,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -37,12 +37,13 @@ class _NotesServiceMock extends Mock implements NotesService {}
 Future<Result<List<Note>, NotesFailure>> _allNotes(List<Note> notes) async =>
     Success<List<Note>, NotesFailure>(notes);
 
-Future<Result<List<Project>, NotesFailure>> _allProjects(Invocation _) async =>
-    const Success<List<Project>, NotesFailure>([]);
+Future<Result<List<Notebook>, NotesFailure>> _allNotebooks(
+  Invocation _,
+) async => const Success<List<Notebook>, NotesFailure>([]);
 
-class _AllProjectsSelected extends SelectedProjectId {
+class _AllNotebooksSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 List<Note> _manyNotes(int count) => List.generate(
@@ -64,7 +65,7 @@ List<Note> _manyNotes(int count) => List.generate(
     updatedAt: DateTime(2026, 1, 14),
     dueDate: DateTime(2026, 1, 14, 9 + (i % 8)),
     priority: TaskPriority.medium,
-    projectId: allProjectsId,
+    notebookId: allNotebooksId,
   ),
 );
 
@@ -83,7 +84,7 @@ void main() {
 
     final service = _NotesServiceMock();
     when(service.getAllNotes).thenAnswer((_) => _allNotes(_manyNotes(14)));
-    when(service.getAllProjects).thenAnswer(_allProjects);
+    when(service.getAllNotebooks).thenAnswer(_allNotebooks);
 
     await tester.pumpWidget(
       ProviderScope(
@@ -91,7 +92,7 @@ void main() {
           notesServiceProvider.overrideWithValue(service),
           isOfflineProvider.overrideWithValue(false),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
+          selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(
@@ -139,7 +140,7 @@ void main() {
 
     final service = _NotesServiceMock();
     when(service.getAllNotes).thenAnswer((_) => _allNotes(_manyNotes(14)));
-    when(service.getAllProjects).thenAnswer(_allProjects);
+    when(service.getAllNotebooks).thenAnswer(_allNotebooks);
 
     await tester.pumpWidget(
       ProviderScope(
@@ -147,7 +148,7 @@ void main() {
           notesServiceProvider.overrideWithValue(service),
           isOfflineProvider.overrideWithValue(false),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
+          selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(

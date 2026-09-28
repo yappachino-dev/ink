@@ -40,27 +40,25 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets(
-      'shows the debug-only reset control, labelled from i18n',
-      (tester) async {
-        await pumpFatalScreen(tester);
+    testWidgets('shows the debug-only reset control, labelled from i18n', (
+      tester,
+    ) async {
+      await pumpFatalScreen(tester);
 
-        expect(find.text(t.vault.fatal.devReset), findsOneWidget);
+      expect(find.text(t.vault.fatal.devReset), findsOneWidget);
 
-        // The old control was a hardcoded English literal, which is how an
-        // untranslated destructive action survived in the UI. Assert the
-        // literal is gone so it cannot come back.
-        expect(find.text('Reset the app state'), findsNothing);
-      },
-    );
+      // The old control was a hardcoded English literal, which is how an
+      // untranslated destructive action survived in the UI. Assert the
+      // literal is gone so it cannot come back.
+      expect(find.text('Reset the app state'), findsNothing);
+    });
 
-    testWidgets(
-      'never presents the release hint in a debug build',
-      (tester) async {
-        await pumpFatalScreen(tester);
+    testWidgets('never presents the release hint in a debug build', (
+      tester,
+    ) async {
+      await pumpFatalScreen(tester);
 
-        expect(find.text(t.vault.fatal.releaseHint), findsNothing);
-      },
-    );
+      expect(find.text(t.vault.fatal.releaseHint), findsNothing);
+    });
   });
 }

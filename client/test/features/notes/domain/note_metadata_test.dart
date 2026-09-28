@@ -21,18 +21,17 @@ Note _note({
     {'insert': 'Body text\n'},
   ],
   DateTime? dueDate,
-}) =>
-    Note(
-      id: 'n1',
-      title: title,
-      content: content,
-      localVersion: 1,
-      lastSyncedVersion: 1,
-      syncStatus: SyncStatus.synced,
-      createdAt: DateTime(2026),
-      updatedAt: DateTime(2026),
-      dueDate: dueDate,
-    );
+}) => Note(
+  id: 'n1',
+  title: title,
+  content: content,
+  localVersion: 1,
+  lastSyncedVersion: 1,
+  syncStatus: SyncStatus.synced,
+  createdAt: DateTime(2026),
+  updatedAt: DateTime(2026),
+  dueDate: dueDate,
+);
 
 void main() {
   group('NoteMetadataDerivation.derive', () {
@@ -207,16 +206,17 @@ void main() {
 
   group('local writes derive metadata', () {
     test('toEncrypted carries the derived cache', () {
-      final encrypted = _note(
-        title: 'Trip plan',
-        content: [
-          {'insert': 'Book flights\n'},
-        ],
-        dueDate: DateTime(2026, 5, 1, 9),
-      ).toEncrypted(
-        encryptedTitle: Uint8List.fromList([1]),
-        encryptedContent: Uint8List.fromList([2]),
-      );
+      final encrypted =
+          _note(
+            title: 'Trip plan',
+            content: [
+              {'insert': 'Book flights\n'},
+            ],
+            dueDate: DateTime(2026, 5, 1, 9),
+          ).toEncrypted(
+            encryptedTitle: Uint8List.fromList([1]),
+            encryptedContent: Uint8List.fromList([2]),
+          );
 
       expect(encrypted.metadata.titlePreview, 'Trip plan');
       expect(encrypted.metadata.bodyPreview, 'Book flights');
@@ -225,18 +225,24 @@ void main() {
     });
 
     test('re-deriving after an edit reflects the new body', () {
-      final before = _note(content: [
-        {'insert': 'Old body\n'},
-      ]).toEncrypted(
-        encryptedTitle: Uint8List.fromList([1]),
-        encryptedContent: Uint8List.fromList([2]),
-      );
-      final after = _note(content: [
-        {'insert': 'New body\n'},
-      ]).toEncrypted(
-        encryptedTitle: Uint8List.fromList([1]),
-        encryptedContent: Uint8List.fromList([2]),
-      );
+      final before =
+          _note(
+            content: [
+              {'insert': 'Old body\n'},
+            ],
+          ).toEncrypted(
+            encryptedTitle: Uint8List.fromList([1]),
+            encryptedContent: Uint8List.fromList([2]),
+          );
+      final after =
+          _note(
+            content: [
+              {'insert': 'New body\n'},
+            ],
+          ).toEncrypted(
+            encryptedTitle: Uint8List.fromList([1]),
+            encryptedContent: Uint8List.fromList([2]),
+          );
 
       expect(before.metadata.bodyPreview, 'Old body');
       expect(after.metadata.bodyPreview, 'New body');

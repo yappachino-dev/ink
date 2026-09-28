@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteDraftState {
 
- String? get projectId; DateTime? get dueDate; TimeOfDay? get dueTime; int? get reminderMinutes; TaskPriority get priority;
+ String? get notebookId; DateTime? get dueDate; TimeOfDay? get dueTime; int? get reminderMinutes; TaskPriority get priority;
 /// Create a copy of NoteDraftState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $NoteDraftStateCopyWith<NoteDraftState> get copyWith => _$NoteDraftStateCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as NoteDraftState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteDraftState&&(identical(other.projectId, _this.projectId) || other.projectId == _this.projectId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.reminderMinutes, _this.reminderMinutes) || other.reminderMinutes == _this.reminderMinutes)&&(identical(other.priority, _this.priority) || other.priority == _this.priority));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteDraftState&&(identical(other.notebookId, _this.notebookId) || other.notebookId == _this.notebookId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.reminderMinutes, _this.reminderMinutes) || other.reminderMinutes == _this.reminderMinutes)&&(identical(other.priority, _this.priority) || other.priority == _this.priority));
 }
 
 
 @override
 int get hashCode {
   final _this = this as NoteDraftState;
-  return Object.hash(runtimeType,_this.projectId,_this.dueDate,_this.dueTime,_this.reminderMinutes,_this.priority);
+  return Object.hash(runtimeType,_this.notebookId,_this.dueDate,_this.dueTime,_this.reminderMinutes,_this.priority);
 }
 
 @override
 String toString() {
   final _this = this as NoteDraftState;
-  return 'NoteDraftState(projectId: ${_this.projectId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, reminderMinutes: ${_this.reminderMinutes}, priority: ${_this.priority})';
+  return 'NoteDraftState(notebookId: ${_this.notebookId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, reminderMinutes: ${_this.reminderMinutes}, priority: ${_this.priority})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $NoteDraftStateCopyWith<$Res>  {
   factory $NoteDraftStateCopyWith(NoteDraftState value, $Res Function(NoteDraftState) _then) = _$NoteDraftStateCopyWithImpl;
 @useResult
 $Res call({
- String? projectId, DateTime? dueDate, TimeOfDay? dueTime, int? reminderMinutes, TaskPriority priority
+ String? notebookId, DateTime? dueDate, TimeOfDay? dueTime, int? reminderMinutes, TaskPriority priority
 });
 
 
@@ -68,9 +68,9 @@ class _$NoteDraftStateCopyWithImpl<$Res>
 
 /// Create a copy of NoteDraftState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? reminderMinutes = freezed,Object? priority = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? notebookId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? reminderMinutes = freezed,Object? priority = null,}) {
   return _then(NoteDraftState(
-projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+notebookId: freezed == notebookId ? _self.notebookId : notebookId // ignore: cast_nullable_to_non_nullable
 as String?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,dueTime: freezed == dueTime ? _self.dueTime : dueTime // ignore: cast_nullable_to_non_nullable
 as TimeOfDay?,reminderMinutes: freezed == reminderMinutes ? _self.reminderMinutes : reminderMinutes // ignore: cast_nullable_to_non_nullable
@@ -157,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? projectId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? notebookId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteDraftState() when $default != null:
-return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);case _:
+return $default(_that.notebookId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);case _:
   return orElse();
 
 }
@@ -178,10 +178,10 @@ return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinute
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? projectId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? notebookId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)  $default,) {final _that = this;
 switch (_that) {
 case _NoteDraftState():
-return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);}
+return $default(_that.notebookId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -195,10 +195,10 @@ return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinute
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? projectId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? notebookId,  DateTime? dueDate,  TimeOfDay? dueTime,  int? reminderMinutes,  TaskPriority priority)?  $default,) {final _that = this;
 switch (_that) {
 case _NoteDraftState() when $default != null:
-return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);case _:
+return $default(_that.notebookId,_that.dueDate,_that.dueTime,_that.reminderMinutes,_that.priority);case _:
   return null;
 
 }
@@ -210,10 +210,10 @@ return $default(_that.projectId,_that.dueDate,_that.dueTime,_that.reminderMinute
 
 
 class _NoteDraftState implements NoteDraftState {
-  const _NoteDraftState({this.projectId, this.dueDate, this.dueTime, this.reminderMinutes, this.priority = TaskPriority.none});
+  const _NoteDraftState({this.notebookId, this.dueDate, this.dueTime, this.reminderMinutes, this.priority = TaskPriority.none});
   
 
-@override final  String? projectId;
+@override final  String? notebookId;
 @override final  DateTime? dueDate;
 @override final  TimeOfDay? dueTime;
 @override final  int? reminderMinutes;
@@ -229,18 +229,18 @@ _$NoteDraftStateCopyWith<_NoteDraftState> get copyWith => __$NoteDraftStateCopyW
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDraftState&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.reminderMinutes, reminderMinutes) || other.reminderMinutes == reminderMinutes)&&(identical(other.priority, priority) || other.priority == priority));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteDraftState&&(identical(other.notebookId, notebookId) || other.notebookId == notebookId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.reminderMinutes, reminderMinutes) || other.reminderMinutes == reminderMinutes)&&(identical(other.priority, priority) || other.priority == priority));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,projectId,dueDate,dueTime,reminderMinutes,priority);
+    return Object.hash(runtimeType,notebookId,dueDate,dueTime,reminderMinutes,priority);
 }
 
 @override
 String toString() {
-    return 'NoteDraftState(projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, reminderMinutes: $reminderMinutes, priority: $priority)';
+    return 'NoteDraftState(notebookId: $notebookId, dueDate: $dueDate, dueTime: $dueTime, reminderMinutes: $reminderMinutes, priority: $priority)';
 }
 
 
@@ -251,7 +251,7 @@ abstract mixin class _$NoteDraftStateCopyWith<$Res> implements $NoteDraftStateCo
   factory _$NoteDraftStateCopyWith(_NoteDraftState value, $Res Function(_NoteDraftState) _then) = __$NoteDraftStateCopyWithImpl;
 @override @useResult
 $Res call({
- String? projectId, DateTime? dueDate, TimeOfDay? dueTime, int? reminderMinutes, TaskPriority priority
+ String? notebookId, DateTime? dueDate, TimeOfDay? dueTime, int? reminderMinutes, TaskPriority priority
 });
 
 
@@ -268,9 +268,9 @@ class __$NoteDraftStateCopyWithImpl<$Res>
 
 /// Create a copy of NoteDraftState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? reminderMinutes = freezed,Object? priority = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? notebookId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? reminderMinutes = freezed,Object? priority = null,}) {
   return _then(_NoteDraftState(
-projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+notebookId: freezed == notebookId ? _self.notebookId : notebookId // ignore: cast_nullable_to_non_nullable
 as String?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,dueTime: freezed == dueTime ? _self.dueTime : dueTime // ignore: cast_nullable_to_non_nullable
 as TimeOfDay?,reminderMinutes: freezed == reminderMinutes ? _self.reminderMinutes : reminderMinutes // ignore: cast_nullable_to_non_nullable

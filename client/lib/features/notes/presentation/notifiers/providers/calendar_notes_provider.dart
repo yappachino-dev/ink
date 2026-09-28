@@ -22,16 +22,17 @@ part 'calendar_notes_provider.g.dart';
 @riverpod
 List<Note> calendarNotes(Ref ref) {
   final allNotes = ref.watch(notesProvider).value ?? {};
-  final selectedNotebookId = ref.watch(selectedProjectIdProvider);
+  final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
   final selectedDate = ref.watch(calendarSelectedDateProvider);
 
   return allNotes.values.where((note) {
-    final writtenOnDay = isSameDay(note.createdAt, selectedDate);
-    final matchesNotebook = selectedNotebookId == allProjectsId ||
-        selectedNotebookId == note.projectId;
+      final writtenOnDay = isSameDay(note.createdAt, selectedDate);
+      final matchesNotebook =
+          selectedNotebookId == allNotebooksId ||
+          selectedNotebookId == note.notebookId;
 
-    return writtenOnDay && matchesNotebook;
-  }).toList()
+      return writtenOnDay && matchesNotebook;
+    }).toList()
     // `allNotes` is a Map, so iteration order follows insertion, not time. A
     // journal that reshuffles when an unrelated note syncs is not a journal.
     // Ascending reads as a diary; id breaks ties so two notes written in the
@@ -60,14 +61,14 @@ List<Note> calendarNotes(Ref ref) {
 @riverpod
 Map<DateTime, int> journalEntryCounts(Ref ref) {
   final allNotes = ref.watch(notesProvider).value ?? {};
-  final selectedNotebookId = ref.watch(selectedProjectIdProvider);
+  final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
 
   final counts = <DateTime, int>{};
 
   for (final note in allNotes.values) {
     final matchesNotebook =
-        selectedNotebookId == allProjectsId ||
-        selectedNotebookId == note.projectId;
+        selectedNotebookId == allNotebooksId ||
+        selectedNotebookId == note.notebookId;
     if (!matchesNotebook) continue;
 
     final day = DateUtils.dateOnly(note.createdAt);

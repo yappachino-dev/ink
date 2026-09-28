@@ -3,8 +3,8 @@ import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
-import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
+import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/empty_state_view.dart';
@@ -23,8 +23,8 @@ class JournalDayList extends ConsumerWidget {
 
   /// Unfiled notes have no notebook to name, so the label is omitted for them
   /// rather than standing in a placeholder.
-  String? _notebookLabel(List<Project> notebooks, Note note) {
-    final id = note.projectId;
+  String? _notebookLabel(List<Notebook> notebooks, Note note) {
+    final id = note.notebookId;
     if (id == null) return null;
 
     return notebooks.where((n) => n.id == id).firstOrNull?.title;
@@ -32,7 +32,7 @@ class JournalDayList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notebooks = ref.watch(projectsProvider).value ?? [];
+    final notebooks = ref.watch(notebooksProvider).value ?? [];
     final notes = ref.watch(calendarNotesProvider);
 
     if (notes.isEmpty) {
@@ -101,7 +101,7 @@ class _JournalEntry extends StatelessWidget {
           ),
           child: NoteCard(
             note: note,
-            projectName: notebookName,
+            notebookName: notebookName,
             showCompletion: false,
             showPriority: false,
           ),

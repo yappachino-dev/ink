@@ -8,10 +8,10 @@ import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/features/notes/presentation/widgets/notebooks/notebooks_drawer.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/notes_view.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/offline_banner.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/sync_trust_indicator.dart';
-import 'package:ink/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -159,7 +159,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   child: child!,
                 );
               },
-              child: const ProjectsDrawer(),
+              child: const NotebooksDrawer(),
             ),
         ],
       ),

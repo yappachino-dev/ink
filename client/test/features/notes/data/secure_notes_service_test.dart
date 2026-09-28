@@ -10,13 +10,13 @@ import 'package:ink/core/services/session/crypto_session.dart';
 import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/features/notes/data/secure_notes_service.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
-import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
-import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
+import 'package:ink/features/notes/domain/models/notebook_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -45,8 +45,8 @@ void main() {
       ),
     );
     registerFallbackValue(
-      EncryptedProject(
-        id: 'fallback-project',
+      EncryptedNotebook(
+        id: 'fallback-notebook',
         encryptedContent: Uint8List(0),
         localVersion: 1,
         lastSyncedVersion: 0,
@@ -76,9 +76,9 @@ void main() {
     createdAt: now,
     updatedAt: now,
   );
-  final project = Project(
-    id: 'project-1',
-    title: 'Project',
+  final notebook = Notebook(
+    id: 'notebook-1',
+    title: 'Notebook',
     emoji: '📁',
     colorValue: 0xFF000000,
     localVersion: 1,
@@ -99,8 +99,9 @@ void main() {
     when(() => cryptoSession.hasKey).thenReturn(true);
     // Default: nothing is stale, so the backfill is a no-op unless a test says
     // otherwise.
-    when(() => repository.findStaleMetadataNoteIds(any()))
-        .thenAnswer((_) async => const Success([]));
+    when(
+      () => repository.findStaleMetadataNoteIds(any()),
+    ).thenAnswer((_) async => const Success([]));
     when(
       () => encryption.encrypt(any(), any()),
     ).thenAnswer((_) async => Uint8List.fromList([1]));
@@ -126,28 +127,30 @@ void main() {
     // while the vault was closed is tagged stale, and this is what repairs it
     // once the user unlocks.
     Future<void> givenStoredNote(EncryptedNote stored) async {
-      when(() => repository.getAllNotes())
-          .thenAnswer((_) async => Success([stored]));
+      when(
+        () => repository.getAllNotes(),
+      ).thenAnswer((_) async => Success([stored]));
     }
 
     EncryptedNote deferredNote() => EncryptedNote(
-          id: 'note-1',
-          // Distinct ciphertexts so the decrypt stub can tell the title from
-          // the body; both go through the same two-argument method.
-          encryptedTitle: Uint8List.fromList([9]),
-          encryptedContent: Uint8List.fromList([8]),
-          localVersion: 1,
-          lastSyncedVersion: 1,
-          syncStatus: SyncStatus.synced,
-          createdAt: now,
-          updatedAt: now,
-          metadata: deferredNoteMetadata,
-        );
+      id: 'note-1',
+      // Distinct ciphertexts so the decrypt stub can tell the title from
+      // the body; both go through the same two-argument method.
+      encryptedTitle: Uint8List.fromList([9]),
+      encryptedContent: Uint8List.fromList([8]),
+      localVersion: 1,
+      lastSyncedVersion: 1,
+      syncStatus: SyncStatus.synced,
+      createdAt: now,
+      updatedAt: now,
+      metadata: deferredNoteMetadata,
+    );
 
     test('repairs a note that was stored while the vault was locked', () async {
       await givenStoredNote(deferredNote());
-      when(() => repository.findStaleMetadataNoteIds(any()))
-          .thenAnswer((_) async => const Success(['note-1']));
+      when(
+        () => repository.findStaleMetadataNoteIds(any()),
+      ).thenAnswer((_) async => const Success(['note-1']));
       when(() => encryption.decrypt(any(), any())).thenAnswer((
         invocation,
       ) async {
@@ -201,11 +204,9 @@ void main() {
       // The notes are still readable without a cache; they just filter poorly
       // until a later attempt. A read must not break over that.
       await givenStoredNote(deferredNote());
-      when(() => repository.findStaleMetadataNoteIds(any()))
-          .thenAnswer(
-            (_) async =>
-                const Failure(NotesCoreFailure(UnexpectedFailure('x'))),
-          );
+      when(() => repository.findStaleMetadataNoteIds(any())).thenAnswer(
+        (_) async => const Failure(NotesCoreFailure(UnexpectedFailure('x'))),
+      );
 
       final result = await service.getAllNotes();
 
@@ -215,12 +216,14 @@ void main() {
     test('a note that cannot be decrypted is still marked current', () async {
       // Otherwise every subsequent read would retry the same impossible repair.
       await givenStoredNote(deferredNote());
-      when(() => repository.findStaleMetadataNoteIds(any()))
-          .thenAnswer((_) async => const Success(['note-1']));
+      when(
+        () => repository.findStaleMetadataNoteIds(any()),
+      ).thenAnswer((_) async => const Success(['note-1']));
       // CryptoDecryptionException is what the real cipher layer throws when the
       // key does not authenticate the payload.
-      when(() => encryption.decrypt(any(), any()))
-          .thenThrow(CryptoDecryptionException());
+      when(
+        () => encryption.decrypt(any(), any()),
+      ).thenThrow(CryptoDecryptionException());
       final written = <String, NoteMetadata>{};
       when(() => repository.writeNoteMetadata(any())).thenAnswer((
         invocation,
@@ -261,9 +264,9 @@ void main() {
     expect(calls, ['persist', 'sync']);
   });
 
-  test('createProject schedules sync after persistence succeeds', () async {
-    final encryptedProject = EncryptedProject(
-      id: 'project-1',
+  test('createNotebook schedules sync after persistence succeeds', () async {
+    final encryptedNotebook = EncryptedNotebook(
+      id: 'notebook-1',
       encryptedContent: Uint8List(0),
       localVersion: 1,
       lastSyncedVersion: 0,
@@ -275,21 +278,21 @@ void main() {
       (_) async => Uint8List.fromList(
         utf8.encode(
           jsonEncode({
-            'title': 'Project',
+            'title': 'Notebook',
             'emoji': '📁',
             'colorValue': '#000000',
           }),
         ),
       ),
     );
-    when(() => repository.createProject(any())).thenAnswer((_) async {
+    when(() => repository.createNotebook(any())).thenAnswer((_) async {
       calls.add('persist');
-      return Success(encryptedProject);
+      return Success(encryptedNotebook);
     });
 
-    await service.createProject(
-      const ProjectCreationPayload(
-        title: 'Project',
+    await service.createNotebook(
+      const NotebookCreationPayload(
+        title: 'Notebook',
         emoji: '📁',
         colorValue: 0xFF000000,
       ),
@@ -320,26 +323,26 @@ void main() {
     expect(calls, ['persist', 'sync']);
   });
 
-  test('saveProject schedules sync only after persistence succeeds', () async {
-    when(() => repository.saveProject(any())).thenAnswer((_) async {
+  test('saveNotebook schedules sync only after persistence succeeds', () async {
+    when(() => repository.saveNotebook(any())).thenAnswer((_) async {
       calls.add('persist');
       return const Success(null);
     });
 
-    await service.saveProject(project);
+    await service.saveNotebook(notebook);
 
     expect(calls, ['persist', 'sync']);
   });
 
   test(
-    'deleteProject schedules sync only after persistence succeeds',
+    'deleteNotebook schedules sync only after persistence succeeds',
     () async {
-      when(() => repository.deleteProject('project-1')).thenAnswer((_) async {
+      when(() => repository.deleteNotebook('notebook-1')).thenAnswer((_) async {
         calls.add('persist');
         return const Success(null);
       });
 
-      await service.deleteProject(project);
+      await service.deleteNotebook(notebook);
 
       expect(calls, ['persist', 'sync']);
     },

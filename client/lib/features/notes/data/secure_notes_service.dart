@@ -11,19 +11,19 @@ import 'package:ink/core/services/session/session_exceptions.dart';
 import 'package:ink/core/services/session/session_manager.dart';
 import 'package:ink/core/services/sync/sync_orchestrator.dart';
 import 'package:ink/features/notes/data/models/note_payload.dart';
-import 'package:ink/features/notes/data/models/project_payload.dart';
+import 'package:ink/features/notes/data/models/notebook_payload.dart';
 import 'package:ink/features/notes/data/note_decryptor.dart';
 import 'package:ink/features/notes/data/unified_notes_repository.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
-import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/mappers/notebooks_mapper.dart';
 import 'package:ink/features/notes/domain/mappers/notes_mapper.dart';
-import 'package:ink/features/notes/domain/mappers/projects_mapper.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
-import 'package:ink/features/notes/domain/models/project_creation_payload.dart';
+import 'package:ink/features/notes/domain/models/notebook_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_repository.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/value_objects/note_time.dart';
@@ -80,7 +80,7 @@ class SecureNotesService implements NotesService {
       final result = await _repository.createNote(
         encryptedTitle,
         encryptedContent,
-        payload.projectId,
+        payload.notebookId,
       );
       if (result case Failure(error: final e)) return Failure(e);
       final encryptedNote = result.unwrap;
@@ -237,20 +237,17 @@ class SecureNotesService implements NotesService {
     unawaited(_sync.performSync());
   }
 
-  Future<Note> _decryptNote(
-    EncryptedNote encryptedNote,
-    Uint8List masterKey,
-  ) =>
+  Future<Note> _decryptNote(EncryptedNote encryptedNote, Uint8List masterKey) =>
       _decryptor.decrypt(encryptedNote, masterKey);
 
   @override
-  Future<Result<Project, NotesFailure>> createProject(
-    ProjectCreationPayload payload,
+  Future<Result<Notebook, NotesFailure>> createNotebook(
+    NotebookCreationPayload payload,
   ) {
     return _guard(() async {
       final masterKey = _cryptoSession.masterKey;
 
-      final p = ProjectPayload(
+      final p = NotebookPayload(
         title: payload.title,
         emoji: payload.emoji,
         colorValue: Color(payload.colorValue),
@@ -263,26 +260,26 @@ class SecureNotesService implements NotesService {
         masterKey,
       );
 
-      final result = await _repository.createProject(encryptedContent);
+      final result = await _repository.createNotebook(encryptedContent);
       if (result case Failure(error: final e)) return Failure(e);
-      final encryptedProject = result.unwrap;
+      final encryptedNotebook = result.unwrap;
 
       _scheduleSync();
-      final project = await _decryptProject(encryptedProject, masterKey);
+      final notebook = await _decryptNotebook(encryptedNotebook, masterKey);
 
-      return Success(project);
+      return Success(notebook);
     });
   }
 
   @override
-  Future<Result<void, NotesFailure>> saveProject(Project project) {
+  Future<Result<void, NotesFailure>> saveNotebook(Notebook notebook) {
     return _guard(() async {
       final masterKey = _cryptoSession.masterKey;
 
-      final payload = ProjectPayload(
-        title: project.title,
-        emoji: project.emoji,
-        colorValue: Color(project.colorValue),
+      final payload = NotebookPayload(
+        title: notebook.title,
+        emoji: notebook.emoji,
+        colorValue: Color(notebook.colorValue),
       );
 
       final plainContent = jsonEncode(payload.toJson());
@@ -292,11 +289,11 @@ class SecureNotesService implements NotesService {
         masterKey,
       );
 
-      final encryptedProject = project.toEncrypted(
+      final encryptedNotebook = notebook.toEncrypted(
         encryptedContent: encryptedContent,
       );
 
-      final result = await _repository.saveProject(encryptedProject);
+      final result = await _repository.saveNotebook(encryptedNotebook);
       if (result case Failure(error: final e)) return Failure(e);
 
       _scheduleSync();
@@ -305,53 +302,53 @@ class SecureNotesService implements NotesService {
   }
 
   @override
-  Future<Result<Project?, NotesFailure>> getProject(String id) {
+  Future<Result<Notebook?, NotesFailure>> getNotebook(String id) {
     return _guard(() async {
       final masterKey = _cryptoSession.masterKey;
 
-      final encryptedProjectResult = await _repository.getProject(id);
-      if (encryptedProjectResult case Failure(error: final e)) {
+      final encryptedNotebookResult = await _repository.getNotebook(id);
+      if (encryptedNotebookResult case Failure(error: final e)) {
         return Failure(e);
       }
 
-      final encryptedProject = encryptedProjectResult.unwrap;
+      final encryptedNotebook = encryptedNotebookResult.unwrap;
 
-      if (encryptedProject == null) {
+      if (encryptedNotebook == null) {
         return const Failure(IdNotFound());
       }
 
-      final note = await _decryptProject(encryptedProject, masterKey);
+      final note = await _decryptNotebook(encryptedNotebook, masterKey);
 
       return Success(note);
     });
   }
 
   @override
-  Future<Result<List<Project>, NotesFailure>> getAllProjects() {
+  Future<Result<List<Notebook>, NotesFailure>> getAllNotebooks() {
     return _guard(() async {
       final masterKey = _cryptoSession.masterKey;
 
-      final encryptedProjectsResult = await _repository.getAllProjects();
-      if (encryptedProjectsResult case Failure(error: final e)) {
+      final encryptedNotebooksResult = await _repository.getAllNotebooks();
+      if (encryptedNotebooksResult case Failure(error: final e)) {
         return Failure(e);
       }
 
-      final encryptedProjects = encryptedProjectsResult.unwrap;
+      final encryptedNotebooks = encryptedNotebooksResult.unwrap;
 
-      if (encryptedProjects.isEmpty) return const Success([]);
+      if (encryptedNotebooks.isEmpty) return const Success([]);
 
-      final projects = await Future.wait(
-        encryptedProjects.map((e) => _decryptProject(e, masterKey)),
+      final notebooks = await Future.wait(
+        encryptedNotebooks.map((e) => _decryptNotebook(e, masterKey)),
       );
 
-      return Success(projects);
+      return Success(notebooks);
     });
   }
 
   @override
-  Future<Result<void, NotesFailure>> deleteProject(Project project) {
+  Future<Result<void, NotesFailure>> deleteNotebook(Notebook notebook) {
     return _guard(() async {
-      final result = await _repository.deleteProject(project.id);
+      final result = await _repository.deleteNotebook(notebook.id);
       if (result case Failure(error: final e)) return Failure(e);
 
       _scheduleSync();
@@ -359,26 +356,26 @@ class SecureNotesService implements NotesService {
     });
   }
 
-  Future<Project> _decryptProject(
-    EncryptedProject encryptedProject,
+  Future<Notebook> _decryptNotebook(
+    EncryptedNotebook encryptedNotebook,
     Uint8List masterKey,
   ) async {
     final plainContent = await _encryption.decryptString(
-      encryptedProject.encryptedContent,
+      encryptedNotebook.encryptedContent,
       masterKey,
     );
 
-    final projectPayload = ProjectPayload.fromJson(
+    final notebookPayload = NotebookPayload.fromJson(
       jsonDecode(plainContent) as Map<String, dynamic>,
     );
 
-    final project = encryptedProject.toProject(
-      title: projectPayload.title,
-      emoji: projectPayload.emoji,
-      colorValue: projectPayload.colorValue.toARGB32(),
+    final notebook = encryptedNotebook.toNotebook(
+      title: notebookPayload.title,
+      emoji: notebookPayload.emoji,
+      colorValue: notebookPayload.colorValue.toARGB32(),
     );
 
-    return project;
+    return notebook;
   }
 
   TimeOfDay? _toTimeOfDay(NoteTime? time) {

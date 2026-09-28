@@ -23,7 +23,7 @@ extension NoteToEncrypted on Note {
     updatedAt: updatedAt,
     deletedAt: deletedAt,
 
-    projectId: projectId,
+    notebookId: notebookId,
 
     // Derived here, at the point where plaintext and ciphertext coexist. Every
     // local write funnels through this mapper, so this is the only place local
@@ -64,7 +64,7 @@ extension EncryptedToNote on EncryptedNote {
     updatedAt: updatedAt,
     deletedAt: deletedAt,
 
-    projectId: projectId,
+    notebookId: notebookId,
 
     dueDate: dueDate,
     dueTime: dueTime,

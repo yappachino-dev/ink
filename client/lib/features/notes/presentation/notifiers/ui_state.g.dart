@@ -9,28 +9,28 @@ part of 'ui_state.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(SelectedProjectId)
-final selectedProjectIdProvider = SelectedProjectIdProvider._();
+@ProviderFor(SelectedNotebookId)
+final selectedNotebookIdProvider = SelectedNotebookIdProvider._();
 
-final class SelectedProjectIdProvider
-    extends $NotifierProvider<SelectedProjectId, String> {
-  SelectedProjectIdProvider._()
+final class SelectedNotebookIdProvider
+    extends $NotifierProvider<SelectedNotebookId, String> {
+  SelectedNotebookIdProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'selectedProjectIdProvider',
+        name: r'selectedNotebookIdProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$selectedProjectIdHash();
+  String debugGetCreateSourceHash() => _$selectedNotebookIdHash();
 
   @$internal
   @override
-  SelectedProjectId create() => SelectedProjectId();
+  SelectedNotebookId create() => SelectedNotebookId();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
@@ -41,9 +41,10 @@ final class SelectedProjectIdProvider
   }
 }
 
-String _$selectedProjectIdHash() => r'9ee8d7fa760d92d5edc1bfd898044769266f5025';
+String _$selectedNotebookIdHash() =>
+    r'5e768276bc7e88badede3140d42c9f390ecfc64f';
 
-abstract class _$SelectedProjectId extends $Notifier<String> {
+abstract class _$SelectedNotebookId extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
@@ -61,28 +62,28 @@ abstract class _$SelectedProjectId extends $Notifier<String> {
   }
 }
 
-@ProviderFor(SelectedProjectTitle)
-final selectedProjectTitleProvider = SelectedProjectTitleProvider._();
+@ProviderFor(SelectedNotebookTitle)
+final selectedNotebookTitleProvider = SelectedNotebookTitleProvider._();
 
-final class SelectedProjectTitleProvider
-    extends $NotifierProvider<SelectedProjectTitle, String> {
-  SelectedProjectTitleProvider._()
+final class SelectedNotebookTitleProvider
+    extends $NotifierProvider<SelectedNotebookTitle, String> {
+  SelectedNotebookTitleProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'selectedProjectTitleProvider',
+        name: r'selectedNotebookTitleProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$selectedProjectTitleHash();
+  String debugGetCreateSourceHash() => _$selectedNotebookTitleHash();
 
   @$internal
   @override
-  SelectedProjectTitle create() => SelectedProjectTitle();
+  SelectedNotebookTitle create() => SelectedNotebookTitle();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
@@ -93,10 +94,10 @@ final class SelectedProjectTitleProvider
   }
 }
 
-String _$selectedProjectTitleHash() =>
-    r'fee43e1255ffbe80c045157de0472b93c6e1cdba';
+String _$selectedNotebookTitleHash() =>
+    r'0db1afba0eff16ccf7b089f6f7acbced439fe94d';
 
-abstract class _$SelectedProjectTitle extends $Notifier<String> {
+abstract class _$SelectedNotebookTitle extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override

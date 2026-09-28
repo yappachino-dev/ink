@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_indexes.dart';
-import 'package:ink/features/notes/data/tables/projects.dart';
+import 'package:ink/features/notes/data/tables/notebooks.dart';
 import 'package:uuid/v7.dart';
 
 @DataClassName('NoteModel')
@@ -35,8 +35,8 @@ class Notes extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 
-  TextColumn get projectId => text().nullable().references(
-    Projects,
+  TextColumn get notebookId => text().nullable().references(
+    Notebooks,
     #id,
     onDelete: KeyAction.setNull,
     onUpdate: KeyAction.cascade,

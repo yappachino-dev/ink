@@ -7,11 +7,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'filtered_notes_provider.g.dart';
 
 @riverpod
-List<Note> projectNotes(Ref ref) {
+List<Note> notebookNotes(Ref ref) {
   final allNotes = ref.watch(notesProvider).value ?? {};
-  final selectedProjectId = ref.watch(selectedProjectIdProvider);
+  final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
 
-  if (selectedProjectId == todayProjectId) {
+  if (selectedNotebookId == todayNotebookId) {
     // The injected clock, not the wall clock. `currentDateProvider` is the seam
     // the calendar goldens already rely on; the Today filter was the one view
     // that read `DateTime.now()` directly, which made it untestable and left
@@ -27,7 +27,7 @@ List<Note> projectNotes(Ref ref) {
     }).toList();
   }
 
-  if (isContentForwardLens(selectedProjectId)) {
+  if (isContentForwardLens(selectedNotebookId)) {
     // Reverse-chronological by last touch: the note you were last working on
     // belongs at the top, which is what makes this a notes list rather than a
     // diary. `allNotes` is a Map, so iteration order follows insertion and
@@ -45,6 +45,6 @@ List<Note> projectNotes(Ref ref) {
   }
 
   return allNotes.values
-      .where((note) => note.projectId == selectedProjectId)
+      .where((note) => note.notebookId == selectedNotebookId)
       .toList();
 }

@@ -48,4 +48,4 @@ final class CompletedNotesProvider
   }
 }
 
-String _$completedNotesHash() => r'3ca4a5fb2163553debcf3b19d539e2d2087c34b7';
+String _$completedNotesHash() => r'06f3660f72e27fe1b3cf840c6f1ec7cc5241fa47';

@@ -1,5 +1,5 @@
 // Regression: `ValueKey(viewState)` keyed an `AnimatedSwitcher` on instance
-// identity. `projectNotesProvider` returns a fresh list on every rebuild, so
+// identity. `notebookNotesProvider` returns a fresh list on every rebuild, so
 // every edit and every sync produced a new `NotesViewContent`, the switcher
 // treated it as a different child, and the list was torn down and rebuilt —
 // resetting scroll to the top mid-read.
@@ -17,7 +17,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -34,9 +34,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedProjectId {
+class _AllSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 Note _note(String id, {int touch = 0}) => Note(
@@ -50,7 +50,7 @@ Note _note(String id, {int touch = 0}) => Note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026),
   updatedAt: DateTime(2026).add(Duration(minutes: touch)),
-  projectId: 'p1',
+  notebookId: 'p1',
   priority: TaskPriority.medium,
 );
 
@@ -67,8 +67,8 @@ void main() {
     svc = _Svc();
     prefs = await SharedPreferences.getInstance();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   });
 
   Future<ProviderContainer> containerOf(List<Note> notes) async {
@@ -80,7 +80,7 @@ void main() {
         notesServiceProvider.overrideWithValue(svc),
         userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         currentDateProvider.overrideWithValue(DateTime(2026)),
-        selectedProjectIdProvider.overrideWith(_AllSelected.new),
+        selectedNotebookIdProvider.overrideWith(_AllSelected.new),
       ],
     );
     addTearDown(c.dispose);

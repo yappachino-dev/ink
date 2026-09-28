@@ -128,7 +128,7 @@ func (x *SyncResponse) GetChanges() *SyncChanges {
 
 type SyncChanges struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Projects      []*Project             `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
+	Notebooks     []*Notebook            `protobuf:"bytes,1,rep,name=notebooks,proto3" json:"notebooks,omitempty"`
 	Notes         []*Note                `protobuf:"bytes,2,rep,name=notes,proto3" json:"notes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -164,9 +164,9 @@ func (*SyncChanges) Descriptor() ([]byte, []int) {
 	return file_sync_v1_sync_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SyncChanges) GetProjects() []*Project {
+func (x *SyncChanges) GetNotebooks() []*Notebook {
 	if x != nil {
-		return x.Projects
+		return x.Notebooks
 	}
 	return nil
 }
@@ -178,7 +178,7 @@ func (x *SyncChanges) GetNotes() []*Note {
 	return nil
 }
 
-type Project struct {
+type Notebook struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	EncryptedContent []byte                 `protobuf:"bytes,2,opt,name=encrypted_content,json=encryptedContent,proto3" json:"encrypted_content,omitempty"`
@@ -190,20 +190,20 @@ type Project struct {
 	sizeCache        protoimpl.SizeCache
 }
 
-func (x *Project) Reset() {
-	*x = Project{}
+func (x *Notebook) Reset() {
+	*x = Notebook{}
 	mi := &file_sync_v1_sync_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Project) String() string {
+func (x *Notebook) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Project) ProtoMessage() {}
+func (*Notebook) ProtoMessage() {}
 
-func (x *Project) ProtoReflect() protoreflect.Message {
+func (x *Notebook) ProtoReflect() protoreflect.Message {
 	mi := &file_sync_v1_sync_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -215,47 +215,47 @@ func (x *Project) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Project.ProtoReflect.Descriptor instead.
-func (*Project) Descriptor() ([]byte, []int) {
+// Deprecated: Use Notebook.ProtoReflect.Descriptor instead.
+func (*Notebook) Descriptor() ([]byte, []int) {
 	return file_sync_v1_sync_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Project) GetId() string {
+func (x *Notebook) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *Project) GetEncryptedContent() []byte {
+func (x *Notebook) GetEncryptedContent() []byte {
 	if x != nil {
 		return x.EncryptedContent
 	}
 	return nil
 }
 
-func (x *Project) GetVersion() int32 {
+func (x *Notebook) GetVersion() int32 {
 	if x != nil {
 		return x.Version
 	}
 	return 0
 }
 
-func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
+func (x *Notebook) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *Notebook) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-func (x *Project) GetDeletedAt() *timestamppb.Timestamp {
+func (x *Notebook) GetDeletedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.DeletedAt
 	}
@@ -265,7 +265,7 @@ func (x *Project) GetDeletedAt() *timestamppb.Timestamp {
 type Note struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProjectId        *string                `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3,oneof" json:"project_id,omitempty"`
+	NotebookId       *string                `protobuf:"bytes,2,opt,name=notebook_id,json=notebookId,proto3,oneof" json:"notebook_id,omitempty"`
 	EncryptedTitle   []byte                 `protobuf:"bytes,3,opt,name=encrypted_title,json=encryptedTitle,proto3" json:"encrypted_title,omitempty"`
 	EncryptedContent []byte                 `protobuf:"bytes,4,opt,name=encrypted_content,json=encryptedContent,proto3" json:"encrypted_content,omitempty"`
 	Version          int32                  `protobuf:"varint,5,opt,name=version,proto3" json:"version,omitempty"`
@@ -313,9 +313,9 @@ func (x *Note) GetId() string {
 	return ""
 }
 
-func (x *Note) GetProjectId() string {
-	if x != nil && x.ProjectId != nil {
-		return *x.ProjectId
+func (x *Note) GetNotebookId() string {
+	if x != nil && x.NotebookId != nil {
+		return *x.NotebookId
 	}
 	return ""
 }
@@ -373,11 +373,11 @@ const file_sync_v1_sync_proto_rawDesc = "" +
 	"\fSyncResponse\x12\x1f\n" +
 	"\vnext_cursor\x18\x01 \x01(\x05R\n" +
 	"nextCursor\x12.\n" +
-	"\achanges\x18\x02 \x01(\v2\x14.sync.v1.SyncChangesR\achanges\"`\n" +
-	"\vSyncChanges\x12,\n" +
-	"\bprojects\x18\x01 \x03(\v2\x10.sync.v1.ProjectR\bprojects\x12#\n" +
-	"\x05notes\x18\x02 \x03(\v2\r.sync.v1.NoteR\x05notes\"\x91\x02\n" +
-	"\aProject\x12\x0e\n" +
+	"\achanges\x18\x02 \x01(\v2\x14.sync.v1.SyncChangesR\achanges\"c\n" +
+	"\vSyncChanges\x12/\n" +
+	"\tnotebooks\x18\x01 \x03(\v2\x11.sync.v1.NotebookR\tnotebooks\x12#\n" +
+	"\x05notes\x18\x02 \x03(\v2\r.sync.v1.NoteR\x05notes\"\x92\x02\n" +
+	"\bNotebook\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12+\n" +
 	"\x11encrypted_content\x18\x02 \x01(\fR\x10encryptedContent\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\x05R\aversion\x129\n" +
@@ -386,11 +386,11 @@ const file_sync_v1_sync_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\n" +
-	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\"\xea\x02\n" +
+	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\"\xed\x02\n" +
 	"\x04Note\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
-	"\n" +
-	"project_id\x18\x02 \x01(\tH\x00R\tprojectId\x88\x01\x01\x12'\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12$\n" +
+	"\vnotebook_id\x18\x02 \x01(\tH\x00R\n" +
+	"notebookId\x88\x01\x01\x12'\n" +
 	"\x0fencrypted_title\x18\x03 \x01(\fR\x0eencryptedTitle\x12+\n" +
 	"\x11encrypted_content\x18\x04 \x01(\fR\x10encryptedContent\x12\x18\n" +
 	"\aversion\x18\x05 \x01(\x05R\aversion\x129\n" +
@@ -399,8 +399,8 @@ const file_sync_v1_sync_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
 	"\n" +
-	"deleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAtB\r\n" +
-	"\v_project_id2B\n" +
+	"deleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAtB\x0e\n" +
+	"\f_notebook_id2B\n" +
 	"\vSyncService\x123\n" +
 	"\x04Sync\x12\x14.sync.v1.SyncRequest\x1a\x15.sync.v1.SyncResponseB\x8d\x01\n" +
 	"\vcom.sync.v1B\tSyncProtoP\x01Z6github.com/yappachino-dev/ink/gen/go/pb/sync/v1;syncv1\xa2\x02\x03SXX\xaa\x02\aSync.V1\xca\x02\aSync\\V1\xe2\x02\x13Sync\\V1\\GPBMetadata\xea\x02\bSync::V1b\x06proto3"
@@ -422,18 +422,18 @@ var file_sync_v1_sync_proto_goTypes = []any{
 	(*SyncRequest)(nil),           // 0: sync.v1.SyncRequest
 	(*SyncResponse)(nil),          // 1: sync.v1.SyncResponse
 	(*SyncChanges)(nil),           // 2: sync.v1.SyncChanges
-	(*Project)(nil),               // 3: sync.v1.Project
+	(*Notebook)(nil),              // 3: sync.v1.Notebook
 	(*Note)(nil),                  // 4: sync.v1.Note
 	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
 var file_sync_v1_sync_proto_depIdxs = []int32{
 	2,  // 0: sync.v1.SyncRequest.changes:type_name -> sync.v1.SyncChanges
 	2,  // 1: sync.v1.SyncResponse.changes:type_name -> sync.v1.SyncChanges
-	3,  // 2: sync.v1.SyncChanges.projects:type_name -> sync.v1.Project
+	3,  // 2: sync.v1.SyncChanges.notebooks:type_name -> sync.v1.Notebook
 	4,  // 3: sync.v1.SyncChanges.notes:type_name -> sync.v1.Note
-	5,  // 4: sync.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	5,  // 5: sync.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
-	5,  // 6: sync.v1.Project.deleted_at:type_name -> google.protobuf.Timestamp
+	5,  // 4: sync.v1.Notebook.created_at:type_name -> google.protobuf.Timestamp
+	5,  // 5: sync.v1.Notebook.updated_at:type_name -> google.protobuf.Timestamp
+	5,  // 6: sync.v1.Notebook.deleted_at:type_name -> google.protobuf.Timestamp
 	5,  // 7: sync.v1.Note.created_at:type_name -> google.protobuf.Timestamp
 	5,  // 8: sync.v1.Note.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 9: sync.v1.Note.deleted_at:type_name -> google.protobuf.Timestamp

@@ -18,7 +18,7 @@ extension NoteModelToEncrypted on NoteModel {
     updatedAt: updatedAt,
     deletedAt: deletedAt,
 
-    projectId: projectId,
+    notebookId: notebookId,
 
     // Rebuilt from the stored columns rather than re-derived: this is a read
     // path, and deriving here would mean decrypting on every list paint, which
@@ -48,7 +48,7 @@ extension EncryptedNoteToCompanion on EncryptedNote {
     updatedAt: Value(updatedAt),
     deletedAt: Value(deletedAt),
 
-    projectId: Value(projectId),
+    notebookId: Value(notebookId),
 
     titlePreview: Value(metadata.titlePreview),
     bodyPreview: Value(metadata.bodyPreview),
@@ -69,6 +69,6 @@ extension EncryptedNoteToCompanion on EncryptedNote {
     updatedAt: updatedAt,
     deletedAt: Value(deletedAt),
 
-    projectId: Value(projectId),
+    notebookId: Value(notebookId),
   );
 }

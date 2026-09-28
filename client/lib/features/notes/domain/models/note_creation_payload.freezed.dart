@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteCreationPayload {
 
- String get title; List<dynamic> get content; String? get projectId; DateTime? get dueDate; NoteTime? get dueTime; TaskPriority get priority; int? get reminderMinutesBefore;
+ String get title; List<dynamic> get content; String? get notebookId; DateTime? get dueDate; NoteTime? get dueTime; TaskPriority get priority; int? get reminderMinutesBefore;
 /// Create a copy of NoteCreationPayload
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $NoteCreationPayloadCopyWith<NoteCreationPayload> get copyWith => _$NoteCreation
 @override
 bool operator ==(Object other) {
   final _this = this as NoteCreationPayload;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteCreationPayload&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.content, _this.content)&&(identical(other.projectId, _this.projectId) || other.projectId == _this.projectId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.priority, _this.priority) || other.priority == _this.priority)&&(identical(other.reminderMinutesBefore, _this.reminderMinutesBefore) || other.reminderMinutesBefore == _this.reminderMinutesBefore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteCreationPayload&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.content, _this.content)&&(identical(other.notebookId, _this.notebookId) || other.notebookId == _this.notebookId)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.dueTime, _this.dueTime) || other.dueTime == _this.dueTime)&&(identical(other.priority, _this.priority) || other.priority == _this.priority)&&(identical(other.reminderMinutesBefore, _this.reminderMinutesBefore) || other.reminderMinutesBefore == _this.reminderMinutesBefore));
 }
 
 
 @override
 int get hashCode {
   final _this = this as NoteCreationPayload;
-  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.content),_this.projectId,_this.dueDate,_this.dueTime,_this.priority,_this.reminderMinutesBefore);
+  return Object.hash(runtimeType,_this.title,const DeepCollectionEquality().hash(_this.content),_this.notebookId,_this.dueDate,_this.dueTime,_this.priority,_this.reminderMinutesBefore);
 }
 
 @override
 String toString() {
   final _this = this as NoteCreationPayload;
-  return 'NoteCreationPayload(title: ${_this.title}, content: ${_this.content}, projectId: ${_this.projectId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, priority: ${_this.priority}, reminderMinutesBefore: ${_this.reminderMinutesBefore})';
+  return 'NoteCreationPayload(title: ${_this.title}, content: ${_this.content}, notebookId: ${_this.notebookId}, dueDate: ${_this.dueDate}, dueTime: ${_this.dueTime}, priority: ${_this.priority}, reminderMinutesBefore: ${_this.reminderMinutesBefore})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $NoteCreationPayloadCopyWith<$Res>  {
   factory $NoteCreationPayloadCopyWith(NoteCreationPayload value, $Res Function(NoteCreationPayload) _then) = _$NoteCreationPayloadCopyWithImpl;
 @useResult
 $Res call({
- String title, List<dynamic> content, String? projectId, DateTime? dueDate, NoteTime? dueTime, TaskPriority priority, int? reminderMinutesBefore
+ String title, List<dynamic> content, String? notebookId, DateTime? dueDate, NoteTime? dueTime, TaskPriority priority, int? reminderMinutesBefore
 });
 
 
@@ -68,11 +68,11 @@ class _$NoteCreationPayloadCopyWithImpl<$Res>
 
 /// Create a copy of NoteCreationPayload
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? content = null,Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? content = null,Object? notebookId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
   return _then(NoteCreationPayload(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,notebookId: freezed == notebookId ? _self.notebookId : notebookId // ignore: cast_nullable_to_non_nullable
 as String?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,dueTime: freezed == dueTime ? _self.dueTime : dueTime // ignore: cast_nullable_to_non_nullable
 as NoteTime?,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
@@ -159,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  List<dynamic> content,  String? projectId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  List<dynamic> content,  String? notebookId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteCreationPayload() when $default != null:
-return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);case _:
+return $default(_that.title,_that.content,_that.notebookId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);case _:
   return orElse();
 
 }
@@ -180,10 +180,10 @@ return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.du
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  List<dynamic> content,  String? projectId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  List<dynamic> content,  String? notebookId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)  $default,) {final _that = this;
 switch (_that) {
 case _NoteCreationPayload():
-return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);}
+return $default(_that.title,_that.content,_that.notebookId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -197,10 +197,10 @@ return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.du
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  List<dynamic> content,  String? projectId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  List<dynamic> content,  String? notebookId,  DateTime? dueDate,  NoteTime? dueTime,  TaskPriority priority,  int? reminderMinutesBefore)?  $default,) {final _that = this;
 switch (_that) {
 case _NoteCreationPayload() when $default != null:
-return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);case _:
+return $default(_that.title,_that.content,_that.notebookId,_that.dueDate,_that.dueTime,_that.priority,_that.reminderMinutesBefore);case _:
   return null;
 
 }
@@ -212,7 +212,7 @@ return $default(_that.title,_that.content,_that.projectId,_that.dueDate,_that.du
 
 
 class _NoteCreationPayload implements NoteCreationPayload {
-  const _NoteCreationPayload({required this.title, required  List<dynamic> content, this.projectId, this.dueDate, this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _content = content;
+  const _NoteCreationPayload({required this.title, required  List<dynamic> content, this.notebookId, this.dueDate, this.dueTime, this.priority = TaskPriority.none, this.reminderMinutesBefore}): _content = content;
   
 
 @override final  String title;
@@ -223,7 +223,7 @@ class _NoteCreationPayload implements NoteCreationPayload {
   return EqualUnmodifiableListView(_content);
 }
 
-@override final  String? projectId;
+@override final  String? notebookId;
 @override final  DateTime? dueDate;
 @override final  NoteTime? dueTime;
 @override@JsonKey() final  TaskPriority priority;
@@ -239,18 +239,18 @@ _$NoteCreationPayloadCopyWith<_NoteCreationPayload> get copyWith => __$NoteCreat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteCreationPayload&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.content, _content)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteCreationPayload&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.content, _content)&&(identical(other.notebookId, notebookId) || other.notebookId == notebookId)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.dueTime, dueTime) || other.dueTime == dueTime)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.reminderMinutesBefore, reminderMinutesBefore) || other.reminderMinutesBefore == reminderMinutesBefore));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_content),projectId,dueDate,dueTime,priority,reminderMinutesBefore);
+    return Object.hash(runtimeType,title,const DeepCollectionEquality().hash(_content),notebookId,dueDate,dueTime,priority,reminderMinutesBefore);
 }
 
 @override
 String toString() {
-    return 'NoteCreationPayload(title: $title, content: $content, projectId: $projectId, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
+    return 'NoteCreationPayload(title: $title, content: $content, notebookId: $notebookId, dueDate: $dueDate, dueTime: $dueTime, priority: $priority, reminderMinutesBefore: $reminderMinutesBefore)';
 }
 
 
@@ -261,7 +261,7 @@ abstract mixin class _$NoteCreationPayloadCopyWith<$Res> implements $NoteCreatio
   factory _$NoteCreationPayloadCopyWith(_NoteCreationPayload value, $Res Function(_NoteCreationPayload) _then) = __$NoteCreationPayloadCopyWithImpl;
 @override @useResult
 $Res call({
- String title, List<dynamic> content, String? projectId, DateTime? dueDate, NoteTime? dueTime, TaskPriority priority, int? reminderMinutesBefore
+ String title, List<dynamic> content, String? notebookId, DateTime? dueDate, NoteTime? dueTime, TaskPriority priority, int? reminderMinutesBefore
 });
 
 
@@ -278,11 +278,11 @@ class __$NoteCreationPayloadCopyWithImpl<$Res>
 
 /// Create a copy of NoteCreationPayload
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? content = null,Object? projectId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? content = null,Object? notebookId = freezed,Object? dueDate = freezed,Object? dueTime = freezed,Object? priority = null,Object? reminderMinutesBefore = freezed,}) {
   return _then(_NoteCreationPayload(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,content: null == content ? _self._content : content // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,notebookId: freezed == notebookId ? _self.notebookId : notebookId // ignore: cast_nullable_to_non_nullable
 as String?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,dueTime: freezed == dueTime ? _self.dueTime : dueTime // ignore: cast_nullable_to_non_nullable
 as NoteTime?,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable

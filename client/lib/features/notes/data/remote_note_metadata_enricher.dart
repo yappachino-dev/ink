@@ -26,9 +26,9 @@ class RemoteNoteMetadataEnricher implements NotesSyncEngine {
     required NotesSyncEngine inner,
     required CryptoSession cryptoSession,
     required NoteDecryptor decryptor,
-  })  : _inner = inner,
-        _cryptoSession = cryptoSession,
-        _decryptor = decryptor;
+  }) : _inner = inner,
+       _cryptoSession = cryptoSession,
+       _decryptor = decryptor;
 
   final NotesSyncEngine _inner;
   final CryptoSession _cryptoSession;
@@ -47,8 +47,8 @@ class RemoteNoteMetadataEnricher implements NotesSyncEngine {
     // key. Storing it with a stale metadata tag means the note is present the
     // moment the user unlocks, and _backfillMetadata fills the columns then.
     //
-    // Throwing instead would stall the entire sync — projects included, and the
-    // cursor with it — for as long as the vault stayed locked.
+    // Throwing instead would stall the entire sync - notebooks included,
+    // and the cursor with it - for as long as the vault stayed locked.
     if (!_cryptoSession.hasKey) {
       for (final note in remoteData) {
         enriched.add(note.copyWith(metadata: deferredNoteMetadata));
@@ -96,6 +96,5 @@ class RemoteNoteMetadataEnricher implements NotesSyncEngine {
   @override
   Future<Result<void, NotesFailure>> acknowledgePushedNotes(
     List<SyncAck> acknowledgements,
-  ) =>
-      _inner.acknowledgePushedNotes(acknowledgements);
+  ) => _inner.acknowledgePushedNotes(acknowledgements);
 }

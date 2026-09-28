@@ -9,9 +9,8 @@ abstract interface class SyncController {
 
 /// Domain-facing stream of successful synchronization events.
 final syncEventsProvider = StreamProvider<SyncEvent>(
-  (ref) => throw StateError(
-    'syncEventsProvider must be overridden at the app root',
-  ),
+  (ref) =>
+      throw StateError('syncEventsProvider must be overridden at the app root'),
 );
 
 /// Domain-facing synchronization command dependency.

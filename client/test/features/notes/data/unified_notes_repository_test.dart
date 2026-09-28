@@ -1,7 +1,7 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/app/database/adapters/notebooks_local_data_source.dart';
 import 'package:ink/app/database/adapters/notes_local_data_source.dart';
-import 'package:ink/app/database/adapters/projects_local_data_source.dart';
 import 'package:ink/app/database/database.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
@@ -18,7 +18,7 @@ void main() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     repository = UnifiedNotesRepository(
       localNotes: NotesLocalDataSource(notesDao: db.notesDao),
-      localProjects: ProjectsLocalDataSource(projectsDao: db.projectsDao),
+      localNotebooks: NotebooksLocalDataSource(notebooksDao: db.notebooksDao),
     );
   });
 
@@ -33,12 +33,12 @@ void main() {
     db.noteConflicts,
   )..where(($t) => $t.id.equals(id))).getSingleOrNull();
 
-  Future<ProjectModel?> projectById(String id) => (db.select(
-    db.projects,
+  Future<NotebookModel?> notebookById(String id) => (db.select(
+    db.notebooks,
   )..where(($t) => $t.id.equals(id))).getSingleOrNull();
 
-  Future<ProjectConflictModel?> projectConflictById(String id) => (db.select(
-    db.projectConflicts,
+  Future<NotebookConflictModel?> notebookConflictById(String id) => (db.select(
+    db.notebookConflicts,
   )..where(($t) => $t.id.equals(id))).getSingleOrNull();
 
   /// Seeds a row and returns it as the sync engine would see it.
@@ -56,13 +56,13 @@ void main() {
     ),
   );
 
-  Future<void> seedProject({
+  Future<void> seedNotebook({
     required String id,
     int localVersion = 1,
     int lastSyncedVersion = 1,
     SyncStatus syncStatus = SyncStatus.synced,
-  }) => db.projectsDao.insertProject(
-    NotesFixtures.buildProjectCompanion(
+  }) => db.notebooksDao.insertNotebook(
+    NotesFixtures.buildNotebookCompanion(
       id: id,
       localVersion: localVersion,
       lastSyncedVersion: lastSyncedVersion,
@@ -100,15 +100,10 @@ void main() {
     });
 
     test('overwrites clean local row when server is newer', () async {
-      await seedNote(
-        id: 'n_clean',
-      );
+      await seedNote(id: 'n_clean');
 
       await repository.applyRemoteNotes([
-        NotesFixtures.buildEncryptedNote(
-          id: 'n_clean',
-          version: 4,
-        ),
+        NotesFixtures.buildEncryptedNote(id: 'n_clean', version: 4),
       ]);
 
       final row = (await noteById('n_clean'))!;
@@ -170,9 +165,7 @@ void main() {
     });
 
     test('deletes clean local row when server deleted it', () async {
-      await seedNote(
-        id: 'n_deleted',
-      );
+      await seedNote(id: 'n_deleted');
 
       await repository.applyRemoteNotes([
         NotesFixtures.buildEncryptedNote(
@@ -187,12 +180,8 @@ void main() {
 
     test('applies a mixed batch of deltas atomically', () async {
       await seedNote(id: 'n_keep', localVersion: 2);
-      await seedNote(
-        id: 'n_drop',
-      );
-      await seedNote(
-        id: 'n_over',
-      );
+      await seedNote(id: 'n_drop');
+      await seedNote(id: 'n_over');
       await seedNote(id: 'n_skip', localVersion: 9, lastSyncedVersion: 9);
 
       final result = await repository.applyRemoteNotes([
@@ -225,116 +214,107 @@ void main() {
     });
   });
 
-  group('UnifiedNotesRepository - applyRemoteProjects', () {
-    test('creates missing project locally', () async {
-      final result = await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(id: 'p_new', version: 2),
+  group('UnifiedNotesRepository - applyRemoteNotebooks', () {
+    test('creates missing notebook locally', () async {
+      final result = await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(id: 'p_new', version: 2),
       ]);
 
       expect(result, isA<Success<void, NotesFailure>>());
-      final row = await projectById('p_new');
+      final row = await notebookById('p_new');
       expect(row, isNotNull);
       expect(row!.localVersion, equals(2));
     });
 
     test('ignores tombstone for unknown id', () async {
-      await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(
           id: 'p_ghost',
           version: 1,
           deletedAt: DateTime.now(),
         ),
       ]);
 
-      expect(await projectById('p_ghost'), isNull);
+      expect(await notebookById('p_ghost'), isNull);
     });
 
     test('overwrites clean local row when server is newer', () async {
-      await seedProject(
-        id: 'p_clean',
-      );
+      await seedNotebook(id: 'p_clean');
 
-      await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(id: 'p_clean', version: 6),
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(id: 'p_clean', version: 6),
       ]);
 
-      final row = (await projectById('p_clean'))!;
+      final row = (await notebookById('p_clean'))!;
       expect(row.localVersion, equals(6));
       expect(row.syncStatus, equals(SyncStatus.synced));
     });
 
-    test(
-      'does not drop unsynced local changes on newer server delta '
-      '(old LWW behavior silently overwrote them)',
-      () async {
-        await seedProject(
-          id: 'p_dirty',
-          localVersion: 3,
-          syncStatus: SyncStatus.modified,
-        );
+    test('does not drop unsynced local changes on newer server delta '
+        '(old LWW behavior silently overwrote them)', () async {
+      await seedNotebook(
+        id: 'p_dirty',
+        localVersion: 3,
+        syncStatus: SyncStatus.modified,
+      );
 
-        await repository.applyRemoteProjects([
-          NotesFixtures.buildEncryptedProject(id: 'p_dirty', version: 5),
-        ]);
-
-        final row = (await projectById('p_dirty'))!;
-        expect(row.syncStatus, equals(SyncStatus.conflicted));
-        expect(row.localVersion, equals(3));
-
-        final conflictRow = (await projectConflictById('p_dirty'))!;
-        expect(conflictRow.version, equals(5));
-      },
-    );
-
-    test('skips stale live delta', () async {
-      await seedProject(id: 'p_stale', localVersion: 4, lastSyncedVersion: 4);
-
-      await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(id: 'p_stale', version: 2),
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(id: 'p_dirty', version: 5),
       ]);
 
-      final row = (await projectById('p_stale'))!;
+      final row = (await notebookById('p_dirty'))!;
+      expect(row.syncStatus, equals(SyncStatus.conflicted));
+      expect(row.localVersion, equals(3));
+
+      final conflictRow = (await notebookConflictById('p_dirty'))!;
+      expect(conflictRow.version, equals(5));
+    });
+
+    test('skips stale live delta', () async {
+      await seedNotebook(id: 'p_stale', localVersion: 4, lastSyncedVersion: 4);
+
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(id: 'p_stale', version: 2),
+      ]);
+
+      final row = (await notebookById('p_stale'))!;
       expect(row.localVersion, equals(4));
     });
 
     test('deletes clean local row when server deleted it', () async {
-      await seedProject(
-        id: 'p_gone',
-      );
+      await seedNotebook(id: 'p_gone');
 
-      await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(
           id: 'p_gone',
           version: 2,
           deletedAt: DateTime.now(),
         ),
       ]);
 
-      expect(await projectById('p_gone'), isNull);
+      expect(await notebookById('p_gone'), isNull);
     });
 
     test('applies mixed batch atomically', () async {
-      await seedProject(id: 'p_keep', localVersion: 2);
-      await seedProject(
-        id: 'p_drop',
-      );
+      await seedNotebook(id: 'p_keep', localVersion: 2);
+      await seedNotebook(id: 'p_drop');
 
-      await repository.applyRemoteProjects([
-        NotesFixtures.buildEncryptedProject(id: 'p_add', version: 1),
-        NotesFixtures.buildEncryptedProject(
+      await repository.applyRemoteNotebooks([
+        NotesFixtures.buildEncryptedNotebook(id: 'p_add', version: 1),
+        NotesFixtures.buildEncryptedNotebook(
           id: 'p_drop',
           version: 2,
           deletedAt: DateTime.now(),
         ),
-        NotesFixtures.buildEncryptedProject(id: 'p_keep', version: 4),
+        NotesFixtures.buildEncryptedNotebook(id: 'p_keep', version: 4),
       ]);
 
-      final ids = (await db.projectsDao.getAll()).map((e) => e.id);
+      final ids = (await db.notebooksDao.getAll()).map((e) => e.id);
       expect(ids, containsAll(['p_add', 'p_keep']));
       expect(ids, isNot(contains('p_drop')));
 
       expect(
-        (await projectById('p_keep'))!.syncStatus,
+        (await notebookById('p_keep'))!.syncStatus,
         equals(SyncStatus.conflicted),
       );
     });

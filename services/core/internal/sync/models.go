@@ -17,14 +17,14 @@ type SyncResult struct {
 }
 
 type SyncChanges struct {
-	Projects []Project
+	Notebooks []Notebook
 	Notes    []Note
 }
 
 type Note struct {
 	ID        uuid.UUID
 	UserID    int
-	ProjectID *uuid.UUID
+	NotebookID *uuid.UUID
 
 	EncryptedTitle   []byte
 	EncryptedContent []byte
@@ -37,7 +37,7 @@ type Note struct {
 	DeletedAt time.Time
 }
 
-type Project struct {
+type Notebook struct {
 	ID     uuid.UUID
 	UserID int
 

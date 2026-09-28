@@ -19,9 +19,9 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../helpers/test_helpers.dart';
 
-class _NoNotebookSelected extends SelectedProjectId {
+class _NoNotebookSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 GoRouter _shellRouter() {
@@ -66,7 +66,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          selectedProjectIdProvider.overrideWith(_NoNotebookSelected.new),
+          selectedNotebookIdProvider.overrideWith(_NoNotebookSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(
@@ -139,7 +139,7 @@ void main() {
   testWidgets('entering the journal clears a task lens (F-10)', (tester) async {
     final container = ProviderContainer(
       overrides: [
-        selectedProjectIdProvider.overrideWith(_NoNotebookSelected.new),
+        selectedNotebookIdProvider.overrideWith(_NoNotebookSelected.new),
         userPreferencesProvider.overrideWithValue(await mockUserConfig()),
       ],
     );
@@ -160,13 +160,13 @@ void main() {
 
     // Home and Calendar read one lens. A task lens is a pseudo-notebook that
     // the journal has no notion of.
-    container.read(selectedProjectIdProvider.notifier).id = todayProjectId;
+    container.read(selectedNotebookIdProvider.notifier).id = todayNotebookId;
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(t.calendar.title));
     await tester.pumpAndSettle();
 
-    expect(container.read(selectedProjectIdProvider), allProjectsId);
+    expect(container.read(selectedNotebookIdProvider), allNotebooksId);
   });
 }
 

@@ -149,10 +149,7 @@ void main() {
 
         final result = await service.unlock(KeyType.pin, 'bad_pin');
 
-        expect(
-          result,
-          const Failure<Never, VaultFailure>(InvalidSecret()),
-        );
+        expect(result, const Failure<Never, VaultFailure>(InvalidSecret()));
 
         verifyNever(() => mockSessionController.setMasterKey(any()));
       },

@@ -33,8 +33,6 @@ grpc_internal.ClientChannel clientChannel(Ref ref) {
   return grpc.ClientChannel(
     config.grpcHost,
     port: config.grpcPort,
-    options: grpc.ChannelOptions(
-      credentials: tls.credentials,
-    ),
+    options: grpc.ChannelOptions(credentials: tls.credentials),
   );
 }

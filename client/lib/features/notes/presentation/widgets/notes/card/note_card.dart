@@ -14,7 +14,7 @@ import 'package:material_ui/material_ui.dart';
 class NoteCard extends ConsumerWidget {
   const NoteCard({
     required this.note,
-    this.projectName,
+    this.notebookName,
     this.showCompletion = true,
     this.showPriority = true,
     this.showMeta = true,
@@ -22,7 +22,7 @@ class NoteCard extends ConsumerWidget {
   });
 
   final Note note;
-  final String? projectName;
+  final String? notebookName;
 
   /// Whether to lead the row with a completion checkbox.
   ///
@@ -111,14 +111,14 @@ class NoteCard extends ConsumerWidget {
 
               if (showMeta &&
                   (note.dueDate != null ||
-                      (projectName?.isNotEmpty ?? false) ||
+                      (notebookName?.isNotEmpty ?? false) ||
                       (showPriority &&
                           note.priority != TaskPriority.none))) ...[
                 AppSpacing.gapSm,
 
                 NoteMetaRow(
                   note: note,
-                  projectName: projectName,
+                  notebookName: notebookName,
                   showPriority: showPriority,
                 ),
               ],
@@ -138,13 +138,13 @@ class NoteCard extends ConsumerWidget {
 class NoteMetaRow extends StatelessWidget {
   const NoteMetaRow({
     required this.note,
-    this.projectName,
+    this.notebookName,
     this.showPriority = true,
     super.key,
   });
 
   final Note note;
-  final String? projectName;
+  final String? notebookName;
   final bool showPriority;
 
   @override
@@ -153,8 +153,8 @@ class NoteMetaRow extends StatelessWidget {
     final parts = <(IconData, String, Color?)>[
       if (note.dueDate != null)
         (Icons.event_outlined, note.timeLabel(context.t), null),
-      if (projectName != null && projectName!.isNotEmpty)
-        (Icons.folder_outlined, projectName!, null),
+      if (notebookName != null && notebookName!.isNotEmpty)
+        (Icons.folder_outlined, notebookName!, null),
       if (showPriority && note.priority != TaskPriority.none)
         (
           Icons.flag_outlined,

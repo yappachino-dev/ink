@@ -1,6 +1,4 @@
-final emailRegex = RegExp(
-  r'^[\w.+-]+@([\w-]+\.)+[A-Za-z]{2,}$',
-);
+final emailRegex = RegExp(r'^[\w.+-]+@([\w-]+\.)+[A-Za-z]{2,}$');
 
 String? emailValidator(
   String? v, {

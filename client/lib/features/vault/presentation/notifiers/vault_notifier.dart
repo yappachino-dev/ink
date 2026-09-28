@@ -30,9 +30,7 @@ class VaultNotifier extends _$VaultNotifier {
 
     final session = ref.read(vaultSessionStatusProvider);
     if (!session.hasMasterKey) {
-      unawaited(
-        _checkInitalizationState(vaultService, session.hasAccessToken),
-      );
+      unawaited(_checkInitalizationState(vaultService, session.hasAccessToken));
     }
   }
 

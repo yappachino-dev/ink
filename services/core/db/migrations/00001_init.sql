@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS user_keys (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS projects (
+CREATE TABLE IF NOT EXISTS notebooks (
     id UUID PRIMARY KEY,
     user_id INT NOT NULL,
 
@@ -39,16 +39,16 @@ CREATE TABLE IF NOT EXISTS projects (
     updated_at TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP NULL,
 
-    CONSTRAINT fk_projects_user
+    CONSTRAINT fk_notebooks_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_projects_sync ON projects(user_id, sync_sequence);
+CREATE INDEX IF NOT EXISTS idx_notebooks_sync ON notebooks(user_id, sync_sequence);
 
 CREATE TABLE IF NOT EXISTS notes (
     id UUID PRIMARY KEY,
     user_id INT NOT NULL,
-    project_id UUID NULL,
+    notebook_id UUID NULL,
 
     encrypted_title BYTEA NOT NULL,
     encrypted_content BYTEA NOT NULL,
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS notes (
     CONSTRAINT fk_notes_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 
-    CONSTRAINT fk_notes_project
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL
+    CONSTRAINT fk_notes_notebook
+    FOREIGN KEY (notebook_id) REFERENCES notebooks(id) ON DELETE SET NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_notes_sync ON notes(user_id, sync_sequence);
@@ -100,6 +100,6 @@ CREATE INDEX IF NOT EXISTS idx_email_verifications_email ON email_verifications(
 DROP TABLE IF EXISTS email_verifications;
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS notes;
-DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS notebooks;
 DROP TABLE IF EXISTS user_keys;
 DROP TABLE IF EXISTS users;

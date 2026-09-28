@@ -78,11 +78,80 @@ func (b *UpsertKeySlotsBatchResults) Close() error {
 	return b.br.Close()
 }
 
+const upsertNotebooks = `-- name: UpsertNotebooks :batchexec
+INSERT INTO notebooks (id, user_id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+ON CONFLICT (id) DO UPDATE SET
+    encrypted_content = EXCLUDED.encrypted_content,
+    version = EXCLUDED.version,
+    sync_sequence = EXCLUDED.sync_sequence,
+    updated_at = EXCLUDED.updated_at,
+    deleted_at = EXCLUDED.deleted_at
+WHERE notebooks.user_id = EXCLUDED.user_id
+`
+
+type UpsertNotebooksBatchResults struct {
+	br     pgx.BatchResults
+	tot    int
+	closed bool
+}
+
+type UpsertNotebooksParams struct {
+	ID               uuid.UUID  `json:"id"`
+	UserID           int32      `json:"user_id"`
+	EncryptedContent []byte     `json:"encrypted_content"`
+	Version          int32      `json:"version"`
+	SyncSequence     int32      `json:"sync_sequence"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
+	DeletedAt        *time.Time `json:"deleted_at"`
+}
+
+func (q *Queries) UpsertNotebooks(ctx context.Context, arg []UpsertNotebooksParams) *UpsertNotebooksBatchResults {
+	batch := &pgx.Batch{}
+	for _, a := range arg {
+		vals := []interface{}{
+			a.ID,
+			a.UserID,
+			a.EncryptedContent,
+			a.Version,
+			a.SyncSequence,
+			a.CreatedAt,
+			a.UpdatedAt,
+			a.DeletedAt,
+		}
+		batch.Queue(upsertNotebooks, vals...)
+	}
+	br := q.db.SendBatch(ctx, batch)
+	return &UpsertNotebooksBatchResults{br, len(arg), false}
+}
+
+func (b *UpsertNotebooksBatchResults) Exec(f func(int, error)) {
+	defer b.br.Close()
+	for t := 0; t < b.tot; t++ {
+		if b.closed {
+			if f != nil {
+				f(t, ErrBatchAlreadyClosed)
+			}
+			continue
+		}
+		_, err := b.br.Exec()
+		if f != nil {
+			f(t, err)
+		}
+	}
+}
+
+func (b *UpsertNotebooksBatchResults) Close() error {
+	b.closed = true
+	return b.br.Close()
+}
+
 const upsertNotes = `-- name: UpsertNotes :batchexec
-INSERT INTO notes (id, user_id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
+INSERT INTO notes (id, user_id, notebook_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 ON CONFLICT (id) DO UPDATE SET
-    project_id = EXCLUDED.project_id,
+    notebook_id = EXCLUDED.notebook_id,
     encrypted_title = EXCLUDED.encrypted_title,
     encrypted_content = EXCLUDED.encrypted_content,
     version = EXCLUDED.version,
@@ -101,7 +170,7 @@ type UpsertNotesBatchResults struct {
 type UpsertNotesParams struct {
 	ID               uuid.UUID  `json:"id"`
 	UserID           int32      `json:"user_id"`
-	ProjectID        *uuid.UUID `json:"project_id"`
+	NotebookID       *uuid.UUID `json:"notebook_id"`
 	EncryptedTitle   []byte     `json:"encrypted_title"`
 	EncryptedContent []byte     `json:"encrypted_content"`
 	Version          int32      `json:"version"`
@@ -117,7 +186,7 @@ func (q *Queries) UpsertNotes(ctx context.Context, arg []UpsertNotesParams) *Ups
 		vals := []interface{}{
 			a.ID,
 			a.UserID,
-			a.ProjectID,
+			a.NotebookID,
 			a.EncryptedTitle,
 			a.EncryptedContent,
 			a.Version,
@@ -149,75 +218,6 @@ func (b *UpsertNotesBatchResults) Exec(f func(int, error)) {
 }
 
 func (b *UpsertNotesBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
-const upsertProjects = `-- name: UpsertProjects :batchexec
-INSERT INTO projects (id, user_id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-ON CONFLICT (id) DO UPDATE SET
-    encrypted_content = EXCLUDED.encrypted_content,
-    version = EXCLUDED.version,
-    sync_sequence = EXCLUDED.sync_sequence,
-    updated_at = EXCLUDED.updated_at,
-    deleted_at = EXCLUDED.deleted_at
-WHERE projects.user_id = EXCLUDED.user_id
-`
-
-type UpsertProjectsBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-type UpsertProjectsParams struct {
-	ID               uuid.UUID  `json:"id"`
-	UserID           int32      `json:"user_id"`
-	EncryptedContent []byte     `json:"encrypted_content"`
-	Version          int32      `json:"version"`
-	SyncSequence     int32      `json:"sync_sequence"`
-	CreatedAt        time.Time  `json:"created_at"`
-	UpdatedAt        time.Time  `json:"updated_at"`
-	DeletedAt        *time.Time `json:"deleted_at"`
-}
-
-func (q *Queries) UpsertProjects(ctx context.Context, arg []UpsertProjectsParams) *UpsertProjectsBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range arg {
-		vals := []interface{}{
-			a.ID,
-			a.UserID,
-			a.EncryptedContent,
-			a.Version,
-			a.SyncSequence,
-			a.CreatedAt,
-			a.UpdatedAt,
-			a.DeletedAt,
-		}
-		batch.Queue(upsertProjects, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &UpsertProjectsBatchResults{br, len(arg), false}
-}
-
-func (b *UpsertProjectsBatchResults) Exec(f func(int, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		if b.closed {
-			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		_, err := b.br.Exec()
-		if f != nil {
-			f(t, err)
-		}
-	}
-}
-
-func (b *UpsertProjectsBatchResults) Close() error {
 	b.closed = true
 	return b.br.Close()
 }

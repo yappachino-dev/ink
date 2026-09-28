@@ -8,7 +8,7 @@ abstract interface class NotesLocalStore {
   Future<EncryptedNote> createNote(
     Uint8List encryptedTitle,
     Uint8List encryptedContent,
-    String? projectId,
+    String? notebookId,
   );
 
   Future<void> saveNote(EncryptedNote note);

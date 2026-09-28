@@ -94,10 +94,7 @@ class RecoveryVerifyFormState extends State<RecoveryVerifyForm>
           builder: (context, child) {
             final offset = sin(_shakeController.value * pi * 3) * 8;
 
-            return Transform.translate(
-              offset: Offset(offset, 0),
-              child: child,
-            );
+            return Transform.translate(offset: Offset(offset, 0), child: child);
           },
           child: Column(
             children: List.generate(widget.indices.length, (index) {
@@ -144,9 +141,7 @@ class _NumberedField extends StatelessWidget {
           width: 35,
           child: Text(
             '$number.',
-            style: context.textTheme.titleLarge?.copyWith(
-              color: activeColor,
-            ),
+            style: context.textTheme.titleLarge?.copyWith(color: activeColor),
           ),
         ),
 
@@ -176,10 +171,7 @@ class _NumberedField extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
-                  borderSide: BorderSide(
-                    color: activeColor,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: activeColor, width: 2),
                 ),
               ),
             ),

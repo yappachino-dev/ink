@@ -27,20 +27,17 @@ class _Decryptor extends Mock implements NoteDecryptor {}
 
 final _key = Uint8List.fromList(List.generate(32, (i) => i));
 
-EncryptedNote _remote({
-  String id = 'n1',
-  String? projectId,
-}) => EncryptedNote(
-      id: id,
-      encryptedTitle: Uint8List.fromList([1, 2]),
-      encryptedContent: Uint8List.fromList([3, 4]),
-      localVersion: 5,
-      lastSyncedVersion: 5,
-      syncStatus: SyncStatus.synced,
-      createdAt: DateTime(2026),
-      updatedAt: DateTime(2026),
-      projectId: projectId,
-    );
+EncryptedNote _remote({String id = 'n1', String? notebookId}) => EncryptedNote(
+  id: id,
+  encryptedTitle: Uint8List.fromList([1, 2]),
+  encryptedContent: Uint8List.fromList([3, 4]),
+  localVersion: 5,
+  lastSyncedVersion: 5,
+  syncStatus: SyncStatus.synced,
+  createdAt: DateTime(2026),
+  updatedAt: DateTime(2026),
+  notebookId: notebookId,
+);
 
 Note _decrypted({
   String title = 'Remote note',
@@ -48,18 +45,17 @@ Note _decrypted({
     {'insert': 'Remote body\n'},
   ],
   DateTime? dueDate,
-}) =>
-    Note(
-      id: 'n1',
-      title: title,
-      content: content,
-      localVersion: 5,
-      lastSyncedVersion: 5,
-      syncStatus: SyncStatus.synced,
-      createdAt: DateTime(2026),
-      updatedAt: DateTime(2026),
-      dueDate: dueDate,
-    );
+}) => Note(
+  id: 'n1',
+  title: title,
+  content: content,
+  localVersion: 5,
+  lastSyncedVersion: 5,
+  syncStatus: SyncStatus.synced,
+  createdAt: DateTime(2026),
+  updatedAt: DateTime(2026),
+  dueDate: dueDate,
+);
 
 void main() {
   setUpAll(() {
@@ -84,10 +80,10 @@ void main() {
   });
 
   RemoteNoteMetadataEnricher build() => RemoteNoteMetadataEnricher(
-        inner: inner,
-        cryptoSession: session,
-        decryptor: decryptor,
-      );
+    inner: inner,
+    cryptoSession: session,
+    decryptor: decryptor,
+  );
 
   test('fills the derived cache for an incoming note', () async {
     when(() => decryptor.decrypt(any(), any())).thenAnswer(
@@ -114,11 +110,11 @@ void main() {
   });
 
   test('leaves ciphertext and sync bookkeeping untouched', () async {
-    when(() => decryptor.decrypt(any(), any())).thenAnswer(
-      (_) async => _decrypted(),
-    );
+    when(
+      () => decryptor.decrypt(any(), any()),
+    ).thenAnswer((_) async => _decrypted());
 
-    final source = _remote(projectId: 'project_1');
+    final source = _remote(notebookId: 'notebook_1');
     await build().applyRemoteNotes([source]);
 
     final written =
@@ -129,27 +125,29 @@ void main() {
     expect(written.single.localVersion, source.localVersion);
     expect(written.single.lastSyncedVersion, source.lastSyncedVersion);
     expect(written.single.syncStatus, source.syncStatus);
-    expect(written.single.projectId, source.projectId);
+    expect(written.single.notebookId, source.notebookId);
   });
 
-  test('a note that cannot be decrypted still lands, with empty metadata',
-      () async {
-    // Dropping it would make the note vanish from the user's view entirely.
-    // Degraded metadata is a display regression; disappearance is data loss.
-    when(() => decryptor.decrypt(any(), any())).thenThrow(
-      StateError('ciphertext does not match key'),
-    );
+  test(
+    'a note that cannot be decrypted still lands, with empty metadata',
+    () async {
+      // Dropping it would make the note vanish from the user's view entirely.
+      // Degraded metadata is a display regression; disappearance is data loss.
+      when(
+        () => decryptor.decrypt(any(), any()),
+      ).thenThrow(StateError('ciphertext does not match key'));
 
-    final result = await build().applyRemoteNotes([_remote()]);
+      final result = await build().applyRemoteNotes([_remote()]);
 
-    expect(result, isA<Success<void, NotesFailure>>());
-    final written =
-        verify(() => inner.applyRemoteNotes(captureAny())).captured.single
-            as List<EncryptedNote>;
-    expect(written.single.metadata, const NoteMetadata());
-    // Marked current, or every later read would retry the same failure.
-    expect(written.single.metadata.isCurrent, isTrue);
-  });
+      expect(result, isA<Success<void, NotesFailure>>());
+      final written =
+          verify(() => inner.applyRemoteNotes(captureAny())).captured.single
+              as List<EncryptedNote>;
+      expect(written.single.metadata, const NoteMetadata());
+      // Marked current, or every later read would retry the same failure.
+      expect(written.single.metadata.isCurrent, isTrue);
+    },
+  );
 
   test('one unreadable note does not stop the rest of the batch', () async {
     when(() => decryptor.decrypt(any(), any())).thenAnswer((invocation) async {
@@ -173,19 +171,23 @@ void main() {
     expect(written[2].metadata.titlePreview, 'good good2');
   });
 
-  test('an empty batch is passed straight through without reading the key',
-      () async {
-    await build().applyRemoteNotes([]);
+  test(
+    'an empty batch is passed straight through without reading the key',
+    () async {
+      await build().applyRemoteNotes([]);
 
-    verify(() => inner.applyRemoteNotes([])).called(1);
-    verifyNever(() => session.masterKey);
-  });
+      verify(() => inner.applyRemoteNotes([])).called(1);
+      verifyNever(() => session.masterKey);
+    },
+  );
 
   test('passes read and acknowledgement calls through untouched', () async {
-    when(() => inner.getPendingNotes())
-        .thenAnswer((_) async => const Success([]));
-    when(() => inner.acknowledgePushedNotes(any()))
-        .thenAnswer((_) async => const Success(null));
+    when(
+      () => inner.getPendingNotes(),
+    ).thenAnswer((_) async => const Success([]));
+    when(
+      () => inner.acknowledgePushedNotes(any()),
+    ).thenAnswer((_) async => const Success(null));
 
     final enricher = build();
 
@@ -199,7 +201,7 @@ void main() {
   group('a locked vault', () {
     // Storing valid ciphertext does not require the key. Only deriving the
     // cache does, and that can wait for unlock. Throwing here would stall the
-    // whole sync — projects and the cursor included — for as long as the vault
+    // whole sync — notebooks and the cursor included — for as long as the vault
     // stayed locked.
     setUp(() {
       when(() => session.hasKey).thenReturn(false);
@@ -249,10 +251,7 @@ void main() {
     });
 
     test('a whole batch defers, not just the first note', () async {
-      await build().applyRemoteNotes([
-        _remote(id: 'a'),
-        _remote(id: 'b'),
-      ]);
+      await build().applyRemoteNotes([_remote(id: 'a'), _remote(id: 'b')]);
 
       final written =
           verify(() => inner.applyRemoteNotes(captureAny())).captured.single
@@ -261,25 +260,29 @@ void main() {
     });
   });
 
-  test('an unlocked-but-undecryptable note is marked current, not deferred',
-      () async {
-    // Different failure from a locked vault: here retrying on every future read
-    // could never succeed, so the row must not be queued for repair forever.
-    when(() => decryptor.decrypt(any(), any()))
-        .thenThrow(StateError('unreadable'));
+  test(
+    'an unlocked-but-undecryptable note is marked current, not deferred',
+    () async {
+      // Different failure from a locked vault: here retrying on every read
+      // could never succeed, so the row must not be queued for repair forever.
+      when(
+        () => decryptor.decrypt(any(), any()),
+      ).thenThrow(StateError('unreadable'));
 
-    await build().applyRemoteNotes([_remote()]);
+      await build().applyRemoteNotes([_remote()]);
 
-    final written =
-        verify(() => inner.applyRemoteNotes(captureAny())).captured.single
-            as List<EncryptedNote>;
-    expect(written.single.metadata.isCurrent, isTrue);
-    expect(written.single.metadata, isNot(deferredNoteMetadata));
-  });
+      final written =
+          verify(() => inner.applyRemoteNotes(captureAny())).captured.single
+              as List<EncryptedNote>;
+      expect(written.single.metadata.isCurrent, isTrue);
+      expect(written.single.metadata, isNot(deferredNoteMetadata));
+    },
+  );
 
   test('reads the key once for the whole batch', () async {
-    when(() => decryptor.decrypt(any(), any()))
-        .thenAnswer((_) async => _decrypted());
+    when(
+      () => decryptor.decrypt(any(), any()),
+    ).thenAnswer((_) async => _decrypted());
 
     await build().applyRemoteNotes([
       _remote(id: 'a'),

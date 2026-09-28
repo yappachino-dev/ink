@@ -11,7 +11,7 @@ part 'note_form_notifier.g.dart';
 @freezed
 sealed class NoteDraftState with _$NoteDraftState {
   const factory NoteDraftState({
-    String? projectId,
+    String? notebookId,
     DateTime? dueDate,
     TimeOfDay? dueTime,
     int? reminderMinutes,
@@ -25,25 +25,22 @@ class NoteFormNotifier extends _$NoteFormNotifier {
   NoteDraftState build() => const NoteDraftState();
 
   void initWithExisting(Note note) => state = state.copyWith(
-    projectId: note.projectId,
+    notebookId: note.notebookId,
     dueDate: note.dueDate ?? DateTime.now(),
     dueTime: note.dueTime?.timeOfDay,
     reminderMinutes: note.reminderMinutesBefore,
     priority: note.priority,
   );
 
-  void initWith({
-    String? projectId,
-    DateTime? dueDate,
-  }) {
+  void initWith({String? notebookId, DateTime? dueDate}) {
     state = state.copyWith(
-      projectId: projectId ?? state.projectId,
+      notebookId: notebookId ?? state.notebookId,
       dueDate: dueDate ?? state.dueDate,
     );
   }
 
-  void updateProjectId(String? projectId) =>
-      state = state.copyWith(projectId: projectId);
+  void updateNotebookId(String? notebookId) =>
+      state = state.copyWith(notebookId: notebookId);
 
   void updateDueDate(DateTime? dueDate) =>
       state = state.copyWith(dueDate: dueDate);

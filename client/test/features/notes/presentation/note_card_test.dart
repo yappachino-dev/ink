@@ -15,7 +15,7 @@ import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/mappers/notes_mapper.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
@@ -51,8 +51,8 @@ void main() {
   setUp(() {
     svc = _Svc();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   });
 
   group('the preview is carried, not re-derived', () {

@@ -43,10 +43,7 @@ class NoteDecryptor {
       dueDate: payload.dueDate,
       dueTime: payload.dueTime == null
           ? null
-          : (
-              hour: payload.dueTime!.hour,
-              minute: payload.dueTime!.minute,
-            ),
+          : (hour: payload.dueTime!.hour, minute: payload.dueTime!.minute),
       reminderMinutesBefore: payload.reminderMinutesBefore,
     );
   }

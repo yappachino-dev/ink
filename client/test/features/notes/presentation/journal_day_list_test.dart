@@ -7,7 +7,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -29,7 +29,7 @@ final _day = DateTime(2026, 3, 14);
 
 Note _note({
   required String id,
-  String? projectId,
+  String? notebookId,
   bool isCompleted = false,
   TaskPriority priority = TaskPriority.high,
 }) => Note(
@@ -46,7 +46,7 @@ Note _note({
   syncStatus: SyncStatus.synced,
   createdAt: _day,
   updatedAt: _day,
-  projectId: projectId,
+  notebookId: notebookId,
   isCompleted: isCompleted,
   priority: priority,
 );
@@ -58,8 +58,8 @@ void main() {
       svc.getAllNotes,
     ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
 
     final container = ProviderContainer(
       overrides: [
@@ -70,10 +70,10 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    // `selectedProjectIdProvider` defaults to `todayProjectId`, which is a
+    // `selectedNotebookIdProvider` defaults to `todayNotebookId`, which is a
     // notebook sentinel and would filter every fixture note out. The calendar
     // shows all notebooks unless the user narrows it.
-    container.read(selectedProjectIdProvider.notifier).id = allProjectsId;
+    container.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
     await container.read(notesProvider.future);
 
     await tester.pumpWidget(
@@ -155,6 +155,6 @@ void main() {
 
     final card = tester.widget<NoteCard>(find.byType(NoteCard));
 
-    expect(card.projectName, isNull);
+    expect(card.notebookName, isNull);
   });
 }

@@ -4,7 +4,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
-import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
@@ -22,9 +22,9 @@ class TaskListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedProjectId = ref.watch(selectedProjectIdProvider);
+    final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
 
-    if (isContentForwardLens(selectedProjectId)) {
+    if (isContentForwardLens(selectedNotebookId)) {
       return _ContentForwardList(title: title);
     }
 
@@ -33,7 +33,7 @@ class TaskListView extends ConsumerWidget {
 }
 
 /// All notes: one flat, reverse-chronological list, ordered by
-/// [projectNotesProvider].
+/// [notebookNotesProvider].
 ///
 /// The split into active and completed, and the per-row completion checkbox,
 /// both answer "what is left to do". That is a real question for Today and
@@ -47,10 +47,10 @@ class _ContentForwardList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(projectNotesProvider);
+    final notes = ref.watch(notebookNotesProvider);
     // A flat cross-notebook list has no other place to say which notebook a
     // note belongs to, so the card carries it.
-    final notebooks = ref.watch(projectsProvider).value ?? const [];
+    final notebooks = ref.watch(notebooksProvider).value ?? const [];
 
     return CustomScrollView(
       slivers: [
@@ -71,7 +71,7 @@ class _ContentForwardList extends ConsumerWidget {
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
-                projectName: projectName(notebooks, note.projectId),
+                notebookName: notebookName(notebooks, note.notebookId),
                 showCompletion: false,
                 showPriority: false,
                 onTap: () => context.showAppBottomSheetLayout<void>(

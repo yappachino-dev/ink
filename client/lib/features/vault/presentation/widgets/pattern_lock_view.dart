@@ -61,10 +61,7 @@ class _PatternLockViewState extends State<PatternLockView>
       builder: (context, child) {
         final offset = sin(_shakeController.value * pi * 3) * 8;
 
-        return Transform.translate(
-          offset: Offset(offset, 0),
-          child: child,
-        );
+        return Transform.translate(offset: Offset(offset, 0), child: child);
       },
       child: SizedBox(
         height: widget.height,

@@ -62,12 +62,12 @@ const SyncChanges$json = {
   '1': 'SyncChanges',
   '2': [
     {
-      '1': 'projects',
+      '1': 'notebooks',
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.sync.v1.Project',
-      '10': 'projects'
+      '6': '.sync.v1.Notebook',
+      '10': 'notebooks'
     },
     {
       '1': 'notes',
@@ -82,12 +82,12 @@ const SyncChanges$json = {
 
 /// Descriptor for `SyncChanges`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List syncChangesDescriptor = $convert.base64Decode(
-    'CgtTeW5jQ2hhbmdlcxIsCghwcm9qZWN0cxgBIAMoCzIQLnN5bmMudjEuUHJvamVjdFIIcHJvam'
-    'VjdHMSIwoFbm90ZXMYAiADKAsyDS5zeW5jLnYxLk5vdGVSBW5vdGVz');
+    'CgtTeW5jQ2hhbmdlcxIvCglub3RlYm9va3MYASADKAsyES5zeW5jLnYxLk5vdGVib29rUglub3'
+    'RlYm9va3MSIwoFbm90ZXMYAiADKAsyDS5zeW5jLnYxLk5vdGVSBW5vdGVz');
 
-@$core.Deprecated('Use projectDescriptor instead')
-const Project$json = {
-  '1': 'Project',
+@$core.Deprecated('Use notebookDescriptor instead')
+const Notebook$json = {
+  '1': 'Notebook',
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     {
@@ -125,13 +125,13 @@ const Project$json = {
   ],
 };
 
-/// Descriptor for `Project`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List projectDescriptor = $convert.base64Decode(
-    'CgdQcm9qZWN0Eg4KAmlkGAEgASgJUgJpZBIrChFlbmNyeXB0ZWRfY29udGVudBgCIAEoDFIQZW'
-    '5jcnlwdGVkQ29udGVudBIYCgd2ZXJzaW9uGAMgASgFUgd2ZXJzaW9uEjkKCmNyZWF0ZWRfYXQY'
-    'BCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wUgljcmVhdGVkQXQSOQoKdXBkYXRlZF'
-    '9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCXVwZGF0ZWRBdBI5CgpkZWxl'
-    'dGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIJZGVsZXRlZEF0');
+/// Descriptor for `Notebook`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List notebookDescriptor = $convert.base64Decode(
+    'CghOb3RlYm9vaxIOCgJpZBgBIAEoCVICaWQSKwoRZW5jcnlwdGVkX2NvbnRlbnQYAiABKAxSEG'
+    'VuY3J5cHRlZENvbnRlbnQSGAoHdmVyc2lvbhgDIAEoBVIHdmVyc2lvbhI5CgpjcmVhdGVkX2F0'
+    'GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIJY3JlYXRlZEF0EjkKCnVwZGF0ZW'
+    'RfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wUgl1cGRhdGVkQXQSOQoKZGVs'
+    'ZXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWRlbGV0ZWRBdA==');
 
 @$core.Deprecated('Use noteDescriptor instead')
 const Note$json = {
@@ -139,12 +139,12 @@ const Note$json = {
   '2': [
     {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     {
-      '1': 'project_id',
+      '1': 'notebook_id',
       '3': 2,
       '4': 1,
       '5': 9,
       '9': 0,
-      '10': 'projectId',
+      '10': 'notebookId',
       '17': true
     },
     {'1': 'encrypted_title', '3': 3, '4': 1, '5': 12, '10': 'encryptedTitle'},
@@ -182,16 +182,16 @@ const Note$json = {
     },
   ],
   '8': [
-    {'1': '_project_id'},
+    {'1': '_notebook_id'},
   ],
 };
 
 /// Descriptor for `Note`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List noteDescriptor = $convert.base64Decode(
-    'CgROb3RlEg4KAmlkGAEgASgJUgJpZBIiCgpwcm9qZWN0X2lkGAIgASgJSABSCXByb2plY3RJZI'
-    'gBARInCg9lbmNyeXB0ZWRfdGl0bGUYAyABKAxSDmVuY3J5cHRlZFRpdGxlEisKEWVuY3J5cHRl'
-    'ZF9jb250ZW50GAQgASgMUhBlbmNyeXB0ZWRDb250ZW50EhgKB3ZlcnNpb24YBSABKAVSB3Zlcn'
-    'Npb24SOQoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSCWNy'
-    'ZWF0ZWRBdBI5Cgp1cGRhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcF'
-    'IJdXBkYXRlZEF0EjkKCmRlbGV0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0'
-    'YW1wUglkZWxldGVkQXRCDQoLX3Byb2plY3RfaWQ=');
+    'CgROb3RlEg4KAmlkGAEgASgJUgJpZBIkCgtub3RlYm9va19pZBgCIAEoCUgAUgpub3RlYm9va0'
+    'lkiAEBEicKD2VuY3J5cHRlZF90aXRsZRgDIAEoDFIOZW5jcnlwdGVkVGl0bGUSKwoRZW5jcnlw'
+    'dGVkX2NvbnRlbnQYBCABKAxSEGVuY3J5cHRlZENvbnRlbnQSGAoHdmVyc2lvbhgFIAEoBVIHdm'
+    'Vyc2lvbhI5CgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIJ'
+    'Y3JlYXRlZEF0EjkKCnVwZGF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW'
+    '1wUgl1cGRhdGVkQXQSOQoKZGVsZXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1l'
+    'c3RhbXBSCWRlbGV0ZWRBdEIOCgxfbm90ZWJvb2tfaWQ=');

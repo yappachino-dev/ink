@@ -21,7 +21,7 @@ sealed class Note with _$Note {
     required DateTime updatedAt,
     DateTime? deletedAt,
 
-    String? projectId,
+    String? notebookId,
 
     DateTime? dueDate,
     NoteTime? dueTime,

@@ -13,7 +13,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
@@ -29,9 +29,9 @@ import 'package:mocktail/mocktail.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedProjectId {
+class _AllSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 Note _note(String id, {String? firstLine = 'Review architecture'}) => Note(
@@ -45,7 +45,7 @@ Note _note(String id, {String? firstLine = 'Review architecture'}) => Note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026),
   updatedAt: DateTime(2026),
-  projectId: 'p1',
+  notebookId: 'p1',
   priority: TaskPriority.medium,
 );
 
@@ -73,8 +73,8 @@ void main() {
   setUp(() {
     svc = _Svc();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   });
 
   Future<ProviderContainer> containerOf(List<Note> notes) async {
@@ -84,7 +84,7 @@ void main() {
     final c = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
-        selectedProjectIdProvider.overrideWith(_AllSelected.new),
+        selectedNotebookIdProvider.overrideWith(_AllSelected.new),
       ],
     );
     addTearDown(c.dispose);
