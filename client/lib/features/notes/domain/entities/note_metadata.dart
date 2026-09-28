@@ -85,7 +85,7 @@ abstract final class NoteMetadataDerivation {
   ///
   /// Always false for current data: the editor has no checklist support, so no
   /// body can yet contain one. The column follows the D-1 decision — a task is
-  /// a notebookion over a note's checklist items, not a third entity — and
+  /// a projection over a note's checklist items, not a third entity — and
   /// becomes meaningful the moment the editor can write one. Until then it
   /// filters nothing, and must not be read as "this note is an unfinished
   /// task": that is `!isCompleted`, a different question, and not stored here.

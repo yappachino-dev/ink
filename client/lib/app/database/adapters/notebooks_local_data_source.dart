@@ -8,9 +8,6 @@ import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/data/ports/notebooks_local_store.dart';
 import 'package:ink/features/notes/data/sync_delta_resolution.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'notebooks_local_data_source.g.dart';
 
 class NotebooksLocalDataSource implements NotebooksLocalStore {
   NotebooksLocalDataSource({required NotebooksDao notebooksDao})
@@ -137,8 +134,3 @@ class NotebooksLocalDataSource implements NotebooksLocalStore {
     }
   }
 }
-
-@riverpod
-NotebooksLocalDataSource notebooksLocalDataSource(Ref ref) => throw StateError(
-  'notebooksLocalStoreProvider must be overridden at the app root',
-);
