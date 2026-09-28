@@ -105,7 +105,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               const OfflineBanner(),
               Expanded(
                 child: Padding(
-                  padding: AppSpacing.screenBottom,
+                  // Horizontal only. A bottom inset here shrinks the scroll
+                  // viewport rather than adding room below the last card, so
+                  // the list stopped short of the navigation bar and left a
+                  // band of bare background between the final note and the
+                  // bar, clipping the last card against it. Calendar's
+                  // journal is inset on the sides for the same reason and has
+                  // no bottom inset, so the two surfaces now end the same way.
+                  padding: AppSpacing.screen,
                   child: AnimatedSwitcher(
                     duration: AppDurations.sheet,
                     // Keyed on the state *type*, never the instance: see

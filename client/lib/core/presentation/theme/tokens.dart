@@ -64,14 +64,6 @@ abstract final class AppSpacing {
   /// Standard screen edge padding used by scaffolds.
   static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: gutter);
 
-  /// Bottom breathing room for a scrolling surface, so the last row clears the
-  /// navigation bar and the floating action button.
-  static const EdgeInsets screenBottom = EdgeInsets.only(
-    left: gutter,
-    right: gutter,
-    bottom: xxl,
-  );
-
   /// Standard content padding for cards and sheets.
   static const EdgeInsets card = EdgeInsets.all(lg);
 
