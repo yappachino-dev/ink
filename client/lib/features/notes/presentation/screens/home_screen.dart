@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/notes_view_state_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -106,7 +106,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               const OfflineBanner(),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                  // Horizontal only. A bottom inset here shrinks the scroll
+                  // viewport rather than adding room below the last card, so
+                  // the list stopped short of the navigation bar and left a
+                  // band of bare background between the final note and the
+                  // bar, clipping the last card against it. Calendar's
+                  // journal is inset on the sides for the same reason and has
+                  // no bottom inset, so the two surfaces now end the same way.
+                  padding: AppSpacing.screen,
                   child: AnimatedSwitcher(
                     duration: AppDurations.sheet,
                     // Keyed on the state *type*, never the instance: see
@@ -119,28 +126,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
               ),
             ],
-          ),
-
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: AnimatedScale(
-              scale: _isDrawerOpen ? 0.0 : 1.0,
-              duration: AppDurations.base,
-              curve: Curves.easeInOut,
-              child: AnimatedOpacity(
-                opacity: _isDrawerOpen ? 0.0 : 1.0,
-                duration: AppDurations.base,
-                child: FloatingActionButton(
-                  onPressed: _isDrawerOpen ? null : _openAddTask,
-                  backgroundColor: context.colorScheme.primary,
-                  foregroundColor: context.colorScheme.surface,
-                  elevation: 0,
-                  shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: sizes.iconXLarge),
-                ),
-              ),
-            ),
           ),
 
           if (_isDrawerOpen)
@@ -177,6 +162,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               child: const ProjectsDrawer(),
             ),
         ],
+      ),
+      // In the Scaffold's slot rather than `Positioned` in the Stack above, so
+      // it lands identically to Calendar's. The drawer animation comes along
+      // for the ride: at scale 0 the button has no hit area, so the open
+      // drawer cannot have it swallow taps meant for the scrim.
+      floatingActionButtonLocation: const AppFabLocation(),
+      floatingActionButton: AnimatedScale(
+        scale: _isDrawerOpen ? 0.0 : 1.0,
+        duration: AppDurations.base,
+        curve: Curves.easeInOut,
+        child: AnimatedOpacity(
+          opacity: _isDrawerOpen ? 0.0 : 1.0,
+          duration: AppDurations.base,
+          child: AppFab(onPressed: _isDrawerOpen ? null : _openAddTask),
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/sync_status.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/trust.dart';
@@ -34,7 +33,7 @@ class SyncTrustIndicator extends ConsumerWidget {
           children: [
             Icon(
               trust.icon,
-              size: sizes.iconSmall,
+              size: AppSize.iconSmall,
               color: trust.color(context),
             ),
             const SizedBox(width: AppSpacing.xs),

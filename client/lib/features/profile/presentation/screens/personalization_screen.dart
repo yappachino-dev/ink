@@ -1,4 +1,3 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
@@ -21,7 +20,12 @@ class PersonalizationScreen extends StatelessWidget {
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
           backgroundColor: context.ink.surface,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+            padding: const EdgeInsets.only(
+              left: AppSpacing.xxl,
+              right: AppSpacing.xxl,
+              top: AppSpacing.xxl,
+              bottom: AppSpacing.xl,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -31,7 +35,7 @@ class PersonalizationScreen extends StatelessWidget {
                   style: textTheme.titleLarge,
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xxl),
 
                 Row(
                   children: [
@@ -55,7 +59,7 @@ class PersonalizationScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(width: 12),
+                    const SizedBox(width: AppSpacing.md),
 
                     Expanded(
                       child: OutlinedButton(
@@ -98,7 +102,10 @@ class PersonalizationScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.md,
+              ),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -107,7 +114,7 @@ class PersonalizationScreen extends StatelessWidget {
                     child: IconButton(
                       icon: Icon(
                         Icons.chevron_left,
-                        size: sizes.iconXLarge,
+                        size: AppSize.iconXLarge,
                         color: context.colorScheme.onSurface,
                       ),
                       onPressed: () => Navigator.of(context).pop(),
@@ -124,7 +131,10 @@ class PersonalizationScreen extends StatelessWidget {
 
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
                 children: [
                   SettingsCard(
                     children: [
@@ -138,7 +148,7 @@ class PersonalizationScreen extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
 
                   SettingsCard(
                     children: [

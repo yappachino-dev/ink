@@ -48,7 +48,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       backgroundColor: context.ink.surface,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.xxl,
+          ),
           children: [
             const SecurityCard(),
 
@@ -120,7 +123,10 @@ class _LogoutTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: AppRadius.lgRadius,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
         child: Center(
           child: Text(
             context.t.profile.personal.logout,

@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
+import 'package:ink/core/presentation/theme/contrast.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
@@ -51,10 +50,6 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   /// Whether the colour is one of the eight fixed swatches rather than the
   /// theme default, which the two rows previously compared inconsistently.
   bool get _isPaletteColor => projectColors.contains(_selectedColor);
-
-  /// Contrast-safe ink for a swatch of arbitrary colour.
-  Color _readableOn(Color background) =>
-      background.computeLuminance() > 0.45 ? Colors.black87 : Colors.white;
 
   @override
   void didChangeDependencies() {
@@ -116,13 +111,12 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
       padForKeyboard: true,
       header: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Icon(
-              Icons.cancel_outlined,
-              size: sizes.iconLarge,
-              color: context.theme.hintColor,
-            ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.cancel_outlined, size: AppSize.iconLarge),
+            color: context.theme.hintColor,
+            tooltip: context.t.common.cancel,
+            visualDensity: VisualDensity.compact,
           ),
 
           Expanded(
@@ -133,13 +127,12 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             ),
           ),
 
-          GestureDetector(
-            onTap: _confirm,
-            child: Icon(
-              Icons.check,
-              size: sizes.iconLarge,
-              color: context.colorScheme.primary,
-            ),
+          IconButton(
+            onPressed: _confirm,
+            icon: const Icon(Icons.check, size: AppSize.iconLarge),
+            color: context.colorScheme.primary,
+            tooltip: context.t.common.confirm,
+            visualDensity: VisualDensity.compact,
           ),
         ],
       ),
@@ -149,7 +142,10 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           style: context.textTheme.bodyLarge,
           decoration: InputDecoration(
             prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 10),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.lg,
+                right: AppSpacing.sm,
+              ),
               // The live preview used to print the stored value straight into
               // the field, so a new notebook showed the word "book" in front of
               // its name.
@@ -174,8 +170,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
             focusedBorder: borderStyle,
 
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
             ),
             isDense: true,
           ),
@@ -183,11 +179,11 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           onSubmitted: (_) => FocusScope.of(context).nextFocus(),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: context.ink.container,
             borderRadius: AppRadius.lgRadius,
@@ -202,7 +198,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
               Wrap(
                 spacing: 12,
@@ -228,7 +224,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       ),
                       child: Icon(
                         Icons.format_color_reset_outlined,
-                        size: sizes.iconMedium,
+                        size: AppSize.iconMedium,
                         color: _isPaletteColor
                             ? context.theme.hintColor
                             : context.colorScheme.onSurface,
@@ -260,8 +256,8 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         child: isSelected
                             ? Icon(
                                 Icons.check,
-                                size: sizes.iconSmall,
-                                color: _readableOn(color),
+                                size: AppSize.iconSmall,
+                                color: readableInkOn(color, dimAlpha: 0.87),
                               )
                             : null,
                       ),
@@ -273,11 +269,11 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.md),
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: context.ink.container,
             borderRadius: AppRadius.lgRadius,
@@ -292,7 +288,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
 
               Wrap(
                 spacing: 12,
@@ -319,7 +315,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                         alignment: Alignment.center,
                         child: Icon(
                           isSelected ? candidate.selectedIcon : candidate.icon,
-                          size: sizes.iconMedium,
+                          size: AppSize.iconMedium,
                           color: isSelected
                               ? _selectedColor
                               : context.colorScheme.onSurfaceVariant,

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
@@ -57,6 +57,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
     final isFilterActive = selectedProjectId != allProjectsId;
+    // Resolved once so the semantic label and the visible text cannot drift.
+    final filterLabel = _filterLabel(allLists, selectedProjectId);
 
     return Scaffold(
       backgroundColor: context.colorScheme.surfaceContainer,
@@ -67,8 +69,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,7 +78,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       IconButton(
                         icon: Icon(
                           viewMode.icon,
-                          size: sizes.iconLarge,
+                          size: AppSize.iconLarge,
                           color: context.colorScheme.onSurface,
                         ),
                         tooltip: viewMode.label(t),
@@ -92,47 +94,57 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       // target, not just the styling. It also left
                       // [_filterLabel]'s unfiltered branch unreachable, so
                       // "Filter" was a string the user could never see.
-                      GestureDetector(
-                        onTap: _openFilterSheet,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isFilterActive
-                                ? context.ink.highlight
-                                : Colors.transparent,
-                            borderRadius: AppRadius.lgRadius,
-                            border: Border.all(
-                              color: isFilterActive
-                                  ? context.colorScheme.primary
-                                  : context.colorScheme.outlineVariant,
+                      // Was a bare GestureDetector: no focus, no ripple, and
+                      // no semantic role, so a screen reader saw an unlabelled
+                      // box where the only way to change the notebook filter
+                      // lived.
+                      Semantics(
+                        button: true,
+                        label: filterLabel,
+                        excludeSemantics: true,
+                        child: InkWell(
+                          onTap: _openFilterSheet,
+                          borderRadius: AppRadius.lgRadius,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _filterLabel(allLists, selectedProjectId),
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(
-                                      color: isFilterActive
-                                          ? context.colorScheme.primary
-                                          : context
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                    ),
+                            decoration: BoxDecoration(
+                              color: isFilterActive
+                                  ? context.ink.highlight
+                                  : Colors.transparent,
+                              borderRadius: AppRadius.lgRadius,
+                              border: Border.all(
+                                color: isFilterActive
+                                    ? context.colorScheme.primary
+                                    : context.colorScheme.outlineVariant,
                               ),
-                              if (isFilterActive) ...[
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.close,
-                                  size: sizes.iconSmall,
-                                  color: context.colorScheme.primary,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  filterLabel,
+                                  style: context.textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: isFilterActive
+                                            ? context.colorScheme.primary
+                                            : context
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                      ),
                                 ),
+                                if (isFilterActive) ...[
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Icon(
+                                    Icons.close,
+                                    size: AppSize.iconSmall,
+                                    color: context.colorScheme.primary,
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -159,7 +171,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           IconButton(
                             icon: Icon(
                               Icons.filter_alt_outlined,
-                              size: sizes.iconLarge,
+                              size: AppSize.iconLarge,
                               color: isFilterActive
                                   ? context.colorScheme.primary
                                   : context.colorScheme.onSurface,
@@ -174,13 +186,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
                   child: viewMode == CalendarViewMode.day
                       ? const DayHeader()
                       : const CalendarCard(),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
 
                 // The journal rows sat flush to both screen edges while the
                 // calendar directly above them was inset, so the same note
@@ -189,7 +203,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 // as one edge.
                 const Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                     child: JournalDayList(),
                   ),
                 ),
@@ -198,14 +212,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openAddTaskSheet,
-        backgroundColor: context.colorScheme.primary,
-        foregroundColor: context.colorScheme.surface,
-        elevation: 4,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, size: sizes.iconXLarge),
-      ),
+      // The same widget and the same location as Notes. These were two
+      // hand-built buttons whose insets differed by 4px, so the button jumped
+      // when switching tabs; the elevation differed too.
+      floatingActionButtonLocation: const AppFabLocation(),
+      floatingActionButton: AppFab(onPressed: _openAddTaskSheet),
     );
   }
 }

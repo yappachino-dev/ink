@@ -1,5 +1,5 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
@@ -19,7 +19,7 @@ class PriorityPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheetLayout(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      padding: AppSpacing.sheetRows,
       header: Text(
         context.t.note.priority.select,
         style: context.textTheme.titleLarge,
@@ -54,7 +54,7 @@ class _PriorityTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         Icons.flag,
-        size: sizes.iconLarge,
+        size: AppSize.iconLarge,
         color: priority == TaskPriority.none
             ? context.theme.hintColor
             : priority.color,
@@ -70,7 +70,7 @@ class _PriorityTile extends StatelessWidget {
       trailing: isCurrent
           ? Icon(
               Icons.check,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,

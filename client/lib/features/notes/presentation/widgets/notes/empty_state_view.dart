@@ -1,3 +1,4 @@
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,7 +15,12 @@ class EmptyStateView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xl,
+            AppSpacing.sm,
+            AppSpacing.xl,
+            0,
+          ),
           child: Text(title, style: textTheme.headlineSmall),
         ),
 

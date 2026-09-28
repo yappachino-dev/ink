@@ -1,6 +1,7 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ink/core/presentation/theme/contrast.dart';
 import 'package:ink/core/presentation/theme/ink_colors.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:material_ui/material_ui.dart';
@@ -47,9 +48,22 @@ abstract final class AppTheme {
       brightness,
     );
 
+    final tokens = _tokens(accessibleScheme, brightness);
+
     return base.copyWith(
       colorScheme: accessibleScheme,
-      extensions: [_tokens(accessibleScheme, brightness)],
+      // `flutter_quill` reads `Theme.of(context).canvasColor` for the editor
+      // chrome and falls back to the light default, which is how a bright
+      // toolbar strip ended up inside the dark editor. Theming the role fixes
+      // the widget without the toolbar having to know about it.
+      canvasColor: accessibleScheme.surface,
+      extensions: [tokens],
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          disabledBackgroundColor: tokens.disabledBackground,
+          disabledForegroundColor: tokens.disabledForeground,
+        ),
+      ),
     );
   }
 
@@ -69,29 +83,11 @@ abstract final class AppTheme {
 
     return scheme.copyWith(
       primary: primary,
-      onPrimary: _readableOn(primary),
-      onSecondary: _readableOn(scheme.secondary),
-      onTertiary: _readableOn(scheme.tertiary),
-      onError: _readableOn(scheme.error),
+      onPrimary: readableInkOn(primary),
+      onSecondary: readableInkOn(scheme.secondary),
+      onTertiary: readableInkOn(scheme.tertiary),
+      onError: readableInkOn(scheme.error),
     );
-  }
-
-  static Color _readableOn(Color background) {
-    final onBlack = _contrastRatio(Colors.black, background);
-    final onWhite = _contrastRatio(Colors.white, background);
-    return onBlack >= onWhite ? Colors.black : Colors.white;
-  }
-
-  static double _contrastRatio(Color foreground, Color background) {
-    final foregroundLuminance = foreground.computeLuminance();
-    final backgroundLuminance = background.computeLuminance();
-    final lighter = foregroundLuminance > backgroundLuminance
-        ? foregroundLuminance
-        : backgroundLuminance;
-    final darker = foregroundLuminance > backgroundLuminance
-        ? backgroundLuminance
-        : foregroundLuminance;
-    return (lighter + 0.05) / (darker + 0.05);
   }
 
   static const _subThemes = FlexSubThemesData(
@@ -113,6 +109,20 @@ abstract final class AppTheme {
     return InkColors(
       scaffold: isDark ? cs.surface : cs.surfaceContainer,
       surface: isDark ? cs.surfaceContainer : cs.surface,
+      // Editor chrome: the one surface that sits against editable content.
+      // A named token rather than a reach for `colorScheme.surfaceContainer`
+      // at the call site, because reaching for the raw role in one place and
+      // `ink.*` in another is exactly how the toolbar and the scaffold ended
+      // up disagreeing in dark only.
+      //
+      // It is chosen per brightness against [surface] rather than fixed,
+      // because `surface` is not one raw role either: in dark it is already
+      // `surfaceContainer`, so a fixed `surfaceContainer` chrome would have
+      // been *identical* to the note surface in dark - an invisible tint in
+      // exactly the theme where the band bug was visible. One step further out
+      // in each, which also keeps the direction right: chrome is darker than
+      // the page in light and lighter in dark, so it lifts off in both.
+      chrome: isDark ? cs.surfaceContainerHigh : cs.surfaceContainer,
       container: isDark ? cs.surfaceContainerHigh : cs.surfaceContainerLow,
       onSurface: cs.onSurface,
       onSurfaceMuted: cs.onSurfaceVariant,
@@ -122,6 +132,13 @@ abstract final class AppTheme {
       shadow: (isDark ? Colors.black : cs.shadow).withValues(
         alpha: isDark ? 0.4 : 0.16,
       ),
+      // A visible recess rather than Material's near-invisible wash. The label
+      // is `onSurface`, the strongest role, so a disabled action still reads as
+      // an action that is merely not available yet (F-12).
+      disabledBackground: isDark
+          ? cs.surfaceContainerHighest
+          : cs.surfaceContainerHigh,
+      disabledForeground: cs.onSurface,
     );
   }
 

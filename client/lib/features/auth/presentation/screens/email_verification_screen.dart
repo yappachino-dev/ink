@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/features/auth/domain/auth_preferences.dart';
 import 'package:ink/features/auth/presentation/extensions/auth_failure_ui_extension.dart';
@@ -92,11 +93,11 @@ class _EmailVerificationScreenState
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xxxl),
 
             CodeFormField(controller: _codeController),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xxxl),
 
             PrimaryButton(
               label: context.t.common.confirm,
@@ -104,7 +105,7 @@ class _EmailVerificationScreenState
               onPressed: _onConfirm,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xxl),
 
             Center(
               child: TextButton(

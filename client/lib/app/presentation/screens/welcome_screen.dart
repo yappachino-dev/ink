@@ -16,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: context.ink.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: AppSpacing.screen,
           child: Column(
             children: [
               const Spacer(flex: 3),
@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
                 style: context.textTheme.displayLarge,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.xxl),
 
               const AppLogo(size: LogoSize.large),
 
@@ -45,10 +45,7 @@ class WelcomeScreen extends StatelessWidget {
               // for the buttons rather than a caption to the thesis.
               const SizedBox(height: AppSpacing.xxxl),
 
-              Text(
-                context.t.auth.chooseMethod,
-                textAlign: TextAlign.center,
-              ),
+              Text(context.t.auth.chooseMethod, textAlign: TextAlign.center),
 
               const Spacer(flex: 3),
 
@@ -57,7 +54,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: Text(context.t.welcome.createLocalStorage),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.lg),
 
               OutlinedButton(
                 onPressed: () => const AuthRoute().push<void>(context),

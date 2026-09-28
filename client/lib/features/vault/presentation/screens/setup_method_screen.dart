@@ -1,13 +1,13 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/back_app_bar.dart';
 import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/domain/entities/key_type.dart';
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
+import 'package:ink/features/vault/presentation/widgets/setup_progress.dart';
 import 'package:ink/features/vault/presentation/widgets/unlock_method.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -42,11 +42,13 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
     return SpacedScaffold(
       appBar: const BackAppBar(),
       children: [
+        const SetupProgress(step: 1, total: 4),
+
         Column(
           children: [
             const _Header(),
 
-            const SizedBox(height: 48),
+            const SizedBox(height: AppSpacing.huge),
 
             UnlockMethod(
               title: context.t.vault.methods.pin.title,
@@ -86,7 +88,7 @@ class _Header extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: sizes.betweenTitleAndSub),
+        const SizedBox(height: AppSpacing.xs),
 
         Text(
           context.t.vault.methods.subtitle,

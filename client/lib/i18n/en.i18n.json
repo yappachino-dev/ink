@@ -17,7 +17,8 @@
             "network": "Unable to reach the server. Check your connection.",
             "timeout": "The server took too long to respond. Try again.",
             "unknown": "Something went wrong. Please try again."
-        }
+        },
+        "remove": "Remove"
     },
     "welcome": {
         "thesis": "Your notes are encrypted on this device. Ink's servers can't read them.",
@@ -158,7 +159,11 @@
                 "verifySuccess": "Verification successful"
             },
             "throttled": "Too many attempts. Try again in ${seconds}s."
-        }
+        },
+        "progressStep": "Step ${current} of ${total}",
+        "progressRemaining": "${count} left",
+        "progressLast": "Last step",
+        "progressSemantic": "Step ${current} of ${total}, ${remaining}"
     },
     "notes": {
         "emptyTitle": "No notes yet",
@@ -214,7 +219,9 @@
             "November",
             "December"
         ],
-        "timezone": "Choose timezone"
+        "timezone": "Choose timezone",
+        "previousDay": "Previous day",
+        "nextDay": "Next day"
     },
     "note": {
         "title": "Notes",
@@ -247,17 +254,19 @@
             "atTime": "Remind at time",
             "minutes": {
                 "one": "1 minute",
-                "other": "{n} minutes"
+                "other": "$n minutes"
             },
             "hours": {
                 "one": "1 hour",
-                "other": "{n} hours"
+                "other": "$n hours"
             },
             "days": {
                 "one": "1 day",
-                "other": "{n} days"
+                "other": "$n days"
             }
-        }
+        },
+        "dueDate": "Due date",
+        "notebook": "Notebook"
     },
     "project": {
         "title": "My projects",

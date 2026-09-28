@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
@@ -10,6 +9,7 @@ import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/recovery_phrase_display.dart';
+import 'package:ink/features/vault/presentation/widgets/setup_progress.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -23,6 +23,8 @@ class SetupRecoveryScreen extends ConsumerWidget {
     return SpacedScaffold(
       appBar: const BackAppBar(),
       children: [
+        const SetupProgress(step: 3, total: 4),
+
         Text(
           context.t.vault.setup.seed.title,
           style: context.textTheme.headlineMedium,
@@ -30,7 +32,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
         ),
 
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             color: context.ink.container,
             borderRadius: AppRadius.mdRadius,
@@ -58,7 +60,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
               icon: Icon(
                 Icons.copy_rounded,
                 color: context.colorScheme.primary,
-                size: sizes.iconMedium,
+                size: AppSize.iconMedium,
               ),
               label: Text(
                 context.t.vault.setup.seed.copy,
@@ -71,7 +73,7 @@ class SetupRecoveryScreen extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             WideFilledButton(
               onPressed: () => const SetupVerifyRoute().push<void>(context),

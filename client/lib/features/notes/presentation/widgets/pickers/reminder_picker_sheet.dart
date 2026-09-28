@@ -1,5 +1,5 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -20,7 +20,7 @@ class ReminderPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheetLayout(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      padding: AppSpacing.sheetRows,
       header: Text(
         context.t.note.reminder.select,
         style: context.textTheme.titleLarge,
@@ -51,13 +51,16 @@ class _ReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The ink surface now comes from [BottomSheetLayout], which wraps its
+    // children in one transparent [Material]. It used to be per-tile, here
+    // only, which left every other sheet's tiles without a ripple.
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(
         option == null
             ? Icons.notifications_off_outlined
             : Icons.notifications_outlined,
-        size: sizes.iconLarge,
+        size: AppSize.iconLarge,
         color: isSelected
             ? context.colorScheme.primary
             : context.theme.hintColor,
@@ -75,7 +78,7 @@ class _ReminderTile extends StatelessWidget {
       trailing: isSelected
           ? Icon(
               Icons.check,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,

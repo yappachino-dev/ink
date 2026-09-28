@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -56,7 +57,7 @@ class _ContentForwardList extends ConsumerWidget {
         if (title != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Text(title!, style: context.textTheme.headlineSmall),
             ),
           ),
@@ -66,7 +67,7 @@ class _ContentForwardList extends ConsumerWidget {
           itemBuilder: (ctx, index) {
             final note = notes[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
@@ -79,6 +80,15 @@ class _ContentForwardList extends ConsumerWidget {
               ),
             );
           },
+        ),
+
+        // See [_TaskForwardList]: clearance for the floating action button,
+        // which is Positioned over the list and reserves no space itself. It
+        // has to be a trailing sliver inside the scroll view, not an inset on
+        // the viewport wrapper, which would shrink the scrollable area and stop
+        // the list short of the navigation bar.
+        const SliverToBoxAdapter(
+          child: SizedBox(height: AppSize.fab + AppSpacing.xxl),
         ),
       ],
     );
@@ -100,7 +110,7 @@ class _TaskForwardList extends ConsumerWidget {
         if (title != null)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: Text(title!, style: context.textTheme.headlineSmall),
             ),
           ),
@@ -110,7 +120,7 @@ class _TaskForwardList extends ConsumerWidget {
           itemBuilder: (ctx, index) {
             final note = activeNotes[index];
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ActiveNoteCard(
                 key: ValueKey(note.id),
                 note: note,
@@ -125,7 +135,7 @@ class _TaskForwardList extends ConsumerWidget {
         if (completedNotes.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: CompletedSection(
                 children: [
                   ...completedNotes.map(
@@ -141,6 +151,24 @@ class _TaskForwardList extends ConsumerWidget {
               ),
             ),
           ),
+
+        // Clearance for the floating action button, which is `Positioned` over
+        // this list rather than placed in a layout slot, so nothing reserves
+        // space for it. Without this the final card parks underneath the button
+        // with its text and tap target covered.
+        //
+        // A trailing sliver *inside* the scroll view, not a bottom inset on
+        // the viewport wrapper: an inset on the wrapper shrinks the scrollable
+        // area instead of adding room below the last card, and the list stops
+        // short of the navigation bar. That is the exact defect the sibling
+        // notes-bottom-clearance test prevents, so the two are in tension by
+        // design and this has to be the one that yields.
+        //
+        // Trailing rather than wrapping the active list, because the completed
+        // section renders after it and is what actually ends the scroll.
+        const SliverToBoxAdapter(
+          child: SizedBox(height: AppSize.fab + AppSpacing.xxl),
+        ),
       ],
     );
   }

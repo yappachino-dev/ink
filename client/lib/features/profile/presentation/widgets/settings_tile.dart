@@ -1,4 +1,3 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,7 +29,10 @@ class SettingsTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: AppRadius.lgRadius,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
         child: Row(
           children: [
             if (icon != null) ...[
@@ -43,11 +45,11 @@ class SettingsTile extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  size: sizes.iconMedium,
+                  size: AppSize.iconMedium,
                   color: context.colorScheme.primary,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: AppSpacing.md),
             ],
 
             Expanded(
@@ -57,7 +59,7 @@ class SettingsTile extends StatelessWidget {
                   Text(title, style: context.textTheme.titleMedium),
 
                   if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xs),
 
                     Text(
                       subtitle!,
@@ -73,7 +75,7 @@ class SettingsTile extends StatelessWidget {
             if (showArrow)
               Icon(
                 Icons.chevron_right,
-                size: sizes.iconMedium,
+                size: AppSize.iconMedium,
                 color: context.theme.hintColor,
               ),
           ],

@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/back_app_bar.dart';
 import 'package:ink/core/presentation/widgets/scaffold/spaced_scaffold.dart';
@@ -11,6 +10,7 @@ import 'package:ink/features/vault/domain/constants.dart' as constants;
 import 'package:ink/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:ink/features/vault/presentation/widgets/pin_pad_view.dart';
+import 'package:ink/features/vault/presentation/widgets/setup_progress.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -37,6 +37,8 @@ class _SetupPinScreenState extends ConsumerState<SetupPinScreen> {
       child: SpacedScaffold(
         appBar: const BackAppBar(),
         children: [
+          const SetupProgress(step: 2, total: 4),
+
           const _Header(),
 
           const AppLogo(size: LogoSize.small),
@@ -69,7 +71,7 @@ class _Header extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
 
-        const SizedBox(height: sizes.betweenTitleAndSub),
+        const SizedBox(height: AppSpacing.xs),
 
         Text(
           context.t.vault.setup.pin.description,

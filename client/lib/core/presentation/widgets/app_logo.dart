@@ -1,3 +1,4 @@
+import 'package:ink/core/presentation/theme/contrast.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The Ink mark, drawn rather than shipped as a raster.
@@ -85,9 +86,7 @@ class _LogoPainter extends CustomPainter {
     // on its own. Cutting a gap in the stroke here instead leaves a dangling
     // stub where the path resumes.
     final body = Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(bodyRect, bodyRadius),
-      );
+      ..addRRect(RRect.fromRectAndRadius(bodyRect, bodyRadius));
 
     canvas.drawPath(body, outline);
 
@@ -143,7 +142,7 @@ class _LogoPainter extends CustomPainter {
     canvas.drawPath(
       check,
       Paint()
-        ..color = _onColor(color)
+        ..color = readableInkOn(color, dimAlpha: 0.87)
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke * 1.05
         ..strokeCap = StrokeCap.round
@@ -151,15 +150,6 @@ class _LogoPainter extends CustomPainter {
     );
   }
 
-  /// Picks a legible checkmark colour for the badge, preferring the surface
-  /// colour the mark sits on and falling back to a contrasting tone when the
-  /// mark is itself close to a surface colour.
-  Color _onColor(Color background) {
-    final luminance = background.computeLuminance();
-    return luminance > 0.5 ? Colors.black87 : Colors.white;
-  }
-
   @override
-  bool shouldRepaint(_LogoPainter oldDelegate) =>
-      oldDelegate.color != color;
+  bool shouldRepaint(_LogoPainter oldDelegate) => oldDelegate.color != color;
 }

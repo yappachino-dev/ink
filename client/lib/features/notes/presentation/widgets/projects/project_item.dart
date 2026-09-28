@@ -35,8 +35,14 @@ class ProjectItem extends StatelessWidget {
         onLongPress: onLongPress,
         child: AnimatedContainer(
           duration: AppDurations.fast,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          margin: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? color.withValues(alpha: AppAlpha.soft)
@@ -47,7 +53,7 @@ class ProjectItem extends StatelessWidget {
             children: [
               ProjectIconView(value: icon, color: color),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.md),
 
               Expanded(
                 child: Text(
@@ -60,7 +66,7 @@ class ProjectItem extends StatelessWidget {
               ),
 
               if (count != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   '$count',
                   style: context.textTheme.bodySmall?.copyWith(

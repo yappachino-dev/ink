@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_logo.dart';
 import 'package:ink/core/presentation/widgets/wide_filled_button.dart';
 import 'package:ink/core/services/session/session_manager.dart';
@@ -63,7 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       backgroundColor: context.ink.surface,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: AppSpacing.screen,
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: ScaleTransition(
@@ -73,7 +74,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 children: [
                   const AppLogo(size: LogoSize.small),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.xxl),
 
                   Text(
                     context.t.common.appName,
@@ -81,7 +82,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     textAlign: TextAlign.center,
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
 
                   Text(
                     loadFailed
@@ -92,7 +93,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ),
 
                   if (loadFailed) ...[
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.xxxl),
 
                     WideFilledButton(
                       onPressed: () => ref

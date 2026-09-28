@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
@@ -67,7 +66,7 @@ class NoteCard extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
         ],
 
         Expanded(
@@ -98,7 +97,7 @@ class NoteCard extends ConsumerWidget {
               ),
 
               if (showDescription && preview.isNotEmpty) ...[
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
 
                 Text(
                   preview,
@@ -115,7 +114,7 @@ class NoteCard extends ConsumerWidget {
                       (projectName?.isNotEmpty ?? false) ||
                       (showPriority &&
                           note.priority != TaskPriority.none))) ...[
-                const SizedBox(height: 6),
+                AppSpacing.gapSm,
 
                 NoteMetaRow(
                   note: note,
@@ -174,8 +173,8 @@ class NoteMetaRow extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: sizes.iconSmall, color: color ?? hint),
-              const SizedBox(width: 4),
+              Icon(icon, size: AppSize.iconSmall, color: color ?? hint),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 text,
                 style: context.textTheme.labelSmall?.copyWith(

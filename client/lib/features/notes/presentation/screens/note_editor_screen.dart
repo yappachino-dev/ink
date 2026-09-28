@@ -1,5 +1,9 @@
 import 'dart:async';
 
+// Stock Material, prefixed. `flutter_quill` is built from stock widgets, so
+// the toolbar needs a stock `Theme` to read. Everything the app itself draws
+// goes through the decoupled `material_ui` fork.
+import 'package:flutter/material.dart' as flutter;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
@@ -208,21 +212,28 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Expanded(
+      body: Column(
+        children: [
+          // The bottom inset is deliberately *not* applied around this whole
+          // column. Doing so reserved a strip below the toolbar that showed
+          // the scaffold background while the toolbar painted
+          // `colorScheme.surface`; the two differ in dark, so closing the
+          // keyboard left a second, darker band under the toolbar. The
+          // toolbar owns its own inset and paints its background through it.
+          Expanded(
+            child: SafeArea(
+              top: false,
+              bottom: false,
               child: _EditorSurface(
                 quillController: _quillController,
                 focusNode: _editorFocus,
               ),
             ),
-            // Pinned: a formatting toolbar that scrolls away is useless while
-            // you are formatting.
-            _QuillToolbar(quillController: _quillController),
-          ],
-        ),
+          ),
+          // Pinned: a formatting toolbar that scrolls away is useless while
+          // you are formatting.
+          _QuillToolbar(quillController: _quillController),
+        ],
       ),
     );
   }
@@ -286,9 +297,18 @@ class _EditorSurface extends StatelessWidget {
             ),
           ),
         ),
-        Divider(height: AppSpacing.xxl, color: context.theme.dividerColor),
+        // The only marker of where the editable region ends. The tint on the
+        // toolbar below does not do this job - the toolbar sits *under* this
+        // line, not at the boundary - so this hairline has to carry it alone.
+        // It was `dividerColor`, which measured 1.14:1 against the surface and
+        // came out fainter than the border between the two non-editable rows
+        // below it. `outlineVariant` gives both boundaries equal weight.
+        Divider(
+          height: AppSpacing.sm,
+          color: context.colorScheme.outlineVariant,
+        ),
         const _MetaActionBar(),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.sm),
       ],
     );
   }
@@ -368,11 +388,15 @@ class _MetaActionBar extends ConsumerWidget {
     return Center(
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 16,
-        runSpacing: 12,
+        // Denser than the default generous Wrap spacing so the meta bar reads
+        // as one strip of editor chrome, at the same rhythm as the Quill
+        // toolbar directly above it, rather than as a row of spaced chips.
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
         children: [
           MetaIconButton(
             icon: Icons.calendar_today_outlined,
+            tooltip: t.note.dueDate,
             label: state.dueDate != null
                 ? formatDateTime(state.dueDate!, state.dueTime?.toNoteTime(), t)
                 : null,
@@ -385,6 +409,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.folder_outlined,
+            tooltip: t.note.notebook,
             label: projectName(projects, state.projectId),
             isActive: state.projectId != null,
             onTap: () => _pickProject(context, ref, projects),
@@ -396,6 +421,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.flag_outlined,
+            tooltip: t.note.priority.select,
             label: state.priority != TaskPriority.none
                 ? state.priority.label(t)
                 : null,
@@ -411,6 +437,7 @@ class _MetaActionBar extends ConsumerWidget {
 
           MetaIconButton(
             icon: Icons.notifications_none_outlined,
+            tooltip: t.note.reminder.select,
             label: state.reminderMinutes != null
                 ? reminderLabel(state.reminderMinutes!, t)
                 : null,
@@ -433,31 +460,77 @@ class _QuillToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The background is painted *outside* the [SafeArea] so it runs through
+    // the bottom inset, giving one surface from the meta row to the bottom
+    // edge. Painting inside the inset would leave the inset showing whatever
+    // is behind it, which is the same band again.
+    // A [Container], not a bare [DecoratedBox]: Container insets its child by
+    // the decoration's border width, so the top border below is actually
+    // visible. DecoratedBox does not, the toolbar's own background painted
+    // straight over the one-pixel line, and the meta row and the toolbar fused
+    // into a single block.
     return Container(
       decoration: BoxDecoration(
-        color: context.colorScheme.surface,
+        // The one place this token is consumed. The bar is the boundary
+        // between the note - the only editable surface in the app - and the
+        // controls below it, so it is tinted rather than divided by a hairline
+        // alone.
+        color: context.ink.chrome,
         border: Border(
           top: BorderSide(color: context.colorScheme.outlineVariant),
         ),
       ),
-      child: QuillSimpleToolbar(
-        controller: quillController,
-        config: const QuillSimpleToolbarConfig(
-          showStrikeThrough: false,
-          showColorButton: false,
-          showBackgroundColorButton: false,
-          showClearFormat: false,
-          showLink: false,
-          showHeaderStyle: false,
-          showCodeBlock: false,
-          showQuote: false,
-          showIndent: false,
-          showSearchButton: false,
-          showSubscript: false,
-          showSuperscript: false,
-          showDividers: false,
-          multiRowsDisplay: false,
-        ),
+      child: SafeArea(
+        top: false,
+        child:
+            // `flutter_quill` builds its toolbar out of stock
+            // `package:flutter/material.dart` widgets, but this app themes
+            // through the decoupled `material_ui` fork, which has its own
+            // `Theme`, `ThemeData` and `ColorScheme` types. Stock widgets
+            // therefore resolved Flutter's *default* light theme no matter what
+            // the app was set to, so in dark mode the font-family and
+            // font-size previews and the disabled undo/redo arrows painted dark
+            // ink on the dark surface: measured at 1.0-1.2:1, i.e. invisible.
+            // Passing a stock theme with the right brightness is the shim. Same
+            // defect as the logo reading the wrong theme in #75, reached here
+            // through a dependency rather than an import.
+            flutter.Theme(
+              data: flutter.ThemeData(
+                brightness: context.isDark ? Brightness.dark : Brightness.light,
+                colorScheme: flutter.ColorScheme.fromSeed(
+                  seedColor: context.colorScheme.primary,
+                  brightness: context.isDark
+                      ? Brightness.dark
+                      : Brightness.light,
+                ),
+              ),
+              child: QuillSimpleToolbar(
+                controller: quillController,
+                config: QuillSimpleToolbarConfig(
+                  // Belt and braces: `canvasColor` is themed too, but the
+                  // toolbar reads its own `color` first and that one is
+                  // never inherited. The same token as the bar around it:
+                  // quill paints its own background, so a different value here
+                  // is a band inside the bar, which is the defect this token
+                  // exists to prevent.
+                  color: context.ink.chrome,
+                  showStrikeThrough: false,
+                  showColorButton: false,
+                  showBackgroundColorButton: false,
+                  showClearFormat: false,
+                  showLink: false,
+                  showHeaderStyle: false,
+                  showCodeBlock: false,
+                  showQuote: false,
+                  showIndent: false,
+                  showSearchButton: false,
+                  showSubscript: false,
+                  showSuperscript: false,
+                  showDividers: false,
+                  multiRowsDisplay: false,
+                ),
+              ),
+            ),
       ),
     );
   }

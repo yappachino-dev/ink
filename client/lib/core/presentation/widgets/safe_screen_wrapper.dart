@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 
 class SafeScreenWrapper extends StatelessWidget {
   const SafeScreenWrapper({
     required this.child,
-    this.padding = const EdgeInsets.fromLTRB(24, 20, 24, 24),
+    this.padding = AppSpacing.scaffold,
     super.key,
   });
 
@@ -18,10 +19,7 @@ class SafeScreenWrapper extends StatelessWidget {
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Padding(
-              padding: padding,
-              child: child,
-            ),
+            child: Padding(padding: padding, child: child),
           ),
         ],
       ),

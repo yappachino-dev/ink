@@ -36,14 +36,19 @@ class ProjectsDrawer extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.xl,
+                right: AppSpacing.xl,
+                top: AppSpacing.xl,
+                bottom: AppSpacing.sm,
+              ),
               child: Text(
                 context.t.project.title,
                 style: context.textTheme.titleLarge,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
 
             // All notes first, because it is the default view and, until this
             // row existed, the only way out of a notebook was to switch tabs.
@@ -64,7 +69,10 @@ class ProjectsDrawer extends ConsumerWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.md,
+              ),
               child: Divider(height: 1, color: context.theme.dividerColor),
             ),
 
@@ -78,15 +86,23 @@ class ProjectsDrawer extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+                vertical: AppSpacing.sm,
+              ),
               child: Divider(height: 1, color: context.theme.dividerColor),
             ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                top: AppSpacing.xs,
+                bottom: AppSpacing.lg,
+              ),
               child: TextButton.icon(
                 onPressed: () => context.showAppBottomSheetLayout<void>(
                   child: const CreateProjectSheet(),
@@ -99,8 +115,8 @@ class ProjectsDrawer extends ConsumerWidget {
                     color: context.colorScheme.primary,
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 12,
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.md,
                   ),
                 ),
               ),

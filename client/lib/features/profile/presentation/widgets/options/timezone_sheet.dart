@@ -46,7 +46,7 @@ class _TimezoneSheetState extends ConsumerState<TimezoneSheet> {
               value: _selected,
               isExpanded: true,
               borderRadius: AppRadius.mdRadius,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               icon: Icon(
                 Icons.keyboard_arrow_down,
                 color: context.theme.hintColor,
@@ -67,7 +67,7 @@ class _TimezoneSheetState extends ConsumerState<TimezoneSheet> {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.lg),
 
         FilledButton(
           onPressed: () {

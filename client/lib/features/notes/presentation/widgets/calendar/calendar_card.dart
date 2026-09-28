@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart' as sdk_material;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 
@@ -38,7 +37,11 @@ class CalendarCard extends ConsumerWidget {
     );
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
+      padding: const EdgeInsets.only(
+        bottom: AppSpacing.md,
+        left: AppSpacing.sm,
+        right: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: context.ink.container,
         borderRadius: AppRadius.lgRadius,
@@ -74,17 +77,17 @@ class CalendarCard extends ConsumerWidget {
             formatButtonVisible: false,
             titleTextStyle: headerStyle,
             headerPadding: const EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 8,
+              vertical: AppSpacing.md,
+              horizontal: AppSpacing.sm,
             ),
             leftChevronIcon: Icon(
               Icons.chevron_left,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.theme.hintColor,
             ),
             rightChevronIcon: Icon(
               Icons.chevron_right,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.theme.hintColor,
             ),
             leftChevronMargin: EdgeInsets.zero,
@@ -96,7 +99,7 @@ class CalendarCard extends ConsumerWidget {
           ),
           daysOfWeekHeight: 24,
           calendarStyle: CalendarStyle(
-            cellMargin: const EdgeInsets.all(4),
+            cellMargin: const EdgeInsets.all(AppSpacing.xs),
             selectedDecoration: BoxDecoration(
               color: context.ink.highlight,
               shape: BoxShape.circle,
@@ -122,7 +125,7 @@ class CalendarCard extends ConsumerWidget {
             ),
             markersMaxCount: 1,
             markerSize: 5,
-            markerMargin: const EdgeInsets.only(top: 1),
+            markerMargin: const EdgeInsets.only(top: AppSpacing.xs),
           ),
         ),
       ),

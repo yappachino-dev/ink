@@ -30,7 +30,10 @@ class CompletedSection extends ConsumerWidget {
             onTap: ref.read(completedExpnadedProvider.notifier).toggle,
             borderRadius: AppRadius.lgRadius,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
               child: Row(
                 children: [
                   Text(
@@ -47,7 +50,7 @@ class CompletedSection extends ConsumerWidget {
                     style: context.textTheme.bodySmall,
                   ),
 
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.sm),
 
                   AnimatedRotation(
                     turns: isExpanded ? 0 : -0.5,

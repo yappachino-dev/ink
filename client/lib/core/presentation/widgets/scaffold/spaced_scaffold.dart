@@ -1,4 +1,5 @@
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
 
 class SpacedScaffold extends StatelessWidget {
@@ -6,7 +7,7 @@ class SpacedScaffold extends StatelessWidget {
     required this.children,
     this.appBar,
     this.alignment = MainAxisAlignment.spaceBetween,
-    this.padding = const EdgeInsets.fromLTRB(24, 20, 24, 24),
+    this.padding = AppSpacing.scaffold,
     this.spacing = 24.0,
     super.key,
   });
@@ -35,10 +36,7 @@ class SpacedScaffold extends StatelessWidget {
 }
 
 class _SafeScreenWrapper extends StatelessWidget {
-  const _SafeScreenWrapper({
-    required this.child,
-    required this.padding,
-  });
+  const _SafeScreenWrapper({required this.child, required this.padding});
 
   final Widget child;
   final EdgeInsetsGeometry padding;

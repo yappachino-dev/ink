@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/extensions/navigation_helper.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/validators.dart';
 import 'package:ink/core/presentation/widgets/flow_scaffold.dart';
 import 'package:ink/features/auth/presentation/extensions/auth_failure_ui_extension.dart';
@@ -87,15 +87,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xxxl),
 
             EmailFormField(controller: _emailController),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             PasswordFormField(controller: _passwordController),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.lg),
 
             PasswordFormField(
               controller: _confirmPasswordController,
@@ -108,7 +108,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xxxl),
 
             PrimaryButton(
               label: context.t.auth.register.action,
@@ -116,7 +116,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               onPressed: _onRegister,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.xxl),
 
             Column(
               children: [
@@ -125,7 +125,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   style: context.textTheme.bodyMedium,
                 ),
 
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
 
                 GestureDetector(
                   onTap: () => context.safePop(),

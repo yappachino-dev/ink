@@ -1,5 +1,5 @@
-import 'package:ink/core/presentation/app_sizes.dart' as sizes;
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
+import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/entities/project.dart';
 import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
@@ -19,7 +19,7 @@ class ProjectPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheetLayout(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      padding: AppSpacing.sheetRows,
       header: Text(
         context.t.project.select,
         style: context.textTheme.titleLarge,
@@ -72,7 +72,7 @@ class _ProjectTile extends StatelessWidget {
       trailing: isSelected
           ? Icon(
               Icons.check,
-              size: sizes.iconMedium,
+              size: AppSize.iconMedium,
               color: context.colorScheme.primary,
             )
           : null,
