@@ -60,13 +60,12 @@ abstract final class NoteMetadataDerivation {
     required String title,
     required List<dynamic> content,
     DateTime? dueDate,
-  }) =>
-      NoteMetadata(
-        titlePreview: title.trim(),
-        bodyPreview: notePreviewText(content),
-        hasUncompletedTasks: _hasUncheckedChecklistItem(content),
-        dueDateDay: _toDay(dueDate),
-      );
+  }) => NoteMetadata(
+    titlePreview: title.trim(),
+    bodyPreview: notePreviewText(content),
+    hasUncompletedTasks: _hasUncheckedChecklistItem(content),
+    dueDateDay: _toDay(dueDate),
+  );
 
   /// Metadata for content that could not be decrypted or parsed.
   ///

@@ -22,7 +22,7 @@ sealed class EncryptedNote with _$EncryptedNote {
     required DateTime updatedAt,
     DateTime? deletedAt,
 
-    String? projectId,
+    String? notebookId,
 
     /// Local, plaintext, derived. Never leaves the device: see
     /// [NoteMetadata]. Absent only for rows written before this column

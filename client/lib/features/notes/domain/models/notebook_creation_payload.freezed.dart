@@ -1,0 +1,279 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'notebook_creation_payload.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$NotebookCreationPayload {
+
+ String get title; String get emoji; int get colorValue;
+/// Create a copy of NotebookCreationPayload
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$NotebookCreationPayloadCopyWith<NotebookCreationPayload> get copyWith => _$NotebookCreationPayloadCopyWithImpl<NotebookCreationPayload>(this as NotebookCreationPayload, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as NotebookCreationPayload;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotebookCreationPayload&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.emoji, _this.emoji) || other.emoji == _this.emoji)&&(identical(other.colorValue, _this.colorValue) || other.colorValue == _this.colorValue));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as NotebookCreationPayload;
+  return Object.hash(runtimeType,_this.title,_this.emoji,_this.colorValue);
+}
+
+@override
+String toString() {
+  final _this = this as NotebookCreationPayload;
+  return 'NotebookCreationPayload(title: ${_this.title}, emoji: ${_this.emoji}, colorValue: ${_this.colorValue})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $NotebookCreationPayloadCopyWith<$Res>  {
+  factory $NotebookCreationPayloadCopyWith(NotebookCreationPayload value, $Res Function(NotebookCreationPayload) _then) = _$NotebookCreationPayloadCopyWithImpl;
+@useResult
+$Res call({
+ String title, String emoji, int colorValue
+});
+
+
+
+
+}
+/// @nodoc
+class _$NotebookCreationPayloadCopyWithImpl<$Res>
+    implements $NotebookCreationPayloadCopyWith<$Res> {
+  _$NotebookCreationPayloadCopyWithImpl(this._self, this._then);
+
+  final NotebookCreationPayload _self;
+  final $Res Function(NotebookCreationPayload) _then;
+
+/// Create a copy of NotebookCreationPayload
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? emoji = null,Object? colorValue = null,}) {
+  return _then(NotebookCreationPayload(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,emoji: null == emoji ? _self.emoji : emoji // ignore: cast_nullable_to_non_nullable
+as String,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [NotebookCreationPayload].
+extension NotebookCreationPayloadPatterns on NotebookCreationPayload {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _NotebookCreationPayload value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _NotebookCreationPayload() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _NotebookCreationPayload value)  $default,){
+final _that = this;
+switch (_that) {
+case _NotebookCreationPayload():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _NotebookCreationPayload value)?  $default,){
+final _that = this;
+switch (_that) {
+case _NotebookCreationPayload() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String emoji,  int colorValue)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _NotebookCreationPayload() when $default != null:
+return $default(_that.title,_that.emoji,_that.colorValue);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String emoji,  int colorValue)  $default,) {final _that = this;
+switch (_that) {
+case _NotebookCreationPayload():
+return $default(_that.title,_that.emoji,_that.colorValue);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String emoji,  int colorValue)?  $default,) {final _that = this;
+switch (_that) {
+case _NotebookCreationPayload() when $default != null:
+return $default(_that.title,_that.emoji,_that.colorValue);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _NotebookCreationPayload implements NotebookCreationPayload {
+  const _NotebookCreationPayload({required this.title, required this.emoji, required this.colorValue});
+  
+
+@override final  String title;
+@override final  String emoji;
+@override final  int colorValue;
+
+/// Create a copy of NotebookCreationPayload
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$NotebookCreationPayloadCopyWith<_NotebookCreationPayload> get copyWith => __$NotebookCreationPayloadCopyWithImpl<_NotebookCreationPayload>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotebookCreationPayload&&(identical(other.title, title) || other.title == title)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.colorValue, colorValue) || other.colorValue == colorValue));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,title,emoji,colorValue);
+}
+
+@override
+String toString() {
+    return 'NotebookCreationPayload(title: $title, emoji: $emoji, colorValue: $colorValue)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$NotebookCreationPayloadCopyWith<$Res> implements $NotebookCreationPayloadCopyWith<$Res> {
+  factory _$NotebookCreationPayloadCopyWith(_NotebookCreationPayload value, $Res Function(_NotebookCreationPayload) _then) = __$NotebookCreationPayloadCopyWithImpl;
+@override @useResult
+$Res call({
+ String title, String emoji, int colorValue
+});
+
+
+
+
+}
+/// @nodoc
+class __$NotebookCreationPayloadCopyWithImpl<$Res>
+    implements _$NotebookCreationPayloadCopyWith<$Res> {
+  __$NotebookCreationPayloadCopyWithImpl(this._self, this._then);
+
+  final _NotebookCreationPayload _self;
+  final $Res Function(_NotebookCreationPayload) _then;
+
+/// Create a copy of NotebookCreationPayload
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? emoji = null,Object? colorValue = null,}) {
+  return _then(_NotebookCreationPayload(
+title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,emoji: null == emoji ? _self.emoji : emoji // ignore: cast_nullable_to_non_nullable
+as String,colorValue: null == colorValue ? _self.colorValue : colorValue // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+// dart format on

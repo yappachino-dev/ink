@@ -9,7 +9,7 @@ sealed class NoteCreationPayload with _$NoteCreationPayload {
   const factory NoteCreationPayload({
     required String title,
     required List<dynamic> content,
-    String? projectId,
+    String? notebookId,
     DateTime? dueDate,
     NoteTime? dueTime,
     @Default(TaskPriority.none) TaskPriority priority,

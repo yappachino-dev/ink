@@ -3,39 +3,42 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/bottom_sheet.dart';
 import 'package:ink/features/notes/domain/constants.dart';
-import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:ink/features/notes/presentation/widgets/projects/project_icon_view.dart';
+import 'package:ink/features/notes/presentation/widgets/notebooks/notebook_icon_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
-const _allProjectsIcon = 'book';
+const _allNotebooksIcon = 'book';
 
 class ListFilterSheet extends ConsumerWidget {
   const ListFilterSheet({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projects = ref.watch(projectsProvider).value ?? [];
-    final selectedProjectId = ref.watch(selectedProjectIdProvider);
+    final notebooks = ref.watch(notebooksProvider).value ?? [];
+    final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
     return BottomSheetLayout(
       padding: AppSpacing.sheetRows,
-      header: Text(context.t.note.project, style: context.textTheme.titleLarge),
+      header: Text(
+        context.t.note.notebook,
+        style: context.textTheme.titleLarge,
+      ),
       children: [
-        _ProjectTile(
-          title: context.t.note.allProjects,
-          icon: _allProjectsIcon,
-          isSelected: selectedProjectId == allProjectsId,
+        _NotebookTile(
+          title: context.t.note.allNotebooks,
+          icon: _allNotebooksIcon,
+          isSelected: selectedNotebookId == allNotebooksId,
           onTap: () =>
-              ref.read(selectedProjectIdProvider.notifier).id = allProjectsId,
+              ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId,
         ),
-        if (projects.isNotEmpty) const Divider(),
-        ...projects.map(
-          (project) => _ProjectTile(
-            title: project.title,
-            icon: project.emoji,
-            isSelected: selectedProjectId == project.id,
+        if (notebooks.isNotEmpty) const Divider(),
+        ...notebooks.map(
+          (notebook) => _NotebookTile(
+            title: notebook.title,
+            icon: notebook.emoji,
+            isSelected: selectedNotebookId == notebook.id,
             onTap: () =>
-                ref.read(selectedProjectIdProvider.notifier).id = project.id,
+                ref.read(selectedNotebookIdProvider.notifier).id = notebook.id,
           ),
         ),
       ],
@@ -43,8 +46,8 @@ class ListFilterSheet extends ConsumerWidget {
   }
 }
 
-class _ProjectTile extends StatelessWidget {
-  const _ProjectTile({
+class _NotebookTile extends StatelessWidget {
+  const _NotebookTile({
     required this.title,
     required this.icon,
     required this.isSelected,
@@ -58,7 +61,7 @@ class _ProjectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: ProjectIconView(value: icon),
+      leading: NotebookIconView(value: icon),
       title: Text(
         title,
         style: context.textTheme.titleMedium?.copyWith(

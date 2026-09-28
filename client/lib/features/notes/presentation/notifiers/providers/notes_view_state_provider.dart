@@ -8,7 +8,7 @@ part 'notes_view_state_provider.g.dart';
 @riverpod
 NotesViewState notesViewState(Ref ref) {
   final notesAsync = ref.watch(notesProvider);
-  final lensNotes = ref.watch(projectNotesProvider);
+  final lensNotes = ref.watch(notebookNotesProvider);
 
   // `hasError` is checked before `when` on purpose. A failed load is an
   // `AsyncLoading` that carries an error, so `when(loading: ...)` matches it

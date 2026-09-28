@@ -11,7 +11,7 @@ import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -29,8 +29,8 @@ void main() {
   setUp(() {
     svc = _Svc();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
     when(
       svc.getAllNotes,
     ).thenAnswer((_) async => const Success<List<Note>, NotesFailure>([]));
@@ -54,7 +54,7 @@ void main() {
   group('the selection is remembered', () {
     test('a chosen notebook is restored on the next start', () async {
       final first = await container();
-      first.read(selectedProjectIdProvider.notifier).id = 'notebook-1';
+      first.read(selectedNotebookIdProvider.notifier).id = 'notebook-1';
       first.dispose();
 
       // A fresh container is a fresh app start: only storage carries over.
@@ -62,41 +62,41 @@ void main() {
         stored: const {'selectedNotebook': 'notebook-1'},
       );
 
-      expect(second.read(selectedProjectIdProvider), 'notebook-1');
+      expect(second.read(selectedNotebookIdProvider), 'notebook-1');
     });
 
     test('nothing stored means the default view', () async {
       final c = await container();
 
-      expect(c.read(selectedProjectIdProvider), allProjectsId);
+      expect(c.read(selectedNotebookIdProvider), allNotebooksId);
     });
 
     test(
       'a stored id the notebook list no longer knows does not throw',
       () async {
-        when(svc.getAllProjects).thenAnswer(
-          (_) async => const Success<List<Project>, NotesFailure>([]),
+        when(svc.getAllNotebooks).thenAnswer(
+          (_) async => const Success<List<Notebook>, NotesFailure>([]),
         );
 
         final c = await container(
           stored: const {'selectedNotebook': 'deleted-elsewhere'},
         );
 
-        // `SelectedProjectTitle` used to `firstWhere` over the list and
+        // `SelectedNotebookTitle` used to `firstWhere` over the list and
         // take the whole screen down when the id was absent.
-        expect(() => c.read(selectedProjectTitleProvider), returnsNormally);
-        expect(c.read(selectedProjectTitleProvider), t.home.all);
+        expect(() => c.read(selectedNotebookTitleProvider), returnsNormally);
+        expect(c.read(selectedNotebookTitleProvider), t.home.all);
       },
     );
   });
 
   group('today and all notes remain usable lenses', () {
     test('each id survives a round trip through storage', () async {
-      for (final id in [allProjectsId, todayProjectId, 'notebook-1']) {
+      for (final id in [allNotebooksId, todayNotebookId, 'notebook-1']) {
         final c = await container();
-        c.read(selectedProjectIdProvider.notifier).id = id;
+        c.read(selectedNotebookIdProvider.notifier).id = id;
 
-        expect(c.read(selectedProjectIdProvider), id);
+        expect(c.read(selectedNotebookIdProvider), id);
         c.dispose();
       }
     });

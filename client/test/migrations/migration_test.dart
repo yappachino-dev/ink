@@ -7,15 +7,20 @@ import 'schema.dart' as helper;
 import 'schema_v1.dart' as v1;
 import 'schema_v2.dart' as v2;
 import 'schema_v3.dart' as v3;
+import 'schema_v4.dart' as v4;
 
 // Schema files under migrations/ are regenerated whenever the database schema
 // changes:
-//   dart run drift_dev schema dump lib/app/database/database.dart drift_schemas/
+//   dart run drift_dev schema dump lib/app/database/database.dart \
+//     drift_schemas/
 //   dart run drift_dev schema generate drift_schemas/ test/migrations/
 //
 // See development.md for the full checklist when bumping schemaVersion.
 void main() {
   final verifier = SchemaVerifier(helper.GeneratedHelper());
+  // The app's own target, so a schema bump does not silently leave these tests
+  // validating against a version the app has moved past.
+  const currentVersion = 4;
 
   // The real MigrationStrategy always migrates to the current version, so an
   // upgrade from an old schema is validated against the newest one.
@@ -30,7 +35,10 @@ void main() {
       "VALUES ('note_1', ?, ?)",
       variables: [Variable.withBlob(bytes), Variable.withBlob(bytes)],
     );
-    // A seeded project is needed later to satisfy the project_conflicts FK.
+    // The old table name, deliberately: this row is written while the database
+    // is still on schema v1, where the table is `projects`. Everything in this
+    // test that describes *historical* state keeps the old names - only the
+    // current schema and the Dart API around it are renamed.
     await oldDb.customInsert(
       "INSERT INTO projects (id, encrypted_content) VALUES ('project_1', ?)",
       variables: [Variable.withBlob(bytes)],
@@ -39,13 +47,13 @@ void main() {
 
     // Migrate using the real AppDatabase migration strategy.
     final db = AppDatabase.forTesting(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, currentVersion);
 
-    // project_conflicts exists and accepts rows.
+    // notebook_conflicts exists and accepts rows.
     await db
-        .into(db.projectConflicts)
+        .into(db.notebookConflicts)
         .insert(
-          ProjectConflictsCompanion.insert(
+          NotebookConflictsCompanion.insert(
             id: 'project_1',
             encryptedContent: bytes,
             version: 5,
@@ -56,18 +64,19 @@ void main() {
     await db.close();
 
     // Pre-existing data survived the upgrade.
-    final checkDb = v3.DatabaseAtV3(schema.newConnection());
+    // Checked against the version we migrated to, not the one we came from: a
+    // v3 snapshot opened on a v4 database is itself a schema mismatch, and
+    // drift reports it as a missing upgrade strategy.
+    final checkDb = v4.DatabaseAtV4(schema.newConnection());
     final rows = await checkDb
-        .customSelect(
-          "SELECT encrypted_content FROM notes WHERE id = 'note_1'",
-        )
+        .customSelect("SELECT encrypted_content FROM notes WHERE id = 'note_1'")
         .get();
     expect(rows, hasLength(1));
     expect(rows.single.data['encrypted_content'], equals(bytes));
     await checkDb.close();
   });
 
-  test('v2 -> v3 adds derived columns and preserves existing rows', () async {
+  test('v2 -> current adds derived columns and preserves rows', () async {
     final schema = await verifier.schemaAt(2);
     final bytes = Uint8List.fromList([9, 8, 7]);
 
@@ -82,10 +91,10 @@ void main() {
     await oldDb.close();
 
     final db = AppDatabase.forTesting(schema.newConnection());
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, currentVersion);
     await db.close();
 
-    final checkDb = v3.DatabaseAtV3(schema.newConnection());
+    final checkDb = v4.DatabaseAtV4(schema.newConnection());
 
     // The pre-existing row and its ciphertext survived untouched.
     final rows = await checkDb
@@ -119,6 +128,72 @@ void main() {
         )
         .get();
     expect(indexes, hasLength(1));
+
+    await checkDb.close();
+  });
+
+  test("v3 -> v4 renames the notebook table and the note's foreign key, and "
+      'keeps the relationship intact', () async {
+    final schema = await verifier.schemaAt(3);
+    final notebookBytes = Uint8List.fromList([4, 5, 6]);
+    final noteBytes = Uint8List.fromList([7, 8, 9]);
+
+    // Seed a notebook and a note that points at it, in the v3 shape.
+    final oldDb = v3.DatabaseAtV3(schema.newConnection());
+    await oldDb.customInsert(
+      "INSERT INTO projects (id, encrypted_content) VALUES ('nb_1', ?)",
+      variables: [Variable.withBlob(notebookBytes)],
+    );
+    await oldDb.customInsert(
+      'INSERT INTO notes (id, project_id, encrypted_title, encrypted_content) '
+      "VALUES ('note_1', 'nb_1', ?, ?)",
+      variables: [Variable.withBlob(noteBytes), Variable.withBlob(noteBytes)],
+    );
+    await oldDb.close();
+
+    final db = AppDatabase.forTesting(schema.newConnection());
+    await verifier.migrateAndValidate(db, currentVersion);
+    await db.close();
+
+    // Re-open against the *current* schema. The point of the test is that both
+    // renames landed and the foreign key still resolves across them: a rename
+    // that kept the tables but orphaned the link would pass a schema check and
+    // quietly detach every note from its notebook.
+    final checkDb = AppDatabase.forTesting(schema.newConnection());
+
+    final notebooks = await checkDb
+        .customSelect(
+          'SELECT encrypted_content FROM notebooks WHERE id = ?',
+          variables: [Variable.withString('nb_1')],
+        )
+        .get();
+    expect(notebooks, hasLength(1));
+    expect(notebooks.single.data['encrypted_content'], equals(notebookBytes));
+
+    final notes = await checkDb
+        .customSelect(
+          'SELECT notebook_id, encrypted_content FROM notes WHERE id = ?',
+          variables: [Variable.withString('note_1')],
+        )
+        .get();
+    expect(notes, hasLength(1));
+    expect(notes.single.data['encrypted_content'], equals(noteBytes));
+    expect(
+      notes.single.data['notebook_id'],
+      'nb_1',
+      reason: 'the renamed foreign key must still point at the renamed table',
+    );
+
+    // And the old names are gone, not merely unused. A rename that left the
+    // old table behind would keep the rows reachable and still pass everything
+    // above, so the absence is asserted rather than assumed.
+    final oldNames = await checkDb
+        .customSelect(
+          'SELECT name FROM sqlite_master WHERE name IN '
+          "('projects', 'project_conflicts')",
+        )
+        .get();
+    expect(oldNames, isEmpty, reason: 'a renamed table was left behind');
 
     await checkDb.close();
   });

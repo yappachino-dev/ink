@@ -6,7 +6,7 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -26,7 +26,7 @@ Note _note({
   required String id,
   required DateTime createdAt,
   DateTime? dueDate,
-  String? projectId,
+  String? notebookId,
   bool isCompleted = false,
 }) => Note(
   id: id,
@@ -40,7 +40,7 @@ Note _note({
   createdAt: createdAt,
   updatedAt: createdAt,
   dueDate: dueDate,
-  projectId: projectId,
+  notebookId: notebookId,
   isCompleted: isCompleted,
 );
 
@@ -50,16 +50,16 @@ void main() {
   /// notifier, so the providers under test are the production ones.
   Future<ProviderContainer> containerWith(
     List<Note> notes, {
-    String? selectedProjectId,
+    String? selectedNotebookId,
   }) async {
-    final notebook = selectedProjectId ?? allProjectsId;
+    final notebook = selectedNotebookId ?? allNotebooksId;
     final svc = _Svc();
     when(
       svc.getAllNotes,
     ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
 
     final container = ProviderContainer(
       overrides: [
@@ -71,7 +71,7 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(notesProvider.future);
-    container.read(selectedProjectIdProvider.notifier).id = notebook;
+    container.read(selectedNotebookIdProvider.notifier).id = notebook;
     await container.read(notesProvider.future);
 
     return container;
@@ -125,9 +125,9 @@ void main() {
 
     test('still respects the selected notebook', () async {
       final container = await containerWith([
-        _note(id: 'in-a', createdAt: _selectedDay, projectId: 'a'),
-        _note(id: 'in-b', createdAt: _selectedDay, projectId: 'b'),
-      ], selectedProjectId: 'a');
+        _note(id: 'in-a', createdAt: _selectedDay, notebookId: 'a'),
+        _note(id: 'in-b', createdAt: _selectedDay, notebookId: 'b'),
+      ], selectedNotebookId: 'a');
 
       expect(container.read(calendarNotesProvider).single.id, 'in-a');
     });

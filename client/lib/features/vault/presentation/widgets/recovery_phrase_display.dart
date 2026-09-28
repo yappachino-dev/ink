@@ -3,10 +3,7 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
 
 class RecoveryPhraseDisplay extends StatelessWidget {
-  const RecoveryPhraseDisplay({
-    required this.phrase,
-    super.key,
-  });
+  const RecoveryPhraseDisplay({required this.phrase, super.key});
 
   final List<String> phrase;
 

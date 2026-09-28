@@ -4,9 +4,9 @@
 // most:
 //
 //  1. The app opens on All notes, and that lens returns every note rather than
-//     nothing. Before this, `allProjectsId` was only meaningful to the
+//     nothing. Before this, `allNotebooksId` was only meaningful to the
 //     calendar's notebook filter, so selecting it on Home fell through to
-//     `note.projectId == '__all__'` and matched nothing.
+//     `note.notebookId == '__all__'` and matched nothing.
 //  2. It is ordered reverse-chronologically and deterministically, because
 //     `allNotes` is a Map and its iteration order is insertion order.
 //  3. It renders flat: no completion checkbox, no separate completed section.
@@ -21,7 +21,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -43,7 +43,7 @@ class _Svc extends Mock implements NotesService {}
 /// A fixed clock, so the Today case never depends on the day the suite runs.
 final _today = DateTime(2026, 1, 14);
 
-class _LensSelected extends SelectedProjectId {
+class _LensSelected extends SelectedNotebookId {
   _LensSelected(this.id);
 
   final String id;
@@ -54,7 +54,7 @@ class _LensSelected extends SelectedProjectId {
 
 Note _note(
   String id, {
-  String? projectId = 'p1',
+  String? notebookId = 'p1',
   DateTime? dueDate,
   DateTime? updatedAt,
   bool isCompleted = false,
@@ -69,7 +69,7 @@ Note _note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026),
   updatedAt: updatedAt ?? DateTime(2026),
-  projectId: projectId,
+  notebookId: notebookId,
   dueDate: dueDate,
   isCompleted: isCompleted,
   priority: TaskPriority.medium,
@@ -85,8 +85,8 @@ void main() {
   setUp(() {
     svc = _Svc();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   });
 
   Future<ProviderContainer> makeContainer(
@@ -103,7 +103,7 @@ void main() {
         userPreferencesProvider.overrideWithValue(await mockUserConfig()),
         currentDateProvider.overrideWithValue(_today),
         if (lens != null)
-          selectedProjectIdProvider.overrideWith(() => _LensSelected(lens)),
+          selectedNotebookIdProvider.overrideWith(() => _LensSelected(lens)),
       ],
     );
     addTearDown(container.dispose);
@@ -115,9 +115,9 @@ void main() {
     test('is All notes, not Today', () async {
       final container = await makeContainer([_note('a')]);
 
-      expect(container.read(selectedProjectIdProvider), allProjectsId);
+      expect(container.read(selectedNotebookIdProvider), allNotebooksId);
       expect(
-        isContentForwardLens(container.read(selectedProjectIdProvider)),
+        isContentForwardLens(container.read(selectedNotebookIdProvider)),
         isTrue,
       );
     });
@@ -125,27 +125,33 @@ void main() {
     test('is titled "All notes" rather than borrowing "Today"', () async {
       final container = await makeContainer([_note('a')]);
 
-      // Previously both `allProjectsId` and `todayProjectId` mapped to
+      // Previously both `allNotebooksId` and `todayNotebookId` mapped to
       // `t.home.today`, so two different views were indistinguishable by
       // title and the default view called itself the wrong thing.
-      expect(container.read(selectedProjectTitleProvider), t.home.all);
-      expect(container.read(selectedProjectTitleProvider), isNot(t.home.today));
+      expect(container.read(selectedNotebookTitleProvider), t.home.all);
+      expect(
+        container.read(selectedNotebookTitleProvider),
+        isNot(t.home.today),
+      );
     });
   });
 
   group('the All notes lens', () {
     test('returns every note, whatever its notebook or due date', () async {
       final container = await makeContainer([
-        _note('undated-unfiled', projectId: null),
-        _note('dated', projectId: 'p2', dueDate: DateTime(2030, 5, 5)),
-        _note('other-notebook', projectId: 'p9'),
+        _note('undated-unfiled', notebookId: null),
+        _note('dated', notebookId: 'p2', dueDate: DateTime(2030, 5, 5)),
+        _note('other-notebook', notebookId: 'p9'),
         _note('completed', isCompleted: true),
       ]);
 
-      final ids = container.read(projectNotesProvider).map((n) => n.id).toSet();
+      final ids = container
+          .read(notebookNotesProvider)
+          .map((n) => n.id)
+          .toSet();
 
       // The regression this guards: All notes used to fall through to
-      // `projectId == '__all__'` and return nothing at all.
+      // `notebookId == '__all__'` and return nothing at all.
       expect(ids, {'undated-unfiled', 'dated', 'other-notebook', 'completed'});
     });
 
@@ -156,7 +162,7 @@ void main() {
         _note('middle', updatedAt: DateTime(2026, 2)),
       ]);
 
-      expect(container.read(projectNotesProvider).map((n) => n.id), [
+      expect(container.read(notebookNotesProvider).map((n) => n.id), [
         'newest',
         'middle',
         'oldest',
@@ -173,7 +179,7 @@ void main() {
         _note('c', updatedAt: at),
       ]);
 
-      expect(container.read(projectNotesProvider).map((n) => n.id), [
+      expect(container.read(notebookNotesProvider).map((n) => n.id), [
         'a',
         'b',
         'c',
@@ -219,20 +225,20 @@ void main() {
         _note('due', dueDate: DateTime(2026, 1, 14)),
         _note('not-due', dueDate: DateTime(2026, 6)),
         _note('undated'),
-      ], lens: todayProjectId);
+      ], lens: todayNotebookId);
 
-      final notes = container.read(projectNotesProvider);
+      final notes = container.read(notebookNotesProvider);
       expect(notes.map((n) => n.id), ['due']);
     });
 
     test('a notebook still filters to its own notes', () async {
       final container = await makeContainer([
         _note('mine'),
-        _note('theirs', projectId: 'p2'),
-        _note('unfiled', projectId: null),
+        _note('theirs', notebookId: 'p2'),
+        _note('unfiled', notebookId: null),
       ], lens: 'p1');
 
-      expect(container.read(projectNotesProvider).map((n) => n.id), ['mine']);
+      expect(container.read(notebookNotesProvider).map((n) => n.id), ['mine']);
     });
 
     testWidgets('a task-forward lens keeps the completion checkbox', (
@@ -242,7 +248,7 @@ void main() {
       // assertion would pass for the wrong reason.
       final container = await makeContainer([
         _note('open-note', dueDate: _today),
-      ], lens: todayProjectId);
+      ], lens: todayNotebookId);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(

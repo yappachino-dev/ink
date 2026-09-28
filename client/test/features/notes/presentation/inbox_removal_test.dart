@@ -1,14 +1,14 @@
 // Inbox removal.
 //
-// Inbox was a virtual "project" whose filter was `dueDate != null ||
+// Inbox was a virtual "notebook" whose filter was `dueDate != null ||
 // dueTime != null` — that is "has a deadline", which Today already answers, not
 // an inbox. It also carried a long-press menu whose single action opened
-// `CreateProjectSheet(colorOnly: true)` with no `initialProject`, while that
-// mode's confirm path dereferences `initialProject!`. Removing Inbox took all
+// `CreateNotebookSheet(colorOnly: true)` with no `initialNotebook`, while that
+// mode's confirm path dereferences `initialNotebook!`. Removing Inbox took all
 // of that with it.
 //
 // These tests pin what the removal must keep true: the sheet can no longer
-// reach a null project, and the drawer no longer offers an action for a lens.
+// reach a null notebook, and the drawer no longer offers an action for a lens.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/config/user_config.dart';
@@ -18,13 +18,13 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
-import 'package:ink/features/notes/presentation/widgets/projects/create_project_sheet.dart';
-import 'package:ink/features/notes/presentation/widgets/projects/drawer_virtual_project_item.dart';
-import 'package:ink/features/notes/presentation/widgets/projects/project_item.dart';
+import 'package:ink/features/notes/presentation/widgets/notebooks/create_notebook_sheet.dart';
+import 'package:ink/features/notes/presentation/widgets/notebooks/drawer_virtual_notebook_item.dart';
+import 'package:ink/features/notes/presentation/widgets/notebooks/notebook_item.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -36,7 +36,7 @@ class _Svc extends Mock implements NotesService {}
 void main() {
   setUpAll(() {
     registerFallbackValue(
-      Project(
+      Notebook(
         id: 'fallback',
         title: 'F',
         emoji: 'x',
@@ -58,10 +58,10 @@ void main() {
       svc.getAllNotes,
     ).thenAnswer((_) async => const Success<List<Note>, NotesFailure>([]));
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
     when(
-      () => svc.saveProject(any()),
+      () => svc.saveNotebook(any()),
     ).thenAnswer((_) async => const Success<void, NotesFailure>(null));
   });
 
@@ -75,7 +75,7 @@ void main() {
         child: TranslationProvider(
           child: MaterialApp(
             theme: AppTheme.light(InkPalette.forest),
-            home: const Scaffold(body: CreateProjectSheet()),
+            home: const Scaffold(body: CreateNotebookSheet()),
           ),
         ),
       ),
@@ -84,9 +84,9 @@ void main() {
   }
 
   group('the colour-only sheet mode is gone', () {
-    // The crash this prevents: `CreateProjectSheet(colorOnly: true)` has no
-    // `initialProject`, and that mode's confirm did `initialProject!`. With the
-    // mode removed, an empty-name confirm simply does nothing.
+    // The crash this prevents: `CreateNotebookSheet(colorOnly: true)` has no
+    // `initialNotebook`, and that mode's confirm did `initialNotebook!`.
+    // With the mode removed, an empty-name confirm simply does nothing.
     testWidgets('confirming a new sheet with no name does not throw', (
       tester,
     ) async {
@@ -96,13 +96,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      verifyNever(() => svc.saveProject(any()));
+      verifyNever(() => svc.saveNotebook(any()));
     });
 
-    testWidgets('editing a project keeps the name, emoji and colour', (
+    testWidgets('editing a notebook keeps the name, emoji and colour', (
       tester,
     ) async {
-      final existing = Project(
+      final existing = Notebook(
         id: 'p1',
         title: 'Groceries',
         emoji: '🛒',
@@ -124,7 +124,7 @@ void main() {
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
               home: Scaffold(
-                body: CreateProjectSheet(initialProject: existing),
+                body: CreateNotebookSheet(initialNotebook: existing),
               ),
             ),
           ),
@@ -137,8 +137,8 @@ void main() {
 
       expect(tester.takeException(), isNull);
       final saved =
-          verify(() => svc.saveProject(captureAny())).captured.single
-              as Project;
+          verify(() => svc.saveNotebook(captureAny())).captured.single
+              as Notebook;
       expect(saved.title, 'Groceries');
       expect(saved.emoji, '🛒');
       expect(saved.id, 'p1');
@@ -159,7 +159,7 @@ void main() {
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
               home: const Scaffold(
-                body: DrawerVirtualProjectItem(
+                body: DrawerVirtualNotebookItem(
                   id: '__today__',
                   count: null,
                   title: 'Today',
@@ -173,10 +173,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final item = tester.widget<ProjectItem>(find.byType(ProjectItem));
+      final item = tester.widget<NotebookItem>(find.byType(NotebookItem));
       expect(item.onLongPress, isNull);
 
-      await tester.longPress(find.byType(ProjectItem));
+      await tester.longPress(find.byType(NotebookItem));
       await tester.pumpAndSettle();
 
       // No context menu, and certainly no "edit" entry.
@@ -195,8 +195,8 @@ void main() {
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
               home: Scaffold(
-                body: DrawerVirtualProjectItem(
-                  id: todayProjectId,
+                body: DrawerVirtualNotebookItem(
+                  id: todayNotebookId,
                   count: null,
                   title: 'Today',
                   icon: 'target',
@@ -209,7 +209,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(ProjectItem));
+      await tester.tap(find.byType(NotebookItem));
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
@@ -220,10 +220,10 @@ void main() {
     test('the sentinel constant is gone from the domain', () {
       // Guards against it being reintroduced: the only two sentinels are the
       // "all" lens and "today".
-      expect(todayProjectId, '__today__');
+      expect(todayNotebookId, '__today__');
       expect(<String>[
-        allProjectsId,
-        todayProjectId,
+        allNotebooksId,
+        todayNotebookId,
       ], isNot(contains('__inbox__')));
     });
   });

@@ -41,17 +41,17 @@ func (q *Queries) FindNoteIDsOwnedByOtherUsers(ctx context.Context, arg FindNote
 	return items, nil
 }
 
-const findProjectIDsAvailableToUser = `-- name: FindProjectIDsAvailableToUser :many
-SELECT id FROM projects WHERE id = ANY($1::uuid[]) AND user_id = $2
+const findNotebookIDsAvailableToUser = `-- name: FindNotebookIDsAvailableToUser :many
+SELECT id FROM notebooks WHERE id = ANY($1::uuid[]) AND user_id = $2
 `
 
-type FindProjectIDsAvailableToUserParams struct {
+type FindNotebookIDsAvailableToUserParams struct {
 	Ids    []uuid.UUID `json:"ids"`
 	UserID int32       `json:"user_id"`
 }
 
-func (q *Queries) FindProjectIDsAvailableToUser(ctx context.Context, arg FindProjectIDsAvailableToUserParams) ([]uuid.UUID, error) {
-	rows, err := q.db.Query(ctx, findProjectIDsAvailableToUser, arg.Ids, arg.UserID)
+func (q *Queries) FindNotebookIDsAvailableToUser(ctx context.Context, arg FindNotebookIDsAvailableToUserParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, findNotebookIDsAvailableToUser, arg.Ids, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -70,17 +70,17 @@ func (q *Queries) FindProjectIDsAvailableToUser(ctx context.Context, arg FindPro
 	return items, nil
 }
 
-const findProjectIDsOwnedByOtherUsers = `-- name: FindProjectIDsOwnedByOtherUsers :many
-SELECT id FROM projects WHERE id = ANY($1::uuid[]) AND user_id <> $2
+const findNotebookIDsOwnedByOtherUsers = `-- name: FindNotebookIDsOwnedByOtherUsers :many
+SELECT id FROM notebooks WHERE id = ANY($1::uuid[]) AND user_id <> $2
 `
 
-type FindProjectIDsOwnedByOtherUsersParams struct {
+type FindNotebookIDsOwnedByOtherUsersParams struct {
 	Ids    []uuid.UUID `json:"ids"`
 	UserID int32       `json:"user_id"`
 }
 
-func (q *Queries) FindProjectIDsOwnedByOtherUsers(ctx context.Context, arg FindProjectIDsOwnedByOtherUsersParams) ([]uuid.UUID, error) {
-	rows, err := q.db.Query(ctx, findProjectIDsOwnedByOtherUsers, arg.Ids, arg.UserID)
+func (q *Queries) FindNotebookIDsOwnedByOtherUsers(ctx context.Context, arg FindNotebookIDsOwnedByOtherUsersParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, findNotebookIDsOwnedByOtherUsers, arg.Ids, arg.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (q *Queries) FindProjectIDsOwnedByOtherUsers(ctx context.Context, arg FindP
 }
 
 const getNoteChanges = `-- name: GetNoteChanges :many
-SELECT id, project_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
+SELECT id, notebook_id, encrypted_title, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
 FROM notes WHERE user_id = $1 AND sync_sequence > $2
 `
 
@@ -111,7 +111,7 @@ type GetNoteChangesParams struct {
 
 type GetNoteChangesRow struct {
 	ID               uuid.UUID  `json:"id"`
-	ProjectID        *uuid.UUID `json:"project_id"`
+	NotebookID       *uuid.UUID `json:"notebook_id"`
 	EncryptedTitle   []byte     `json:"encrypted_title"`
 	EncryptedContent []byte     `json:"encrypted_content"`
 	Version          int32      `json:"version"`
@@ -132,7 +132,7 @@ func (q *Queries) GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) 
 		var i GetNoteChangesRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.ProjectID,
+			&i.NotebookID,
 			&i.EncryptedTitle,
 			&i.EncryptedContent,
 			&i.Version,
@@ -151,17 +151,17 @@ func (q *Queries) GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) 
 	return items, nil
 }
 
-const getProjectChanges = `-- name: GetProjectChanges :many
+const getNotebookChanges = `-- name: GetNotebookChanges :many
 SELECT id, encrypted_content, version, sync_sequence, created_at, updated_at, deleted_at
-FROM projects WHERE user_id = $1 AND sync_sequence > $2
+FROM notebooks WHERE user_id = $1 AND sync_sequence > $2
 `
 
-type GetProjectChangesParams struct {
+type GetNotebookChangesParams struct {
 	UserID       int32 `json:"user_id"`
 	SyncSequence int32 `json:"sync_sequence"`
 }
 
-type GetProjectChangesRow struct {
+type GetNotebookChangesRow struct {
 	ID               uuid.UUID  `json:"id"`
 	EncryptedContent []byte     `json:"encrypted_content"`
 	Version          int32      `json:"version"`
@@ -171,15 +171,15 @@ type GetProjectChangesRow struct {
 	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
-func (q *Queries) GetProjectChanges(ctx context.Context, arg GetProjectChangesParams) ([]GetProjectChangesRow, error) {
-	rows, err := q.db.Query(ctx, getProjectChanges, arg.UserID, arg.SyncSequence)
+func (q *Queries) GetNotebookChanges(ctx context.Context, arg GetNotebookChangesParams) ([]GetNotebookChangesRow, error) {
+	rows, err := q.db.Query(ctx, getNotebookChanges, arg.UserID, arg.SyncSequence)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetProjectChangesRow
+	var items []GetNotebookChangesRow
 	for rows.Next() {
-		var i GetProjectChangesRow
+		var i GetNotebookChangesRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.EncryptedContent,

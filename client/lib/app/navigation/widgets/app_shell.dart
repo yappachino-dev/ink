@@ -36,8 +36,8 @@ class AppShell extends ConsumerWidget {
     // only way back to your notes was to leave the tab and return, which
     // silently reset the selection as a side effect.
     if (index == _calendarBranch &&
-        ref.read(selectedProjectIdProvider) == todayProjectId) {
-      ref.read(selectedProjectIdProvider.notifier).id = allProjectsId;
+        ref.read(selectedNotebookIdProvider) == todayNotebookId) {
+      ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
     }
 
     navigationShell.goBranch(

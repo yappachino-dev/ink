@@ -27,9 +27,9 @@ func findDuplicateIDs(ids []uuid.UUID) []uuid.UUID {
 	return duplicates
 }
 
-func projectIDs(projects []Project) []uuid.UUID {
-	ids := make([]uuid.UUID, 0, len(projects))
-	for _, p := range projects {
+func notebookIDs(notebooks []Notebook) []uuid.UUID {
+	ids := make([]uuid.UUID, 0, len(notebooks))
+	for _, p := range notebooks {
 		ids = append(ids, p.ID)
 	}
 
@@ -45,21 +45,21 @@ func noteIDs(notes []Note) []uuid.UUID {
 	return ids
 }
 
-// referencedProjectIDs returns the distinct, non-nil project references carried
+// referencedNotebookIDs returns the distinct, non-nil notebook references carried
 // by a batch of notes.
-func referencedProjectIDs(notes []Note) []uuid.UUID {
+func referencedNotebookIDs(notes []Note) []uuid.UUID {
 	seen := make(map[uuid.UUID]struct{}, len(notes))
 	var ids []uuid.UUID
 
 	for _, n := range notes {
-		if n.ProjectID == nil {
+		if n.NotebookID == nil {
 			continue
 		}
-		if _, ok := seen[*n.ProjectID]; ok {
+		if _, ok := seen[*n.NotebookID]; ok {
 			continue
 		}
-		seen[*n.ProjectID] = struct{}{}
-		ids = append(ids, *n.ProjectID)
+		seen[*n.NotebookID] = struct{}{}
+		ids = append(ids, *n.NotebookID)
 	}
 
 	return ids
@@ -89,8 +89,8 @@ func missingFrom(want, have []uuid.UUID) []uuid.UUID {
 func validateChanges(ctx context.Context, userID int, changes SyncChanges, repo SyncRepository) error {
 	// 1. Duplicates are rejected outright. They are decided from the request
 	//    alone, so they cost no round trip.
-	if dups := findDuplicateIDs(projectIDs(changes.Projects)); len(dups) > 0 {
-		return &DuplicateEntityIDsError{Entity: "project", IDs: dups}
+	if dups := findDuplicateIDs(notebookIDs(changes.Notebooks)); len(dups) > 0 {
+		return &DuplicateEntityIDsError{Entity: "notebook", IDs: dups}
 	}
 	if dups := findDuplicateIDs(noteIDs(changes.Notes)); len(dups) > 0 {
 		return &DuplicateEntityIDsError{Entity: "note", IDs: dups}
@@ -98,14 +98,14 @@ func validateChanges(ctx context.Context, userID int, changes SyncChanges, repo 
 
 	// 2. A pushed ID owned by another account must fail loudly instead of
 	//    being swallowed by the `WHERE user_id = EXCLUDED.user_id` upsert guard.
-	pushedProjects := projectIDs(changes.Projects)
-	if len(pushedProjects) > 0 {
-		foreign, err := repo.FindProjectIDsOwnedByOtherUsers(ctx, pushedProjects, userID)
+	pushedNotebooks := notebookIDs(changes.Notebooks)
+	if len(pushedNotebooks) > 0 {
+		foreign, err := repo.FindNotebookIDsOwnedByOtherUsers(ctx, pushedNotebooks, userID)
 		if err != nil {
 			return err
 		}
 		if len(foreign) > 0 {
-			return &OwnershipConflictError{Entity: "project", IDs: foreign}
+			return &OwnershipConflictError{Entity: "notebook", IDs: foreign}
 		}
 	}
 
@@ -120,19 +120,19 @@ func validateChanges(ctx context.Context, userID int, changes SyncChanges, repo 
 		}
 	}
 
-	// 3. Notes may only reference projects this account owns. The schema's
-	//    foreign key checks `projects.id` alone, so ownership is not implied.
+	// 3. Notes may only reference notebooks this account owns. The schema's
+	//    foreign key checks `notebooks.id` alone, so ownership is not implied.
 	//
-	//    Projects carried by this same batch count as available: they have
+	//    Notebooks carried by this same batch count as available: they have
 	//    already cleared the ownership check in step 2 and are about to be
-	//    written. Without this, the core offline workflow — creating a project
+	//    written. Without this, the core offline workflow — creating a notebook
 	//    and a note that references it while disconnected, then pushing both at
-	//    once — would be rejected, because the project does not exist in the
+	//    once — would be rejected, because the notebook does not exist in the
 	//    database yet at validation time.
-	references := referencedProjectIDs(changes.Notes)
+	references := referencedNotebookIDs(changes.Notes)
 	if len(references) > 0 {
-		inBatch := make(map[uuid.UUID]struct{}, len(changes.Projects))
-		for _, p := range changes.Projects {
+		inBatch := make(map[uuid.UUID]struct{}, len(changes.Notebooks))
+		for _, p := range changes.Notebooks {
 			inBatch[p.ID] = struct{}{}
 		}
 
@@ -145,12 +145,12 @@ func validateChanges(ctx context.Context, userID int, changes SyncChanges, repo 
 
 		// Skips the round trip entirely when every reference ships in this batch.
 		if len(external) > 0 {
-			available, err := repo.FindProjectIDsAvailableToUser(ctx, external, userID)
+			available, err := repo.FindNotebookIDsAvailableToUser(ctx, external, userID)
 			if err != nil {
 				return err
 			}
 			if unavailable := missingFrom(external, available); len(unavailable) > 0 {
-				return &ProjectReferenceError{IDs: unavailable}
+				return &NotebookReferenceError{IDs: unavailable}
 			}
 		}
 	}

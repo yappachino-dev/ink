@@ -67,8 +67,8 @@ user-keys:
 notes:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from notes;"
 
-projects:
-	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from projects;"
+notebooks:
+	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from notebooks;"
 
 tokens:
 	docker exec -i ink-db psql -U $(DB_USER) -d $(DB_NAME) -c "select * from refresh_tokens;"

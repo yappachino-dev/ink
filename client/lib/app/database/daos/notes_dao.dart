@@ -18,28 +18,28 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
 
   Future<void> updateNote(NotesCompanion note) => update(notes).replace(note);
 
-  Future<void> acknowledgePushed(
-    List<SyncAck> acknowledgements,
-  ) => batch((batch) {
-    for (final ack in acknowledgements) {
-      if (ack.isDeleted) {
-        batch.deleteWhere(
-          notes,
-          (tbl) => tbl.id.equals(ack.id) & tbl.localVersion.equals(ack.version),
-        );
-      } else {
-        batch.update(
-          notes,
-          NotesCompanion(
-            syncStatus: const Value(SyncStatus.synced),
-            lastSyncedVersion: Value(ack.version),
-          ),
-          where: (tbl) =>
-              tbl.id.equals(ack.id) & tbl.localVersion.equals(ack.version),
-        );
-      }
-    }
-  });
+  Future<void> acknowledgePushed(List<SyncAck> acknowledgements) =>
+      batch((batch) {
+        for (final ack in acknowledgements) {
+          if (ack.isDeleted) {
+            batch.deleteWhere(
+              notes,
+              (tbl) =>
+                  tbl.id.equals(ack.id) & tbl.localVersion.equals(ack.version),
+            );
+          } else {
+            batch.update(
+              notes,
+              NotesCompanion(
+                syncStatus: const Value(SyncStatus.synced),
+                lastSyncedVersion: Value(ack.version),
+              ),
+              where: (tbl) =>
+                  tbl.id.equals(ack.id) & tbl.localVersion.equals(ack.version),
+            );
+          }
+        }
+      });
 
   Future<NoteModel?> getNote(String id) =>
       (select(notes)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
@@ -63,28 +63,20 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
   }) => batch((b) {
     b
       ..insertAll(notes, upserts, mode: InsertMode.replace)
-      ..insertAll(
-        noteConflicts,
-        [for (final (_, conflict) in conflicts) conflict],
-        mode: InsertMode.replace,
-      );
+      ..insertAll(noteConflicts, [
+        for (final (_, conflict) in conflicts) conflict,
+      ], mode: InsertMode.replace);
     for (final (note, _) in conflicts) {
-      b.update(
-        notes,
-        note,
-        where: (tbl) => tbl.id.equals(note.id.value),
-      );
+      b.update(notes, note, where: (tbl) => tbl.id.equals(note.id.value));
     }
     if (deletes.isNotEmpty) {
       b.deleteWhere(notes, (tbl) => tbl.id.isIn(deletes));
     }
   });
 
-  Future<List<NoteModel>> getPending() =>
-      (select(notes)..where(
-            (tbl) => tbl.syncStatus.isIn(syncPendingPushIndexes),
-          ))
-          .get();
+  Future<List<NoteModel>> getPending() => (select(
+    notes,
+  )..where((tbl) => tbl.syncStatus.isIn(syncPendingPushIndexes))).get();
 
   Future<List<String>> findStaleMetadataNoteIds(int currentVersion) {
     final query = select(notes)

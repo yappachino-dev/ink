@@ -53,7 +53,7 @@ func TestOwnershipConflictErrorBoundsIDs(t *testing.T) {
 		ids = append(ids, uuid.New())
 	}
 
-	err := (&OwnershipConflictError{Entity: "project", IDs: ids}).Error()
+	err := (&OwnershipConflictError{Entity: "notebook", IDs: ids}).Error()
 
 	// A hostile batch must not be able to inflate the response or the logs.
 	if len(err) > 400 {

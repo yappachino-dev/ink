@@ -4,7 +4,7 @@
 // surface: no ripple in release, and a debug assert on some tiles.
 //
 // It was fixed once, in the reminder picker only, by wrapping that one tile.
-// The priority, project, notebook-filter, view-mode and language sheets were
+// The priority, notebook, notebook-filter, view-mode and language sheets were
 // left with the same defect. This asserts the surface is provided once, for
 // everything.
 import 'package:flutter_test/flutter_test.dart';

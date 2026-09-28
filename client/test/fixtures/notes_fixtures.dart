@@ -3,7 +3,7 @@ import 'package:ink/app/database/database.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/services/sync/sync_types.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
-import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 
 class NotesFixtures {
@@ -25,7 +25,7 @@ class NotesFixtures {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
-    String? projectId,
+    String? notebookId,
   }) {
     return NotesCompanion.insert(
       id: id != null ? Value(id) : const Value('note_1'),
@@ -41,7 +41,7 @@ class NotesFixtures {
       createdAt: createdAt != null ? Value(createdAt) : Value(defaultDate),
       updatedAt: updatedAt != null ? Value(updatedAt) : Value(defaultDate),
       deletedAt: Value(deletedAt),
-      projectId: Value(projectId),
+      notebookId: Value(notebookId),
     );
   }
 
@@ -53,7 +53,7 @@ class NotesFixtures {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
-    String? projectId,
+    String? notebookId,
   }) {
     return NoteConflictsCompanion.insert(
       id: id ?? 'note_1',
@@ -63,11 +63,11 @@ class NotesFixtures {
       createdAt: createdAt ?? defaultDate,
       updatedAt: updatedAt ?? defaultDate,
       deletedAt: Value(deletedAt),
-      projectId: Value(projectId),
+      notebookId: Value(notebookId),
     );
   }
 
-  static ProjectConflictsCompanion buildProjectConflictCompanion({
+  static NotebookConflictsCompanion buildNotebookConflictCompanion({
     String? id,
     Uint8List? encryptedContent,
     int? version,
@@ -75,8 +75,8 @@ class NotesFixtures {
     DateTime? updatedAt,
     DateTime? deletedAt,
   }) {
-    return ProjectConflictsCompanion.insert(
-      id: id ?? 'project_1',
+    return NotebookConflictsCompanion.insert(
+      id: id ?? 'notebook_1',
       encryptedContent: encryptedContent ?? defaultBytes,
       version: version ?? 2,
       createdAt: createdAt ?? defaultDate,
@@ -85,7 +85,7 @@ class NotesFixtures {
     );
   }
 
-  static ProjectsCompanion buildProjectCompanion({
+  static NotebooksCompanion buildNotebookCompanion({
     String? id,
     Uint8List? encryptedContent,
     int? localVersion,
@@ -95,8 +95,8 @@ class NotesFixtures {
     DateTime? updatedAt,
     DateTime? deletedAt,
   }) {
-    return ProjectsCompanion.insert(
-      id: id != null ? Value(id) : const Value('project_1'),
+    return NotebooksCompanion.insert(
+      id: id != null ? Value(id) : const Value('notebook_1'),
       encryptedContent: encryptedContent ?? defaultBytes,
       localVersion: localVersion != null ? Value(localVersion) : const Value(1),
       lastSyncedVersion: lastSyncedVersion != null
@@ -141,14 +141,14 @@ class NotesFixtures {
     );
   }
 
-  static ProjectModel buildProjectModel({
+  static NotebookModel buildNotebookModel({
     String? id,
     int? localVersion,
     int? lastSyncedVersion,
     SyncStatus? syncStatus,
   }) {
-    return ProjectModel(
-      id: id ?? 'project_1',
+    return NotebookModel(
+      id: id ?? 'notebook_1',
       encryptedContent: defaultBytes,
       localVersion: localVersion ?? 1,
       lastSyncedVersion: lastSyncedVersion ?? 0,
@@ -178,14 +178,14 @@ class NotesFixtures {
     );
   }
 
-  static EncryptedProject buildEncryptedProject({
+  static EncryptedNotebook buildEncryptedNotebook({
     String? id,
     int? version,
     DateTime? updatedAt,
     DateTime? deletedAt,
   }) {
-    return EncryptedProject(
-      id: id ?? 'project_1',
+    return EncryptedNotebook(
+      id: id ?? 'notebook_1',
       encryptedContent: defaultBytes,
       localVersion: version ?? 1,
       lastSyncedVersion: 0,
@@ -198,11 +198,7 @@ class NotesFixtures {
 
   // --- Value object builders ---
 
-  static SyncAck buildAck({
-    String? id,
-    int? version,
-    bool? isDeleted,
-  }) {
+  static SyncAck buildAck({String? id, int? version, bool? isDeleted}) {
     return (
       id: id ?? 'note_1',
       version: version ?? 1,

@@ -21,7 +21,7 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/app_fab.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -35,9 +35,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _AllProjectsSelected extends SelectedProjectId {
+class _AllNotebooksSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 final _note = Note(
@@ -51,7 +51,7 @@ final _note = Note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026, 1, 14),
   updatedAt: DateTime(2026, 1, 14),
-  projectId: allProjectsId,
+  notebookId: allNotebooksId,
 );
 
 /// The real shell, with both branches built for real, so the two buttons are
@@ -101,8 +101,8 @@ void main() {
       svc.getAllNotes,
     ).thenAnswer((_) async => Success<List<Note>, NotesFailure>([_note]));
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
 
     await tester.pumpWidget(
       ProviderScope(
@@ -110,7 +110,7 @@ void main() {
           notesServiceProvider.overrideWithValue(svc),
           isOfflineProvider.overrideWithValue(false),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
+          selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(

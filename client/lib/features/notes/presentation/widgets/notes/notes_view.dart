@@ -34,8 +34,8 @@ class NotesView extends ConsumerWidget {
         onRetry: onRetry ?? () => ref.invalidate(notesProvider),
       ),
       NotesViewContent() => TaskListView(
-        key: ValueKey('list-${ref.watch(selectedProjectIdProvider)}'),
-        title: ref.watch(selectedProjectTitleProvider),
+        key: ValueKey('list-${ref.watch(selectedNotebookIdProvider)}'),
+        title: ref.watch(selectedNotebookTitleProvider),
       ),
     };
   }

@@ -9,7 +9,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -30,9 +30,9 @@ import 'package:mocktail/mocktail.dart';
 /// toolbar now owns the inset and paints its background through it.
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedProjectId {
+class _AllSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 const _screenHeight = 800.0;
@@ -52,14 +52,14 @@ Future<_Svc> _service() async {
         syncStatus: SyncStatus.synced,
         createdAt: DateTime(2026),
         updatedAt: DateTime(2026),
-        projectId: 'p1',
+        notebookId: 'p1',
         priority: TaskPriority.medium,
       ),
     ]),
   );
   when(
-    svc.getAllProjects,
-  ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+    svc.getAllNotebooks,
+  ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   return svc;
 }
 
@@ -80,7 +80,7 @@ void main() {
       ProviderScope(
         overrides: [
           notesServiceProvider.overrideWithValue(svc),
-          selectedProjectIdProvider.overrideWith(_AllSelected.new),
+          selectedNotebookIdProvider.overrideWith(_AllSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp(

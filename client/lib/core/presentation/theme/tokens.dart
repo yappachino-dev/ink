@@ -94,7 +94,7 @@ abstract final class AppSpacing {
 
   /// Content padding for a sheet that holds a full-width list of rows.
   ///
-  /// The pickers (priority, project, notebook filter) each spelled this out;
+  /// The pickers (priority, notebook, notebook filter) each spelled this out;
   /// they are the same three-line `EdgeInsets.only` in four files. It is wider
   /// than the `BottomSheetLayout` default, which is what sheets without rows
   /// still use.

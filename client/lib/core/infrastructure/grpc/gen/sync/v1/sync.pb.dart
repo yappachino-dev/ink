@@ -158,11 +158,11 @@ class SyncResponse extends $pb.GeneratedMessage {
 
 class SyncChanges extends $pb.GeneratedMessage {
   factory SyncChanges({
-    $core.Iterable<Project>? projects,
+    $core.Iterable<Notebook>? notebooks,
     $core.Iterable<Note>? notes,
   }) {
     final result = create();
-    if (projects != null) result.projects.addAll(projects);
+    if (notebooks != null) result.notebooks.addAll(notebooks);
     if (notes != null) result.notes.addAll(notes);
     return result;
   }
@@ -180,8 +180,8 @@ class SyncChanges extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'SyncChanges',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'sync.v1'),
       createEmptyInstance: create)
-    ..pPM<Project>(1, _omitFieldNames ? '' : 'projects',
-        subBuilder: Project.create)
+    ..pPM<Notebook>(1, _omitFieldNames ? '' : 'notebooks',
+        subBuilder: Notebook.create)
     ..pPM<Note>(2, _omitFieldNames ? '' : 'notes', subBuilder: Note.create)
     ..hasRequiredFields = false;
 
@@ -205,14 +205,14 @@ class SyncChanges extends $pb.GeneratedMessage {
   static SyncChanges? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $pb.PbList<Project> get projects => $_getList(0);
+  $pb.PbList<Notebook> get notebooks => $_getList(0);
 
   @$pb.TagNumber(2)
   $pb.PbList<Note> get notes => $_getList(1);
 }
 
-class Project extends $pb.GeneratedMessage {
-  factory Project({
+class Notebook extends $pb.GeneratedMessage {
+  factory Notebook({
     $core.String? id,
     $core.List<$core.int>? encryptedContent,
     $core.int? version,
@@ -230,17 +230,17 @@ class Project extends $pb.GeneratedMessage {
     return result;
   }
 
-  Project._();
+  Notebook._();
 
-  factory Project.fromBuffer($core.List<$core.int> data,
+  factory Notebook.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory Project.fromJson($core.String json,
+  factory Notebook.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'Project',
+      _omitMessageNames ? '' : 'Notebook',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'sync.v1'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'id')
@@ -256,22 +256,22 @@ class Project extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Project clone() => deepCopy();
+  Notebook clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  Project copyWith(void Function(Project) updates) =>
-      super.copyWith((message) => updates(message as Project)) as Project;
+  Notebook copyWith(void Function(Notebook) updates) =>
+      super.copyWith((message) => updates(message as Notebook)) as Notebook;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static Project create() => Project._();
+  static Notebook create() => Notebook._();
   @$core.override
-  Project createEmptyInstance() => create();
+  Notebook createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static Project getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Project>(create);
-  static Project? _defaultInstance;
+  static Notebook getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Notebook>(create);
+  static Notebook? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get id => $_getSZ(0);
@@ -337,7 +337,7 @@ class Project extends $pb.GeneratedMessage {
 class Note extends $pb.GeneratedMessage {
   factory Note({
     $core.String? id,
-    $core.String? projectId,
+    $core.String? notebookId,
     $core.List<$core.int>? encryptedTitle,
     $core.List<$core.int>? encryptedContent,
     $core.int? version,
@@ -347,7 +347,7 @@ class Note extends $pb.GeneratedMessage {
   }) {
     final result = create();
     if (id != null) result.id = id;
-    if (projectId != null) result.projectId = projectId;
+    if (notebookId != null) result.notebookId = notebookId;
     if (encryptedTitle != null) result.encryptedTitle = encryptedTitle;
     if (encryptedContent != null) result.encryptedContent = encryptedContent;
     if (version != null) result.version = version;
@@ -371,7 +371,7 @@ class Note extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'sync.v1'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'id')
-    ..aOS(2, _omitFieldNames ? '' : 'projectId')
+    ..aOS(2, _omitFieldNames ? '' : 'notebookId')
     ..a<$core.List<$core.int>>(
         3, _omitFieldNames ? '' : 'encryptedTitle', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(
@@ -413,13 +413,13 @@ class Note extends $pb.GeneratedMessage {
   void clearId() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get projectId => $_getSZ(1);
+  $core.String get notebookId => $_getSZ(1);
   @$pb.TagNumber(2)
-  set projectId($core.String value) => $_setString(1, value);
+  set notebookId($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasProjectId() => $_has(1);
+  $core.bool hasNotebookId() => $_has(1);
   @$pb.TagNumber(2)
-  void clearProjectId() => $_clearField(2);
+  void clearNotebookId() => $_clearField(2);
 
   @$pb.TagNumber(3)
   $core.List<$core.int> get encryptedTitle => $_getN(2);

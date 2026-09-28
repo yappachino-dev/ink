@@ -15,7 +15,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -226,7 +226,7 @@ Widget _notesApp({
       // trust indicator reads the free/sync gate out of it.
       sharedPreferencesProvider.overrideWithValue(_prefs),
       if (selectAllNotebooks)
-        selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
+        selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
     ],
     child: MaterialApp.router(
       theme: _themeFor(brightness),
@@ -314,7 +314,7 @@ typedef _NotesScreenBuilder = Widget Function(_NotesService service);
 class _NotesService extends Mock implements NotesService {
   _NotesService([List<Note>? notes]) : notes = notes ?? [goldenNote] {
     when(getAllNotes).thenAnswer((_) async => _allNotes(this.notes));
-    when(getAllProjects).thenAnswer(_allProjects);
+    when(getAllNotebooks).thenAnswer(_allNotebooks);
   }
 
   final List<Note> notes;
@@ -323,11 +323,11 @@ class _NotesService extends Mock implements NotesService {
 Future<Result<List<Note>, NotesFailure>> _allNotes(List<Note> notes) async =>
     Success<List<Note>, NotesFailure>(notes);
 
-/// Selects every notebook. The real provider defaults to `todayProjectId`,
+/// Selects every notebook. The real provider defaults to `todayNotebookId`,
 /// which is a sentinel and would filter every fixture note out of the journal.
-class _AllProjectsSelected extends SelectedProjectId {
+class _AllNotebooksSelected extends SelectedNotebookId {
   @override
-  String build() => allProjectsId;
+  String build() => allNotebooksId;
 }
 
 /// Journal fixtures are written on [goldenCalendarDate], the day the golden
@@ -345,7 +345,7 @@ final journalFirstNote = Note(
   syncStatus: SyncStatus.synced,
   createdAt: goldenCalendarDate,
   updatedAt: goldenCalendarDate,
-  projectId: 'golden-project',
+  notebookId: 'golden-notebook',
 );
 
 /// Completed and high priority, so the golden proves the journal renders no
@@ -361,7 +361,7 @@ final journalSecondNote = Note(
   syncStatus: SyncStatus.synced,
   createdAt: goldenCalendarDate,
   updatedAt: goldenCalendarDate,
-  projectId: 'golden-project',
+  notebookId: 'golden-notebook',
   // Due later than the day it was written: the journal keys on neither, but a
   // future due-date view will need it.
   dueDate: DateTime(2026, 1, 20),
@@ -369,8 +369,9 @@ final journalSecondNote = Note(
   isCompleted: true,
 );
 
-Future<Result<List<Project>, NotesFailure>> _allProjects(Invocation _) async =>
-    Success<List<Project>, NotesFailure>([goldenProject]);
+Future<Result<List<Notebook>, NotesFailure>> _allNotebooks(
+  Invocation _,
+) async => Success<List<Notebook>, NotesFailure>([goldenNotebook]);
 
 final goldenCalendarDate = DateTime(2026, 1, 14);
 
@@ -385,13 +386,13 @@ final goldenNote = Note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026),
   updatedAt: DateTime(2026),
-  projectId: 'golden-project',
+  notebookId: 'golden-notebook',
   dueDate: DateTime(2026, 1, 14),
   priority: TaskPriority.high,
 );
 
-final goldenProject = Project(
-  id: 'golden-project',
+final goldenNotebook = Notebook(
+  id: 'golden-notebook',
   title: 'Work',
   emoji: '💼',
   colorValue: 0xFF5B9AA9,

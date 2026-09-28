@@ -4,7 +4,7 @@ part of 'notes_dao.dart';
 
 // ignore_for_file: type=lint
 mixin _$NotesDaoMixin on DatabaseAccessor<AppDatabase> {
-  $ProjectsTable get projects => attachedDatabase.projects;
+  $NotebooksTable get notebooks => attachedDatabase.notebooks;
   $NotesTable get notes => attachedDatabase.notes;
   $NoteConflictsTable get noteConflicts => attachedDatabase.noteConflicts;
   NotesDaoManager get managers => NotesDaoManager(this);
@@ -13,8 +13,8 @@ mixin _$NotesDaoMixin on DatabaseAccessor<AppDatabase> {
 class NotesDaoManager {
   final _$NotesDaoMixin _db;
   NotesDaoManager(this._db);
-  $$ProjectsTableTableManager get projects =>
-      $$ProjectsTableTableManager(_db.attachedDatabase, _db.projects);
+  $$NotebooksTableTableManager get notebooks =>
+      $$NotebooksTableTableManager(_db.attachedDatabase, _db.notebooks);
   $$NotesTableTableManager get notes =>
       $$NotesTableTableManager(_db.attachedDatabase, _db.notes);
   $$NoteConflictsTableTableManager get noteConflicts =>

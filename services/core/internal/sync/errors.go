@@ -32,16 +32,16 @@ func (e *OwnershipConflictError) Error() string {
 	return fmt.Sprintf("%s ids already belong to another account: %s", e.Entity, formatUUIDs(e.IDs))
 }
 
-// ProjectReferenceError reports notes that reference projects the pushing
-// account cannot use. Missing and foreign-owned projects are deliberately
-// reported identically so the error cannot be used to probe which project IDs
+// NotebookReferenceError reports notes that reference notebooks the pushing
+// account cannot use. Missing and foreign-owned notebooks are deliberately
+// reported identically so the error cannot be used to probe which notebook IDs
 // exist in the system.
-type ProjectReferenceError struct {
+type NotebookReferenceError struct {
 	IDs []uuid.UUID
 }
 
-func (e *ProjectReferenceError) Error() string {
-	return fmt.Sprintf("notes reference projects that are not available to this account: %s", formatUUIDs(e.IDs))
+func (e *NotebookReferenceError) Error() string {
+	return fmt.Sprintf("notes reference notebooks that are not available to this account: %s", formatUUIDs(e.IDs))
 }
 
 // maxReportedIDs bounds how many ids an error message spells out. A malformed

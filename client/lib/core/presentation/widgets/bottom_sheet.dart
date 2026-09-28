@@ -43,23 +43,23 @@ class BottomSheetLayout extends StatelessWidget {
           // sheet that used this layout was without an ancestor to paint its
           // splash into: no ripple, and a debug assert on some tiles. This was
           // previously fixed one tile at a time, in the reminder sheet only,
-          // which left the priority, project, filter, view-mode and language
+          // which left the priority, notebook, filter, view-mode and language
           // sheets broken. Transparent so the Container's colour still shows.
           child: Material(
             type: MaterialType.transparency,
             child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _BottomSheetLayoutDragHandle(),
-              AppSpacing.gapLg,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _BottomSheetLayoutDragHandle(),
+                AppSpacing.gapLg,
 
-              if (header != null) ...[header!, AppSpacing.gapSm],
+                if (header != null) ...[header!, AppSpacing.gapSm],
 
-              if (showDivider) ...[const _Divider(), AppSpacing.gapMd],
+                if (showDivider) ...[const _Divider(), AppSpacing.gapMd],
 
-              ...children,
-            ],
+                ...children,
+              ],
             ),
           ),
         ),

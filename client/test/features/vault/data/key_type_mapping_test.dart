@@ -20,10 +20,7 @@ void main() {
     test('every known proto value maps to its domain counterpart', () {
       expect(pb.KeyType.KEY_TYPE_PIN.toDomain(), KeyType.pin);
       expect(pb.KeyType.KEY_TYPE_PATTERN.toDomain(), KeyType.pattern);
-      expect(
-        pb.KeyType.KEY_TYPE_RECOVERY.toDomain(),
-        KeyType.recoveryPhrase,
-      );
+      expect(pb.KeyType.KEY_TYPE_RECOVERY.toDomain(), KeyType.recoveryPhrase);
     });
 
     test('unknown proto values degrade to KeyType.unknown', () {

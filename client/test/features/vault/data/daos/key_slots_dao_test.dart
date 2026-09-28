@@ -41,19 +41,16 @@ void main() {
       expect(result.salt, equals(pinSlot.salt));
     });
 
-    test(
-      'saveKeySlots saves all slots correctly',
-      () async {
-        final slots = [pinSlot.toCompanion(), graphSlot.toCompanion()];
-        await dao.saveKeySlots(slots);
+    test('saveKeySlots saves all slots correctly', () async {
+      final slots = [pinSlot.toCompanion(), graphSlot.toCompanion()];
+      await dao.saveKeySlots(slots);
 
-        final savedSlots = await dao.getAllKeySlots();
-        expect(savedSlots.length, 2);
+      final savedSlots = await dao.getAllKeySlots();
+      expect(savedSlots.length, 2);
 
-        final types = savedSlots.map((slot) => slot.toDomain().type);
-        expect(types, containsAll([KeyType.pin, KeyType.pattern]));
-      },
-    );
+      final types = savedSlots.map((slot) => slot.toDomain().type);
+      expect(types, containsAll([KeyType.pin, KeyType.pattern]));
+    });
 
     test('saveKeySlot replaces existing slot', () async {
       await dao.saveKeySlot(pinSlot.toCompanion());

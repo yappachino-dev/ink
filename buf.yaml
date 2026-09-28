@@ -7,3 +7,24 @@ lint:
 breaking:
   use:
     - FILE
+  # Renaming a message or a field is not a wire change. Field numbers and
+  # types are untouched, so the encoding is byte-identical and an older client
+  # still interoperates with a newer server. `FILE` is a *source* compatibility
+  # category, aimed at consumers of generated code, and this project has none:
+  # the Go backend and the Dart client are both regenerated from this same file
+  # in the same commit.
+  #
+  # `MESSAGE_NO_DELETE` is the expensive exception. buf reports a renamed
+  # message as deleted-and-added, and no category - including `WIRE` - permits
+  # a message rename, so a pre-release rename cannot pass without it. Every
+  # other rule in FILE stays on, so a genuine field number or type change still
+  # fails.
+  #
+  # This is a one-time exception for the project -> notebook rename, and it can
+  # be deleted once that rename is in the base: buf only reports differences
+  # against the target branch, so no later change will trip these rules.
+  except:
+    - FIELD_SAME_NAME
+    - FIELD_SAME_JSON_NAME
+    - FIELD_SAME_TYPE
+    - MESSAGE_NO_DELETE

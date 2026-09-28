@@ -10,7 +10,7 @@ class ActiveNoteCard extends ConsumerWidget {
   const ActiveNoteCard({
     required this.note,
     required this.onTap,
-    this.projectName,
+    this.notebookName,
     this.showCompletion = true,
     this.showPriority = true,
     super.key,
@@ -18,7 +18,7 @@ class ActiveNoteCard extends ConsumerWidget {
 
   final Note note;
   final VoidCallback onTap;
-  final String? projectName;
+  final String? notebookName;
 
   /// Whether the row leads with a completion checkbox.
   ///
@@ -67,7 +67,7 @@ class ActiveNoteCard extends ConsumerWidget {
               padding: AppSpacing.card,
               child: NoteCard(
                 note: note,
-                projectName: projectName,
+                notebookName: notebookName,
                 showCompletion: showCompletion,
                 showPriority: showPriority,
               ),

@@ -41,7 +41,7 @@ final class NoteFormNotifierProvider
   }
 }
 
-String _$noteFormNotifierHash() => r'8c103222528e8cb24a99bbd36f73f3e4982a648d';
+String _$noteFormNotifierHash() => r'757f8c5fa4d5e17c3f02cc31957043b7d2dc6dc7';
 
 abstract class _$NoteFormNotifier extends $Notifier<NoteDraftState> {
   NoteDraftState build();

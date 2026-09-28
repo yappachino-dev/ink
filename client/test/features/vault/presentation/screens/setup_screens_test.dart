@@ -18,10 +18,7 @@ import 'package:material_ui/material_ui.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-      .setMockMethodCallHandler(
-        SystemChannels.platform,
-        (_) async => null,
-      );
+      .setMockMethodCallHandler(SystemChannels.platform, (_) async => null);
 
   testWidgets(
     'recovery screen displays all phrase words and copies the phrase',

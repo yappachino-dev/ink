@@ -15,12 +15,12 @@ type Querier interface {
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	FindNoteIDsOwnedByOtherUsers(ctx context.Context, arg FindNoteIDsOwnedByOtherUsersParams) ([]uuid.UUID, error)
-	FindProjectIDsAvailableToUser(ctx context.Context, arg FindProjectIDsAvailableToUserParams) ([]uuid.UUID, error)
-	FindProjectIDsOwnedByOtherUsers(ctx context.Context, arg FindProjectIDsOwnedByOtherUsersParams) ([]uuid.UUID, error)
+	FindNotebookIDsAvailableToUser(ctx context.Context, arg FindNotebookIDsAvailableToUserParams) ([]uuid.UUID, error)
+	FindNotebookIDsOwnedByOtherUsers(ctx context.Context, arg FindNotebookIDsOwnedByOtherUsersParams) ([]uuid.UUID, error)
 	GetKeySlotsByUserID(ctx context.Context, userID int32) ([]GetKeySlotsByUserIDRow, error)
 	GetLatestEmailVerification(ctx context.Context, email string) (EmailVerification, error)
 	GetNoteChanges(ctx context.Context, arg GetNoteChangesParams) ([]GetNoteChangesRow, error)
-	GetProjectChanges(ctx context.Context, arg GetProjectChangesParams) ([]GetProjectChangesRow, error)
+	GetNotebookChanges(ctx context.Context, arg GetNotebookChangesParams) ([]GetNotebookChangesRow, error)
 	GetRefreshTokenByHash(ctx context.Context, hash []byte) (RefreshToken, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error)
@@ -34,8 +34,8 @@ type Querier interface {
 	UpdateRefreshToken(ctx context.Context, arg UpdateRefreshTokenParams) error
 	UpdateUserCursor(ctx context.Context, arg UpdateUserCursorParams) error
 	UpsertKeySlots(ctx context.Context, arg []UpsertKeySlotsParams) *UpsertKeySlotsBatchResults
+	UpsertNotebooks(ctx context.Context, arg []UpsertNotebooksParams) *UpsertNotebooksBatchResults
 	UpsertNotes(ctx context.Context, arg []UpsertNotesParams) *UpsertNotesBatchResults
-	UpsertProjects(ctx context.Context, arg []UpsertProjectsParams) *UpsertProjectsBatchResults
 }
 
 var _ Querier = (*Queries)(nil)

@@ -11,20 +11,20 @@ import (
 type fakeSyncRepo struct {
 	currentCursor int
 
-	upsertProjects    [][]Project
+	upsertNotebooks    [][]Notebook
 	upsertNotes       [][]Note
 	upsertSequences   []int
 	upsertUserIDs     []int
-	projectsFetchedAt []int
+	notebooksFetchedAt []int
 	notesFetchedAt    []int
 	cursorUpdates     []int
 	lockedCursorReads int
 
 	// Ownership fixtures: IDs the database reports as belonging to someone
 	// else, and IDs this account can actually use.
-	foreignProjectIDs []uuid.UUID
+	foreignNotebookIDs []uuid.UUID
 	foreignNoteIDs    []uuid.UUID
-	availableProjects []uuid.UUID
+	availableNotebooks []uuid.UUID
 
 	lookupCalls int
 }
@@ -44,9 +44,9 @@ func (f *fakeSyncRepo) UpdateUserCursor(_ context.Context, _ int, cursor int) er
 	return nil
 }
 
-func (f *fakeSyncRepo) UpsertProjects(_ context.Context, userID, seq int, projects []Project) error {
+func (f *fakeSyncRepo) UpsertNotebooks(_ context.Context, userID, seq int, notebooks []Notebook) error {
 	f.upsertUserIDs = append(f.upsertUserIDs, userID)
-	f.upsertProjects = append(f.upsertProjects, projects)
+	f.upsertNotebooks = append(f.upsertNotebooks, notebooks)
 	f.upsertSequences = append(f.upsertSequences, seq)
 	return nil
 }
@@ -58,8 +58,8 @@ func (f *fakeSyncRepo) UpsertNotes(_ context.Context, userID, seq int, notes []N
 	return nil
 }
 
-func (f *fakeSyncRepo) GetProjectChanges(_ context.Context, _ int, cursor int) ([]Project, error) {
-	f.projectsFetchedAt = append(f.projectsFetchedAt, cursor)
+func (f *fakeSyncRepo) GetNotebookChanges(_ context.Context, _ int, cursor int) ([]Notebook, error) {
+	f.notebooksFetchedAt = append(f.notebooksFetchedAt, cursor)
 	return nil, nil
 }
 
@@ -68,9 +68,9 @@ func (f *fakeSyncRepo) GetNoteChanges(_ context.Context, _ int, cursor int) ([]N
 	return nil, nil
 }
 
-func (f *fakeSyncRepo) FindProjectIDsOwnedByOtherUsers(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
+func (f *fakeSyncRepo) FindNotebookIDsOwnedByOtherUsers(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
 	f.lookupCalls++
-	return f.foreignProjectIDs, nil
+	return f.foreignNotebookIDs, nil
 }
 
 func (f *fakeSyncRepo) FindNoteIDsOwnedByOtherUsers(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
@@ -78,9 +78,9 @@ func (f *fakeSyncRepo) FindNoteIDsOwnedByOtherUsers(_ context.Context, _ []uuid.
 	return f.foreignNoteIDs, nil
 }
 
-func (f *fakeSyncRepo) FindProjectIDsAvailableToUser(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
+func (f *fakeSyncRepo) FindNotebookIDsAvailableToUser(_ context.Context, _ []uuid.UUID, _ int) ([]uuid.UUID, error) {
 	f.lookupCalls++
-	return f.availableProjects, nil
+	return f.availableNotebooks, nil
 }
 
 type fakeTransactor struct{}
@@ -105,7 +105,7 @@ func TestSync_PushIncrementsCursorOnce(t *testing.T) {
 		ClientCursor: 3,
 		Changes: SyncChanges{
 			Notes:    []Note{note("00000000-0000-7000-8000-000000000001")},
-			Projects: []Project{{ID: uuid.New()}},
+			Notebooks: []Notebook{{ID: uuid.New()}},
 		},
 	})
 	if err != nil {
@@ -141,15 +141,15 @@ func TestSync_PullOnlyKeepsCursorUntouched(t *testing.T) {
 	if res.NextCursor != 9 {
 		t.Fatalf("pull-only sync must not move the cursor, got %d", res.NextCursor)
 	}
-	if len(repo.cursorUpdates) != 0 || len(repo.upsertNotes) != 0 || len(repo.upsertProjects) != 0 {
+	if len(repo.cursorUpdates) != 0 || len(repo.upsertNotes) != 0 || len(repo.upsertNotebooks) != 0 {
 		t.Fatal("pull-only sync must not write anything")
 	}
 	if repo.lockedCursorReads != 0 {
 		t.Fatalf("pull-only sync must not take the cursor write lock, got %d", repo.lockedCursorReads)
 	}
 
-	if len(repo.projectsFetchedAt) != 1 || repo.projectsFetchedAt[0] != 4 {
-		t.Fatalf("project changes should be fetched from client cursor 4, got %v", repo.projectsFetchedAt)
+	if len(repo.notebooksFetchedAt) != 1 || repo.notebooksFetchedAt[0] != 4 {
+		t.Fatalf("notebook changes should be fetched from client cursor 4, got %v", repo.notebooksFetchedAt)
 	}
 	if len(repo.notesFetchedAt) != 1 || repo.notesFetchedAt[0] != 4 {
 		t.Fatalf("note changes should be fetched from client cursor 4, got %v", repo.notesFetchedAt)
@@ -162,7 +162,7 @@ func TestSync_EmptyPushCountsAsPull(t *testing.T) {
 
 	res, err := svc.Sync(context.Background(), 1, SyncPayload{
 		ClientCursor: 2,
-		Changes:      SyncChanges{Notes: []Note{}, Projects: []Project{}},
+		Changes:      SyncChanges{Notes: []Note{}, Notebooks: []Notebook{}},
 	})
 	if err != nil {
 		t.Fatalf("Sync: %v", err)
@@ -179,12 +179,12 @@ func TestSync_UpsertUsesAuthenticatedUserID(t *testing.T) {
 	repo := &fakeSyncRepo{}
 	svc := newTestService(repo)
 
-	p := Project{ID: uuid.New()}
+	p := Notebook{ID: uuid.New()}
 	n := note("00000000-0000-7000-8000-000000000002")
 
 	_, err := svc.Sync(context.Background(), 77, SyncPayload{
 		ClientCursor: 0,
-		Changes:      SyncChanges{Projects: []Project{p}, Notes: []Note{n}},
+		Changes:      SyncChanges{Notebooks: []Notebook{p}, Notes: []Note{n}},
 	})
 	if err != nil {
 		t.Fatalf("Sync: %v", err)
@@ -196,6 +196,6 @@ func TestSync_UpsertUsesAuthenticatedUserID(t *testing.T) {
 		}
 	}
 	if len(repo.upsertUserIDs) != 2 {
-		t.Fatalf("expected one project and one note upsert, got %d", len(repo.upsertUserIDs))
+		t.Fatalf("expected one notebook and one note upsert, got %d", len(repo.upsertUserIDs))
 	}
 }

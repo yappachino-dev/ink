@@ -1,6 +1,6 @@
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/value_objects/note_time.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -21,9 +21,9 @@ String formatDateTime(DateTime date, NoteTime? time, Translations t) {
   return '$dateStr $h:$m';
 }
 
-String? projectName(List<Project> projects, String? projectId) {
-  if (projectId == null) return null;
-  return projects.where((p) => p.id == projectId).firstOrNull?.title;
+String? notebookName(List<Notebook> notebooks, String? notebookId) {
+  if (notebookId == null) return null;
+  return notebooks.where((p) => p.id == notebookId).firstOrNull?.title;
 }
 
 Future<bool> confirmDeletion(
@@ -43,10 +43,7 @@ Future<bool> confirmDeletion(
           textAlign: TextAlign.center,
           style: context.textTheme.titleLarge,
         ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
+        content: Text(message, textAlign: TextAlign.center),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),

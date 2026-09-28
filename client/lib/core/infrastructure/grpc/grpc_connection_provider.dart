@@ -23,11 +23,7 @@ typedef GrpcConnection = ({
 GrpcConnection grpcConnection(Ref ref) {
   final channel = ref.watch(clientChannelProvider);
 
-  return (
-    channel: channel,
-    options: _timeoutOptions(),
-    interceptors: [],
-  );
+  return (channel: channel, options: _timeoutOptions(), interceptors: []);
 }
 
 @Riverpod(keepAlive: true)
@@ -45,9 +41,7 @@ GrpcConnection grpcAuthConnection(Ref ref) {
             final refreshToken = ref.read(authSessionProvider).refreshToken;
 
             if (refreshToken == null) {
-              throw const GrpcError.unauthenticated(
-                'No session found',
-              );
+              throw const GrpcError.unauthenticated('No session found');
             }
 
             final refreshResult = await ref
@@ -77,9 +71,8 @@ GrpcConnection grpcAuthConnection(Ref ref) {
   );
 }
 
-CallOptions _timeoutOptions({
-  List<MetadataProvider> providers = const [],
-}) => CallOptions(
-  timeout: const Duration(seconds: networkSecondsTimeout),
-  providers: providers,
-);
+CallOptions _timeoutOptions({List<MetadataProvider> providers = const []}) =>
+    CallOptions(
+      timeout: const Duration(seconds: networkSecondsTimeout),
+      providers: providers,
+    );

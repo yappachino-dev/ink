@@ -48,4 +48,4 @@ final class NotesViewStateProvider
   }
 }
 
-String _$notesViewStateHash() => r'd0abd887b23db6e5473b192af44c6897d4fbe186';
+String _$notesViewStateHash() => r'0dc108bc2901da6011bb80659f9dff54693c24e3';

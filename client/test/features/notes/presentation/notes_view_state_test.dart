@@ -13,7 +13,7 @@ import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -32,7 +32,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _Lens extends SelectedProjectId {
+class _Lens extends SelectedNotebookId {
   _Lens(this.id);
 
   final String id;
@@ -52,7 +52,7 @@ Note _note(String id, {SyncStatus status = SyncStatus.synced}) => Note(
   syncStatus: status,
   createdAt: DateTime(2026),
   updatedAt: DateTime(2026),
-  projectId: 'p1',
+  notebookId: 'p1',
   priority: TaskPriority.medium,
 );
 
@@ -69,8 +69,8 @@ void main() {
     svc = _Svc();
     prefs = await SharedPreferences.getInstance();
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
   });
 
   Future<ProviderContainer> containerWith(
@@ -97,7 +97,7 @@ void main() {
         syncActivityProvider.overrideWithValue(activity),
         isOfflineProvider.overrideWithValue(offline),
         if (lens != null)
-          selectedProjectIdProvider.overrideWith(() => _Lens(lens)),
+          selectedNotebookIdProvider.overrideWith(() => _Lens(lens)),
       ],
     );
     addTearDown(container.dispose);
@@ -354,7 +354,7 @@ void main() {
   group('the gate itself', () {
     test('the All notes lens is still the default view', () async {
       final c = await containerWith([_note('a')]);
-      expect(c.read(selectedProjectIdProvider), allProjectsId);
+      expect(c.read(selectedNotebookIdProvider), allNotebooksId);
     });
   });
 }

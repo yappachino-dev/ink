@@ -234,8 +234,8 @@
         "addDetails": "Add details...",
         "showDetails": "Show note details",
         "hideDetails": "Hide note details",
-        "project": "Note's project",
-        "allProjects": "All projects",
+        "notebook": "Note's notebook",
+        "allNotebooks": "All notebooks",
         "delete": {
             "title": "Delete note?",
             "tooltip": "Delete note",
@@ -268,20 +268,20 @@
         "dueDate": "Due date",
         "notebook": "Notebook"
     },
-    "project": {
-        "title": "My projects",
-        "select": "Select a project",
-        "none": "No project",
-        "create": "Add a project",
-        "edit": "Edit project",
+    "notebook": {
+        "title": "My notebooks",
+        "select": "Select a notebook",
+        "none": "No notebook",
+        "create": "Add a notebook",
+        "edit": "Edit notebook",
         "delete": {
-            "title": "Delete project?",
-            "tooltip": "Delete project",
-            "message": "The project will be permanently deleted."
+            "title": "Delete notebook?",
+            "tooltip": "Delete notebook",
+            "message": "The notebook will be permanently deleted."
         },
         "form": {
             "name": "Name",
-            "color": "Project color",
+            "color": "Notebook color",
             "icon": "Icon"
         }
     },

@@ -9,7 +9,7 @@ ALTER TABLE users
 ALTER TABLE user_keys
     ALTER COLUMN updated_at TYPE timestamptz USING updated_at AT TIME ZONE 'UTC';
 
-ALTER TABLE projects
+ALTER TABLE notebooks
     ALTER COLUMN created_at TYPE timestamptz USING created_at AT TIME ZONE 'UTC',
     ALTER COLUMN updated_at TYPE timestamptz USING updated_at AT TIME ZONE 'UTC',
     ALTER COLUMN deleted_at TYPE timestamptz USING deleted_at AT TIME ZONE 'UTC';
@@ -37,7 +37,7 @@ ALTER TABLE users
 ALTER TABLE user_keys
     ALTER COLUMN updated_at TYPE timestamp USING updated_at AT TIME ZONE 'UTC';
 
-ALTER TABLE projects
+ALTER TABLE notebooks
     ALTER COLUMN created_at TYPE timestamp USING created_at AT TIME ZONE 'UTC',
     ALTER COLUMN updated_at TYPE timestamp USING updated_at AT TIME ZONE 'UTC',
     ALTER COLUMN deleted_at TYPE timestamp USING deleted_at AT TIME ZONE 'UTC';

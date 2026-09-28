@@ -7,10 +7,7 @@ import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CompletedSection extends ConsumerWidget {
-  const CompletedSection({
-    required this.children,
-    super.key,
-  });
+  const CompletedSection({required this.children, super.key});
 
   final List<Widget> children;
 

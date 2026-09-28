@@ -380,12 +380,12 @@ class KeySlotsCompanion extends UpdateCompanion<KeySlotModel> {
   }
 }
 
-class $ProjectsTable extends Projects
-    with TableInfo<$ProjectsTable, ProjectModel> {
+class $NotebooksTable extends Notebooks
+    with TableInfo<$NotebooksTable, NotebookModel> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ProjectsTable(this.attachedDatabase, [this._alias]);
+  $NotebooksTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
@@ -441,7 +441,7 @@ class $ProjectsTable extends Projects
         type: DriftSqlType.int,
         requiredDuringInsert: false,
         defaultValue: const Constant(syncModifiedIndex),
-      ).withConverter<SyncStatus>($ProjectsTable.$convertersyncStatus);
+      ).withConverter<SyncStatus>($NotebooksTable.$convertersyncStatus);
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -492,10 +492,10 @@ class $ProjectsTable extends Projects
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'projects';
+  static const String $name = 'notebooks';
   @override
   VerificationContext validateIntegrity(
-    Insertable<ProjectModel> instance, {
+    Insertable<NotebookModel> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -556,9 +556,9 @@ class $ProjectsTable extends Projects
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProjectModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NotebookModel map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectModel(
+    return NotebookModel(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -575,7 +575,7 @@ class $ProjectsTable extends Projects
         DriftSqlType.int,
         data['${effectivePrefix}last_synced_version'],
       )!,
-      syncStatus: $ProjectsTable.$convertersyncStatus.fromSql(
+      syncStatus: $NotebooksTable.$convertersyncStatus.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.int,
           data['${effectivePrefix}sync_status'],
@@ -597,15 +597,15 @@ class $ProjectsTable extends Projects
   }
 
   @override
-  $ProjectsTable createAlias(String alias) {
-    return $ProjectsTable(attachedDatabase, alias);
+  $NotebooksTable createAlias(String alias) {
+    return $NotebooksTable(attachedDatabase, alias);
   }
 
   static JsonTypeConverter2<SyncStatus, int, int> $convertersyncStatus =
       const EnumIndexConverter<SyncStatus>(SyncStatus.values);
 }
 
-class ProjectModel extends DataClass implements Insertable<ProjectModel> {
+class NotebookModel extends DataClass implements Insertable<NotebookModel> {
   final String id;
   final Uint8List encryptedContent;
   final int localVersion;
@@ -614,7 +614,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  const ProjectModel({
+  const NotebookModel({
     required this.id,
     required this.encryptedContent,
     required this.localVersion,
@@ -633,7 +633,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     map['last_synced_version'] = Variable<int>(lastSyncedVersion);
     {
       map['sync_status'] = Variable<int>(
-        $ProjectsTable.$convertersyncStatus.toSql(syncStatus),
+        $NotebooksTable.$convertersyncStatus.toSql(syncStatus),
       );
     }
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -644,8 +644,8 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     return map;
   }
 
-  ProjectsCompanion toCompanion(bool nullToAbsent) {
-    return ProjectsCompanion(
+  NotebooksCompanion toCompanion(bool nullToAbsent) {
+    return NotebooksCompanion(
       id: Value(id),
       encryptedContent: Value(encryptedContent),
       localVersion: Value(localVersion),
@@ -659,19 +659,19 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     );
   }
 
-  factory ProjectModel.fromJson(
+  factory NotebookModel.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ProjectModel(
+    return NotebookModel(
       id: serializer.fromJson<String>(json['id']),
       encryptedContent: serializer.fromJson<Uint8List>(
         json['encryptedContent'],
       ),
       localVersion: serializer.fromJson<int>(json['localVersion']),
       lastSyncedVersion: serializer.fromJson<int>(json['lastSyncedVersion']),
-      syncStatus: $ProjectsTable.$convertersyncStatus.fromJson(
+      syncStatus: $NotebooksTable.$convertersyncStatus.fromJson(
         serializer.fromJson<int>(json['syncStatus']),
       ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -688,7 +688,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
       'localVersion': serializer.toJson<int>(localVersion),
       'lastSyncedVersion': serializer.toJson<int>(lastSyncedVersion),
       'syncStatus': serializer.toJson<int>(
-        $ProjectsTable.$convertersyncStatus.toJson(syncStatus),
+        $NotebooksTable.$convertersyncStatus.toJson(syncStatus),
       ),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -696,7 +696,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     };
   }
 
-  ProjectModel copyWith({
+  NotebookModel copyWith({
     String? id,
     Uint8List? encryptedContent,
     int? localVersion,
@@ -705,7 +705,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
-  }) => ProjectModel(
+  }) => NotebookModel(
     id: id ?? this.id,
     encryptedContent: encryptedContent ?? this.encryptedContent,
     localVersion: localVersion ?? this.localVersion,
@@ -715,8 +715,8 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
-  ProjectModel copyWithCompanion(ProjectsCompanion data) {
-    return ProjectModel(
+  NotebookModel copyWithCompanion(NotebooksCompanion data) {
+    return NotebookModel(
       id: data.id.present ? data.id.value : this.id,
       encryptedContent: data.encryptedContent.present
           ? data.encryptedContent.value
@@ -738,7 +738,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
 
   @override
   String toString() {
-    return (StringBuffer('ProjectModel(')
+    return (StringBuffer('NotebookModel(')
           ..write('id: $id, ')
           ..write('encryptedContent: $encryptedContent, ')
           ..write('localVersion: $localVersion, ')
@@ -765,7 +765,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ProjectModel &&
+      (other is NotebookModel &&
           other.id == this.id &&
           $driftBlobEquality.equals(
             other.encryptedContent,
@@ -779,7 +779,7 @@ class ProjectModel extends DataClass implements Insertable<ProjectModel> {
           other.deletedAt == this.deletedAt);
 }
 
-class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
+class NotebooksCompanion extends UpdateCompanion<NotebookModel> {
   final Value<String> id;
   final Value<Uint8List> encryptedContent;
   final Value<int> localVersion;
@@ -789,7 +789,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
-  const ProjectsCompanion({
+  const NotebooksCompanion({
     this.id = const Value.absent(),
     this.encryptedContent = const Value.absent(),
     this.localVersion = const Value.absent(),
@@ -800,7 +800,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  ProjectsCompanion.insert({
+  NotebooksCompanion.insert({
     this.id = const Value.absent(),
     required Uint8List encryptedContent,
     this.localVersion = const Value.absent(),
@@ -811,7 +811,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : encryptedContent = Value(encryptedContent);
-  static Insertable<ProjectModel> custom({
+  static Insertable<NotebookModel> custom({
     Expression<String>? id,
     Expression<Uint8List>? encryptedContent,
     Expression<int>? localVersion,
@@ -835,7 +835,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     });
   }
 
-  ProjectsCompanion copyWith({
+  NotebooksCompanion copyWith({
     Value<String>? id,
     Value<Uint8List>? encryptedContent,
     Value<int>? localVersion,
@@ -846,7 +846,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
-    return ProjectsCompanion(
+    return NotebooksCompanion(
       id: id ?? this.id,
       encryptedContent: encryptedContent ?? this.encryptedContent,
       localVersion: localVersion ?? this.localVersion,
@@ -876,7 +876,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     }
     if (syncStatus.present) {
       map['sync_status'] = Variable<int>(
-        $ProjectsTable.$convertersyncStatus.toSql(syncStatus.value),
+        $NotebooksTable.$convertersyncStatus.toSql(syncStatus.value),
       );
     }
     if (createdAt.present) {
@@ -896,7 +896,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
 
   @override
   String toString() {
-    return (StringBuffer('ProjectsCompanion(')
+    return (StringBuffer('NotebooksCompanion(')
           ..write('id: $id, ')
           ..write('encryptedContent: $encryptedContent, ')
           ..write('localVersion: $localVersion, ')
@@ -1080,18 +1080,18 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
+  static const VerificationMeta _notebookIdMeta = const VerificationMeta(
+    'notebookId',
   );
   @override
-  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
-    'project_id',
+  late final GeneratedColumn<String> notebookId = GeneratedColumn<String>(
+    'notebook_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES notebooks (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   @override
@@ -1110,7 +1110,7 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     createdAt,
     updatedAt,
     deletedAt,
-    projectId,
+    notebookId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1230,10 +1230,10 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
-    if (data.containsKey('project_id')) {
+    if (data.containsKey('notebook_id')) {
       context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+        _notebookIdMeta,
+        notebookId.isAcceptableOrUnknown(data['notebook_id']!, _notebookIdMeta),
       );
     }
     return context;
@@ -1303,9 +1303,9 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}deleted_at'],
       ),
-      projectId: attachedDatabase.typeMapping.read(
+      notebookId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}project_id'],
+        data['${effectivePrefix}notebook_id'],
       ),
     );
   }
@@ -1334,7 +1334,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  final String? projectId;
+  final String? notebookId;
   const NoteModel({
     required this.id,
     required this.encryptedTitle,
@@ -1350,7 +1350,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
-    this.projectId,
+    this.notebookId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1377,8 +1377,8 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
     }
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<String>(projectId);
+    if (!nullToAbsent || notebookId != null) {
+      map['notebook_id'] = Variable<String>(notebookId);
     }
     return map;
   }
@@ -1403,9 +1403,9 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
-      projectId: projectId == null && nullToAbsent
+      notebookId: notebookId == null && nullToAbsent
           ? const Value.absent()
-          : Value(projectId),
+          : Value(notebookId),
     );
   }
 
@@ -1435,7 +1435,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-      projectId: serializer.fromJson<String?>(json['projectId']),
+      notebookId: serializer.fromJson<String?>(json['notebookId']),
     );
   }
   @override
@@ -1458,7 +1458,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-      'projectId': serializer.toJson<String?>(projectId),
+      'notebookId': serializer.toJson<String?>(notebookId),
     };
   }
 
@@ -1477,7 +1477,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
-    Value<String?> projectId = const Value.absent(),
+    Value<String?> notebookId = const Value.absent(),
   }) => NoteModel(
     id: id ?? this.id,
     encryptedTitle: encryptedTitle ?? this.encryptedTitle,
@@ -1493,7 +1493,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    projectId: projectId.present ? projectId.value : this.projectId,
+    notebookId: notebookId.present ? notebookId.value : this.notebookId,
   );
   NoteModel copyWithCompanion(NotesCompanion data) {
     return NoteModel(
@@ -1531,7 +1531,9 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      notebookId: data.notebookId.present
+          ? data.notebookId.value
+          : this.notebookId,
     );
   }
 
@@ -1552,7 +1554,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
-          ..write('projectId: $projectId')
+          ..write('notebookId: $notebookId')
           ..write(')'))
         .toString();
   }
@@ -1573,7 +1575,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     createdAt,
     updatedAt,
     deletedAt,
-    projectId,
+    notebookId,
   );
   @override
   bool operator ==(Object other) =>
@@ -1599,7 +1601,7 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
-          other.projectId == this.projectId);
+          other.notebookId == this.notebookId);
 }
 
 class NotesCompanion extends UpdateCompanion<NoteModel> {
@@ -1617,7 +1619,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
-  final Value<String?> projectId;
+  final Value<String?> notebookId;
   final Value<int> rowid;
   const NotesCompanion({
     this.id = const Value.absent(),
@@ -1634,7 +1636,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.notebookId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   NotesCompanion.insert({
@@ -1652,7 +1654,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.notebookId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : encryptedTitle = Value(encryptedTitle),
        encryptedContent = Value(encryptedContent);
@@ -1671,7 +1673,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
-    Expression<String>? projectId,
+    Expression<String>? notebookId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1690,7 +1692,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
-      if (projectId != null) 'project_id': projectId,
+      if (notebookId != null) 'notebook_id': notebookId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1710,7 +1712,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? deletedAt,
-    Value<String?>? projectId,
+    Value<String?>? notebookId,
     Value<int>? rowid,
   }) {
     return NotesCompanion(
@@ -1728,7 +1730,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
-      projectId: projectId ?? this.projectId,
+      notebookId: notebookId ?? this.notebookId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1780,8 +1782,8 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
-    if (projectId.present) {
-      map['project_id'] = Variable<String>(projectId.value);
+    if (notebookId.present) {
+      map['notebook_id'] = Variable<String>(notebookId.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1806,7 +1808,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
-          ..write('projectId: $projectId, ')
+          ..write('notebookId: $notebookId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1899,18 +1901,18 @@ class $NoteConflictsTable extends NoteConflicts
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _projectIdMeta = const VerificationMeta(
-    'projectId',
+  static const VerificationMeta _notebookIdMeta = const VerificationMeta(
+    'notebookId',
   );
   @override
-  late final GeneratedColumn<String> projectId = GeneratedColumn<String>(
-    'project_id',
+  late final GeneratedColumn<String> notebookId = GeneratedColumn<String>(
+    'notebook_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id) ON UPDATE CASCADE ON DELETE SET NULL',
+      'REFERENCES notebooks (id) ON UPDATE CASCADE ON DELETE SET NULL',
     ),
   );
   @override
@@ -1922,7 +1924,7 @@ class $NoteConflictsTable extends NoteConflicts
     createdAt,
     updatedAt,
     deletedAt,
-    projectId,
+    notebookId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1993,10 +1995,10 @@ class $NoteConflictsTable extends NoteConflicts
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
-    if (data.containsKey('project_id')) {
+    if (data.containsKey('notebook_id')) {
       context.handle(
-        _projectIdMeta,
-        projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
+        _notebookIdMeta,
+        notebookId.isAcceptableOrUnknown(data['notebook_id']!, _notebookIdMeta),
       );
     }
     return context;
@@ -2036,9 +2038,9 @@ class $NoteConflictsTable extends NoteConflicts
         DriftSqlType.dateTime,
         data['${effectivePrefix}deleted_at'],
       ),
-      projectId: attachedDatabase.typeMapping.read(
+      notebookId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}project_id'],
+        data['${effectivePrefix}notebook_id'],
       ),
     );
   }
@@ -2058,7 +2060,7 @@ class NoteConflictModel extends DataClass
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  final String? projectId;
+  final String? notebookId;
   const NoteConflictModel({
     required this.id,
     required this.encryptedTitle,
@@ -2067,7 +2069,7 @@ class NoteConflictModel extends DataClass
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
-    this.projectId,
+    this.notebookId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2081,8 +2083,8 @@ class NoteConflictModel extends DataClass
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
     }
-    if (!nullToAbsent || projectId != null) {
-      map['project_id'] = Variable<String>(projectId);
+    if (!nullToAbsent || notebookId != null) {
+      map['notebook_id'] = Variable<String>(notebookId);
     }
     return map;
   }
@@ -2098,9 +2100,9 @@ class NoteConflictModel extends DataClass
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
-      projectId: projectId == null && nullToAbsent
+      notebookId: notebookId == null && nullToAbsent
           ? const Value.absent()
-          : Value(projectId),
+          : Value(notebookId),
     );
   }
 
@@ -2119,7 +2121,7 @@ class NoteConflictModel extends DataClass
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
-      projectId: serializer.fromJson<String?>(json['projectId']),
+      notebookId: serializer.fromJson<String?>(json['notebookId']),
     );
   }
   @override
@@ -2133,7 +2135,7 @@ class NoteConflictModel extends DataClass
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
-      'projectId': serializer.toJson<String?>(projectId),
+      'notebookId': serializer.toJson<String?>(notebookId),
     };
   }
 
@@ -2145,7 +2147,7 @@ class NoteConflictModel extends DataClass
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
-    Value<String?> projectId = const Value.absent(),
+    Value<String?> notebookId = const Value.absent(),
   }) => NoteConflictModel(
     id: id ?? this.id,
     encryptedTitle: encryptedTitle ?? this.encryptedTitle,
@@ -2154,7 +2156,7 @@ class NoteConflictModel extends DataClass
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    projectId: projectId.present ? projectId.value : this.projectId,
+    notebookId: notebookId.present ? notebookId.value : this.notebookId,
   );
   NoteConflictModel copyWithCompanion(NoteConflictsCompanion data) {
     return NoteConflictModel(
@@ -2169,7 +2171,9 @@ class NoteConflictModel extends DataClass
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      notebookId: data.notebookId.present
+          ? data.notebookId.value
+          : this.notebookId,
     );
   }
 
@@ -2183,7 +2187,7 @@ class NoteConflictModel extends DataClass
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
-          ..write('projectId: $projectId')
+          ..write('notebookId: $notebookId')
           ..write(')'))
         .toString();
   }
@@ -2197,7 +2201,7 @@ class NoteConflictModel extends DataClass
     createdAt,
     updatedAt,
     deletedAt,
-    projectId,
+    notebookId,
   );
   @override
   bool operator ==(Object other) =>
@@ -2216,7 +2220,7 @@ class NoteConflictModel extends DataClass
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
-          other.projectId == this.projectId);
+          other.notebookId == this.notebookId);
 }
 
 class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
@@ -2227,7 +2231,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
-  final Value<String?> projectId;
+  final Value<String?> notebookId;
   final Value<int> rowid;
   const NoteConflictsCompanion({
     this.id = const Value.absent(),
@@ -2237,7 +2241,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.notebookId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   NoteConflictsCompanion.insert({
@@ -2248,7 +2252,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
     required DateTime createdAt,
     required DateTime updatedAt,
     this.deletedAt = const Value.absent(),
-    this.projectId = const Value.absent(),
+    this.notebookId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        encryptedTitle = Value(encryptedTitle),
@@ -2264,7 +2268,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? deletedAt,
-    Expression<String>? projectId,
+    Expression<String>? notebookId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2275,7 +2279,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
-      if (projectId != null) 'project_id': projectId,
+      if (notebookId != null) 'notebook_id': notebookId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2288,7 +2292,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? deletedAt,
-    Value<String?>? projectId,
+    Value<String?>? notebookId,
     Value<int>? rowid,
   }) {
     return NoteConflictsCompanion(
@@ -2299,7 +2303,7 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
-      projectId: projectId ?? this.projectId,
+      notebookId: notebookId ?? this.notebookId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2328,8 +2332,8 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
-    if (projectId.present) {
-      map['project_id'] = Variable<String>(projectId.value);
+    if (notebookId.present) {
+      map['notebook_id'] = Variable<String>(notebookId.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2347,19 +2351,19 @@ class NoteConflictsCompanion extends UpdateCompanion<NoteConflictModel> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
-          ..write('projectId: $projectId, ')
+          ..write('notebookId: $notebookId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
 }
 
-class $ProjectConflictsTable extends ProjectConflicts
-    with TableInfo<$ProjectConflictsTable, ProjectConflictModel> {
+class $NotebookConflictsTable extends NotebookConflicts
+    with TableInfo<$NotebookConflictsTable, NotebookConflictModel> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $ProjectConflictsTable(this.attachedDatabase, [this._alias]);
+  $NotebookConflictsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
@@ -2369,7 +2373,7 @@ class $ProjectConflictsTable extends ProjectConflicts
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES projects (id) ON UPDATE CASCADE ON DELETE CASCADE',
+      'REFERENCES notebooks (id) ON UPDATE CASCADE ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _encryptedContentMeta = const VerificationMeta(
@@ -2441,10 +2445,10 @@ class $ProjectConflictsTable extends ProjectConflicts
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'project_conflicts';
+  static const String $name = 'notebook_conflicts';
   @override
   VerificationContext validateIntegrity(
-    Insertable<ProjectConflictModel> instance, {
+    Insertable<NotebookConflictModel> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -2501,9 +2505,9 @@ class $ProjectConflictsTable extends ProjectConflicts
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  ProjectConflictModel map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NotebookConflictModel map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ProjectConflictModel(
+    return NotebookConflictModel(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}id'],
@@ -2532,20 +2536,20 @@ class $ProjectConflictsTable extends ProjectConflicts
   }
 
   @override
-  $ProjectConflictsTable createAlias(String alias) {
-    return $ProjectConflictsTable(attachedDatabase, alias);
+  $NotebookConflictsTable createAlias(String alias) {
+    return $NotebookConflictsTable(attachedDatabase, alias);
   }
 }
 
-class ProjectConflictModel extends DataClass
-    implements Insertable<ProjectConflictModel> {
+class NotebookConflictModel extends DataClass
+    implements Insertable<NotebookConflictModel> {
   final String id;
   final Uint8List encryptedContent;
   final int version;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  const ProjectConflictModel({
+  const NotebookConflictModel({
     required this.id,
     required this.encryptedContent,
     required this.version,
@@ -2567,8 +2571,8 @@ class ProjectConflictModel extends DataClass
     return map;
   }
 
-  ProjectConflictsCompanion toCompanion(bool nullToAbsent) {
-    return ProjectConflictsCompanion(
+  NotebookConflictsCompanion toCompanion(bool nullToAbsent) {
+    return NotebookConflictsCompanion(
       id: Value(id),
       encryptedContent: Value(encryptedContent),
       version: Value(version),
@@ -2580,12 +2584,12 @@ class ProjectConflictModel extends DataClass
     );
   }
 
-  factory ProjectConflictModel.fromJson(
+  factory NotebookConflictModel.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return ProjectConflictModel(
+    return NotebookConflictModel(
       id: serializer.fromJson<String>(json['id']),
       encryptedContent: serializer.fromJson<Uint8List>(
         json['encryptedContent'],
@@ -2609,14 +2613,14 @@ class ProjectConflictModel extends DataClass
     };
   }
 
-  ProjectConflictModel copyWith({
+  NotebookConflictModel copyWith({
     String? id,
     Uint8List? encryptedContent,
     int? version,
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
-  }) => ProjectConflictModel(
+  }) => NotebookConflictModel(
     id: id ?? this.id,
     encryptedContent: encryptedContent ?? this.encryptedContent,
     version: version ?? this.version,
@@ -2624,8 +2628,8 @@ class ProjectConflictModel extends DataClass
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
-  ProjectConflictModel copyWithCompanion(ProjectConflictsCompanion data) {
-    return ProjectConflictModel(
+  NotebookConflictModel copyWithCompanion(NotebookConflictsCompanion data) {
+    return NotebookConflictModel(
       id: data.id.present ? data.id.value : this.id,
       encryptedContent: data.encryptedContent.present
           ? data.encryptedContent.value
@@ -2639,7 +2643,7 @@ class ProjectConflictModel extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('ProjectConflictModel(')
+    return (StringBuffer('NotebookConflictModel(')
           ..write('id: $id, ')
           ..write('encryptedContent: $encryptedContent, ')
           ..write('version: $version, ')
@@ -2662,7 +2666,7 @@ class ProjectConflictModel extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is ProjectConflictModel &&
+      (other is NotebookConflictModel &&
           other.id == this.id &&
           $driftBlobEquality.equals(
             other.encryptedContent,
@@ -2674,7 +2678,8 @@ class ProjectConflictModel extends DataClass
           other.deletedAt == this.deletedAt);
 }
 
-class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
+class NotebookConflictsCompanion
+    extends UpdateCompanion<NotebookConflictModel> {
   final Value<String> id;
   final Value<Uint8List> encryptedContent;
   final Value<int> version;
@@ -2682,7 +2687,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
-  const ProjectConflictsCompanion({
+  const NotebookConflictsCompanion({
     this.id = const Value.absent(),
     this.encryptedContent = const Value.absent(),
     this.version = const Value.absent(),
@@ -2691,7 +2696,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  ProjectConflictsCompanion.insert({
+  NotebookConflictsCompanion.insert({
     required String id,
     required Uint8List encryptedContent,
     required int version,
@@ -2704,7 +2709,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
        version = Value(version),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
-  static Insertable<ProjectConflictModel> custom({
+  static Insertable<NotebookConflictModel> custom({
     Expression<String>? id,
     Expression<Uint8List>? encryptedContent,
     Expression<int>? version,
@@ -2724,7 +2729,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
     });
   }
 
-  ProjectConflictsCompanion copyWith({
+  NotebookConflictsCompanion copyWith({
     Value<String>? id,
     Value<Uint8List>? encryptedContent,
     Value<int>? version,
@@ -2733,7 +2738,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
-    return ProjectConflictsCompanion(
+    return NotebookConflictsCompanion(
       id: id ?? this.id,
       encryptedContent: encryptedContent ?? this.encryptedContent,
       version: version ?? this.version,
@@ -2773,7 +2778,7 @@ class ProjectConflictsCompanion extends UpdateCompanion<ProjectConflictModel> {
 
   @override
   String toString() {
-    return (StringBuffer('ProjectConflictsCompanion(')
+    return (StringBuffer('NotebookConflictsCompanion(')
           ..write('id: $id, ')
           ..write('encryptedContent: $encryptedContent, ')
           ..write('version: $version, ')
@@ -2790,43 +2795,42 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $KeySlotsTable keySlots = $KeySlotsTable(this);
-  late final $ProjectsTable projects = $ProjectsTable(this);
+  late final $NotebooksTable notebooks = $NotebooksTable(this);
   late final $NotesTable notes = $NotesTable(this);
   late final $NoteConflictsTable noteConflicts = $NoteConflictsTable(this);
-  late final $ProjectConflictsTable projectConflicts = $ProjectConflictsTable(
-    this,
-  );
+  late final $NotebookConflictsTable notebookConflicts =
+      $NotebookConflictsTable(this);
   late final Index notesMetadataVersion = Index(
     'notes_metadata_version',
     'CREATE INDEX notes_metadata_version ON notes (metadata_version)',
   );
   late final KeySlotsDao keySlotsDao = KeySlotsDao(this as AppDatabase);
   late final NotesDao notesDao = NotesDao(this as AppDatabase);
-  late final ProjectsDao projectsDao = ProjectsDao(this as AppDatabase);
+  late final NotebooksDao notebooksDao = NotebooksDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     keySlots,
-    projects,
+    notebooks,
     notes,
     noteConflicts,
-    projectConflicts,
+    notebookConflicts,
     notesMetadataVersion,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('notes', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('notes', kind: UpdateKind.update)],
@@ -2847,31 +2851,31 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('note_conflicts', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.update,
       ),
       result: [TableUpdate('note_conflicts', kind: UpdateKind.update)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.delete,
       ),
-      result: [TableUpdate('project_conflicts', kind: UpdateKind.delete)],
+      result: [TableUpdate('notebook_conflicts', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
-        'projects',
+        'notebooks',
         limitUpdateKind: UpdateKind.update,
       ),
-      result: [TableUpdate('project_conflicts', kind: UpdateKind.update)],
+      result: [TableUpdate('notebook_conflicts', kind: UpdateKind.update)],
     ),
   ]);
 }
@@ -3086,8 +3090,8 @@ typedef $$KeySlotsTableProcessedTableManager =
       KeySlotModel,
       PrefetchHooks Function()
     >;
-typedef $$ProjectsTableCreateCompanionBuilder =
-    ProjectsCompanion Function({
+typedef $$NotebooksTableCreateCompanionBuilder =
+    NotebooksCompanion Function({
       Value<String> id,
       required Uint8List encryptedContent,
       Value<int> localVersion,
@@ -3098,8 +3102,8 @@ typedef $$ProjectsTableCreateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
-typedef $$ProjectsTableUpdateCompanionBuilder =
-    ProjectsCompanion Function({
+typedef $$NotebooksTableUpdateCompanionBuilder =
+    NotebooksCompanion Function({
       Value<String> id,
       Value<Uint8List> encryptedContent,
       Value<int> localVersion,
@@ -3111,22 +3115,22 @@ typedef $$ProjectsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$ProjectsTableReferences
-    extends BaseReferences<_$AppDatabase, $ProjectsTable, ProjectModel> {
-  $$ProjectsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$NotebooksTableReferences
+    extends BaseReferences<_$AppDatabase, $NotebooksTable, NotebookModel> {
+  $$NotebooksTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$NotesTable, List<NoteModel>> _notesRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.notes,
-    aliasName: 'projects__id__notes__project_id',
+    aliasName: 'notebooks__id__notes__notebook_id',
   );
 
   $$NotesTableProcessedTableManager get notesRefs {
     final manager = $$NotesTableTableManager(
       $_db,
       $_db.notes,
-    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+    ).filter((f) => f.notebookId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_notesRefsTable($_db));
     return ProcessedTableManager(
@@ -3137,14 +3141,14 @@ final class $$ProjectsTableReferences
   static MultiTypedResultKey<$NoteConflictsTable, List<NoteConflictModel>>
   _noteConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.noteConflicts,
-    aliasName: 'projects__id__note_conflicts__project_id',
+    aliasName: 'notebooks__id__note_conflicts__notebook_id',
   );
 
   $$NoteConflictsTableProcessedTableManager get noteConflictsRefs {
     final manager = $$NoteConflictsTableTableManager(
       $_db,
       $_db.noteConflicts,
-    ).filter((f) => f.projectId.id.sqlEquals($_itemColumn<String>('id')!));
+    ).filter((f) => f.notebookId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_noteConflictsRefsTable($_db));
     return ProcessedTableManager(
@@ -3152,20 +3156,24 @@ final class $$ProjectsTableReferences
     );
   }
 
-  static MultiTypedResultKey<$ProjectConflictsTable, List<ProjectConflictModel>>
-  _projectConflictsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.projectConflicts,
-    aliasName: 'projects__id__project_conflicts__id',
-  );
+  static MultiTypedResultKey<
+    $NotebookConflictsTable,
+    List<NotebookConflictModel>
+  >
+  _notebookConflictsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.notebookConflicts,
+        aliasName: 'notebooks__id__notebook_conflicts__id',
+      );
 
-  $$ProjectConflictsTableProcessedTableManager get projectConflictsRefs {
-    final manager = $$ProjectConflictsTableTableManager(
+  $$NotebookConflictsTableProcessedTableManager get notebookConflictsRefs {
+    final manager = $$NotebookConflictsTableTableManager(
       $_db,
-      $_db.projectConflicts,
+      $_db.notebookConflicts,
     ).filter((f) => f.id.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _projectConflictsRefsTable($_db),
+      _notebookConflictsRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -3173,9 +3181,9 @@ final class $$ProjectsTableReferences
   }
 }
 
-class $$ProjectsTableFilterComposer
-    extends Composer<_$AppDatabase, $ProjectsTable> {
-  $$ProjectsTableFilterComposer({
+class $$NotebooksTableFilterComposer
+    extends Composer<_$AppDatabase, $NotebooksTable> {
+  $$NotebooksTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -3230,7 +3238,7 @@ class $$ProjectsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.notes,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.notebookId,
       builder:
           (
             joinBuilder, {
@@ -3255,7 +3263,7 @@ class $$ProjectsTableFilterComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.noteConflicts,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.notebookId,
       builder:
           (
             joinBuilder, {
@@ -3273,22 +3281,22 @@ class $$ProjectsTableFilterComposer
     return f(composer);
   }
 
-  Expression<bool> projectConflictsRefs(
-    Expression<bool> Function($$ProjectConflictsTableFilterComposer f) f,
+  Expression<bool> notebookConflictsRefs(
+    Expression<bool> Function($$NotebookConflictsTableFilterComposer f) f,
   ) {
-    final $$ProjectConflictsTableFilterComposer composer = $composerBuilder(
+    final $$NotebookConflictsTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projectConflicts,
+      referencedTable: $db.notebookConflicts,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectConflictsTableFilterComposer(
+          }) => $$NotebookConflictsTableFilterComposer(
             $db: $db,
-            $table: $db.projectConflicts,
+            $table: $db.notebookConflicts,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3299,9 +3307,9 @@ class $$ProjectsTableFilterComposer
   }
 }
 
-class $$ProjectsTableOrderingComposer
-    extends Composer<_$AppDatabase, $ProjectsTable> {
-  $$ProjectsTableOrderingComposer({
+class $$NotebooksTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotebooksTable> {
+  $$NotebooksTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -3349,9 +3357,9 @@ class $$ProjectsTableOrderingComposer
   );
 }
 
-class $$ProjectsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ProjectsTable> {
-  $$ProjectsTableAnnotationComposer({
+class $$NotebooksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotebooksTable> {
+  $$NotebooksTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -3398,7 +3406,7 @@ class $$ProjectsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.notes,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.notebookId,
       builder:
           (
             joinBuilder, {
@@ -3423,7 +3431,7 @@ class $$ProjectsTableAnnotationComposer
       composer: this,
       getCurrentColumn: (t) => t.id,
       referencedTable: $db.noteConflicts,
-      getReferencedColumn: (t) => t.projectId,
+      getReferencedColumn: (t) => t.notebookId,
       builder:
           (
             joinBuilder, {
@@ -3441,62 +3449,63 @@ class $$ProjectsTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> projectConflictsRefs<T extends Object>(
-    Expression<T> Function($$ProjectConflictsTableAnnotationComposer a) f,
+  Expression<T> notebookConflictsRefs<T extends Object>(
+    Expression<T> Function($$NotebookConflictsTableAnnotationComposer a) f,
   ) {
-    final $$ProjectConflictsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projectConflicts,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectConflictsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.projectConflicts,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
+    final $$NotebookConflictsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.notebookConflicts,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-          ),
-    );
+              }) => $$NotebookConflictsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.notebookConflicts,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$ProjectsTableTableManager
+class $$NotebooksTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $ProjectsTable,
-          ProjectModel,
-          $$ProjectsTableFilterComposer,
-          $$ProjectsTableOrderingComposer,
-          $$ProjectsTableAnnotationComposer,
-          $$ProjectsTableCreateCompanionBuilder,
-          $$ProjectsTableUpdateCompanionBuilder,
-          (ProjectModel, $$ProjectsTableReferences),
-          ProjectModel,
+          $NotebooksTable,
+          NotebookModel,
+          $$NotebooksTableFilterComposer,
+          $$NotebooksTableOrderingComposer,
+          $$NotebooksTableAnnotationComposer,
+          $$NotebooksTableCreateCompanionBuilder,
+          $$NotebooksTableUpdateCompanionBuilder,
+          (NotebookModel, $$NotebooksTableReferences),
+          NotebookModel,
           PrefetchHooks Function({
             bool notesRefs,
             bool noteConflictsRefs,
-            bool projectConflictsRefs,
+            bool notebookConflictsRefs,
           })
         > {
-  $$ProjectsTableTableManager(_$AppDatabase db, $ProjectsTable table)
+  $$NotebooksTableTableManager(_$AppDatabase db, $NotebooksTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$ProjectsTableFilterComposer($db: db, $table: table),
+              $$NotebooksTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$ProjectsTableOrderingComposer($db: db, $table: table),
+              $$NotebooksTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$ProjectsTableAnnotationComposer($db: db, $table: table),
+              $$NotebooksTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
@@ -3508,7 +3517,7 @@ class $$ProjectsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => ProjectsCompanion(
+              }) => NotebooksCompanion(
                 id: id,
                 encryptedContent: encryptedContent,
                 localVersion: localVersion,
@@ -3530,7 +3539,7 @@ class $$ProjectsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => ProjectsCompanion.insert(
+              }) => NotebooksCompanion.insert(
                 id: id,
                 encryptedContent: encryptedContent,
                 localVersion: localVersion,
@@ -3544,8 +3553,8 @@ class $$ProjectsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$ProjectsTable, ProjectModel>(table),
-                  $$ProjectsTableReferences(db, table, e),
+                  e.readTable<$NotebooksTable, NotebookModel>(table),
+                  $$NotebooksTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -3553,75 +3562,75 @@ class $$ProjectsTableTableManager
               ({
                 notesRefs = false,
                 noteConflictsRefs = false,
-                projectConflictsRefs = false,
+                notebookConflictsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (notesRefs) db.notes,
                     if (noteConflictsRefs) db.noteConflicts,
-                    if (projectConflictsRefs) db.projectConflicts,
+                    if (notebookConflictsRefs) db.notebookConflicts,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (notesRefs)
                         await $_getPrefetchedData<
-                          ProjectModel,
-                          $ProjectsTable,
+                          NotebookModel,
+                          $NotebooksTable,
                           NoteModel
                         >(
                           currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
+                          referencedTable: $$NotebooksTableReferences
                               ._notesRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
+                              $$NotebooksTableReferences(
                                 db,
                                 table,
                                 p0,
                               ).notesRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
+                                (e) => e.notebookId == item.id,
                               ),
                           typedResults: items,
                         ),
                       if (noteConflictsRefs)
                         await $_getPrefetchedData<
-                          ProjectModel,
-                          $ProjectsTable,
+                          NotebookModel,
+                          $NotebooksTable,
                           NoteConflictModel
                         >(
                           currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
+                          referencedTable: $$NotebooksTableReferences
                               ._noteConflictsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
+                              $$NotebooksTableReferences(
                                 db,
                                 table,
                                 p0,
                               ).noteConflictsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
-                                (e) => e.projectId == item.id,
+                                (e) => e.notebookId == item.id,
                               ),
                           typedResults: items,
                         ),
-                      if (projectConflictsRefs)
+                      if (notebookConflictsRefs)
                         await $_getPrefetchedData<
-                          ProjectModel,
-                          $ProjectsTable,
-                          ProjectConflictModel
+                          NotebookModel,
+                          $NotebooksTable,
+                          NotebookConflictModel
                         >(
                           currentTable: table,
-                          referencedTable: $$ProjectsTableReferences
-                              ._projectConflictsRefsTable(db),
+                          referencedTable: $$NotebooksTableReferences
+                              ._notebookConflictsRefsTable(db),
                           managerFromTypedResult: (p0) =>
-                              $$ProjectsTableReferences(
+                              $$NotebooksTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).projectConflictsRefs,
+                              ).notebookConflictsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) =>
                                   referencedItems.where((e) => e.id == item.id),
@@ -3635,22 +3644,22 @@ class $$ProjectsTableTableManager
       );
 }
 
-typedef $$ProjectsTableProcessedTableManager =
+typedef $$NotebooksTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $ProjectsTable,
-      ProjectModel,
-      $$ProjectsTableFilterComposer,
-      $$ProjectsTableOrderingComposer,
-      $$ProjectsTableAnnotationComposer,
-      $$ProjectsTableCreateCompanionBuilder,
-      $$ProjectsTableUpdateCompanionBuilder,
-      (ProjectModel, $$ProjectsTableReferences),
-      ProjectModel,
+      $NotebooksTable,
+      NotebookModel,
+      $$NotebooksTableFilterComposer,
+      $$NotebooksTableOrderingComposer,
+      $$NotebooksTableAnnotationComposer,
+      $$NotebooksTableCreateCompanionBuilder,
+      $$NotebooksTableUpdateCompanionBuilder,
+      (NotebookModel, $$NotebooksTableReferences),
+      NotebookModel,
       PrefetchHooks Function({
         bool notesRefs,
         bool noteConflictsRefs,
-        bool projectConflictsRefs,
+        bool notebookConflictsRefs,
       })
     >;
 typedef $$NotesTableCreateCompanionBuilder =
@@ -3669,7 +3678,7 @@ typedef $$NotesTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> deletedAt,
-      Value<String?> projectId,
+      Value<String?> notebookId,
       Value<int> rowid,
     });
 typedef $$NotesTableUpdateCompanionBuilder =
@@ -3688,7 +3697,7 @@ typedef $$NotesTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> deletedAt,
-      Value<String?> projectId,
+      Value<String?> notebookId,
       Value<int> rowid,
     });
 
@@ -3696,17 +3705,17 @@ final class $$NotesTableReferences
     extends BaseReferences<_$AppDatabase, $NotesTable, NoteModel> {
   $$NotesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias('notes__project_id__projects__id');
+  static $NotebooksTable _notebookIdTable(_$AppDatabase db) =>
+      db.notebooks.createAlias('notes__notebook_id__notebooks__id');
 
-  $$ProjectsTableProcessedTableManager? get projectId {
-    final $_column = $_itemColumn<String>('project_id');
+  $$NotebooksTableProcessedTableManager? get notebookId {
+    final $_column = $_itemColumn<String>('notebook_id');
     if ($_column == null) return null;
-    final manager = $$ProjectsTableTableManager(
+    final manager = $$NotebooksTableTableManager(
       $_db,
-      $_db.projects,
+      $_db.notebooks,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_notebookIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -3811,20 +3820,20 @@ class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  $$ProjectsTableFilterComposer get projectId {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+  $$NotebooksTableFilterComposer get notebookId {
+    final $$NotebooksTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
+          }) => $$NotebooksTableFilterComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3939,20 +3948,20 @@ class $$NotesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$ProjectsTableOrderingComposer get projectId {
-    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+  $$NotebooksTableOrderingComposer get notebookId {
+    final $$NotebooksTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableOrderingComposer(
+          }) => $$NotebooksTableOrderingComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4035,20 +4044,20 @@ class $$NotesTableAnnotationComposer
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
-  $$ProjectsTableAnnotationComposer get projectId {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+  $$NotebooksTableAnnotationComposer get notebookId {
+    final $$NotebooksTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
+          }) => $$NotebooksTableAnnotationComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4097,7 +4106,7 @@ class $$NotesTableTableManager
           $$NotesTableUpdateCompanionBuilder,
           (NoteModel, $$NotesTableReferences),
           NoteModel,
-          PrefetchHooks Function({bool projectId, bool noteConflictsRefs})
+          PrefetchHooks Function({bool notebookId, bool noteConflictsRefs})
         > {
   $$NotesTableTableManager(_$AppDatabase db, $NotesTable table)
     : super(
@@ -4126,7 +4135,7 @@ class $$NotesTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
-                Value<String?> projectId = const Value.absent(),
+                Value<String?> notebookId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NotesCompanion(
                 id: id,
@@ -4143,7 +4152,7 @@ class $$NotesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deletedAt: deletedAt,
-                projectId: projectId,
+                notebookId: notebookId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4162,7 +4171,7 @@ class $$NotesTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
-                Value<String?> projectId = const Value.absent(),
+                Value<String?> notebookId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NotesCompanion.insert(
                 id: id,
@@ -4179,7 +4188,7 @@ class $$NotesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deletedAt: deletedAt,
-                projectId: projectId,
+                notebookId: notebookId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4191,7 +4200,7 @@ class $$NotesTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({projectId = false, noteConflictsRefs = false}) {
+              ({notebookId = false, noteConflictsRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -4213,15 +4222,15 @@ class $$NotesTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (projectId) {
+                        if (notebookId) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.projectId,
+                                    currentColumn: table.notebookId,
                                     referencedTable: $$NotesTableReferences
-                                        ._projectIdTable(db),
+                                        ._notebookIdTable(db),
                                     referencedColumn: $$NotesTableReferences
-                                        ._projectIdTable(db)
+                                        ._notebookIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -4271,7 +4280,7 @@ typedef $$NotesTableProcessedTableManager =
       $$NotesTableUpdateCompanionBuilder,
       (NoteModel, $$NotesTableReferences),
       NoteModel,
-      PrefetchHooks Function({bool projectId, bool noteConflictsRefs})
+      PrefetchHooks Function({bool notebookId, bool noteConflictsRefs})
     >;
 typedef $$NoteConflictsTableCreateCompanionBuilder =
     NoteConflictsCompanion Function({
@@ -4282,7 +4291,7 @@ typedef $$NoteConflictsTableCreateCompanionBuilder =
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<DateTime?> deletedAt,
-      Value<String?> projectId,
+      Value<String?> notebookId,
       Value<int> rowid,
     });
 typedef $$NoteConflictsTableUpdateCompanionBuilder =
@@ -4294,7 +4303,7 @@ typedef $$NoteConflictsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> deletedAt,
-      Value<String?> projectId,
+      Value<String?> notebookId,
       Value<int> rowid,
     });
 
@@ -4324,17 +4333,17 @@ final class $$NoteConflictsTableReferences
     );
   }
 
-  static $ProjectsTable _projectIdTable(_$AppDatabase db) =>
-      db.projects.createAlias('note_conflicts__project_id__projects__id');
+  static $NotebooksTable _notebookIdTable(_$AppDatabase db) =>
+      db.notebooks.createAlias('note_conflicts__notebook_id__notebooks__id');
 
-  $$ProjectsTableProcessedTableManager? get projectId {
-    final $_column = $_itemColumn<String>('project_id');
+  $$NotebooksTableProcessedTableManager? get notebookId {
+    final $_column = $_itemColumn<String>('notebook_id');
     if ($_column == null) return null;
-    final manager = $$ProjectsTableTableManager(
+    final manager = $$NotebooksTableTableManager(
       $_db,
-      $_db.projects,
+      $_db.notebooks,
     ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_projectIdTable($_db));
+    final item = $_typedResult.readTableOrNull(_notebookIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -4404,20 +4413,20 @@ class $$NoteConflictsTableFilterComposer
     return composer;
   }
 
-  $$ProjectsTableFilterComposer get projectId {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+  $$NotebooksTableFilterComposer get notebookId {
+    final $$NotebooksTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
+          }) => $$NotebooksTableFilterComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4490,20 +4499,20 @@ class $$NoteConflictsTableOrderingComposer
     return composer;
   }
 
-  $$ProjectsTableOrderingComposer get projectId {
-    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+  $$NotebooksTableOrderingComposer get notebookId {
+    final $$NotebooksTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableOrderingComposer(
+          }) => $$NotebooksTableOrderingComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4568,20 +4577,20 @@ class $$NoteConflictsTableAnnotationComposer
     return composer;
   }
 
-  $$ProjectsTableAnnotationComposer get projectId {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+  $$NotebooksTableAnnotationComposer get notebookId {
+    final $$NotebooksTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.projectId,
-      referencedTable: $db.projects,
+      getCurrentColumn: (t) => t.notebookId,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
+          }) => $$NotebooksTableAnnotationComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4605,7 +4614,7 @@ class $$NoteConflictsTableTableManager
           $$NoteConflictsTableUpdateCompanionBuilder,
           (NoteConflictModel, $$NoteConflictsTableReferences),
           NoteConflictModel,
-          PrefetchHooks Function({bool id, bool projectId})
+          PrefetchHooks Function({bool id, bool notebookId})
         > {
   $$NoteConflictsTableTableManager(_$AppDatabase db, $NoteConflictsTable table)
     : super(
@@ -4627,7 +4636,7 @@ class $$NoteConflictsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
-                Value<String?> projectId = const Value.absent(),
+                Value<String?> notebookId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoteConflictsCompanion(
                 id: id,
@@ -4637,7 +4646,7 @@ class $$NoteConflictsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deletedAt: deletedAt,
-                projectId: projectId,
+                notebookId: notebookId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -4649,7 +4658,7 @@ class $$NoteConflictsTableTableManager
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<DateTime?> deletedAt = const Value.absent(),
-                Value<String?> projectId = const Value.absent(),
+                Value<String?> notebookId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => NoteConflictsCompanion.insert(
                 id: id,
@@ -4659,7 +4668,7 @@ class $$NoteConflictsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 deletedAt: deletedAt,
-                projectId: projectId,
+                notebookId: notebookId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4670,7 +4679,7 @@ class $$NoteConflictsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({id = false, projectId = false}) {
+          prefetchHooksCallback: ({id = false, notebookId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -4703,15 +4712,15 @@ class $$NoteConflictsTableTableManager
                               )
                               as T;
                     }
-                    if (projectId) {
+                    if (notebookId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.projectId,
+                                currentColumn: table.notebookId,
                                 referencedTable: $$NoteConflictsTableReferences
-                                    ._projectIdTable(db),
+                                    ._notebookIdTable(db),
                                 referencedColumn: $$NoteConflictsTableReferences
-                                    ._projectIdTable(db)
+                                    ._notebookIdTable(db)
                                     .id,
                               )
                               as T;
@@ -4740,10 +4749,10 @@ typedef $$NoteConflictsTableProcessedTableManager =
       $$NoteConflictsTableUpdateCompanionBuilder,
       (NoteConflictModel, $$NoteConflictsTableReferences),
       NoteConflictModel,
-      PrefetchHooks Function({bool id, bool projectId})
+      PrefetchHooks Function({bool id, bool notebookId})
     >;
-typedef $$ProjectConflictsTableCreateCompanionBuilder =
-    ProjectConflictsCompanion Function({
+typedef $$NotebookConflictsTableCreateCompanionBuilder =
+    NotebookConflictsCompanion Function({
       required String id,
       required Uint8List encryptedContent,
       required int version,
@@ -4752,8 +4761,8 @@ typedef $$ProjectConflictsTableCreateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
-typedef $$ProjectConflictsTableUpdateCompanionBuilder =
-    ProjectConflictsCompanion Function({
+typedef $$NotebookConflictsTableUpdateCompanionBuilder =
+    NotebookConflictsCompanion Function({
       Value<String> id,
       Value<Uint8List> encryptedContent,
       Value<int> version,
@@ -4763,28 +4772,28 @@ typedef $$ProjectConflictsTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$ProjectConflictsTableReferences
+final class $$NotebookConflictsTableReferences
     extends
         BaseReferences<
           _$AppDatabase,
-          $ProjectConflictsTable,
-          ProjectConflictModel
+          $NotebookConflictsTable,
+          NotebookConflictModel
         > {
-  $$ProjectConflictsTableReferences(
+  $$NotebookConflictsTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
-  static $ProjectsTable _idTable(_$AppDatabase db) =>
-      db.projects.createAlias('project_conflicts__id__projects__id');
+  static $NotebooksTable _idTable(_$AppDatabase db) =>
+      db.notebooks.createAlias('notebook_conflicts__id__notebooks__id');
 
-  $$ProjectsTableProcessedTableManager get id {
+  $$NotebooksTableProcessedTableManager get id {
     final $_column = $_itemColumn<String>('id')!;
 
-    final manager = $$ProjectsTableTableManager(
+    final manager = $$NotebooksTableTableManager(
       $_db,
-      $_db.projects,
+      $_db.notebooks,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_idTable($_db));
     if (item == null) return manager;
@@ -4794,9 +4803,9 @@ final class $$ProjectConflictsTableReferences
   }
 }
 
-class $$ProjectConflictsTableFilterComposer
-    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
-  $$ProjectConflictsTableFilterComposer({
+class $$NotebookConflictsTableFilterComposer
+    extends Composer<_$AppDatabase, $NotebookConflictsTable> {
+  $$NotebookConflictsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -4828,20 +4837,20 @@ class $$ProjectConflictsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$ProjectsTableFilterComposer get id {
-    final $$ProjectsTableFilterComposer composer = $composerBuilder(
+  $$NotebooksTableFilterComposer get id {
+    final $$NotebooksTableFilterComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projects,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableFilterComposer(
+          }) => $$NotebooksTableFilterComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4852,9 +4861,9 @@ class $$ProjectConflictsTableFilterComposer
   }
 }
 
-class $$ProjectConflictsTableOrderingComposer
-    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
-  $$ProjectConflictsTableOrderingComposer({
+class $$NotebookConflictsTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotebookConflictsTable> {
+  $$NotebookConflictsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -4886,20 +4895,20 @@ class $$ProjectConflictsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$ProjectsTableOrderingComposer get id {
-    final $$ProjectsTableOrderingComposer composer = $composerBuilder(
+  $$NotebooksTableOrderingComposer get id {
+    final $$NotebooksTableOrderingComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projects,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableOrderingComposer(
+          }) => $$NotebooksTableOrderingComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4910,9 +4919,9 @@ class $$ProjectConflictsTableOrderingComposer
   }
 }
 
-class $$ProjectConflictsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $ProjectConflictsTable> {
-  $$ProjectConflictsTableAnnotationComposer({
+class $$NotebookConflictsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotebookConflictsTable> {
+  $$NotebookConflictsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -4936,20 +4945,20 @@ class $$ProjectConflictsTableAnnotationComposer
   GeneratedColumn<DateTime> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
-  $$ProjectsTableAnnotationComposer get id {
-    final $$ProjectsTableAnnotationComposer composer = $composerBuilder(
+  $$NotebooksTableAnnotationComposer get id {
+    final $$NotebooksTableAnnotationComposer composer = $composerBuilder(
       composer: this,
       getCurrentColumn: (t) => t.id,
-      referencedTable: $db.projects,
+      referencedTable: $db.notebooks,
       getReferencedColumn: (t) => t.id,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$ProjectsTableAnnotationComposer(
+          }) => $$NotebooksTableAnnotationComposer(
             $db: $db,
-            $table: $db.projects,
+            $table: $db.notebooks,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4960,34 +4969,37 @@ class $$ProjectConflictsTableAnnotationComposer
   }
 }
 
-class $$ProjectConflictsTableTableManager
+class $$NotebookConflictsTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $ProjectConflictsTable,
-          ProjectConflictModel,
-          $$ProjectConflictsTableFilterComposer,
-          $$ProjectConflictsTableOrderingComposer,
-          $$ProjectConflictsTableAnnotationComposer,
-          $$ProjectConflictsTableCreateCompanionBuilder,
-          $$ProjectConflictsTableUpdateCompanionBuilder,
-          (ProjectConflictModel, $$ProjectConflictsTableReferences),
-          ProjectConflictModel,
+          $NotebookConflictsTable,
+          NotebookConflictModel,
+          $$NotebookConflictsTableFilterComposer,
+          $$NotebookConflictsTableOrderingComposer,
+          $$NotebookConflictsTableAnnotationComposer,
+          $$NotebookConflictsTableCreateCompanionBuilder,
+          $$NotebookConflictsTableUpdateCompanionBuilder,
+          (NotebookConflictModel, $$NotebookConflictsTableReferences),
+          NotebookConflictModel,
           PrefetchHooks Function({bool id})
         > {
-  $$ProjectConflictsTableTableManager(
+  $$NotebookConflictsTableTableManager(
     _$AppDatabase db,
-    $ProjectConflictsTable table,
+    $NotebookConflictsTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$ProjectConflictsTableFilterComposer($db: db, $table: table),
+              $$NotebookConflictsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$ProjectConflictsTableOrderingComposer($db: db, $table: table),
+              $$NotebookConflictsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$ProjectConflictsTableAnnotationComposer($db: db, $table: table),
+              $$NotebookConflictsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
@@ -4997,7 +5009,7 @@ class $$ProjectConflictsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => ProjectConflictsCompanion(
+              }) => NotebookConflictsCompanion(
                 id: id,
                 encryptedContent: encryptedContent,
                 version: version,
@@ -5015,7 +5027,7 @@ class $$ProjectConflictsTableTableManager
                 required DateTime updatedAt,
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => ProjectConflictsCompanion.insert(
+              }) => NotebookConflictsCompanion.insert(
                 id: id,
                 encryptedContent: encryptedContent,
                 version: version,
@@ -5027,10 +5039,10 @@ class $$ProjectConflictsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$ProjectConflictsTable, ProjectConflictModel>(
+                  e.readTable<$NotebookConflictsTable, NotebookConflictModel>(
                     table,
                   ),
-                  $$ProjectConflictsTableReferences(db, table, e),
+                  $$NotebookConflictsTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -5060,11 +5072,11 @@ class $$ProjectConflictsTableTableManager
                                 currentTable: table,
                                 currentColumn: table.id,
                                 referencedTable:
-                                    $$ProjectConflictsTableReferences._idTable(
+                                    $$NotebookConflictsTableReferences._idTable(
                                       db,
                                     ),
                                 referencedColumn:
-                                    $$ProjectConflictsTableReferences
+                                    $$NotebookConflictsTableReferences
                                         ._idTable(db)
                                         .id,
                               )
@@ -5082,18 +5094,18 @@ class $$ProjectConflictsTableTableManager
       );
 }
 
-typedef $$ProjectConflictsTableProcessedTableManager =
+typedef $$NotebookConflictsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $ProjectConflictsTable,
-      ProjectConflictModel,
-      $$ProjectConflictsTableFilterComposer,
-      $$ProjectConflictsTableOrderingComposer,
-      $$ProjectConflictsTableAnnotationComposer,
-      $$ProjectConflictsTableCreateCompanionBuilder,
-      $$ProjectConflictsTableUpdateCompanionBuilder,
-      (ProjectConflictModel, $$ProjectConflictsTableReferences),
-      ProjectConflictModel,
+      $NotebookConflictsTable,
+      NotebookConflictModel,
+      $$NotebookConflictsTableFilterComposer,
+      $$NotebookConflictsTableOrderingComposer,
+      $$NotebookConflictsTableAnnotationComposer,
+      $$NotebookConflictsTableCreateCompanionBuilder,
+      $$NotebookConflictsTableUpdateCompanionBuilder,
+      (NotebookConflictModel, $$NotebookConflictsTableReferences),
+      NotebookConflictModel,
       PrefetchHooks Function({bool id})
     >;
 
@@ -5102,12 +5114,12 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$KeySlotsTableTableManager get keySlots =>
       $$KeySlotsTableTableManager(_db, _db.keySlots);
-  $$ProjectsTableTableManager get projects =>
-      $$ProjectsTableTableManager(_db, _db.projects);
+  $$NotebooksTableTableManager get notebooks =>
+      $$NotebooksTableTableManager(_db, _db.notebooks);
   $$NotesTableTableManager get notes =>
       $$NotesTableTableManager(_db, _db.notes);
   $$NoteConflictsTableTableManager get noteConflicts =>
       $$NoteConflictsTableTableManager(_db, _db.noteConflicts);
-  $$ProjectConflictsTableTableManager get projectConflicts =>
-      $$ProjectConflictsTableTableManager(_db, _db.projectConflicts);
+  $$NotebookConflictsTableTableManager get notebookConflicts =>
+      $$NotebookConflictsTableTableManager(_db, _db.notebookConflicts);
 }

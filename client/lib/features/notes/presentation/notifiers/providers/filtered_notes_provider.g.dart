@@ -9,25 +9,25 @@ part of 'filtered_notes_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(projectNotes)
-final projectNotesProvider = ProjectNotesProvider._();
+@ProviderFor(notebookNotes)
+final notebookNotesProvider = NotebookNotesProvider._();
 
-final class ProjectNotesProvider
+final class NotebookNotesProvider
     extends $FunctionalProvider<List<Note>, List<Note>, List<Note>>
     with $Provider<List<Note>> {
-  ProjectNotesProvider._()
+  NotebookNotesProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'projectNotesProvider',
+        name: r'notebookNotesProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$projectNotesHash();
+  String debugGetCreateSourceHash() => _$notebookNotesHash();
 
   @$internal
   @override
@@ -36,7 +36,7 @@ final class ProjectNotesProvider
 
   @override
   List<Note> create(Ref ref) {
-    return projectNotes(ref);
+    return notebookNotes(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -48,4 +48,4 @@ final class ProjectNotesProvider
   }
 }
 
-String _$projectNotesHash() => r'c1b58bb1aae770dbd2d65ee565f584565593d665';
+String _$notebookNotesHash() => r'2713a12d693e6de59e7d32347b48f761cfaf28f1';

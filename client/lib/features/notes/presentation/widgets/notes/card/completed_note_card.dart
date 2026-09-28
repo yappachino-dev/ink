@@ -9,13 +9,13 @@ class CompletedNoteCard extends ConsumerWidget {
   const CompletedNoteCard({
     required this.note,
     required this.onTap,
-    this.projectName,
+    this.notebookName,
     super.key,
   });
 
   final Note note;
   final VoidCallback onTap;
-  final String? projectName;
+  final String? notebookName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +35,7 @@ class CompletedNoteCard extends ConsumerWidget {
               AppSpacing.md,
               AppSpacing.md,
             ),
-            child: NoteCard(note: note, projectName: projectName),
+            child: NoteCard(note: note, notebookName: notebookName),
           ),
         ),
       ),

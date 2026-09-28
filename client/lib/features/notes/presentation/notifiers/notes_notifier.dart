@@ -50,10 +50,7 @@ class NotesNotifier extends _$NotesNotifier {
     final service = ref.read(notesServiceProvider);
     final result = await service.saveNote(updatedNote);
 
-    return result.fold(
-      (_) {},
-      (failure) => state = previousState,
-    );
+    return result.fold((_) {}, (failure) => state = previousState);
   }
 
   Future<void> deleteNote(Note note) async {
@@ -66,9 +63,6 @@ class NotesNotifier extends _$NotesNotifier {
     final service = ref.read(notesServiceProvider);
     final result = await service.deleteNote(note);
 
-    return result.fold(
-      (_) {},
-      (failure) => state = previousState,
-    );
+    return result.fold((_) {}, (failure) => state = previousState);
   }
 }

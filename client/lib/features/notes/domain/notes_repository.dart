@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/features/notes/domain/entities/encrypted_note.dart';
-import 'package:ink/features/notes/domain/entities/encrypted_project.dart';
+import 'package:ink/features/notes/domain/entities/encrypted_notebook.dart';
 import 'package:ink/features/notes/domain/entities/note_metadata.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 
@@ -10,7 +10,7 @@ abstract class NotesRepository {
   Future<Result<EncryptedNote, NotesFailure>> createNote(
     Uint8List encryptedTitle,
     Uint8List encryptedContent,
-    String? projectId,
+    String? notebookId,
   );
   Future<Result<void, NotesFailure>> saveNote(EncryptedNote note);
   Future<Result<EncryptedNote?, NotesFailure>> getNote(String id);
@@ -33,11 +33,11 @@ abstract class NotesRepository {
     Map<String, NoteMetadata> byNoteId,
   );
 
-  Future<Result<EncryptedProject, NotesFailure>> createProject(
+  Future<Result<EncryptedNotebook, NotesFailure>> createNotebook(
     Uint8List encryptedContent,
   );
-  Future<Result<void, NotesFailure>> saveProject(EncryptedProject note);
-  Future<Result<EncryptedProject?, NotesFailure>> getProject(String id);
-  Future<Result<List<EncryptedProject>, NotesFailure>> getAllProjects();
-  Future<Result<void, NotesFailure>> deleteProject(String id);
+  Future<Result<void, NotesFailure>> saveNotebook(EncryptedNotebook note);
+  Future<Result<EncryptedNotebook?, NotesFailure>> getNotebook(String id);
+  Future<Result<List<EncryptedNotebook>, NotesFailure>> getAllNotebooks();
+  Future<Result<void, NotesFailure>> deleteNotebook(String id);
 }

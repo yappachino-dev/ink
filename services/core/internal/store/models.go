@@ -22,7 +22,7 @@ type EmailVerification struct {
 type Note struct {
 	ID               uuid.UUID  `json:"id"`
 	UserID           int32      `json:"user_id"`
-	ProjectID        *uuid.UUID `json:"project_id"`
+	NotebookID       *uuid.UUID `json:"notebook_id"`
 	EncryptedTitle   []byte     `json:"encrypted_title"`
 	EncryptedContent []byte     `json:"encrypted_content"`
 	Version          int32      `json:"version"`
@@ -32,7 +32,7 @@ type Note struct {
 	DeletedAt        *time.Time `json:"deleted_at"`
 }
 
-type Project struct {
+type Notebook struct {
 	ID               uuid.UUID  `json:"id"`
 	UserID           int32      `json:"user_id"`
 	EncryptedContent []byte     `json:"encrypted_content"`

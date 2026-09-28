@@ -11,7 +11,7 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
@@ -23,16 +23,16 @@ import 'package:mocktail/mocktail.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _TodaySelected extends SelectedProjectId {
+class _TodaySelected extends SelectedNotebookId {
   @override
-  String build() => todayProjectId;
+  String build() => todayNotebookId;
 }
 
 /// A date no test should collide with by accident: it is in the past and is
 /// not the day the suite happens to run.
 final _injected = DateTime(2026, 1, 14);
 
-Note _note(String id, {DateTime? dueDate, String? projectId = 'p1'}) => Note(
+Note _note(String id, {DateTime? dueDate, String? notebookId = 'p1'}) => Note(
   id: id,
   title: id,
   content: [
@@ -43,7 +43,7 @@ Note _note(String id, {DateTime? dueDate, String? projectId = 'p1'}) => Note(
   syncStatus: SyncStatus.synced,
   createdAt: DateTime(2026),
   updatedAt: DateTime(2026),
-  projectId: projectId,
+  notebookId: notebookId,
   dueDate: dueDate,
   priority: TaskPriority.medium,
 );
@@ -68,24 +68,24 @@ void main() {
       svc.getAllNotes,
     ).thenAnswer((_) async => Success<List<Note>, NotesFailure>(notes));
     when(
-      svc.getAllProjects,
-    ).thenAnswer((_) async => const Success<List<Project>, NotesFailure>([]));
+      svc.getAllNotebooks,
+    ).thenAnswer((_) async => const Success<List<Notebook>, NotesFailure>([]));
 
     final container = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
         currentDateProvider.overrideWithValue(clock),
-        selectedProjectIdProvider.overrideWith(_TodaySelected.new),
+        selectedNotebookIdProvider.overrideWith(_TodaySelected.new),
       ],
     );
     addTearDown(container.dispose);
 
-    expect(container.read(selectedProjectIdProvider), todayProjectId);
+    expect(container.read(selectedNotebookIdProvider), todayNotebookId);
 
-    // `notesProvider` is async and `projectNotesProvider` derives from it, so
+    // `notesProvider` is async and `notebookNotesProvider` derives from it, so
     // settle the load first rather than reading a provider off a cold graph.
     await container.read(notesProvider.future);
-    return container.read(projectNotesProvider);
+    return container.read(notebookNotesProvider);
   }
 
   test('a note due on the injected day is today', () async {

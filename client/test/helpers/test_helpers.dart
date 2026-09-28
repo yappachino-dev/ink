@@ -31,6 +31,6 @@ void registerTestFallbacks() {
   registerFallbackValue(VaultFixtures.buildKeySlot());
   registerFallbackValue(const KeySlotsCompanion());
   registerFallbackValue(const NotesCompanion());
-  registerFallbackValue(const ProjectsCompanion());
+  registerFallbackValue(const NotebooksCompanion());
   registerFallbackValue(const NoteConflictsCompanion());
 }

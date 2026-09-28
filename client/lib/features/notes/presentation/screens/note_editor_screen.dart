@@ -11,7 +11,7 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
-import 'package:ink/features/notes/domain/entities/project.dart';
+import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
 import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -19,14 +19,14 @@ import 'package:ink/features/notes/presentation/extensions/note_time_ui_extensio
 import 'package:ink/features/notes/presentation/extensions/task_priority_ui_extension.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/note_form_notifier.dart';
+import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
-import 'package:ink/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/note_by_id.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/quill_document.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/editor/meta_icon_button.dart';
+import 'package:ink/features/notes/presentation/widgets/pickers/notebook_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/priority_picker_sheet.dart';
-import 'package:ink/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,15 +66,16 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     _quillController = QuillController.basic();
 
     if (widget.noteId == null) {
-      final selectedProjectId = ref.read(selectedProjectIdProvider);
-      final projectId = switch (selectedProjectId) {
-        _ when isContentForwardLens(selectedProjectId) => null,
-        _ when selectedProjectId == todayProjectId => null,
-        _ => selectedProjectId,
+      final selectedNotebookId = ref.read(selectedNotebookIdProvider);
+      final notebookId = switch (selectedNotebookId) {
+        _ when isContentForwardLens(selectedNotebookId) => null,
+        _ when selectedNotebookId == todayNotebookId => null,
+        _ => selectedNotebookId,
       };
       _seedForm(
-        () =>
-            ref.read(noteFormProvider.notifier).initWith(projectId: projectId),
+        () => ref
+            .read(noteFormProvider.notifier)
+            .initWith(notebookId: notebookId),
       );
     }
   }
@@ -140,7 +141,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
               existing.copyWith(
                 title: title,
                 content: content,
-                projectId: state.projectId,
+                notebookId: state.notebookId,
                 dueDate: state.dueDate,
                 dueTime: state.dueTime?.toNoteTime(),
                 priority: state.priority,
@@ -156,7 +157,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
               NoteCreationPayload(
                 title: title,
                 content: content,
-                projectId: state.projectId,
+                notebookId: state.notebookId,
                 dueDate: state.dueDate,
                 dueTime: state.dueTime?.toNoteTime(),
                 priority: state.priority,
@@ -339,17 +340,17 @@ class _MetaActionBar extends ConsumerWidget {
     ref.read(noteFormProvider.notifier).updateDueFields(dueDate, dueTime);
   }
 
-  Future<void> _pickProject(
+  Future<void> _pickNotebook(
     BuildContext context,
     WidgetRef ref,
-    List<Project> projects,
+    List<Notebook> notebooks,
   ) async {
     await context.showAppBottomSheetLayout<void>(
-      child: ProjectPickerSheet(
-        projects: projects,
-        selectedProjectId: ref.read(noteFormProvider).projectId,
-        onSelected: (projectId) {
-          ref.read(noteFormProvider.notifier).updateProjectId(projectId);
+      child: NotebookPickerSheet(
+        notebooks: notebooks,
+        selectedNotebookId: ref.read(noteFormProvider).notebookId,
+        onSelected: (notebookId) {
+          ref.read(noteFormProvider.notifier).updateNotebookId(notebookId);
           Navigator.pop(context);
         },
       ),
@@ -382,7 +383,7 @@ class _MetaActionBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final projects = ref.watch(projectsProvider).value ?? [];
+    final notebooks = ref.watch(notebooksProvider).value ?? [];
     final state = ref.watch(noteFormProvider);
 
     return Center(
@@ -410,12 +411,12 @@ class _MetaActionBar extends ConsumerWidget {
           MetaIconButton(
             icon: Icons.folder_outlined,
             tooltip: t.note.notebook,
-            label: projectName(projects, state.projectId),
-            isActive: state.projectId != null,
-            onTap: () => _pickProject(context, ref, projects),
-            onClear: state.projectId != null
+            label: notebookName(notebooks, state.notebookId),
+            isActive: state.notebookId != null,
+            onTap: () => _pickNotebook(context, ref, notebooks),
+            onClear: state.notebookId != null
                 ? () =>
-                      ref.read(noteFormProvider.notifier).updateProjectId(null)
+                      ref.read(noteFormProvider.notifier).updateNotebookId(null)
                 : null,
           ),
 

@@ -19,7 +19,7 @@ extension ProtoNoteToEncrypted on pb.Note {
     updatedAt: updatedAt.toDateTime(),
     deletedAt: hasDeletedAt() ? deletedAt.toDateTime() : null,
 
-    projectId: hasProjectId() ? projectId : null,
+    notebookId: hasNotebookId() ? notebookId : null,
   );
 }
 
@@ -35,6 +35,6 @@ extension EncryptedNoteToProto on EncryptedNote {
     updatedAt: Timestamp.fromDateTime(updatedAt),
     deletedAt: deletedAt != null ? Timestamp.fromDateTime(deletedAt!) : null,
 
-    projectId: projectId,
+    notebookId: notebookId,
   );
 }

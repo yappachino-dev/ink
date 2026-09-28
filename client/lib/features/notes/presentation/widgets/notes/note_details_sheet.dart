@@ -92,7 +92,7 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
       }
     });
 
-    final projectName = ref.watch(selectedProjectTitleProvider);
+    final notebookName = ref.watch(selectedNotebookTitleProvider);
 
     return BottomSheetLayout(
       showDivider: true,
@@ -194,11 +194,11 @@ class _NoteDetailsSheetState extends ConsumerState<NoteDetailsSheet> {
           const SizedBox(height: AppSpacing.md),
         ],
 
-        if (projectName.isNotEmpty) ...[
+        if (notebookName.isNotEmpty) ...[
           _DetailSection(
             icon: Icons.folder_outlined,
             child: Text(
-              projectName,
+              notebookName,
               style: context.textTheme.bodyLarge?.copyWith(
                 color: context.colorScheme.onSurface,
               ),

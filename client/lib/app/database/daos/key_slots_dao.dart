@@ -28,7 +28,6 @@ class KeySlotsDao extends DatabaseAccessor<AppDatabase>
     keySlots,
   )..where((tbl) => tbl.syncStatus.equals(SyncStatus.modified.index))).get();
 
-  Future<void> deleteKeySlot(KeyType type) => (delete(
-    keySlots,
-  )..where((tbl) => tbl.type.equals(type.index))).go();
+  Future<void> deleteKeySlot(KeyType type) =>
+      (delete(keySlots)..where((tbl) => tbl.type.equals(type.index))).go();
 }

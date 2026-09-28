@@ -19,11 +19,11 @@ message SyncResponse {
 }
 
 message SyncChanges {
-  repeated Project projects = 1;
+  repeated Notebook notebooks = 1;
   repeated Note notes = 2;
 }
 
-message Project {
+message Notebook {
   string id = 1;
   bytes encrypted_content = 2;
   int32 version = 3;
@@ -34,7 +34,7 @@ message Project {
 
 message Note {
   string id = 1;
-  optional string project_id = 2;
+  optional string notebook_id = 2;
   bytes encrypted_title = 3;
   bytes encrypted_content = 4;
   int32 version = 5;

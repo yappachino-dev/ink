@@ -12,13 +12,9 @@ extension AppSnackBarExtension on BuildContext {
           content: Text(
             message,
             textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onError,
-            ),
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onError),
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.smRadius,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -33,13 +29,9 @@ extension AppSnackBarExtension on BuildContext {
           content: Text(
             message,
             textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
-            ),
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.smRadius,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -54,13 +46,9 @@ extension AppSnackBarExtension on BuildContext {
           content: Text(
             message,
             textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onPrimary,
-            ),
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimary),
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.smRadius,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
           duration: const Duration(seconds: 2),
         ),
       );

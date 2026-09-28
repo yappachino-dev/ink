@@ -24,14 +24,14 @@ func toDomain(pbReq *syncv1.SyncRequest) (SyncPayload, error) {
 	changes := SyncChanges{}
 
 	if pbReq.Changes != nil {
-		changes.Projects = make([]Project, 0, len(pbReq.Changes.Projects))
-		for _, p := range pbReq.Changes.Projects {
+		changes.Notebooks = make([]Notebook, 0, len(pbReq.Changes.Notebooks))
+		for _, p := range pbReq.Changes.Notebooks {
 			id, err := uuid.Parse(p.Id)
 			if err != nil {
-				return SyncPayload{}, fmt.Errorf("invalid project id %q: %w", p.Id, err)
+				return SyncPayload{}, fmt.Errorf("invalid notebook id %q: %w", p.Id, err)
 			}
 
-			changes.Projects = append(changes.Projects, Project{
+			changes.Notebooks = append(changes.Notebooks, Notebook{
 				ID:               id,
 				EncryptedContent: p.EncryptedContent,
 				Version:          int(p.Version),
@@ -49,17 +49,17 @@ func toDomain(pbReq *syncv1.SyncRequest) (SyncPayload, error) {
 			}
 
 			var pID *uuid.UUID
-			if n.ProjectId != nil {
-				parsed, err := uuid.Parse(*n.ProjectId)
+			if n.NotebookId != nil {
+				parsed, err := uuid.Parse(*n.NotebookId)
 				if err != nil {
-					return SyncPayload{}, fmt.Errorf("invalid project_id %q for note %q: %w", *n.ProjectId, n.Id, err)
+					return SyncPayload{}, fmt.Errorf("invalid notebook_id %q for note %q: %w", *n.NotebookId, n.Id, err)
 				}
 				pID = &parsed
 			}
 
 			changes.Notes = append(changes.Notes, Note{
 				ID:               id,
-				ProjectID:        pID,
+				NotebookID:        pID,
 				EncryptedTitle:   n.EncryptedTitle,
 				EncryptedContent: n.EncryptedContent,
 				Version:          int(n.Version),
@@ -86,9 +86,9 @@ func timeToPb(t time.Time) *timestamppb.Timestamp {
 }
 
 func toProto(result SyncResult) *syncv1.SyncResponse {
-	pbProjects := make([]*syncv1.Project, 0, len(result.Changes.Projects))
-	for _, p := range result.Changes.Projects {
-		pbProjects = append(pbProjects, &syncv1.Project{
+	pbNotebooks := make([]*syncv1.Notebook, 0, len(result.Changes.Notebooks))
+	for _, p := range result.Changes.Notebooks {
+		pbNotebooks = append(pbNotebooks, &syncv1.Notebook{
 			Id:               p.ID.String(),
 			EncryptedContent: p.EncryptedContent,
 			Version:          int32(p.Version),
@@ -100,15 +100,15 @@ func toProto(result SyncResult) *syncv1.SyncResponse {
 
 	pbNotes := make([]*syncv1.Note, 0, len(result.Changes.Notes))
 	for _, n := range result.Changes.Notes {
-		var projectIDStr *string
-		if n.ProjectID != nil {
-			str := n.ProjectID.String()
-			projectIDStr = &str
+		var notebookIDStr *string
+		if n.NotebookID != nil {
+			str := n.NotebookID.String()
+			notebookIDStr = &str
 		}
 
 		pbNotes = append(pbNotes, &syncv1.Note{
 			Id:               n.ID.String(),
-			ProjectId:        projectIDStr,
+			NotebookId:        notebookIDStr,
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
@@ -121,7 +121,7 @@ func toProto(result SyncResult) *syncv1.SyncResponse {
 	return &syncv1.SyncResponse{
 		NextCursor: int32(result.NextCursor),
 		Changes: &syncv1.SyncChanges{
-			Projects: pbProjects,
+			Notebooks: pbNotebooks,
 			Notes:    pbNotes,
 		},
 	}

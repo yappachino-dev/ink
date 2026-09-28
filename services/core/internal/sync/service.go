@@ -11,13 +11,13 @@ type SyncRepository interface {
 	GetUserCursor(ctx context.Context, userID int) (int, error)
 	GetUserCursorForUpdate(ctx context.Context, userID int) (int, error)
 	UpdateUserCursor(ctx context.Context, userID int, cursor int) error
-	UpsertProjects(ctx context.Context, userID int, syncSequence int, projects []Project) error
+	UpsertNotebooks(ctx context.Context, userID int, syncSequence int, notebooks []Notebook) error
 	UpsertNotes(ctx context.Context, userID int, syncSequence int, notes []Note) error
-	GetProjectChanges(ctx context.Context, userID int, cursor int) ([]Project, error)
+	GetNotebookChanges(ctx context.Context, userID int, cursor int) ([]Notebook, error)
 	GetNoteChanges(ctx context.Context, userID int, cursor int) ([]Note, error)
-	FindProjectIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
+	FindNotebookIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
 	FindNoteIDsOwnedByOtherUsers(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
-	FindProjectIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
+	FindNotebookIDsAvailableToUser(ctx context.Context, ids []uuid.UUID, userID int) ([]uuid.UUID, error)
 }
 
 type SyncService struct {
@@ -32,7 +32,7 @@ func NewSyncService(transactor database.Transactor, repo SyncRepository) *SyncSe
 func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (SyncResult, error) {
 	var newCursor int
 	var fetchedChanges SyncChanges
-	hasChanges := len(req.Changes.Projects) > 0 || len(req.Changes.Notes) > 0
+	hasChanges := len(req.Changes.Notebooks) > 0 || len(req.Changes.Notes) > 0
 
 	err := s.transactor.WithinTransaction(ctx, func(txCtx context.Context) error {
 		var currentCursor int
@@ -61,7 +61,7 @@ func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (Sy
 				return err
 			}
 
-			if err = s.repo.UpsertProjects(txCtx, userID, newCursor, req.Changes.Projects); err != nil {
+			if err = s.repo.UpsertNotebooks(txCtx, userID, newCursor, req.Changes.Notebooks); err != nil {
 				return err
 			}
 
@@ -70,7 +70,7 @@ func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (Sy
 			}
 		}
 
-		projects, err := s.repo.GetProjectChanges(txCtx, userID, req.ClientCursor)
+		notebooks, err := s.repo.GetNotebookChanges(txCtx, userID, req.ClientCursor)
 		if err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ func (s *SyncService) Sync(ctx context.Context, userID int, req SyncPayload) (Sy
 			return err
 		}
 
-		fetchedChanges = SyncChanges{Projects: projects, Notes: notes}
+		fetchedChanges = SyncChanges{Notebooks: notebooks, Notes: notes}
 
 		return nil
 	})
