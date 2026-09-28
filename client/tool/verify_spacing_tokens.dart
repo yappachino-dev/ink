@@ -34,6 +34,18 @@ const Map<String, int> _token = <String, int>{
   'xxl': 24,
   'xxxl': 32,
   'huge': 48,
+  // The `gap*` aliases are pre-built SizedBoxes, so a literal
+  // `SizedBox(height: 8)` becomes a bare `AppSpacing.gapSm` rather than a
+  // `SizedBox` wrapping a token. Without these entries such a conversion left
+  // `_sizeToken` with nothing to match, the counts came out unequal, and the
+  // file was reported as SKIPPED - i.e. the verifier silently stopped checking
+  // exactly the form the codebase prefers.
+  'gapXs': 4,
+  'gapSm': 8,
+  'gapMd': 12,
+  'gapLg': 16,
+  'gapXl': 20,
+  'gapXxl': 24,
 };
 
 /// Values that were never on the scale, and the nearest step each snaps to.
@@ -55,8 +67,12 @@ const Map<int, int> _snap = <int, int>{
 final RegExp _edgeCall = RegExp(r'EdgeInsets\.([a-zA-Z]+)\(([^()]*)\)');
 final RegExp _edgeToken = RegExp(r'AppSpacing\.(\w+)');
 final RegExp _edgeNumber = RegExp(r'(?<![\w.])([0-9]+)(?:\.[0-9]+)?(?![\w.])');
+
+/// Matches a size token in either spelling, in source order: wrapped in a
+/// `SizedBox`, or a bare `gap*` alias. The second group is null for the
+/// wrapped form.
 final RegExp _sizeToken = RegExp(
-  r'SizedBox\((?:height|width):\s*AppSpacing\.(\w+)\)',
+  r'SizedBox\((?:height|width):\s*AppSpacing\.(\w+)\)|AppSpacing\.(gap\w+)',
 );
 final RegExp _sizeNumber = RegExp(
   r'SizedBox\((?:height|width):\s*([0-9]+(?:\.[0-9]+)?)\)',
@@ -73,15 +89,38 @@ void main(List<String> args) {
   final problems = <String>[];
   final review = <String>[];
   var checked = 0;
+  var unresolvedBase = 0;
 
   for (final file in _dartFiles()) {
     final after = _read(head, file, '$prefix$file');
     if (!after.contains('AppSpacing')) continue;
     final before = _read(base, file, '$prefix$file');
-    if (before.isEmpty) continue;
+    // An empty `before` means either the file is new or the base ref could
+    // not be resolved. Those are different: a new file has nothing to compare,
+    // but a missing base means every file silently skipped and the run
+    // reported success across zero files, which reads as a clean pass.
+    if (before.isEmpty) {
+      unresolvedBase++;
+      continue;
+    }
     checked++;
     _collect(_checkSizeBoxes(file, before, after), problems, review);
     _collect(_checkEdgeInsets(file, before, after), problems, review);
+  }
+
+  if (checked == 0) {
+    stderr.writeln(
+      'Spacing verification checked 0 files: nothing was compared, so this is '
+      'not a pass.\n'
+      '  base: $base   head: $head\n'
+      '  $unresolvedBase file(s) mentioned AppSpacing but had no '
+      'readable version at the base.\n'
+      '  If the base ref is missing (a shallow clone, or a local branch '
+      'with no origin/main), pass one explicitly: '
+      'make check-spacing BASE=<ref>',
+    );
+    exitCode = 1;
+    return;
   }
 
   if (review.isNotEmpty) {
@@ -170,7 +209,10 @@ List<String> _checkSizeBoxes(String path, String before, String after) {
   }
 
   final old = _sizeNumber.allMatches(before).map((m) => m.group(1)!).toList();
-  final tokens = _sizeToken.allMatches(after).map((m) => m.group(1)!).toList();
+  final tokens = _sizeToken
+      .allMatches(after)
+      .map((m) => m.group(1) ?? m.group(2)!)
+      .toList();
   if (old.length != tokens.length) {
     final unpaired =
         '$path: SKIPPED - ${old.length} literal SizedBox values'

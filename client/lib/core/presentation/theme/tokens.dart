@@ -61,11 +61,41 @@ abstract final class AppSpacing {
   /// rather than gains it.
   static const double gutter = xl;
 
-  /// Standard screen edge padding used by scaffolds.
+  /// Standard screen edge padding used by screens that scroll to the edges.
+  ///
+  /// Horizontal only, and *not* what the scaffolds use: a scaffold has to clear
+  /// its own app bar, so its padding is [scaffold].
   static const EdgeInsets screen = EdgeInsets.symmetric(horizontal: gutter);
+
+  /// Content padding for a scaffold body: wider than [gutter] on the sides and
+  /// inset from the app bar.
+  ///
+  /// Four screens (three scaffolds plus the personalization sheet) each spelled
+  /// this same 24/20/24/24 out by hand, and the doc on [screen] claimed *they*
+  /// used it - so the token and the reality disagreed, and changing the gutter
+  /// would have silently missed every scaffold. One name, one value.
+  static const EdgeInsets scaffold = EdgeInsets.only(
+    left: xxl,
+    right: xxl,
+    top: xl,
+    bottom: xxl,
+  );
 
   /// Standard content padding for cards and sheets.
   static const EdgeInsets card = EdgeInsets.all(lg);
+
+  /// Content padding for a sheet that holds a full-width list of rows.
+  ///
+  /// The pickers (priority, project, notebook filter) each spelled this out;
+  /// they are the same three-line `EdgeInsets.only` in four files. It is wider
+  /// than the `BottomSheetLayout` default, which is what sheets without rows
+  /// still use.
+  static const EdgeInsets sheetRows = EdgeInsets.only(
+    left: xl,
+    right: xl,
+    top: md,
+    bottom: lg,
+  );
 
   /// A settings-style row: the app's most repeated container.
   static const EdgeInsets row = EdgeInsets.symmetric(
@@ -99,6 +129,13 @@ abstract final class AppAlpha {
 /// them read as a second, competing scale next to [AppSpacing] and [AppRadius].
 /// They are here now so there is one place to look.
 abstract final class AppSize {
+  /// The floating action button's diameter.
+  ///
+  /// Material's `kFloatingActionButtonSize`, named here because the app imports
+  /// the decoupled `material_ui` fork, which does not export it. The button and
+  /// the scroll clearance under it have to agree, so the number is stated once.
+  static const double fab = 56;
+
   /// Inline glyphs: meta row labels, badge marks.
   static const double iconSmall = 14;
 

@@ -19,6 +19,7 @@ import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/home_screen.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/notes_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
@@ -128,6 +129,59 @@ void main() {
       findsOneWidget,
       reason: 'the list should be scrolled to its end',
     );
+  });
+
+  testWidgets('the final notes can scroll clear of the floating button', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+
+    final service = _NotesServiceMock();
+    when(service.getAllNotes).thenAnswer((_) => _allNotes(_manyNotes(14)));
+    when(service.getAllProjects).thenAnswer(_allProjects);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          notesServiceProvider.overrideWithValue(service),
+          isOfflineProvider.overrideWithValue(false),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          selectedProjectIdProvider.overrideWith(_AllProjectsSelected.new),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light(InkPalette.forest),
+            routerConfig: _router(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -3000));
+    await tester.pumpAndSettle();
+
+    final fab = tester.getRect(find.byType(FloatingActionButton));
+
+    // The button is Positioned over the list rather than placed in a layout
+    // slot, so nothing reserves space for it. The clearance has to live inside
+    // the scrollable content - in the ListView's own padding, not around the
+    // viewport - or the last cards park underneath the button with their text
+    // and tap targets covered.
+    for (final label in ['Note number 1', 'Note number 2', 'Note number 3']) {
+      final card = tester.getRect(
+        find.ancestor(of: find.text(label), matching: find.byType(NoteCard)),
+      );
+      expect(
+        card.bottom,
+        lessThanOrEqualTo(fab.top + 0.5),
+        reason:
+            '"$label" ends at ${card.bottom} but the FAB starts at '
+            '${fab.top}, so the button is covering it',
+      );
+    }
   });
 }
 

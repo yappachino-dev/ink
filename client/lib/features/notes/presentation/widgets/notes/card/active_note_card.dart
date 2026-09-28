@@ -37,9 +37,24 @@ class ActiveNoteCard extends ConsumerWidget {
       note: note,
       child: Semantics(
         button: true,
-        label: note.title,
-        // A tappable row announced only as "button" told a screen reader user
-        // nothing about which note it was.
+        // No `label` on purpose. NoteCard already renders the title as a Text,
+        // so setting one merged with the descendant and every row announced as
+        // "My note, My note". The Text supplies the name, exactly once.
+        //
+        // Also no `container`, no `explicitChildNodes` and no explicit
+        // `onTap`, all three of which were tried. Each one splits the inner
+        // GestureDetector into a second node, leaving the row announced as a
+        // bare "button" - with or without a name - and the title one level
+        // below it. Left to merge, the row is a single node: isButton, one
+        // tap, and the title once.
+        //
+        // The checkbox stays a child of that node rather than a sibling. It
+        // keeps its own tap action and checked state, so it is still
+        // independently operable; only the grouping differs from what a
+        // screen reader would ideally hear. Making it a sibling means hoisting
+        // the checkbox out of NoteCard, which would split the single
+        // `showCompletion` flag into "lead with a checkbox" and "style
+        // completed titles" across every caller.
         child: GestureDetector(
           onTap: onTap,
           child: Container(

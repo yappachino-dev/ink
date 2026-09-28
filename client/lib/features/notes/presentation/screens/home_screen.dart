@@ -128,8 +128,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ),
 
           Positioned(
-            right: 16,
-            bottom: 16,
+            right: AppSpacing.gutter,
+            bottom: AppSpacing.gutter,
             child: AnimatedScale(
               scale: _isDrawerOpen ? 0.0 : 1.0,
               duration: AppDurations.base,
@@ -138,6 +138,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 opacity: _isDrawerOpen ? 0.0 : 1.0,
                 duration: AppDurations.base,
                 child: FloatingActionButton(
+                  // Its diameter is the framework default, which is what
+                  // [AppSize.fab] states for the list's scroll clearance.
+                  // This fork exposes no size parameter to pin it to, so if the
+                  // button is ever resized the clearance has to move with it.
                   onPressed: _isDrawerOpen ? null : _openAddTask,
                   backgroundColor: context.colorScheme.primary,
                   foregroundColor: context.colorScheme.surface,

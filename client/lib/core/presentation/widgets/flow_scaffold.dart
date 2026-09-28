@@ -8,12 +8,7 @@ class FlowScaffold extends StatelessWidget {
   const FlowScaffold({
     required this.body,
     this.showAppBar = true,
-    this.padding = const EdgeInsets.only(
-  left: AppSpacing.xxl,
-  right: AppSpacing.xxl,
-  top: AppSpacing.xl,
-  bottom: AppSpacing.xxl,
-),
+    this.padding = AppSpacing.scaffold,
     super.key,
   });
 

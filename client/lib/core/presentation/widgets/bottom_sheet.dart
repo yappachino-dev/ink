@@ -7,11 +7,11 @@ class BottomSheetLayout extends StatelessWidget {
     required this.children,
     this.header,
     this.padding = const EdgeInsets.only(
-  left: AppSpacing.lg,
-  right: AppSpacing.lg,
-  top: AppSpacing.md,
-  bottom: AppSpacing.lg,
-),
+      left: AppSpacing.lg,
+      right: AppSpacing.lg,
+      top: AppSpacing.md,
+      bottom: AppSpacing.lg,
+    ),
     this.padForKeyboard = false,
     this.showDivider = false,
     super.key,
@@ -38,7 +38,16 @@ class BottomSheetLayout extends StatelessWidget {
         top: false,
         child: SingleChildScrollView(
           padding: padding.add(EdgeInsets.only(bottom: bottomInset)),
-          child: Column(
+          // One ink surface for the whole sheet. The Container above paints a
+          // BoxDecoration and is not a Material, so every ListTile in every
+          // sheet that used this layout was without an ancestor to paint its
+          // splash into: no ripple, and a debug assert on some tiles. This was
+          // previously fixed one tile at a time, in the reminder sheet only,
+          // which left the priority, project, filter, view-mode and language
+          // sheets broken. Transparent so the Container's colour still shows.
+          child: Material(
+            type: MaterialType.transparency,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -51,6 +60,7 @@ class BottomSheetLayout extends StatelessWidget {
 
               ...children,
             ],
+            ),
           ),
         ),
       ),

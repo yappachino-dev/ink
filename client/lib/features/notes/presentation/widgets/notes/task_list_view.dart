@@ -81,6 +81,15 @@ class _ContentForwardList extends ConsumerWidget {
             );
           },
         ),
+
+        // See [_TaskForwardList]: clearance for the floating action button,
+        // which is Positioned over the list and reserves no space itself. It
+        // has to be a trailing sliver inside the scroll view, not an inset on
+        // the viewport wrapper, which would shrink the scrollable area and stop
+        // the list short of the navigation bar.
+        const SliverToBoxAdapter(
+          child: SizedBox(height: AppSize.fab + AppSpacing.xxl),
+        ),
       ],
     );
   }
@@ -142,6 +151,24 @@ class _TaskForwardList extends ConsumerWidget {
               ),
             ),
           ),
+
+        // Clearance for the floating action button, which is `Positioned` over
+        // this list rather than placed in a layout slot, so nothing reserves
+        // space for it. Without this the final card parks underneath the button
+        // with its text and tap target covered.
+        //
+        // A trailing sliver *inside* the scroll view, not a bottom inset on
+        // the viewport wrapper: an inset on the wrapper shrinks the scrollable
+        // area instead of adding room below the last card, and the list stops
+        // short of the navigation bar. That is the exact defect the sibling
+        // notes-bottom-clearance test prevents, so the two are in tension by
+        // design and this has to be the one that yields.
+        //
+        // Trailing rather than wrapping the active list, because the completed
+        // section renders after it and is what actually ends the scroll.
+        const SliverToBoxAdapter(
+          child: SizedBox(height: AppSize.fab + AppSpacing.xxl),
+        ),
       ],
     );
   }

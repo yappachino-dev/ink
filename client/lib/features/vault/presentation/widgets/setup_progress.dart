@@ -27,7 +27,15 @@ class SetupProgress extends StatelessWidget {
         : context.t.vault.progressRemaining(count: remaining);
 
     return Semantics(
-      label: context.t.vault.progressSemantic(current: step, total: total),
+      // Both labels, because excludeSemantics below drops the visible text and
+      // a semantic string of only "Step 2 of 4" silenced the remaining count
+      // entirely - a screen reader user was told where they were and never how
+      // much was left, which is the half that tells them whether to keep going.
+      label: context.t.vault.progressSemantic(
+        current: step,
+        total: total,
+        remaining: label,
+      ),
       excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

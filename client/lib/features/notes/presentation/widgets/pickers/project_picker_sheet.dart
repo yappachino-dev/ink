@@ -19,12 +19,7 @@ class ProjectPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomSheetLayout(
-      padding: const EdgeInsets.only(
-  left: AppSpacing.xl,
-  right: AppSpacing.xl,
-  top: AppSpacing.md,
-  bottom: AppSpacing.lg,
-),
+      padding: AppSpacing.sheetRows,
       header: Text(
         context.t.project.select,
         style: context.textTheme.titleLarge,

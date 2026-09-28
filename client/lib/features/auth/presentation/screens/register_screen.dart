@@ -15,8 +15,6 @@ import 'package:ink/features/auth/presentation/widgets/primary_button.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
-
-
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({required this.source, super.key});
 

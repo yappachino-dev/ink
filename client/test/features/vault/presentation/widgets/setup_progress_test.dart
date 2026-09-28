@@ -78,4 +78,38 @@ void main() {
     expect(node.label, contains('2'));
     expect(node.label, contains('4'));
   });
+
+  testWidgets('the semantic label carries the remaining count, not just the '
+      'position', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pump(tester, step: 2);
+
+    // The two visible labels are deliberately not announced as fragments, so
+    // the container's own label is the only thing a screen reader reaches. It
+    // used to be "Step 2 of 4" alone, which silently dropped "2 left" - the
+    // half that says whether to keep going.
+    final node = tester.getSemantics(find.byType(SetupProgress));
+    final spoken = node.label;
+
+    expect(
+      spoken,
+      contains(t.vault.progressStep(current: 2, total: 4)),
+      reason: 'the position must be announced',
+    );
+    expect(
+      spoken,
+      contains(t.vault.progressRemaining(count: 2)),
+      reason: 'the remaining count was being silenced entirely',
+    );
+    handle.dispose();
+  });
+
+  testWidgets('the last step announces that it is the last', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pump(tester, step: 4);
+
+    final spoken = tester.getSemantics(find.byType(SetupProgress)).label;
+    expect(spoken, contains(t.vault.progressLast));
+    handle.dispose();
+  });
 }

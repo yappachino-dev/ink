@@ -163,7 +163,7 @@
         "progressStep": "Step ${current} of ${total}",
         "progressRemaining": "${count} left",
         "progressLast": "Last step",
-        "progressSemantic": "Step ${current} of ${total}"
+        "progressSemantic": "Step ${current} of ${total}, ${remaining}"
     },
     "notes": {
         "emptyTitle": "No notes yet",

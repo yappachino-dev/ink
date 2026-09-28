@@ -168,8 +168,8 @@ class Translations$vault$en {
 	/// en: 'Last step'
 	String get progressLast => 'Last step';
 
-	/// en: 'Step ${current} of ${total}'
-	String progressSemantic({required Object current, required Object total}) => 'Step ${current} of ${total}';
+	/// en: 'Step ${current} of ${total}, ${remaining}'
+	String progressSemantic({required Object current, required Object total, required Object remaining}) => 'Step ${current} of ${total}, ${remaining}';
 }
 
 // Path: notes
@@ -1296,7 +1296,7 @@ extension on Translations {
 			'vault.progressStep' => ({required Object current, required Object total}) => 'Step ${current} of ${total}',
 			'vault.progressRemaining' => ({required Object count}) => '${count} left',
 			'vault.progressLast' => 'Last step',
-			'vault.progressSemantic' => ({required Object current, required Object total}) => 'Step ${current} of ${total}',
+			'vault.progressSemantic' => ({required Object current, required Object total, required Object remaining}) => 'Step ${current} of ${total}, ${remaining}',
 			'notes.emptyTitle' => 'No notes yet',
 			'notes.emptyBody' => 'Everything you write is encrypted on this device first.',
 			'notes.emptyByFilterTitle' => 'Nothing here',

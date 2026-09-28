@@ -15,8 +15,8 @@ import 'package:material_ui/material_ui.dart';
 /// pass the contrast bar on their own; only decorative ink (a checkmark on a
 /// badge) dims itself, and says so by asking for it.
 Color readableInkOn(Color background, {double dimAlpha = 1}) {
-  final blackRatio = _contrast(_black(dimAlpha), background);
-  final whiteRatio = _contrast(Colors.white, background);
+  final blackRatio = contrastRatio(_black(dimAlpha), background);
+  final whiteRatio = contrastRatio(Colors.white, background);
 
   return blackRatio >= whiteRatio ? _black(dimAlpha) : Colors.white;
 }
@@ -32,11 +32,3 @@ double contrastRatio(Color a, Color b) {
 
 Color _black(double alpha) =>
     alpha >= 1 ? Colors.black : Colors.black.withValues(alpha: alpha);
-
-double _contrast(Color foreground, Color background) {
-  final la = foreground.computeLuminance();
-  final lb = background.computeLuminance();
-  final lighter = la > lb ? la : lb;
-  final darker = la > lb ? lb : la;
-  return (lighter + 0.05) / (darker + 0.05);
-}

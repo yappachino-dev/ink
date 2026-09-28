@@ -9,13 +9,15 @@ class DayHeader extends ConsumerWidget {
   const DayHeader({super.key});
 
   void _step(BuildContext context, WidgetRef ref, int days) {
-    final next = selectedDateOf(ref).add(Duration(days: days));
+    // ref.read, not the ref.watch in [selectedDateOf]: this runs from an
+    // onPressed callback, not from build, so a watch here would re-subscribe
+    // on every tap and never dispose.
+    final next = ref
+        .read(calendarSelectedDateProvider)
+        .add(Duration(days: days));
     ref.read(calendarSelectedDateProvider.notifier).date = next;
     ref.read(calendarFocusedDateProvider.notifier).date = next;
   }
-
-  DateTime selectedDateOf(WidgetRef ref) =>
-      ref.watch(calendarSelectedDateProvider);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

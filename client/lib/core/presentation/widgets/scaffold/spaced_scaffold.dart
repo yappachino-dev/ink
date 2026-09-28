@@ -7,12 +7,7 @@ class SpacedScaffold extends StatelessWidget {
     required this.children,
     this.appBar,
     this.alignment = MainAxisAlignment.spaceBetween,
-    this.padding = const EdgeInsets.only(
-  left: AppSpacing.xxl,
-  right: AppSpacing.xxl,
-  top: AppSpacing.xl,
-  bottom: AppSpacing.xxl,
-),
+    this.padding = AppSpacing.scaffold,
     this.spacing = 24.0,
     super.key,
   });
