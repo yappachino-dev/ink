@@ -298,16 +298,17 @@ void main() {
     expect(written.map((n) => n.id).toList(), ['a', 'b', 'c']);
   });
 
-  group('checklist detection survives the sync path', () {
-    test('an unchecked item in a synced note is detected', () async {
+  group('derivation survives the sync path', () {
+    // A remote write arrives ciphertext-only, so this is the one place the
+    // derived cache is filled for a note the device never typed. Deriving it
+    // here is what stops the row from sitting at a stale version until the
+    // backfill happens to run.
+    test('a synced note is enriched before it is written', () async {
       when(() => decryptor.decrypt(any(), any())).thenAnswer(
         (_) async => _decrypted(
+          title: 'Synced title',
           content: [
-            {'insert': 'Milk\n'},
-            {
-              'insert': '\n',
-              'attributes': {'list': 'unchecked'},
-            },
+            {'insert': 'Synced body\n'},
           ],
         ),
       );
@@ -317,7 +318,9 @@ void main() {
       final written =
           verify(() => inner.applyRemoteNotes(captureAny())).captured.single
               as List<EncryptedNote>;
-      expect(written.single.metadata.hasUncompletedTasks, isTrue);
+      expect(written.single.metadata.titlePreview, 'Synced title');
+      expect(written.single.metadata.bodyPreview, 'Synced body');
+      expect(written.single.metadata.isCurrent, isTrue);
     });
   });
 }

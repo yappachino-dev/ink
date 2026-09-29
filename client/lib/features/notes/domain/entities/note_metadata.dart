@@ -19,7 +19,7 @@ const int notePreviewMaxLength = 300;
 /// `dueDate` and friends unqueryable on the client too, because they live
 /// inside the encrypted payload rather than in a column.
 ///
-/// These four columns are a local cache of facts already inside that payload.
+/// These three columns are a local cache of facts already inside that payload.
 /// They exist to make SQL filtering and previewing possible. They are not a
 /// second source of truth, and nothing that needs the real note may read them
 /// in its place.
@@ -28,7 +28,6 @@ sealed class NoteMetadata with _$NoteMetadata {
   const factory NoteMetadata({
     @Default('') String titlePreview,
     @Default('') String bodyPreview,
-    @Default(false) bool hasUncompletedTasks,
     DateTime? dueDateDay,
     @Default(noteMetadataVersion) int version,
   }) = _NoteMetadata;
@@ -63,7 +62,6 @@ abstract final class NoteMetadataDerivation {
   }) => NoteMetadata(
     titlePreview: title.trim(),
     bodyPreview: notePreviewText(content),
-    hasUncompletedTasks: _hasUncheckedChecklistItem(content),
     dueDateDay: _toDay(dueDate),
   );
 
@@ -74,29 +72,6 @@ abstract final class NoteMetadataDerivation {
   /// render without a preview.
   static NoteMetadata unreadable({required String title}) =>
       NoteMetadata(titlePreview: title.trim());
-
-  /// Whether any operation is an unchecked checklist item.
-  ///
-  /// Quill marks list items through `attributes.list`; `checked` and
-  /// `unchecked` are the two task-shaped values, distinct from `bullet` and
-  /// `ordered`.
-  ///
-  /// The checked value is the string `'unchecked'`.
-  ///
-  /// Always false for current data: the editor has no checklist support, so no
-  /// body can yet contain one. The column follows the D-1 decision — a task is
-  /// a projection over a note's checklist items, not a third entity — and
-  /// becomes meaningful the moment the editor can write one. Until then it
-  /// filters nothing, and must not be read as "this note is an unfinished
-  /// task": that is `!isCompleted`, a different question, and not stored here.
-  static bool _hasUncheckedChecklistItem(List<dynamic>? content) {
-    for (final op in usableNoteOps(content)) {
-      final attributes = op['attributes'];
-      if (attributes is! Map) continue;
-      if (attributes['list'] == 'unchecked') return true;
-    }
-    return false;
-  }
 
   /// Local midnight of the recorded day, or null.
   ///

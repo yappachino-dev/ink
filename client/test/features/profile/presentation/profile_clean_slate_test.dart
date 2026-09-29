@@ -94,9 +94,27 @@ void main() {
 
     expect(find.text(t.profile.settings.personalization), findsOneWidget);
     expect(find.text(t.profile.settings.appearance.title), findsOneWidget);
-    expect(find.text(t.profile.settings.dateTime), findsOneWidget);
-    expect(find.text(t.profile.settings.widgets), findsOneWidget);
     expect(find.text(t.profile.personal.logout), findsOneWidget);
+  });
+
+  testWidgets('the settings that did nothing are gone', (tester) async {
+    // "Date and time" persisted a timezone that nothing read: every timestamp
+    // went through the device zone, so it promised behaviour that did not
+    // exist. "Widgets" was worse - three switches over a hardcoded list of
+    // `enabled:` literals, so toggling one rebuilt the same value and the
+    // switch could not change anything even in memory.
+    //
+    // Both are asserted absent so that re-adding a setting with no consumer
+    // behind it fails here rather than shipping.
+    await pump(tester);
+
+    final tiles = tester
+        .widgetList<SettingsTile>(find.byType(SettingsTile))
+        .map((tile) => tile.title)
+        .toList();
+
+    expect(tiles, isNot(contains('Date and time')));
+    expect(tiles, isNot(contains('Widgets')));
   });
 
   group('the security card states what actually protects the notes', () {

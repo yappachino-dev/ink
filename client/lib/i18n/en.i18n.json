@@ -234,7 +234,7 @@
         "addDetails": "Add details...",
         "showDetails": "Show note details",
         "hideDetails": "Hide note details",
-        "notebook": "Note's notebook",
+        "notebook": "Notebook",
         "allNotebooks": "All notebooks",
         "delete": {
             "title": "Delete note?",
@@ -265,8 +265,7 @@
                 "other": "$n days"
             }
         },
-        "dueDate": "Due date",
-        "notebook": "Notebook"
+        "dueDate": "Due date"
     },
     "notebook": {
         "title": "My notebooks",
@@ -312,18 +311,7 @@
                 "light": "Light",
                 "dark": "Dark",
                 "system": "System"
-            },
-            "timezone": "Choose timezone",
-            "dateTime": "Date and time",
-            "widgets": "Widgets"
+            }
         }
-    },
-    "timezones": {
-        "utc": "UTC",
-        "london": "London (GMT)",
-        "warsaw": "Warsaw (CET)",
-        "newYork": "New York (ET)",
-        "losAngeles": "Los Angeles (PT)",
-        "tokyo": "Tokyo (JST)"
     }
 }

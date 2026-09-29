@@ -120,7 +120,6 @@ class NotesFixtures {
     SyncStatus? syncStatus,
     String? titlePreview,
     String? bodyPreview,
-    bool? hasUncompletedTasks,
     DateTime? dueDateDay,
     int? metadataVersion,
   }) {
@@ -130,7 +129,6 @@ class NotesFixtures {
       encryptedContent: defaultBytes,
       titlePreview: titlePreview ?? '',
       bodyPreview: bodyPreview ?? '',
-      hasUncompletedTasks: hasUncompletedTasks ?? false,
       dueDateDay: dueDateDay,
       metadataVersion: metadataVersion ?? noteMetadataVersion,
       localVersion: localVersion ?? 1,

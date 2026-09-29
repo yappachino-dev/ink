@@ -7,12 +7,9 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/auth/domain/auth_providers.dart';
 import 'package:ink/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:ink/features/profile/presentation/widgets/options/appearance_sheet.dart';
-import 'package:ink/features/profile/presentation/widgets/options/timezone_sheet.dart';
-import 'package:ink/features/profile/presentation/widgets/options/widgets_sheet.dart';
 import 'package:ink/features/profile/presentation/widgets/security_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_card.dart';
 import 'package:ink/features/profile/presentation/widgets/settings_tile.dart';
-import 'package:ink/features/profile/presentation/widgets/tile_divider.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -33,12 +30,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _openAppearance() =>
       context.showAppBottomSheetLayout<void>(child: const AppearanceSheet());
-
-  Future<void> _openTimezone() =>
-      context.showAppBottomSheetLayout<void>(child: const TimezoneSheet());
-
-  Future<void> _openWidgets() =>
-      context.showAppBottomSheetLayout<void>(child: const WidgetsSheet());
 
   @override
   Widget build(BuildContext context) {
@@ -75,22 +66,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   icon: Icons.dark_mode_outlined,
                   title: t.profile.settings.appearance.title,
                   onTap: _openAppearance,
-                ),
-
-                const TileDivider(),
-
-                SettingsTile(
-                  icon: Icons.access_time_outlined,
-                  title: t.profile.settings.dateTime,
-                  onTap: _openTimezone,
-                ),
-
-                const TileDivider(),
-
-                SettingsTile(
-                  icon: Icons.widgets_outlined,
-                  title: t.profile.settings.widgets,
-                  onTap: _openWidgets,
                 ),
               ],
             ),

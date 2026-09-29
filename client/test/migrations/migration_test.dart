@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/app/database/database.dart';
@@ -8,6 +9,7 @@ import 'schema_v1.dart' as v1;
 import 'schema_v2.dart' as v2;
 import 'schema_v3.dart' as v3;
 import 'schema_v4.dart' as v4;
+import 'schema_v5.dart' as v5;
 
 // Schema files under migrations/ are regenerated whenever the database schema
 // changes:
@@ -20,7 +22,20 @@ void main() {
   final verifier = SchemaVerifier(helper.GeneratedHelper());
   // The app's own target, so a schema bump does not silently leave these tests
   // validating against a version the app has moved past.
-  const currentVersion = 4;
+  //
+  // Bumping this by hand is a trap: the failure surfaces as a schema mismatch
+  // naming a column rather than as "you forgot to bump the version", which is
+  // close to unreadable. The test below pins it to the database instead.
+  const currentVersion = 5;
+
+  test('the migration target matches the database', () {
+    // `schemaVersion` is an instance getter, so this needs a throwaway handle.
+    // If this fails, `currentVersion` above is stale - do not "fix" the schema
+    // mismatch, fix the constant.
+    final db = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(db.close);
+    expect(db.schemaVersion, currentVersion);
+  });
 
   // The real MigrationStrategy always migrates to the current version, so an
   // upgrade from an old schema is validated against the newest one.
@@ -65,9 +80,10 @@ void main() {
 
     // Pre-existing data survived the upgrade.
     // Checked against the version we migrated to, not the one we came from: a
-    // v3 snapshot opened on a v4 database is itself a schema mismatch, and
-    // drift reports it as a missing upgrade strategy.
-    final checkDb = v4.DatabaseAtV4(schema.newConnection());
+    // snapshot opened on a newer database is itself a schema mismatch, and
+    // drift reports it as a missing upgrade strategy. Every post-migration
+    // assertion here therefore has to move up whenever `currentVersion` does.
+    final checkDb = v5.DatabaseAtV5(schema.newConnection());
     final rows = await checkDb
         .customSelect("SELECT encrypted_content FROM notes WHERE id = 'note_1'")
         .get();
@@ -94,13 +110,18 @@ void main() {
     await verifier.migrateAndValidate(db, currentVersion);
     await db.close();
 
-    final checkDb = v4.DatabaseAtV4(schema.newConnection());
+    final checkDb = v5.DatabaseAtV5(schema.newConnection());
 
     // The pre-existing row and its ciphertext survived untouched.
+    //
+    // `has_uncompleted_tasks` is not in this list. It is deliberately absent:
+    // the v3 step still creates it so a v2 database can pass through v3, and
+    // the v5 step drops it, so selecting it here is what would catch a v5 step
+    // that quietly stopped running.
     final rows = await checkDb
         .customSelect(
           'SELECT encrypted_content, title_preview, body_preview, '
-          'has_uncompleted_tasks, due_date_day, metadata_version '
+          'due_date_day, metadata_version '
           "FROM notes WHERE id = 'note_1'",
         )
         .get();
@@ -111,7 +132,6 @@ void main() {
     // query against them never has to guard for null.
     expect(rows.single.data['title_preview'], equals(''));
     expect(rows.single.data['body_preview'], equals(''));
-    expect(rows.single.data['has_uncompleted_tasks'], equals(0));
     expect(rows.single.data['due_date_day'], equals(null));
 
     // version 0 marks the row as not-yet-derived, which is how the backfill
@@ -197,4 +217,65 @@ void main() {
 
     await checkDb.close();
   });
+
+  test(
+    'v4 -> v5 drops has_uncompleted_tasks and keeps the note intact',
+    () async {
+      final schema = await verifier.schemaAt(4);
+      final titleBytes = Uint8List.fromList([1, 2, 3]);
+      final bodyBytes = Uint8List.fromList([4, 5, 6]);
+
+      // Seed in the v4 shape, with the column this migration removes carrying a
+      // non-default value. If the drop were done by rebuilding the table and
+      // forgetting to carry the encrypted columns over, the note would survive
+      // with a null body and the assertions below would catch it.
+      // Seeded at v4, not v5: the point is to start from the shape that still
+      // has the column, so the drop has something to remove.
+      final oldDb = v4.DatabaseAtV4(schema.newConnection());
+      await oldDb.customInsert(
+        'INSERT INTO notes (id, encrypted_title, encrypted_content, '
+        'title_preview, metadata_version, has_uncompleted_tasks) '
+        "VALUES (?, ?, ?, 'Kept preview', 1, 1)",
+        variables: [
+          Variable.withString('note_1'),
+          Variable.withBlob(titleBytes),
+          Variable.withBlob(bodyBytes),
+        ],
+      );
+      await oldDb.close();
+
+      final db = AppDatabase.forTesting(schema.newConnection());
+      await verifier.migrateAndValidate(db, currentVersion);
+      await db.close();
+
+      final checkDb = v5.DatabaseAtV5(schema.newConnection());
+
+      final columns = await checkDb.customSelect('SELECT * FROM notes').get();
+      expect(
+        columns.single.data.keys,
+        isNot(contains('has_uncompleted_tasks')),
+        reason: 'the column was removed, not merely left unused',
+      );
+
+      // The payload is the source of truth; the dropped column was only ever a
+      // derived mirror of it. Losing the column is safe, losing this is not.
+      final notes = await checkDb
+          .customSelect(
+            'SELECT encrypted_title, encrypted_content, title_preview '
+            'FROM notes WHERE id = ?',
+            variables: [Variable.withString('note_1')],
+          )
+          .get();
+      expect(notes, hasLength(1));
+      expect(notes.single.data['encrypted_title'], equals(titleBytes));
+      expect(notes.single.data['encrypted_content'], equals(bodyBytes));
+
+      // The sibling cache columns are untouched by the drop. Asserting one
+      // specifically is what distinguishes "dropped one column" from "rebuilt
+      // the table and lost the rest of the row".
+      expect(notes.single.data['title_preview'], equals('Kept preview'));
+
+      await checkDb.close();
+    },
+  );
 }
