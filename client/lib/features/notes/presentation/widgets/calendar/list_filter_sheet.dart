@@ -13,6 +13,23 @@ const _allNotebooksIcon = 'book';
 
 class ListFilterSheet extends ConsumerWidget {
   const ListFilterSheet({super.key});
+
+  /// Applies [notebookId] and closes the sheet.
+  ///
+  /// Single-select with instant apply: one value, a radio-style check mark,
+  /// and the write happens on tap. That makes this a value *picker*, not a
+  /// multi-select filter, and a picker dismisses on selection - the result is
+  /// behind the sheet, and on a phone the only feedback a user got was a check
+  /// mark below the fold. Keeping it open would only matter if several values
+  /// could be toggled at once, which one `selectedNotebookId` cannot express.
+  ///
+  /// Uniform across every row, including All notes: a picker that closes for
+  /// some rows and not others is worse than either behaviour.
+  void _select(BuildContext context, WidgetRef ref, String notebookId) {
+    ref.read(selectedNotebookIdProvider.notifier).id = notebookId;
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notebooks = ref.watch(notebooksProvider).value ?? [];
@@ -28,8 +45,7 @@ class ListFilterSheet extends ConsumerWidget {
           title: context.t.note.allNotebooks,
           icon: _allNotebooksIcon,
           isSelected: selectedNotebookId == allNotebooksId,
-          onTap: () =>
-              ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId,
+          onTap: () => _select(context, ref, allNotebooksId),
         ),
         if (notebooks.isNotEmpty) const Divider(),
         ...notebooks.map(
@@ -37,8 +53,7 @@ class ListFilterSheet extends ConsumerWidget {
             title: notebook.title,
             icon: notebook.emoji,
             isSelected: selectedNotebookId == notebook.id,
-            onTap: () =>
-                ref.read(selectedNotebookIdProvider.notifier).id = notebook.id,
+            onTap: () => _select(context, ref, notebook.id),
           ),
         ),
       ],

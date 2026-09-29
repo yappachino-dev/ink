@@ -363,6 +363,11 @@ class Translations$note$en {
 
 	/// en: 'Due date'
 	String get dueDate => 'Due date';
+
+	late final Translations$note$unreadableContent$en unreadableContent = Translations$note$unreadableContent$en.internal(_root);
+
+	/// en: 'Clear notebook filter'
+	String get clearNotebookFilter => 'Clear notebook filter';
 }
 
 // Path: notebook
@@ -720,6 +725,31 @@ class Translations$note$reminder$en {
 		one: '1 day',
 		other: '${n} days',
 	);
+}
+
+// Path: note.unreadableContent
+class Translations$note$unreadableContent$en {
+	Translations$note$unreadableContent$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Some content could not be displayed'
+	String get title => 'Some content could not be displayed';
+
+	/// en: '(zero) {This note has $n items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.} (one) {This note has $n item that this app cannot read. It is still in the encrypted data, but saving will discard it permanently.} (other) {This note has $n items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.}'
+	String body({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.',
+		one: 'This note has ${n} item that this app cannot read. It is still in the encrypted data, but saving will discard it permanently.',
+		other: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.',
+	);
+
+	/// en: 'Discard and save'
+	String get discard => 'Discard and save';
+
+	/// en: 'Keep editing'
+	String get keep => 'Keep editing';
 }
 
 // Path: notebook.delete
@@ -1330,6 +1360,11 @@ extension on Translations {
 			'note.reminder.hours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '${n} hours', ), 
 			'note.reminder.days' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '${n} days', ), 
 			'note.dueDate' => 'Due date',
+			'note.unreadableContent.title' => 'Some content could not be displayed',
+			'note.unreadableContent.body' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.', one: 'This note has ${n} item that this app cannot read. It is still in the encrypted data, but saving will discard it permanently.', other: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.', ), 
+			'note.unreadableContent.discard' => 'Discard and save',
+			'note.unreadableContent.keep' => 'Keep editing',
+			'note.clearNotebookFilter' => 'Clear notebook filter',
 			'notebook.title' => 'My notebooks',
 			'notebook.select' => 'Select a notebook',
 			'notebook.none' => 'No notebook',

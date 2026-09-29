@@ -150,6 +150,19 @@ abstract final class AppSize {
   /// Default glyph size for list rows and settings tiles.
   static const double iconMedium = 20;
 
+  /// Minimum width and height of an interactive target.
+  ///
+  /// Material's floor, and Apple's is 44, so 48 is the safe common value. A
+  /// glyph alone is not a target: a 14px icon in 6px of padding is about 28,
+  /// which is below the floor and narrow enough that a miss lands on whatever
+  /// is next to it - and "what is next to it" is usually a second action on the
+  /// same control.
+  ///
+  /// This is not the same rule as the editor's compact meta buttons at 30px.
+  /// Those sit inside a dense toolbar row at the bottom of the screen and were
+  /// a deliberate trade; a control in an app bar is not in that position.
+  static const double touchTarget = 48;
+
   /// Prominent standalone glyphs.
   static const double iconLarge = 24;
 
