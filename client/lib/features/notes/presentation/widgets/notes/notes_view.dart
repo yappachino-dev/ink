@@ -3,8 +3,8 @@ import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/notes_list.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/notes_view_state.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -33,7 +33,7 @@ class NotesView extends ConsumerWidget {
         error: error,
         onRetry: onRetry ?? () => ref.invalidate(notesProvider),
       ),
-      NotesViewContent() => TaskListView(
+      NotesViewContent() => NotesList(
         key: ValueKey('list-${ref.watch(selectedNotebookIdProvider)}'),
         title: ref.watch(selectedNotebookTitleProvider),
       ),

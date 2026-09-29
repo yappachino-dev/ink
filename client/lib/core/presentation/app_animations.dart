@@ -15,6 +15,11 @@ abstract final class AppDurations {
   /// Emphasized transitions (progress reveals).
   static const Duration slow = Duration(milliseconds: 350);
 
+  /// How long a snack bar stays up. Long enough to read a failure message,
+  /// which is the only thing these are ever used for, and no longer: a snack
+  /// bar is a report, not a notification to sit with.
+  static const Duration snackBar = Duration(seconds: 2);
+
   /// Full-screen dramatic sequences only (e.g. fatal/intro screen).
   static const Duration dramatic = Duration(milliseconds: 1200);
 }

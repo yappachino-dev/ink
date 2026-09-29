@@ -194,7 +194,7 @@ void main() {
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
-              home: Scaffold(
+              home: const Scaffold(
                 body: DrawerVirtualNotebookItem(
                   id: todayNotebookId,
                   count: null,

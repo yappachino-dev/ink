@@ -75,11 +75,15 @@ class _BottomSheetLayoutDragHandle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 40,
-        height: 4,
+        width: AppSize.sheetHandleWidth,
+        height: AppSize.sheetHandleHeight,
         decoration: BoxDecoration(
           color: context.theme.dividerColor,
-          borderRadius: BorderRadius.circular(2),
+          // `xsRadius` rather than a literal 2. The radius scale bottoms out at
+          // 4, which is this handle's height, so the ends come out fully
+          // rounded - the conventional drag handle - instead of the near-square
+          // bar the 2 produced.
+          borderRadius: AppRadius.xsRadius,
         ),
       ),
     );

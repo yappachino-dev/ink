@@ -61,7 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
-  Future<void> _openAddTask() => const NoteNewRoute().push<void>(context);
+  Future<void> _openNewNote() => const NoteNewRoute().push<void>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         child: AnimatedOpacity(
           opacity: _isDrawerOpen ? 0.0 : 1.0,
           duration: AppDurations.base,
-          child: AppFab(onPressed: _isDrawerOpen ? null : _openAddTask),
+          child: AppFab(onPressed: _isDrawerOpen ? null : _openNewNote),
         ),
       ),
     );

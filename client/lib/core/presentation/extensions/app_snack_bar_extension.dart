@@ -1,3 +1,4 @@
+import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:material_ui/material_ui.dart';
@@ -15,7 +16,7 @@ extension AppSnackBarExtension on BuildContext {
             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onError),
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
-          duration: const Duration(seconds: 2),
+          duration: AppDurations.snackBar,
         ),
       );
   }
@@ -32,7 +33,7 @@ extension AppSnackBarExtension on BuildContext {
             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
-          duration: const Duration(seconds: 2),
+          duration: AppDurations.snackBar,
         ),
       );
   }
@@ -49,7 +50,7 @@ extension AppSnackBarExtension on BuildContext {
             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimary),
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.smRadius),
-          duration: const Duration(seconds: 2),
+          duration: AppDurations.snackBar,
         ),
       );
   }
