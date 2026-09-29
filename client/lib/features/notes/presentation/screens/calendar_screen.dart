@@ -48,6 +48,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Future<void> _openAddTaskSheet() => const NoteNewRoute().push<void>(context);
 
+  /// Drops the notebook filter and returns to the All notes lens.
+  ///
+  /// Clears to `allNotebooksId` rather than to null, because that is the id
+  /// the rest of the app still treats as "no filter". A `todayNotebookId` lens
+  /// is included: the pill's x means "stop filtering", and a due-date lens is a
+  /// filter too, so leaving it applied would make the x look inert.
+  void _clearFilter() {
+    ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
+  }
+
   @override
   Widget build(BuildContext context) {
     final allLists = ref.watch(notebooksProvider).value ?? [];
@@ -87,65 +97,109 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
                       // Always rendered. This used to be hidden when no
                       // notebook filter was applied, on the assumption that the
-                      // app never started in the unfiltered state — which was
+                      // app never started in the unfiltered state - which was
                       // true only because the default lens was Today. Now that
                       // All notes is the landing view, hiding it made the
                       // notebook filter unreachable: the guard wrapped the tap
                       // target, not just the styling. It also left
                       // [_filterLabel]'s unfiltered branch unreachable, so
                       // "Filter" was a string the user could never see.
-                      // Was a bare GestureDetector: no focus, no ripple, and
-                      // no semantic role, so a screen reader saw an unlabelled
-                      // box where the only way to change the notebook filter
-                      // lived.
-                      Semantics(
-                        button: true,
-                        label: filterLabel,
-                        excludeSemantics: true,
-                        child: InkWell(
-                          onTap: _openFilterSheet,
+                      //
+                      // Two sibling nodes, not one node with a decoration.
+                      //
+                      // The x used to be an Icon inside the same InkWell as the
+                      // label, so tapping it opened the picker rather than
+                      // clearing the filter - the opposite of what an x means
+                      // on a chip anywhere else. It was also nested under
+                      // `excludeSemantics: true`, so a screen reader was told
+                      // there was one button and had no way to learn that half
+                      // of it did something else.
+                      //
+                      // Each region is therefore its own InkWell with its own
+                      // Semantics label, and the shared pill decoration is
+                      // carried by the Container around both. The label region
+                      // keeps `excludeSemantics` so the Text does not announce
+                      // itself twice alongside the button's label.
+                      // `Material`, not `Container`. The border is rounded but
+                      // nothing clipped the ink, so the ripple from the label
+                      // ran square over the rounded corners, and the x's
+                      // ripple did it on the right-hand edge where the
+                      // rounding is most visible. `clipBehavior` is what fixes
+                      // it; a `BorderRadius` on a decoration alone does not
+                      // clip.
+                      Material(
+                        color: isFilterActive
+                            ? context.ink.highlight
+                            : Colors.transparent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: AppRadius.lgRadius,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isFilterActive
-                                  ? context.ink.highlight
-                                  : Colors.transparent,
-                              borderRadius: AppRadius.lgRadius,
-                              border: Border.all(
-                                color: isFilterActive
-                                    ? context.colorScheme.primary
-                                    : context.colorScheme.outlineVariant,
+                          side: BorderSide(
+                            color: isFilterActive
+                                ? context.colorScheme.primary
+                                : context.colorScheme.outlineVariant,
+                          ),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Semantics(
+                              button: true,
+                              label: filterLabel,
+                              excludeSemantics: true,
+                              child: InkWell(
+                                onTap: _openFilterSheet,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  child: Text(
+                                    filterLabel,
+                                    style: context.textTheme.labelMedium
+                                        ?.copyWith(
+                                          color: isFilterActive
+                                              ? context.colorScheme.primary
+                                              : context
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                        ),
+                                  ),
+                                ),
                               ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  filterLabel,
-                                  style: context.textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: isFilterActive
-                                            ? context.colorScheme.primary
-                                            : context
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                      ),
+                            if (isFilterActive)
+                              // A 16dp icon in 6dp of padding is a ~28dp
+                              // target: below the 48dp Material floor and
+                              // narrow enough that a miss lands on the label
+                              // and opens the picker instead, which is the
+                              // defect this replaced. The height is what makes
+                              // the pill readable as a control; the width keeps
+                              // the x from crowding the label.
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  minWidth: AppSize.touchTarget,
+                                  minHeight: AppSize.touchTarget,
                                 ),
-                                if (isFilterActive) ...[
-                                  const SizedBox(width: AppSpacing.xs),
-                                  Icon(
-                                    Icons.close,
-                                    size: AppSize.iconSmall,
-                                    color: context.colorScheme.primary,
+                                child: Semantics(
+                                  button: true,
+                                  label: context.t.note.clearNotebookFilter,
+                                  child: InkWell(
+                                    onTap: _clearFilter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.sm,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: AppSize.iconSmall,
+                                        color: context.colorScheme.primary,
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ],
-                            ),
-                          ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       Row(

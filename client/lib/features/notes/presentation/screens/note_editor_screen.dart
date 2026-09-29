@@ -58,6 +58,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   String? _seededId;
   bool _formSeeded = false;
 
+  /// Operations the editor could not load, and so would drop on the next save.
+  ///
+  /// Counted once, when the note is seeded, because that is the only point
+  /// where the original content exists. The editor document is built from the
+  /// *filtered* delta, so by the time the user types there is nothing left to
+  /// count.
+  int _unreadableOps = 0;
+
   @override
   void initState() {
     super.initState();
@@ -99,12 +107,24 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     if (_seededId == note.id) return;
     _seededId = note.id;
 
+    final unreadable = unreadableNoteOpCount(note.content);
     final wasEmpty = _quillController.document.length == 0;
-    _quillController.dispose();
-    _quillController = QuillController(
-      document: parseQuillDocument(note.content),
-      selection: const TextSelection.collapsed(offset: 0),
-    );
+
+    // Assigned rather than disposed-and-rebuilt. Recreating the controller
+    // dropped every listener bound to the old instance - the toolbar's, the
+    // editor's - and reset the selection, so a note that arrived after the
+    // first frame could lose the cursor. Worse, disposing during `build`
+    // releases a controller the rendered tree still holds, which is a
+    // use-after-dispose the moment anything touches it before the next frame.
+    //
+    // `QuillController.document` has a setter that swaps the document, resets
+    // the selection and calls `notifyListeners()`, so the rebuild is visible to
+    // the widgets already holding this controller.
+    _quillController.document = parseQuillDocument(note.content);
+
+    if (unreadable != _unreadableOps) {
+      setState(() => _unreadableOps = unreadable);
+    }
     if (wasEmpty) {
       _seedForm(
         () => ref.read(noteFormProvider.notifier).initWithExisting(note),
@@ -128,6 +148,53 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     final title = noteTitleFromContent(content);
     if (title.isEmpty) return;
 
+    unawaited(_confirmDiscardThenSave(content, title));
+  }
+
+  /// Saves, having first asked about content the editor had to drop.
+  ///
+  /// This is the only thing standing between a malformed note and silent data
+  /// loss. [content] is already the *filtered* delta by this point, so saving
+  /// it overwrites the note with the readable remainder and the dropped
+  /// operations are gone from the only copy. The note still decrypts, which is
+  /// the recovery route: fix whatever produced the malformed delta, re-sync,
+  /// and the operations are back. That is worth a dialog, because a user who
+  /// never sees the warning has no way to know a save was destructive.
+  Future<void> _confirmDiscardThenSave(
+    List<dynamic> content,
+    String title,
+  ) async {
+    if (_unreadableOps > 0) {
+      final t = context.t;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(t.note.unreadableContent.title),
+          content: Text(t.note.unreadableContent.body(n: _unreadableOps)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(t.note.unreadableContent.keep),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(t.note.unreadableContent.discard),
+            ),
+          ],
+        ),
+      );
+      // Null covers the back button and a tap outside the barrier. Both mean
+      // "not now", which is the same answer as choosing to keep editing. There
+      // is no "already agreed" flag to check: a successful save pops this
+      // screen, so there is no second save to suppress a prompt for.
+      if (confirmed != true) return;
+    }
+
+    if (!mounted) return;
+    _writeNote(content, title);
+  }
+
+  void _writeNote(List<dynamic> content, String title) {
     final state = ref.read(noteFormProvider);
     final existing = widget.noteId == null
         ? null
@@ -225,9 +292,19 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
             child: SafeArea(
               top: false,
               bottom: false,
-              child: _EditorSurface(
-                quillController: _quillController,
-                focusNode: _editorFocus,
+              child: Column(
+                children: [
+                  if (_unreadableOps > 0) ...[
+                    _UnreadableContentBanner(count: _unreadableOps),
+                    const SizedBox(height: AppSpacing.sm),
+                  ],
+                  Expanded(
+                    child: _EditorSurface(
+                      quillController: _quillController,
+                      focusNode: _editorFocus,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -235,6 +312,51 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           // you are formatting.
           _QuillToolbar(quillController: _quillController),
         ],
+      ),
+    );
+  }
+}
+
+class _UnreadableContentBanner extends StatelessWidget {
+  const _UnreadableContentBanner({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.t;
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: context.ink.container,
+          borderRadius: AppRadius.mdRadius,
+          border: Border.all(color: context.colorScheme.outlineVariant),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              size: AppSize.iconSmall,
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                t.note.unreadableContent.body(n: count),
+                style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

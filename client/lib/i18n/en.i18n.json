@@ -265,7 +265,18 @@
                 "other": "$n days"
             }
         },
-        "dueDate": "Due date"
+        "dueDate": "Due date",
+        "unreadableContent": {
+            "title": "Some content could not be displayed",
+            "body": {
+                "zero": "This note has $n items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.",
+                "one": "This note has $n item that this app cannot read. It is still in the encrypted data, but saving will discard it permanently.",
+                "other": "This note has $n items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently."
+            },
+            "discard": "Discard and save",
+            "keep": "Keep editing"
+        },
+        "clearNotebookFilter": "Clear notebook filter"
     },
     "notebook": {
         "title": "My notebooks",

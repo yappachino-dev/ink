@@ -118,6 +118,33 @@ List<Object?> normalizeNoteDelta(List<dynamic>? content) {
   return ops;
 }
 
+/// How many operations [usableNoteOps] would discard from [content].
+///
+/// The counterpart to that function, for callers that need to *tell* the user
+/// rather than silently repair. Opening a note runs it through the filter, and
+/// the editor saves the filtered result, so a note with unreadable operations
+/// loses them on the first save with nothing said. That is recoverable - the
+/// payload still decrypts, and only the delta is malformed - which is exactly
+/// why it should be the user's decision to overwrite and not a default.
+///
+/// Counts non-`Map` entries, and maps whose `insert` is neither text nor an
+/// embedded object. An entry with non-string keys is still counted as usable,
+/// matching [usableNoteOps], which re-keys it rather than dropping it.
+int unreadableNoteOpCount(List<dynamic>? content) {
+  if (content is! List) return 0;
+
+  var dropped = 0;
+  for (final op in content) {
+    if (op is! Map) {
+      dropped++;
+      continue;
+    }
+    final insert = op['insert'];
+    if (insert is! String && insert is! Map) dropped++;
+  }
+  return dropped;
+}
+
 /// The note's title: the first non-empty line of the document (D-2).
 ///
 /// Accumulates across operations rather than stopping at the first one, because
