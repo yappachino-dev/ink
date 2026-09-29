@@ -3,8 +3,15 @@ package auth
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"time"
 )
+
+// How long the reuse-detection revocation may run once it is detached from the
+// request. It is a single indexed UPDATE that revokes one user's sessions, so
+// this is a backstop against a wedged connection pool rather than a budget for
+// real work.
+const reuseRevokeTimeout = 2 * time.Second
 
 type UserRepository interface {
 	Create(ctx context.Context, user *User) error
@@ -155,7 +162,7 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string,
 		// Reuse of a revoked token means it likely leaked: revoke every
 		// session of the owner as standard refresh-token reuse detection.
 		if storedToken != nil {
-			_ = s.refreshTokenRepo.RevokeAllByUserID(ctx, storedToken.UserID)
+			s.revokeAllOnReuse(ctx, storedToken.UserID)
 		}
 		return "", "", ErrRevokedRefreshToken
 	}
@@ -187,11 +194,40 @@ func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (string,
 	if !rotated {
 		// Another request may have rotated this token between validation and
 		// the atomic update. Treat it as reuse and invalidate every session.
-		_ = s.refreshTokenRepo.RevokeAllByUserID(ctx, storedToken.UserID)
+		s.revokeAllOnReuse(ctx, storedToken.UserID)
 		return "", "", ErrRevokedRefreshToken
 	}
 
 	return accessToken, refreshToken, nil
+}
+
+// revokeAllOnReuse kills every session of a user whose refresh token was
+// replayed, which is the whole point of reuse detection.
+//
+// It deliberately does not use the request context. By the time this runs the
+// request has already been answered - `ByHash` returned, or `Rotate` reported a
+// lost race - so the client may already be gone, and a cancelled context would
+// abort the UPDATE and leave the stolen token's family alive. That is the
+// likeliest way this silently failed: a mobile client on a flaky network drops
+// mid-refresh, which is exactly when a replay is most plausible. Detaching
+// costs nothing when the request is healthy and is the difference between
+// containing a leak and not when it is not.
+//
+// A failure here is logged and not returned. The caller is denied either way -
+// the token they presented is already revoked - so surfacing an infrastructure
+// error instead would tell a caller holding a stolen credential more about our
+// internals without protecting anything.
+func (s *AuthService) revokeAllOnReuse(ctx context.Context, userID int) {
+	detached, cancel := context.WithTimeout(context.WithoutCancel(ctx), reuseRevokeTimeout)
+	defer cancel()
+
+	if err := s.refreshTokenRepo.RevokeAllByUserID(detached, userID); err != nil {
+		slog.Error(
+			"refresh token reuse detected but session revocation failed",
+			"userID", userID,
+			"error", err,
+		)
+	}
 }
 
 func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
