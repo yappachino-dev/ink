@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteMetadata {
 
- String get titlePreview; String get bodyPreview; bool get hasUncompletedTasks; DateTime? get dueDateDay; int get version;
+ String get titlePreview; String get bodyPreview; DateTime? get dueDateDay; int get version;
 /// Create a copy of NoteMetadata
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $NoteMetadataCopyWith<NoteMetadata> get copyWith => _$NoteMetadataCopyWithImpl<N
 @override
 bool operator ==(Object other) {
   final _this = this as NoteMetadata;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteMetadata&&(identical(other.titlePreview, _this.titlePreview) || other.titlePreview == _this.titlePreview)&&(identical(other.bodyPreview, _this.bodyPreview) || other.bodyPreview == _this.bodyPreview)&&(identical(other.hasUncompletedTasks, _this.hasUncompletedTasks) || other.hasUncompletedTasks == _this.hasUncompletedTasks)&&(identical(other.dueDateDay, _this.dueDateDay) || other.dueDateDay == _this.dueDateDay)&&(identical(other.version, _this.version) || other.version == _this.version));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NoteMetadata&&(identical(other.titlePreview, _this.titlePreview) || other.titlePreview == _this.titlePreview)&&(identical(other.bodyPreview, _this.bodyPreview) || other.bodyPreview == _this.bodyPreview)&&(identical(other.dueDateDay, _this.dueDateDay) || other.dueDateDay == _this.dueDateDay)&&(identical(other.version, _this.version) || other.version == _this.version));
 }
 
 
 @override
 int get hashCode {
   final _this = this as NoteMetadata;
-  return Object.hash(runtimeType,_this.titlePreview,_this.bodyPreview,_this.hasUncompletedTasks,_this.dueDateDay,_this.version);
+  return Object.hash(runtimeType,_this.titlePreview,_this.bodyPreview,_this.dueDateDay,_this.version);
 }
 
 @override
 String toString() {
   final _this = this as NoteMetadata;
-  return 'NoteMetadata(titlePreview: ${_this.titlePreview}, bodyPreview: ${_this.bodyPreview}, hasUncompletedTasks: ${_this.hasUncompletedTasks}, dueDateDay: ${_this.dueDateDay}, version: ${_this.version})';
+  return 'NoteMetadata(titlePreview: ${_this.titlePreview}, bodyPreview: ${_this.bodyPreview}, dueDateDay: ${_this.dueDateDay}, version: ${_this.version})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $NoteMetadataCopyWith<$Res>  {
   factory $NoteMetadataCopyWith(NoteMetadata value, $Res Function(NoteMetadata) _then) = _$NoteMetadataCopyWithImpl;
 @useResult
 $Res call({
- String titlePreview, String bodyPreview, bool hasUncompletedTasks, DateTime? dueDateDay, int version
+ String titlePreview, String bodyPreview, DateTime? dueDateDay, int version
 });
 
 
@@ -68,12 +68,11 @@ class _$NoteMetadataCopyWithImpl<$Res>
 
 /// Create a copy of NoteMetadata
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? titlePreview = null,Object? bodyPreview = null,Object? hasUncompletedTasks = null,Object? dueDateDay = freezed,Object? version = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? titlePreview = null,Object? bodyPreview = null,Object? dueDateDay = freezed,Object? version = null,}) {
   return _then(NoteMetadata(
 titlePreview: null == titlePreview ? _self.titlePreview : titlePreview // ignore: cast_nullable_to_non_nullable
 as String,bodyPreview: null == bodyPreview ? _self.bodyPreview : bodyPreview // ignore: cast_nullable_to_non_nullable
-as String,hasUncompletedTasks: null == hasUncompletedTasks ? _self.hasUncompletedTasks : hasUncompletedTasks // ignore: cast_nullable_to_non_nullable
-as bool,dueDateDay: freezed == dueDateDay ? _self.dueDateDay : dueDateDay // ignore: cast_nullable_to_non_nullable
+as String,dueDateDay: freezed == dueDateDay ? _self.dueDateDay : dueDateDay // ignore: cast_nullable_to_non_nullable
 as DateTime?,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -157,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String titlePreview,  String bodyPreview,  bool hasUncompletedTasks,  DateTime? dueDateDay,  int version)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String titlePreview,  String bodyPreview,  DateTime? dueDateDay,  int version)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteMetadata() when $default != null:
-return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_that.dueDateDay,_that.version);case _:
+return $default(_that.titlePreview,_that.bodyPreview,_that.dueDateDay,_that.version);case _:
   return orElse();
 
 }
@@ -178,10 +177,10 @@ return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String titlePreview,  String bodyPreview,  bool hasUncompletedTasks,  DateTime? dueDateDay,  int version)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String titlePreview,  String bodyPreview,  DateTime? dueDateDay,  int version)  $default,) {final _that = this;
 switch (_that) {
 case _NoteMetadata():
-return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_that.dueDateDay,_that.version);}
+return $default(_that.titlePreview,_that.bodyPreview,_that.dueDateDay,_that.version);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -195,10 +194,10 @@ return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String titlePreview,  String bodyPreview,  bool hasUncompletedTasks,  DateTime? dueDateDay,  int version)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String titlePreview,  String bodyPreview,  DateTime? dueDateDay,  int version)?  $default,) {final _that = this;
 switch (_that) {
 case _NoteMetadata() when $default != null:
-return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_that.dueDateDay,_that.version);case _:
+return $default(_that.titlePreview,_that.bodyPreview,_that.dueDateDay,_that.version);case _:
   return null;
 
 }
@@ -210,12 +209,11 @@ return $default(_that.titlePreview,_that.bodyPreview,_that.hasUncompletedTasks,_
 
 
 class _NoteMetadata extends NoteMetadata {
-  const _NoteMetadata({this.titlePreview = '', this.bodyPreview = '', this.hasUncompletedTasks = false, this.dueDateDay, this.version = noteMetadataVersion}): super._();
+  const _NoteMetadata({this.titlePreview = '', this.bodyPreview = '', this.dueDateDay, this.version = noteMetadataVersion}): super._();
   
 
 @override@JsonKey() final  String titlePreview;
 @override@JsonKey() final  String bodyPreview;
-@override@JsonKey() final  bool hasUncompletedTasks;
 @override final  DateTime? dueDateDay;
 @override@JsonKey() final  int version;
 
@@ -229,18 +227,18 @@ _$NoteMetadataCopyWith<_NoteMetadata> get copyWith => __$NoteMetadataCopyWithImp
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteMetadata&&(identical(other.titlePreview, titlePreview) || other.titlePreview == titlePreview)&&(identical(other.bodyPreview, bodyPreview) || other.bodyPreview == bodyPreview)&&(identical(other.hasUncompletedTasks, hasUncompletedTasks) || other.hasUncompletedTasks == hasUncompletedTasks)&&(identical(other.dueDateDay, dueDateDay) || other.dueDateDay == dueDateDay)&&(identical(other.version, version) || other.version == version));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NoteMetadata&&(identical(other.titlePreview, titlePreview) || other.titlePreview == titlePreview)&&(identical(other.bodyPreview, bodyPreview) || other.bodyPreview == bodyPreview)&&(identical(other.dueDateDay, dueDateDay) || other.dueDateDay == dueDateDay)&&(identical(other.version, version) || other.version == version));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,titlePreview,bodyPreview,hasUncompletedTasks,dueDateDay,version);
+    return Object.hash(runtimeType,titlePreview,bodyPreview,dueDateDay,version);
 }
 
 @override
 String toString() {
-    return 'NoteMetadata(titlePreview: $titlePreview, bodyPreview: $bodyPreview, hasUncompletedTasks: $hasUncompletedTasks, dueDateDay: $dueDateDay, version: $version)';
+    return 'NoteMetadata(titlePreview: $titlePreview, bodyPreview: $bodyPreview, dueDateDay: $dueDateDay, version: $version)';
 }
 
 
@@ -251,7 +249,7 @@ abstract mixin class _$NoteMetadataCopyWith<$Res> implements $NoteMetadataCopyWi
   factory _$NoteMetadataCopyWith(_NoteMetadata value, $Res Function(_NoteMetadata) _then) = __$NoteMetadataCopyWithImpl;
 @override @useResult
 $Res call({
- String titlePreview, String bodyPreview, bool hasUncompletedTasks, DateTime? dueDateDay, int version
+ String titlePreview, String bodyPreview, DateTime? dueDateDay, int version
 });
 
 
@@ -268,12 +266,11 @@ class __$NoteMetadataCopyWithImpl<$Res>
 
 /// Create a copy of NoteMetadata
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? titlePreview = null,Object? bodyPreview = null,Object? hasUncompletedTasks = null,Object? dueDateDay = freezed,Object? version = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? titlePreview = null,Object? bodyPreview = null,Object? dueDateDay = freezed,Object? version = null,}) {
   return _then(_NoteMetadata(
 titlePreview: null == titlePreview ? _self.titlePreview : titlePreview // ignore: cast_nullable_to_non_nullable
 as String,bodyPreview: null == bodyPreview ? _self.bodyPreview : bodyPreview // ignore: cast_nullable_to_non_nullable
-as String,hasUncompletedTasks: null == hasUncompletedTasks ? _self.hasUncompletedTasks : hasUncompletedTasks // ignore: cast_nullable_to_non_nullable
-as bool,dueDateDay: freezed == dueDateDay ? _self.dueDateDay : dueDateDay // ignore: cast_nullable_to_non_nullable
+as String,dueDateDay: freezed == dueDateDay ? _self.dueDateDay : dueDateDay // ignore: cast_nullable_to_non_nullable
 as DateTime?,version: null == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
 as int,
   ));

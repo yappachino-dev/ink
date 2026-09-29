@@ -97,7 +97,6 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
             NotesCompanion(
               titlePreview: Value(metadata.titlePreview),
               bodyPreview: Value(metadata.bodyPreview),
-              hasUncompletedTasks: Value(metadata.hasUncompletedTasks),
               dueDateDay: Value(metadata.dueDateDay),
               metadataVersion: Value(metadata.version),
             ),

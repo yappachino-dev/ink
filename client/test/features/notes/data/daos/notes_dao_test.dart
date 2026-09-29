@@ -63,7 +63,6 @@ void main() {
           'n_1': NoteMetadata(
             titlePreview: 'Repaired title',
             bodyPreview: 'Repaired body',
-            hasUncompletedTasks: true,
             dueDateDay: DateTime(2026, 8, 9),
           ),
         });
@@ -71,7 +70,6 @@ void main() {
         final row = await dao.getNote('n_1');
         expect(row!.titlePreview, 'Repaired title');
         expect(row.bodyPreview, 'Repaired body');
-        expect(row.hasUncompletedTasks, isTrue);
         expect(row.dueDateDay, DateTime(2026, 8, 9));
         expect(
           await dao.findStaleMetadataNoteIds(noteMetadataVersion),

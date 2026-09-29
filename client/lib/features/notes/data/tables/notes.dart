@@ -16,8 +16,6 @@ class Notes extends Table {
   // for.
   TextColumn get titlePreview => text().withDefault(const Constant(''))();
   TextColumn get bodyPreview => text().withDefault(const Constant(''))();
-  BoolColumn get hasUncompletedTasks =>
-      boolean().withDefault(const Constant(false))();
   DateTimeColumn get dueDateDay => dateTime().nullable()();
   // Indexed because `findStaleMetadataNoteIds` runs on every notes read, and it
   // scans the whole table without this. `dueDateDay` is deliberately *not*

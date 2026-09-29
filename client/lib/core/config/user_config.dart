@@ -14,7 +14,6 @@ class UserConfig {
   static const _paletteIdKey = 'paletteId';
   static const _localeCodeKey = 'localeCode';
   static const _selectedNotebookKey = 'selectedNotebook';
-  static const _selectedTimezoneKey = 'selectedTimezone';
 
   bool get localOnly => _sharedPrefs.getBool(_localOnlyKey) ?? true;
 
@@ -43,11 +42,6 @@ class UserConfig {
 
   Future<void> setSelectedNotebookId(String id) async =>
       _sharedPrefs.setString(_selectedNotebookKey, id);
-
-  String? get selectedTimezone => _sharedPrefs.getString(_selectedTimezoneKey);
-
-  Future<void> setSelectedTimezone(String id) async =>
-      _sharedPrefs.setString(_selectedTimezoneKey, id);
 }
 
 @Riverpod(keepAlive: true)

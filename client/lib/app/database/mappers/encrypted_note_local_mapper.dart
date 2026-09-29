@@ -26,7 +26,6 @@ extension NoteModelToEncrypted on NoteModel {
     metadata: NoteMetadata(
       titlePreview: titlePreview,
       bodyPreview: bodyPreview,
-      hasUncompletedTasks: hasUncompletedTasks,
       dueDateDay: dueDateDay,
       version: metadataVersion,
     ),
@@ -52,7 +51,6 @@ extension EncryptedNoteToCompanion on EncryptedNote {
 
     titlePreview: Value(metadata.titlePreview),
     bodyPreview: Value(metadata.bodyPreview),
-    hasUncompletedTasks: Value(metadata.hasUncompletedTasks),
     dueDateDay: Value(metadata.dueDateDay),
     metadataVersion: Value(metadata.version),
   );

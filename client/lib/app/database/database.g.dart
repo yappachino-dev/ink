@@ -974,20 +974,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
-  static const VerificationMeta _hasUncompletedTasksMeta =
-      const VerificationMeta('hasUncompletedTasks');
-  @override
-  late final GeneratedColumn<bool> hasUncompletedTasks = GeneratedColumn<bool>(
-    'has_uncompleted_tasks',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("has_uncompleted_tasks" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
   static const VerificationMeta _dueDateDayMeta = const VerificationMeta(
     'dueDateDay',
   );
@@ -1101,7 +1087,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     encryptedContent,
     titlePreview,
     bodyPreview,
-    hasUncompletedTasks,
     dueDateDay,
     metadataVersion,
     localVersion,
@@ -1164,15 +1149,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
         bodyPreview.isAcceptableOrUnknown(
           data['body_preview']!,
           _bodyPreviewMeta,
-        ),
-      );
-    }
-    if (data.containsKey('has_uncompleted_tasks')) {
-      context.handle(
-        _hasUncompletedTasksMeta,
-        hasUncompletedTasks.isAcceptableOrUnknown(
-          data['has_uncompleted_tasks']!,
-          _hasUncompletedTasksMeta,
         ),
       );
     }
@@ -1265,10 +1241,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
         DriftSqlType.string,
         data['${effectivePrefix}body_preview'],
       )!,
-      hasUncompletedTasks: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}has_uncompleted_tasks'],
-      )!,
       dueDateDay: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}due_date_day'],
@@ -1325,7 +1297,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
   final Uint8List encryptedContent;
   final String titlePreview;
   final String bodyPreview;
-  final bool hasUncompletedTasks;
   final DateTime? dueDateDay;
   final int metadataVersion;
   final int localVersion;
@@ -1341,7 +1312,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     required this.encryptedContent,
     required this.titlePreview,
     required this.bodyPreview,
-    required this.hasUncompletedTasks,
     this.dueDateDay,
     required this.metadataVersion,
     required this.localVersion,
@@ -1360,7 +1330,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     map['encrypted_content'] = Variable<Uint8List>(encryptedContent);
     map['title_preview'] = Variable<String>(titlePreview);
     map['body_preview'] = Variable<String>(bodyPreview);
-    map['has_uncompleted_tasks'] = Variable<bool>(hasUncompletedTasks);
     if (!nullToAbsent || dueDateDay != null) {
       map['due_date_day'] = Variable<DateTime>(dueDateDay);
     }
@@ -1390,7 +1359,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       encryptedContent: Value(encryptedContent),
       titlePreview: Value(titlePreview),
       bodyPreview: Value(bodyPreview),
-      hasUncompletedTasks: Value(hasUncompletedTasks),
       dueDateDay: dueDateDay == null && nullToAbsent
           ? const Value.absent()
           : Value(dueDateDay),
@@ -1422,9 +1390,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       ),
       titlePreview: serializer.fromJson<String>(json['titlePreview']),
       bodyPreview: serializer.fromJson<String>(json['bodyPreview']),
-      hasUncompletedTasks: serializer.fromJson<bool>(
-        json['hasUncompletedTasks'],
-      ),
       dueDateDay: serializer.fromJson<DateTime?>(json['dueDateDay']),
       metadataVersion: serializer.fromJson<int>(json['metadataVersion']),
       localVersion: serializer.fromJson<int>(json['localVersion']),
@@ -1447,7 +1412,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       'encryptedContent': serializer.toJson<Uint8List>(encryptedContent),
       'titlePreview': serializer.toJson<String>(titlePreview),
       'bodyPreview': serializer.toJson<String>(bodyPreview),
-      'hasUncompletedTasks': serializer.toJson<bool>(hasUncompletedTasks),
       'dueDateDay': serializer.toJson<DateTime?>(dueDateDay),
       'metadataVersion': serializer.toJson<int>(metadataVersion),
       'localVersion': serializer.toJson<int>(localVersion),
@@ -1468,7 +1432,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     Uint8List? encryptedContent,
     String? titlePreview,
     String? bodyPreview,
-    bool? hasUncompletedTasks,
     Value<DateTime?> dueDateDay = const Value.absent(),
     int? metadataVersion,
     int? localVersion,
@@ -1484,7 +1447,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     encryptedContent: encryptedContent ?? this.encryptedContent,
     titlePreview: titlePreview ?? this.titlePreview,
     bodyPreview: bodyPreview ?? this.bodyPreview,
-    hasUncompletedTasks: hasUncompletedTasks ?? this.hasUncompletedTasks,
     dueDateDay: dueDateDay.present ? dueDateDay.value : this.dueDateDay,
     metadataVersion: metadataVersion ?? this.metadataVersion,
     localVersion: localVersion ?? this.localVersion,
@@ -1510,9 +1472,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
       bodyPreview: data.bodyPreview.present
           ? data.bodyPreview.value
           : this.bodyPreview,
-      hasUncompletedTasks: data.hasUncompletedTasks.present
-          ? data.hasUncompletedTasks.value
-          : this.hasUncompletedTasks,
       dueDateDay: data.dueDateDay.present
           ? data.dueDateDay.value
           : this.dueDateDay,
@@ -1545,7 +1504,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
           ..write('encryptedContent: $encryptedContent, ')
           ..write('titlePreview: $titlePreview, ')
           ..write('bodyPreview: $bodyPreview, ')
-          ..write('hasUncompletedTasks: $hasUncompletedTasks, ')
           ..write('dueDateDay: $dueDateDay, ')
           ..write('metadataVersion: $metadataVersion, ')
           ..write('localVersion: $localVersion, ')
@@ -1566,7 +1524,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
     $driftBlobEquality.hash(encryptedContent),
     titlePreview,
     bodyPreview,
-    hasUncompletedTasks,
     dueDateDay,
     metadataVersion,
     localVersion,
@@ -1592,7 +1549,6 @@ class NoteModel extends DataClass implements Insertable<NoteModel> {
           ) &&
           other.titlePreview == this.titlePreview &&
           other.bodyPreview == this.bodyPreview &&
-          other.hasUncompletedTasks == this.hasUncompletedTasks &&
           other.dueDateDay == this.dueDateDay &&
           other.metadataVersion == this.metadataVersion &&
           other.localVersion == this.localVersion &&
@@ -1610,7 +1566,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
   final Value<Uint8List> encryptedContent;
   final Value<String> titlePreview;
   final Value<String> bodyPreview;
-  final Value<bool> hasUncompletedTasks;
   final Value<DateTime?> dueDateDay;
   final Value<int> metadataVersion;
   final Value<int> localVersion;
@@ -1627,7 +1582,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     this.encryptedContent = const Value.absent(),
     this.titlePreview = const Value.absent(),
     this.bodyPreview = const Value.absent(),
-    this.hasUncompletedTasks = const Value.absent(),
     this.dueDateDay = const Value.absent(),
     this.metadataVersion = const Value.absent(),
     this.localVersion = const Value.absent(),
@@ -1645,7 +1599,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     required Uint8List encryptedContent,
     this.titlePreview = const Value.absent(),
     this.bodyPreview = const Value.absent(),
-    this.hasUncompletedTasks = const Value.absent(),
     this.dueDateDay = const Value.absent(),
     this.metadataVersion = const Value.absent(),
     this.localVersion = const Value.absent(),
@@ -1664,7 +1617,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     Expression<Uint8List>? encryptedContent,
     Expression<String>? titlePreview,
     Expression<String>? bodyPreview,
-    Expression<bool>? hasUncompletedTasks,
     Expression<DateTime>? dueDateDay,
     Expression<int>? metadataVersion,
     Expression<int>? localVersion,
@@ -1682,8 +1634,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
       if (encryptedContent != null) 'encrypted_content': encryptedContent,
       if (titlePreview != null) 'title_preview': titlePreview,
       if (bodyPreview != null) 'body_preview': bodyPreview,
-      if (hasUncompletedTasks != null)
-        'has_uncompleted_tasks': hasUncompletedTasks,
       if (dueDateDay != null) 'due_date_day': dueDateDay,
       if (metadataVersion != null) 'metadata_version': metadataVersion,
       if (localVersion != null) 'local_version': localVersion,
@@ -1703,7 +1653,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     Value<Uint8List>? encryptedContent,
     Value<String>? titlePreview,
     Value<String>? bodyPreview,
-    Value<bool>? hasUncompletedTasks,
     Value<DateTime?>? dueDateDay,
     Value<int>? metadataVersion,
     Value<int>? localVersion,
@@ -1721,7 +1670,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
       encryptedContent: encryptedContent ?? this.encryptedContent,
       titlePreview: titlePreview ?? this.titlePreview,
       bodyPreview: bodyPreview ?? this.bodyPreview,
-      hasUncompletedTasks: hasUncompletedTasks ?? this.hasUncompletedTasks,
       dueDateDay: dueDateDay ?? this.dueDateDay,
       metadataVersion: metadataVersion ?? this.metadataVersion,
       localVersion: localVersion ?? this.localVersion,
@@ -1752,9 +1700,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     }
     if (bodyPreview.present) {
       map['body_preview'] = Variable<String>(bodyPreview.value);
-    }
-    if (hasUncompletedTasks.present) {
-      map['has_uncompleted_tasks'] = Variable<bool>(hasUncompletedTasks.value);
     }
     if (dueDateDay.present) {
       map['due_date_day'] = Variable<DateTime>(dueDateDay.value);
@@ -1799,7 +1744,6 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
           ..write('encryptedContent: $encryptedContent, ')
           ..write('titlePreview: $titlePreview, ')
           ..write('bodyPreview: $bodyPreview, ')
-          ..write('hasUncompletedTasks: $hasUncompletedTasks, ')
           ..write('dueDateDay: $dueDateDay, ')
           ..write('metadataVersion: $metadataVersion, ')
           ..write('localVersion: $localVersion, ')
@@ -3669,7 +3613,6 @@ typedef $$NotesTableCreateCompanionBuilder =
       required Uint8List encryptedContent,
       Value<String> titlePreview,
       Value<String> bodyPreview,
-      Value<bool> hasUncompletedTasks,
       Value<DateTime?> dueDateDay,
       Value<int> metadataVersion,
       Value<int> localVersion,
@@ -3688,7 +3631,6 @@ typedef $$NotesTableUpdateCompanionBuilder =
       Value<Uint8List> encryptedContent,
       Value<String> titlePreview,
       Value<String> bodyPreview,
-      Value<bool> hasUncompletedTasks,
       Value<DateTime?> dueDateDay,
       Value<int> metadataVersion,
       Value<int> localVersion,
@@ -3771,11 +3713,6 @@ class $$NotesTableFilterComposer extends Composer<_$AppDatabase, $NotesTable> {
 
   ColumnFilters<String> get bodyPreview => $composableBuilder(
     column: $table.bodyPreview,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get hasUncompletedTasks => $composableBuilder(
-    column: $table.hasUncompletedTasks,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3903,11 +3840,6 @@ class $$NotesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<bool> get hasUncompletedTasks => $composableBuilder(
-    column: $table.hasUncompletedTasks,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get dueDateDay => $composableBuilder(
     column: $table.dueDateDay,
     builder: (column) => ColumnOrderings(column),
@@ -4001,11 +3933,6 @@ class $$NotesTableAnnotationComposer
 
   GeneratedColumn<String> get bodyPreview => $composableBuilder(
     column: $table.bodyPreview,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<bool> get hasUncompletedTasks => $composableBuilder(
-    column: $table.hasUncompletedTasks,
     builder: (column) => column,
   );
 
@@ -4126,7 +4053,6 @@ class $$NotesTableTableManager
                 Value<Uint8List> encryptedContent = const Value.absent(),
                 Value<String> titlePreview = const Value.absent(),
                 Value<String> bodyPreview = const Value.absent(),
-                Value<bool> hasUncompletedTasks = const Value.absent(),
                 Value<DateTime?> dueDateDay = const Value.absent(),
                 Value<int> metadataVersion = const Value.absent(),
                 Value<int> localVersion = const Value.absent(),
@@ -4143,7 +4069,6 @@ class $$NotesTableTableManager
                 encryptedContent: encryptedContent,
                 titlePreview: titlePreview,
                 bodyPreview: bodyPreview,
-                hasUncompletedTasks: hasUncompletedTasks,
                 dueDateDay: dueDateDay,
                 metadataVersion: metadataVersion,
                 localVersion: localVersion,
@@ -4162,7 +4087,6 @@ class $$NotesTableTableManager
                 required Uint8List encryptedContent,
                 Value<String> titlePreview = const Value.absent(),
                 Value<String> bodyPreview = const Value.absent(),
-                Value<bool> hasUncompletedTasks = const Value.absent(),
                 Value<DateTime?> dueDateDay = const Value.absent(),
                 Value<int> metadataVersion = const Value.absent(),
                 Value<int> localVersion = const Value.absent(),
@@ -4179,7 +4103,6 @@ class $$NotesTableTableManager
                 encryptedContent: encryptedContent,
                 titlePreview: titlePreview,
                 bodyPreview: bodyPreview,
-                hasUncompletedTasks: hasUncompletedTasks,
                 dueDateDay: dueDateDay,
                 metadataVersion: metadataVersion,
                 localVersion: localVersion,
