@@ -45,6 +45,15 @@ type fakeTokenRepo struct {
 	revokeAll []int
 	nextID    int
 	rotateErr error
+
+	// Forces the revocation to fail, so the "we log and still deny" path can be
+	// exercised. It used to be impossible to reach: this method returned nil
+	// unconditionally, which is why a discarded error went unnoticed.
+	revokeAllErr error
+
+	// Cancels the caller's context from inside ByHash, after the row has been
+	// found, to reproduce a client disconnecting mid-request.
+	cancelOnByHash context.CancelFunc
 }
 
 func newFakeTokenRepo() *fakeTokenRepo {
@@ -64,6 +73,14 @@ func (f *fakeTokenRepo) ByHash(_ context.Context, hash []byte) (*RefreshToken, e
 	t, ok := f.tokens[key(hash)]
 	if !ok {
 		return nil, nil
+	}
+	// Simulates the client hanging up in the window between the lookup
+	// completing and the next statement being issued. The query has already
+	// returned its row, so the cancellation arrives too late to affect it -
+	// which is why `ByHash` ignores the context and this hook fires after the
+	// result is in hand.
+	if f.cancelOnByHash != nil {
+		f.cancelOnByHash()
 	}
 	return t, nil
 }
@@ -96,8 +113,19 @@ func (f *fakeTokenRepo) RevokeByHash(_ context.Context, hash []byte) error {
 	return nil
 }
 
-func (f *fakeTokenRepo) RevokeAllByUserID(_ context.Context, userID int) error {
+func (f *fakeTokenRepo) RevokeAllByUserID(ctx context.Context, userID int) error {
 	f.revokeAll = append(f.revokeAll, userID)
+
+	// A real driver refuses to run against a dead context. Without this the
+	// fake would happily revoke everything and the regression this exists to
+	// catch could not possibly reproduce.
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if f.revokeAllErr != nil {
+		return f.revokeAllErr
+	}
+
 	for _, t := range f.tokens {
 		if t.UserID == userID && t.RevokedAt.IsZero() {
 			t.RevokedAt = time.Now().UTC()
@@ -269,6 +297,76 @@ func TestRefresh_ReuseRevokesAllSessions(t *testing.T) {
 	_, _, err = svc.Refresh(ctx, refreshB)
 	if err != ErrRevokedRefreshToken {
 		t.Fatalf("session B should be revoked after reuse detection, got %v", err)
+	}
+}
+
+func TestRefresh_ReuseRevokesAllSessionsAfterClientDisconnect(t *testing.T) {
+	// The regression this exists for. Reuse detection runs after the token
+	// lookup has already answered, so the client can be gone by then. Passing
+	// the request context to the revocation meant a dropped connection aborted
+	// the UPDATE and left the stolen token's family alive - silently, because
+	// the error was discarded.
+	userRepo := newFakeUserRepo()
+	tokenRepo := newFakeTokenRepo()
+	seedUser(t, userRepo)
+	svc := newTestService(userRepo, tokenRepo)
+
+	ctx := context.Background()
+	_, refreshA, err := svc.Login(ctx, "user@example.com", testPassword)
+	if err != nil {
+		t.Fatalf("Login: %v", err)
+	}
+	_, refreshB, err := svc.Refresh(ctx, refreshA)
+	if err != nil {
+		t.Fatalf("Refresh (rotation): %v", err)
+	}
+
+	// The client vanishes immediately after the replayed token is looked up.
+	ctx, cancel := context.WithCancel(ctx)
+	tokenRepo.cancelOnByHash = cancel
+
+	_, _, err = svc.Refresh(ctx, refreshA)
+	if err != ErrRevokedRefreshToken {
+		t.Fatalf("want ErrRevokedRefreshToken on reuse, got %v", err)
+	}
+	if ctx.Err() == nil {
+		t.Fatal("test did not reproduce a disconnected client")
+	}
+
+	// The legitimate session must still be dead, even though its owner hung up.
+	_, _, err = svc.Refresh(context.Background(), refreshB)
+	if err != ErrRevokedRefreshToken {
+		t.Fatalf("session B should be revoked after reuse detection, got %v", err)
+	}
+}
+
+func TestRefresh_ReuseRevokeFailureStillDenies(t *testing.T) {
+	// A revocation that fails for a reason other than a dead context must not
+	// turn into a successful refresh. The caller presented a revoked token, so
+	// the request is denied regardless; reporting an infrastructure error
+	// instead would tell a caller holding a stolen credential more about our
+	// internals without protecting anything.
+	userRepo := newFakeUserRepo()
+	tokenRepo := newFakeTokenRepo()
+	tokenRepo.revokeAllErr = errors.New("connection reset by peer")
+	seedUser(t, userRepo)
+	svc := newTestService(userRepo, tokenRepo)
+
+	ctx := context.Background()
+	_, refreshA, err := svc.Login(ctx, "user@example.com", testPassword)
+	if err != nil {
+		t.Fatalf("Login: %v", err)
+	}
+	if _, _, err := svc.Refresh(ctx, refreshA); err != nil {
+		t.Fatalf("Refresh (rotation): %v", err)
+	}
+
+	_, _, err = svc.Refresh(ctx, refreshA)
+	if !errors.Is(err, ErrRevokedRefreshToken) {
+		t.Fatalf("want ErrRevokedRefreshToken even when revocation fails, got %v", err)
+	}
+	if len(tokenRepo.revokeAll) != 1 {
+		t.Fatalf("revocation should still have been attempted, got %v", tokenRepo.revokeAll)
 	}
 }
 
