@@ -1,16 +1,11 @@
 {
     "common": {
         "appName": "Ink",
-        "back": "Back",
         "next": "Next",
         "continue": "Continue",
         "confirm": "Confirm",
-        "save": "Save",
         "cancel": "Cancel",
-        "notFound": "That note is no longer available.",
         "delete": "Delete",
-        "errorTitle": "Error",
-        "loading": "Loading...",
         "retry": "Try again",
         "sessionLoadFailed": "Ink could not read your saved session. Your data is safe — try again.",
         "errors": {
@@ -53,11 +48,9 @@
             "invalidPassword": "Password does not meet the security requirements."
         },
         "form": {
-            "email": "Email",
             "emailHint": "Email",
             "emailError": "Email is required",
             "emailFormatError": "Invalid email format",
-            "password": "Password",
             "passwordHint": "Password",
             "passwordError": "Password is required",
             "passwordLengthError": "Password must be between 6 and 72 characters",
@@ -90,20 +83,6 @@
             "seed": {
                 "title": "Recovery Phrase",
                 "subtitle": "Secure 12-words password"
-            },
-            "word": {
-                "title": "Association Word",
-                "subtitle": "Password with a hint for recovery"
-            },
-            "verification": {
-                "title": "Identity Verification",
-                "subtitle": "Choose an unlock method to verify"
-            },
-            "options": {
-                "pin": "Login via PIN-code",
-                "pattern": "Pattern Lock",
-                "word": "Association Word",
-                "seed": "Seed Phrase (Master Key)"
             }
         },
         "setup": {
@@ -116,10 +95,6 @@
                 "description": "Connect at least 4 dots",
                 "errorShort": "Pattern too short!"
             },
-            "word": {
-                "title": "Think of\nan association",
-                "description": "Word must be at least 6 characters (no spaces, digits or signs)"
-            },
             "seed": {
                 "title": "Your Secret Phrase",
                 "warning": "Write these 12 words on paper and keep them in a safe place. If you lose them, access to your data cannot be restored.",
@@ -131,8 +106,7 @@
                 "title": "Record Verification",
                 "description": "Please enter the specified words from your secret phrase",
                 "inputHint": "Enter word...",
-                "error": "Words do not match. Try again!",
-                "success": "Verification successful"
+                "error": "Words do not match. Try again!"
             }
         },
         "unlock": {
@@ -145,18 +119,10 @@
                 "description": "Draw your pattern to login",
                 "errorShort": "Pattern too short!"
             },
-            "word": {
-                "title": "Enter\nassociation",
-                "description": "Enter your association word to login",
-                "hint": "Enter association word"
-            },
             "seed": {
                 "title": "Enter your\nsecret phrase",
                 "description": "Enter all 12 words in the correct order",
-                "wordHint": "Word...",
-                "verifyTitle": "Record Verification",
-                "verifyError": "Words do not match. Try again!",
-                "verifySuccess": "Verification successful"
+                "wordHint": "Word..."
             },
             "throttled": "Too many attempts. Try again in ${seconds}s."
         },
@@ -219,7 +185,6 @@
             "November",
             "December"
         ],
-        "timezone": "Choose timezone",
         "previousDay": "Previous day",
         "nextDay": "Next day"
     },
@@ -231,7 +196,6 @@
         "save": "Save",
         "cancel": "Cancel",
         "notFound": "That note is no longer available.",
-        "addDetails": "Add details...",
         "showDetails": "Show note details",
         "hideDetails": "Hide note details",
         "notebook": "Notebook",
@@ -298,8 +262,6 @@
     "profile": {
         "title": "Profile",
         "personal": {
-            "name": "Name",
-            "email": "Email",
             "changeName": "Change name",
             "changePassword": "Change password",
             "changeEncryption": "Change encryption method",

@@ -46,7 +46,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
-  Future<void> _openAddTaskSheet() => const NoteNewRoute().push<void>(context);
+  Future<void> _openNewNoteSheet() => const NoteNewRoute().push<void>(context);
 
   /// Drops the notebook filter and returns to the All notes lens.
   ///
@@ -270,7 +270,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       // hand-built buttons whose insets differed by 4px, so the button jumped
       // when switching tabs; the elevation differed too.
       floatingActionButtonLocation: const AppFabLocation(),
-      floatingActionButton: AppFab(onPressed: _openAddTaskSheet),
+      floatingActionButton: AppFab(onPressed: _openNewNoteSheet),
     );
   }
 }

@@ -150,6 +150,14 @@ abstract final class AppSize {
   /// Default glyph size for list rows and settings tiles.
   static const double iconMedium = 20;
 
+  /// Width of a bottom sheet's drag handle.
+  static const double sheetHandleWidth = 40;
+
+  /// Height of a bottom sheet's drag handle. Paired with [AppRadius.xsRadius],
+  /// which is the same value, so the handle renders as a capsule rather than a
+  /// near-square bar with a barely visible corner.
+  static const double sheetHandleHeight = 4;
+
   /// Minimum width and height of an interactive target.
   ///
   /// Material's floor, and Apple's is 44, so 48 is the safe common value. A

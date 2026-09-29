@@ -57,9 +57,13 @@ void main() {
   testWidgets('the placeholder identity header is gone', (tester) async {
     await pump(tester);
 
-    // These were literal strings standing in for a name and an address.
-    expect(find.text(t.profile.personal.name), findsNothing);
-    expect(find.text(t.profile.personal.email), findsNothing);
+    // This used to assert that the placeholder strings were absent by way of
+    // `t.profile.personal.name` and `.email`, which kept two dead catalogue
+    // keys alive for the sole purpose of asserting they were dead. The values
+    // were "Name" and "Email", generic enough that the assertion proved little.
+    // The avatar is what the header actually was, so assert on that. The bottom
+    // nav also uses a `person_outline`, but that is a different screen and the
+    // nav is not mounted here.
     expect(find.byIcon(Icons.person_outline), findsNothing);
   });
 

@@ -17,12 +17,17 @@ extension CalendarViewModeUiExtension on CalendarViewMode {
     }
   }
 
+  /// The icon in the calendar's app bar, which is the only standing record of
+  /// which mode is active. Two-week and week used to share
+  /// `calendar_view_week_outlined`, so switching between them left the header
+  /// looking identical while the grid underneath changed - the icon then
+  /// actively lied about the state it was supposed to convey.
   IconData get icon {
     switch (this) {
       case CalendarViewMode.month:
         return Icons.calendar_view_month_outlined;
       case CalendarViewMode.twoWeeks:
-        return Icons.calendar_view_week_outlined;
+        return Icons.date_range_outlined;
       case CalendarViewMode.week:
         return Icons.calendar_view_week_outlined;
       case CalendarViewMode.day:

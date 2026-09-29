@@ -30,9 +30,9 @@ class AppShell extends ConsumerWidget {
   }
 
   void _select(WidgetRef ref, int index) {
-    // Home and Calendar read the same lens. A task lens is a pseudo-notebook
-    // that the journal has no notion of, so entering Calendar clears it. A
-    // real notebook is a valid filter for both, so it is kept - otherwise the
+    // Notes and Calendar read the same lens. Today is a pseudo-notebook that
+    // the journal has no notion of, so entering Calendar clears it. A real
+    // notebook is a valid filter for both, so it is kept - otherwise the
     // only way back to your notes was to leave the tab and return, which
     // silently reset the selection as a side effect.
     if (index == _calendarBranch &&

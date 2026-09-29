@@ -11,12 +11,12 @@ import 'package:ink/features/notes/presentation/notifiers/providers/filtered_not
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/active_note_card.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/completed_note_card.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/completed_secion.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/completed_section.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/note_details_sheet.dart';
 import 'package:material_ui/material_ui.dart';
 
-class TaskListView extends ConsumerWidget {
-  const TaskListView({required this.title, super.key});
+class NotesList extends ConsumerWidget {
+  const NotesList({required this.title, super.key});
 
   final String? title;
 

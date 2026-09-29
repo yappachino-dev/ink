@@ -65,9 +65,6 @@ class Translations$common$en {
 	/// en: 'Ink'
 	String get appName => 'Ink';
 
-	/// en: 'Back'
-	String get back => 'Back';
-
 	/// en: 'Next'
 	String get next => 'Next';
 
@@ -77,23 +74,11 @@ class Translations$common$en {
 	/// en: 'Confirm'
 	String get confirm => 'Confirm';
 
-	/// en: 'Save'
-	String get save => 'Save';
-
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
 
-	/// en: 'That note is no longer available.'
-	String get notFound => 'That note is no longer available.';
-
 	/// en: 'Delete'
 	String get delete => 'Delete';
-
-	/// en: 'Error'
-	String get errorTitle => 'Error';
-
-	/// en: 'Loading...'
-	String get loading => 'Loading...';
 
 	/// en: 'Try again'
 	String get retry => 'Try again';
@@ -303,9 +288,6 @@ class Translations$calendar$en {
 		'December',
 	];
 
-	/// en: 'Choose timezone'
-	String get timezone => 'Choose timezone';
-
 	/// en: 'Previous day'
 	String get previousDay => 'Previous day';
 
@@ -341,9 +323,6 @@ class Translations$note$en {
 
 	/// en: 'That note is no longer available.'
 	String get notFound => 'That note is no longer available.';
-
-	/// en: 'Add details...'
-	String get addDetails => 'Add details...';
 
 	/// en: 'Show note details'
 	String get showDetails => 'Show note details';
@@ -525,9 +504,6 @@ class Translations$auth$form$en {
 	// Translations
 
 	/// en: 'Email'
-	String get email => 'Email';
-
-	/// en: 'Email'
 	String get emailHint => 'Email';
 
 	/// en: 'Email is required'
@@ -535,9 +511,6 @@ class Translations$auth$form$en {
 
 	/// en: 'Invalid email format'
 	String get emailFormatError => 'Invalid email format';
-
-	/// en: 'Password'
-	String get password => 'Password';
 
 	/// en: 'Password'
 	String get passwordHint => 'Password';
@@ -593,9 +566,6 @@ class Translations$vault$methods$en {
 	late final Translations$vault$methods$pin$en pin = Translations$vault$methods$pin$en.internal(_root);
 	late final Translations$vault$methods$pattern$en pattern = Translations$vault$methods$pattern$en.internal(_root);
 	late final Translations$vault$methods$seed$en seed = Translations$vault$methods$seed$en.internal(_root);
-	late final Translations$vault$methods$word$en word = Translations$vault$methods$word$en.internal(_root);
-	late final Translations$vault$methods$verification$en verification = Translations$vault$methods$verification$en.internal(_root);
-	late final Translations$vault$methods$options$en options = Translations$vault$methods$options$en.internal(_root);
 }
 
 // Path: vault.setup
@@ -607,7 +577,6 @@ class Translations$vault$setup$en {
 	// Translations
 	late final Translations$vault$setup$pin$en pin = Translations$vault$setup$pin$en.internal(_root);
 	late final Translations$vault$setup$pattern$en pattern = Translations$vault$setup$pattern$en.internal(_root);
-	late final Translations$vault$setup$word$en word = Translations$vault$setup$word$en.internal(_root);
 	late final Translations$vault$setup$seed$en seed = Translations$vault$setup$seed$en.internal(_root);
 	late final Translations$vault$setup$seedVerify$en seedVerify = Translations$vault$setup$seedVerify$en.internal(_root);
 }
@@ -621,7 +590,6 @@ class Translations$vault$unlock$en {
 	// Translations
 	late final Translations$vault$unlock$pin$en pin = Translations$vault$unlock$pin$en.internal(_root);
 	late final Translations$vault$unlock$pattern$en pattern = Translations$vault$unlock$pattern$en.internal(_root);
-	late final Translations$vault$unlock$word$en word = Translations$vault$unlock$word$en.internal(_root);
 	late final Translations$vault$unlock$seed$en seed = Translations$vault$unlock$seed$en.internal(_root);
 
 	/// en: 'Too many attempts. Try again in ${seconds}s.'
@@ -796,12 +764,6 @@ class Translations$profile$personal$en {
 
 	// Translations
 
-	/// en: 'Name'
-	String get name => 'Name';
-
-	/// en: 'Email'
-	String get email => 'Email';
-
 	/// en: 'Change name'
 	String get changeName => 'Change name';
 
@@ -912,57 +874,6 @@ class Translations$vault$methods$seed$en {
 	String get subtitle => 'Secure 12-words password';
 }
 
-// Path: vault.methods.word
-class Translations$vault$methods$word$en {
-	Translations$vault$methods$word$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Association Word'
-	String get title => 'Association Word';
-
-	/// en: 'Password with a hint for recovery'
-	String get subtitle => 'Password with a hint for recovery';
-}
-
-// Path: vault.methods.verification
-class Translations$vault$methods$verification$en {
-	Translations$vault$methods$verification$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Identity Verification'
-	String get title => 'Identity Verification';
-
-	/// en: 'Choose an unlock method to verify'
-	String get subtitle => 'Choose an unlock method to verify';
-}
-
-// Path: vault.methods.options
-class Translations$vault$methods$options$en {
-	Translations$vault$methods$options$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Login via PIN-code'
-	String get pin => 'Login via PIN-code';
-
-	/// en: 'Pattern Lock'
-	String get pattern => 'Pattern Lock';
-
-	/// en: 'Association Word'
-	String get word => 'Association Word';
-
-	/// en: 'Seed Phrase (Master Key)'
-	String get seed => 'Seed Phrase (Master Key)';
-}
-
 // Path: vault.setup.pin
 class Translations$vault$setup$pin$en {
 	Translations$vault$setup$pin$en.internal(this._root);
@@ -994,21 +905,6 @@ class Translations$vault$setup$pattern$en {
 
 	/// en: 'Pattern too short!'
 	String get errorShort => 'Pattern too short!';
-}
-
-// Path: vault.setup.word
-class Translations$vault$setup$word$en {
-	Translations$vault$setup$word$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Think of an association'
-	String get title => 'Think of\nan association';
-
-	/// en: 'Word must be at least 6 characters (no spaces, digits or signs)'
-	String get description => 'Word must be at least 6 characters (no spaces, digits or signs)';
 }
 
 // Path: vault.setup.seed
@@ -1054,9 +950,6 @@ class Translations$vault$setup$seedVerify$en {
 
 	/// en: 'Words do not match. Try again!'
 	String get error => 'Words do not match. Try again!';
-
-	/// en: 'Verification successful'
-	String get success => 'Verification successful';
 }
 
 // Path: vault.unlock.pin
@@ -1092,24 +985,6 @@ class Translations$vault$unlock$pattern$en {
 	String get errorShort => 'Pattern too short!';
 }
 
-// Path: vault.unlock.word
-class Translations$vault$unlock$word$en {
-	Translations$vault$unlock$word$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'Enter association'
-	String get title => 'Enter\nassociation';
-
-	/// en: 'Enter your association word to login'
-	String get description => 'Enter your association word to login';
-
-	/// en: 'Enter association word'
-	String get hint => 'Enter association word';
-}
-
 // Path: vault.unlock.seed
 class Translations$vault$unlock$seed$en {
 	Translations$vault$unlock$seed$en.internal(this._root);
@@ -1126,15 +1001,6 @@ class Translations$vault$unlock$seed$en {
 
 	/// en: 'Word...'
 	String get wordHint => 'Word...';
-
-	/// en: 'Record Verification'
-	String get verifyTitle => 'Record Verification';
-
-	/// en: 'Words do not match. Try again!'
-	String get verifyError => 'Words do not match. Try again!';
-
-	/// en: 'Verification successful'
-	String get verifySuccess => 'Verification successful';
 }
 
 // Path: profile.settings.appearance
@@ -1182,16 +1048,11 @@ extension on Translations {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'common.appName' => 'Ink',
-			'common.back' => 'Back',
 			'common.next' => 'Next',
 			'common.kContinue' => 'Continue',
 			'common.confirm' => 'Confirm',
-			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
-			'common.notFound' => 'That note is no longer available.',
 			'common.delete' => 'Delete',
-			'common.errorTitle' => 'Error',
-			'common.loading' => 'Loading...',
 			'common.retry' => 'Try again',
 			'common.sessionLoadFailed' => 'Ink could not read your saved session. Your data is safe — try again.',
 			'common.errors.network' => 'Unable to reach the server. Check your connection.',
@@ -1219,11 +1080,9 @@ extension on Translations {
 			'auth.errors.invalidCredentials' => 'Invalid email or password.',
 			'auth.errors.emailAlreadyInUse' => 'An account with this email already exists.',
 			'auth.errors.invalidPassword' => 'Password does not meet the security requirements.',
-			'auth.form.email' => 'Email',
 			'auth.form.emailHint' => 'Email',
 			'auth.form.emailError' => 'Email is required',
 			'auth.form.emailFormatError' => 'Invalid email format',
-			'auth.form.password' => 'Password',
 			'auth.form.passwordHint' => 'Password',
 			'auth.form.passwordError' => 'Password is required',
 			'auth.form.passwordLengthError' => 'Password must be between 6 and 72 characters',
@@ -1243,21 +1102,11 @@ extension on Translations {
 			'vault.methods.pattern.subtitle' => 'Protection with a unique gesture',
 			'vault.methods.seed.title' => 'Recovery Phrase',
 			'vault.methods.seed.subtitle' => 'Secure 12-words password',
-			'vault.methods.word.title' => 'Association Word',
-			'vault.methods.word.subtitle' => 'Password with a hint for recovery',
-			'vault.methods.verification.title' => 'Identity Verification',
-			'vault.methods.verification.subtitle' => 'Choose an unlock method to verify',
-			'vault.methods.options.pin' => 'Login via PIN-code',
-			'vault.methods.options.pattern' => 'Pattern Lock',
-			'vault.methods.options.word' => 'Association Word',
-			'vault.methods.options.seed' => 'Seed Phrase (Master Key)',
 			'vault.setup.pin.title' => 'Create PIN-code',
 			'vault.setup.pin.description' => 'For quick access to your plans',
 			'vault.setup.pattern.title' => 'Create Pattern Lock',
 			'vault.setup.pattern.description' => 'Connect at least 4 dots',
 			'vault.setup.pattern.errorShort' => 'Pattern too short!',
-			'vault.setup.word.title' => 'Think of\nan association',
-			'vault.setup.word.description' => 'Word must be at least 6 characters (no spaces, digits or signs)',
 			'vault.setup.seed.title' => 'Your Secret Phrase',
 			'vault.setup.seed.warning' => 'Write these 12 words on paper and keep them in a safe place. If you lose them, access to your data cannot be restored.',
 			'vault.setup.seed.copy' => 'Copy to clipboard',
@@ -1267,21 +1116,14 @@ extension on Translations {
 			'vault.setup.seedVerify.description' => 'Please enter the specified words from your secret phrase',
 			'vault.setup.seedVerify.inputHint' => 'Enter word...',
 			'vault.setup.seedVerify.error' => 'Words do not match. Try again!',
-			'vault.setup.seedVerify.success' => 'Verification successful',
 			'vault.unlock.pin.title' => 'Enter PIN-code',
 			'vault.unlock.pin.description' => 'Enter your PIN-code to login',
 			'vault.unlock.pattern.title' => 'Enter Pattern Lock',
 			'vault.unlock.pattern.description' => 'Draw your pattern to login',
 			'vault.unlock.pattern.errorShort' => 'Pattern too short!',
-			'vault.unlock.word.title' => 'Enter\nassociation',
-			'vault.unlock.word.description' => 'Enter your association word to login',
-			'vault.unlock.word.hint' => 'Enter association word',
 			'vault.unlock.seed.title' => 'Enter your\nsecret phrase',
 			'vault.unlock.seed.description' => 'Enter all 12 words in the correct order',
 			'vault.unlock.seed.wordHint' => 'Word...',
-			'vault.unlock.seed.verifyTitle' => 'Record Verification',
-			'vault.unlock.seed.verifyError' => 'Words do not match. Try again!',
-			'vault.unlock.seed.verifySuccess' => 'Verification successful',
 			'vault.unlock.throttled' => ({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.',
 			'vault.progressStep' => ({required Object current, required Object total}) => 'Step ${current} of ${total}',
 			'vault.progressRemaining' => ({required Object count}) => '${count} left',
@@ -1330,7 +1172,6 @@ extension on Translations {
 			'calendar.months.9' => 'October',
 			'calendar.months.10' => 'November',
 			'calendar.months.11' => 'December',
-			'calendar.timezone' => 'Choose timezone',
 			'calendar.previousDay' => 'Previous day',
 			'calendar.nextDay' => 'Next day',
 			'note.title' => 'Notes',
@@ -1340,7 +1181,6 @@ extension on Translations {
 			'note.save' => 'Save',
 			'note.cancel' => 'Cancel',
 			'note.notFound' => 'That note is no longer available.',
-			'note.addDetails' => 'Add details...',
 			'note.showDetails' => 'Show note details',
 			'note.hideDetails' => 'Hide note details',
 			'note.notebook' => 'Notebook',
@@ -1377,8 +1217,6 @@ extension on Translations {
 			'notebook.form.color' => 'Notebook color',
 			'notebook.form.icon' => 'Icon',
 			'profile.title' => 'Profile',
-			'profile.personal.name' => 'Name',
-			'profile.personal.email' => 'Email',
 			'profile.personal.changeName' => 'Change name',
 			'profile.personal.changePassword' => 'Change password',
 			'profile.personal.changeEncryption' => 'Change encryption method',

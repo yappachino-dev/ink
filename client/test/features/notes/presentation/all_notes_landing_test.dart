@@ -30,7 +30,7 @@ import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
-import 'package:ink/features/notes/presentation/widgets/notes/task_list_view.dart';
+import 'package:ink/features/notes/presentation/widgets/notes/notes_list.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -200,7 +200,7 @@ void main() {
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
-              home: const Scaffold(body: TaskListView(title: 'All notes')),
+              home: const Scaffold(body: NotesList(title: 'All notes')),
             ),
           ),
         ),
@@ -256,7 +256,7 @@ void main() {
           child: TranslationProvider(
             child: MaterialApp(
               theme: AppTheme.light(InkPalette.forest),
-              home: const Scaffold(body: TaskListView(title: 'Today')),
+              home: const Scaffold(body: NotesList(title: 'Today')),
             ),
           ),
         ),
