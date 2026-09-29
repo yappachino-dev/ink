@@ -85,7 +85,7 @@ void main() {
         // `SelectedNotebookTitle` used to `firstWhere` over the list and
         // take the whole screen down when the id was absent.
         expect(() => c.read(selectedNotebookTitleProvider), returnsNormally);
-        expect(c.read(selectedNotebookTitleProvider), t.home.all);
+        expect(c.read(selectedNotebookTitleProvider), t.notes.all);
       },
     );
   });

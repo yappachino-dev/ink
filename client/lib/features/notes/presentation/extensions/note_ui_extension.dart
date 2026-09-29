@@ -18,6 +18,6 @@ extension NoteUiExtension on Note {
     if (dueDate != null) {
       return '${dueDate!.day} ${t.calendar.months[dueDate!.month - 1]}';
     }
-    return t.home.today;
+    return t.notes.today;
   }
 }

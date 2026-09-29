@@ -47,7 +47,6 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$vault$en vault = Translations$vault$en.internal(_root);
 	late final Translations$notes$en notes = Translations$notes$en.internal(_root);
 	late final Translations$trust$en trust = Translations$trust$en.internal(_root);
-	late final Translations$home$en home = Translations$home$en.internal(_root);
 	late final Translations$calendar$en calendar = Translations$calendar$en.internal(_root);
 	late final Translations$note$en note = Translations$note$en.internal(_root);
 	late final Translations$notebook$en notebook = Translations$notebook$en.internal(_root);
@@ -187,6 +186,15 @@ class Translations$notes$en {
 
 	/// en: 'Offline. Your notes are safe on this device and will sync when you reconnect.'
 	String get offline => 'Offline. Your notes are safe on this device and will sync when you reconnect.';
+
+	/// en: 'All notes'
+	String get all => 'All notes';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Completed'
+	String get completed => 'Completed';
 }
 
 // Path: trust
@@ -232,24 +240,6 @@ class Translations$trust$en {
 
 	/// en: 'A note changed on two devices. Nothing has been overwritten.'
 	String get conflictedMessage => 'A note changed on two devices. Nothing has been overwritten.';
-}
-
-// Path: home
-class Translations$home$en {
-	Translations$home$en.internal(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'All notes'
-	String get all => 'All notes';
-
-	/// en: 'Today'
-	String get today => 'Today';
-
-	/// en: 'Completed'
-	String get completed => 'Completed';
 }
 
 // Path: calendar
@@ -1137,6 +1127,9 @@ extension on Translations {
 			'notes.errorBody' => 'Your notes are still on this device. Try again.',
 			'notes.retry' => 'Try again',
 			'notes.offline' => 'Offline. Your notes are safe on this device and will sync when you reconnect.',
+			'notes.all' => 'All notes',
+			'notes.today' => 'Today',
+			'notes.completed' => 'Completed',
 			'trust.onDevice' => 'On device',
 			'trust.onDeviceMessage' => 'Encrypted on this device only. Syncing is available on Ink Pro.',
 			'trust.queued' => 'Pending',
@@ -1149,9 +1142,6 @@ extension on Translations {
 			'trust.failedMessage' => 'Your notes are safe on this device. Syncing will retry.',
 			'trust.conflicted' => 'Conflict',
 			'trust.conflictedMessage' => 'A note changed on two devices. Nothing has been overwritten.',
-			'home.all' => 'All notes',
-			'home.today' => 'Today',
-			'home.completed' => 'Completed',
 			'calendar.title' => 'Calendar',
 			'calendar.filter' => 'Filter',
 			'calendar.noNotes' => 'No notes for this day',

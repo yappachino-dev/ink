@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
-import 'package:ink/features/notes/presentation/screens/home_screen.dart';
 import 'package:ink/features/notes/presentation/screens/note_editor_screen.dart';
+import 'package:ink/features/notes/presentation/screens/notes_screen.dart';
 import 'package:material_ui/material_ui.dart';
 
 part 'notes_routes.g.dart';
@@ -17,7 +17,7 @@ class NotesRoute extends GoRouteData with $NotesRoute {
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return CustomTransitionPage(
       key: state.pageKey,
-      child: const HomeScreen(),
+      child: const NotesScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: CurveTween(curve: Curves.easeInOut).animate(animation),

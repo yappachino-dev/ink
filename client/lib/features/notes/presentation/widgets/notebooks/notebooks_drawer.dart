@@ -55,7 +55,7 @@ class NotebooksDrawer extends ConsumerWidget {
             DrawerVirtualNotebookItem(
               id: allNotebooksId,
               count: null,
-              title: context.t.home.all,
+              title: context.t.notes.all,
               icon: 'book',
               color: context.colorScheme.primary,
             ),
@@ -63,7 +63,7 @@ class NotebooksDrawer extends ConsumerWidget {
             DrawerVirtualNotebookItem(
               id: todayNotebookId,
               count: null,
-              title: context.t.home.today,
+              title: context.t.notes.today,
               icon: 'target',
               color: context.colorScheme.primary,
             ),

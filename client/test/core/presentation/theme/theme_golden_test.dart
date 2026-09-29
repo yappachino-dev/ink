@@ -22,8 +22,8 @@ import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
-import 'package:ink/features/notes/presentation/screens/home_screen.dart';
 import 'package:ink/features/notes/presentation/screens/note_editor_screen.dart';
+import 'package:ink/features/notes/presentation/screens/notes_screen.dart';
 import 'package:ink/features/profile/presentation/screens/profile_screen.dart';
 import 'package:ink/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
@@ -55,13 +55,13 @@ void main() {
         brightness: Brightness.light,
         service: service,
         location: AppDestinations.notes,
-        screen: const HomeScreen(),
+        screen: const NotesScreen(),
       ),
       dark: (service) => _notesApp(
         brightness: Brightness.dark,
         service: service,
         location: AppDestinations.notes,
-        screen: const HomeScreen(),
+        screen: const NotesScreen(),
       ),
     );
   });

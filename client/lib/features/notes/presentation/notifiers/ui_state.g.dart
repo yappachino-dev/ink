@@ -95,7 +95,7 @@ final class SelectedNotebookTitleProvider
 }
 
 String _$selectedNotebookTitleHash() =>
-    r'0db1afba0eff16ccf7b089f6f7acbced439fe94d';
+    r'25694fdda3650cc183a0f5ee5c7ad5290cc466ea';
 
 abstract class _$SelectedNotebookTitle extends $Notifier<String> {
   String build();

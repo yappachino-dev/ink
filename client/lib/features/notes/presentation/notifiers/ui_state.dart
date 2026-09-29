@@ -45,15 +45,15 @@ class SelectedNotebookTitle extends _$SelectedNotebookTitle {
       // Previously All notes was labelled "Today", because it was not a real
       // Home lens and borrowing the label was the cheapest way to avoid a
       // second string. Now that it is the default view, it needs its own.
-      _ when isContentForwardLens(selectedNotebookId) => t.home.all,
-      _ when selectedNotebookId == todayNotebookId => t.home.today,
+      _ when isContentForwardLens(selectedNotebookId) => t.notes.all,
+      _ when selectedNotebookId == todayNotebookId => t.notes.today,
       // A restored id can name a notebook that no longer exists, and
       // `firstWhere` used to throw on it and take the screen down with it.
       // Falling back to the default view is the honest reading: the lens is
       // gone, so show everything rather than claim an empty notebook.
       _ =>
         notebooks.where((p) => p.id == selectedNotebookId).firstOrNull?.title ??
-            t.home.all,
+            t.notes.all,
     };
   }
 }
