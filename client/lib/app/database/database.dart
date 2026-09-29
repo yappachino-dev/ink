@@ -69,18 +69,16 @@ class AppDatabase extends _$AppDatabase {
           // has no key and must not be handed one just to fill a cache.
           await m.addColumn(notes, notes.titlePreview);
           await m.addColumn(notes, notes.bodyPreview);
-          // `has_uncompleted_tasks` was created here at v3 and dropped again at
-          // v5, so it is no longer a column on the table and cannot be named
-          // through it. A v2 database still has to pass *through* v3 to reach
-          // v5, so the column is still created here and then removed by the
-          // v5 step. Raw SQL for the same reason as that step: drift's
-          // `BoolColumn` is a typedef for the abstract `Column<bool>` and
-          // cannot be instantiated, so there is no typed spelling for a column
-          // the table no longer declares.
-          await customStatement(
-            'ALTER TABLE notes ADD COLUMN has_uncompleted_tasks '
-            'BOOLEAN NOT NULL DEFAULT 0',
-          );
+          // `has_uncompleted_tasks` is deliberately absent here. It was created
+          // by the v3 step originally and removed at v5, and recreating it just
+          // so the v5 step can drop it again is two statements of pure waste -
+          // and a needless dependency on `ALTER TABLE ... DROP COLUMN` for
+          // exactly the v2 users who never had the column in the first place.
+          // A v2 database upgrades straight to v5 and never materialises it.
+          // Nothing needs the intermediate shape: the schema verifier compares
+          // the *final* schema against the target, not each step, so a skipped
+          // step is invisible to it. Only a database that genuinely reached v3
+          // or v4 has the column, and the v5 step handles those.
           await m.addColumn(notes, notes.dueDateDay);
           await m.addColumn(notes, notes.metadataVersion);
           // The index arrives with the column it covers: the table predates
@@ -140,9 +138,23 @@ class AppDatabase extends _$AppDatabase {
           // leaves the rows alone - the column was only ever a derived mirror
           // of data that still lives in the encrypted payload, so nothing is
           // lost that cannot be recomputed.
-          await customStatement(
-            'ALTER TABLE notes DROP COLUMN has_uncompleted_tasks',
-          );
+          //
+          // Conditional on the column being there, because a v1 or v2 database
+          // upgrading straight to v5 never had it: the v3 step above no longer
+          // creates it. Dropping unconditionally would fail on exactly the
+          // users who have nothing to drop.
+          final legacy = await customSelect(
+            'SELECT 1 AS present FROM pragma_table_info(?) WHERE name = ?',
+            variables: [
+              Variable.withString(notes.actualTableName),
+              Variable.withString('has_uncompleted_tasks'),
+            ],
+          ).get();
+          if (legacy.isNotEmpty) {
+            await customStatement(
+              'ALTER TABLE notes DROP COLUMN has_uncompleted_tasks',
+            );
+          }
         }
       },
       beforeOpen: (details) async {

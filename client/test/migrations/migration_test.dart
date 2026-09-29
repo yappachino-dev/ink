@@ -114,10 +114,12 @@ void main() {
 
     // The pre-existing row and its ciphertext survived untouched.
     //
-    // `has_uncompleted_tasks` is not in this list. It is deliberately absent:
-    // the v3 step still creates it so a v2 database can pass through v3, and
-    // the v5 step drops it, so selecting it here is what would catch a v5 step
-    // that quietly stopped running.
+    // `has_uncompleted_tasks` is not in this list, and that is the assertion
+    // this path is really about. A v2 database upgrades straight to v5 and
+    // never materialises the column: the v3 step no longer creates it, and the
+    // v5 drop is conditional on it being there. So the column is asserted
+    // *absent* below rather than merely left out of the SELECT - leaving it
+    // out would also pass if the column existed.
     final rows = await checkDb
         .customSelect(
           'SELECT encrypted_content, title_preview, body_preview, '
@@ -127,6 +129,18 @@ void main() {
         .get();
     expect(rows, hasLength(1));
     expect(rows.single.data['encrypted_content'], equals(bytes));
+
+    final columns = await checkDb
+        .customSelect(
+          'SELECT name FROM pragma_table_info(?)',
+          variables: [Variable.withString('notes')],
+        )
+        .get();
+    expect(
+      columns.map((c) => c.data['name']),
+      isNot(contains('has_uncompleted_tasks')),
+      reason: 'a v2 upgrade must never create the column it is removing',
+    );
 
     // The derived columns exist, and default to empty rather than NULL, so a
     // query against them never has to guard for null.
