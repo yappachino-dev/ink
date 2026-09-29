@@ -77,6 +77,29 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -z "$HEAD_BRANCH" ]]; then
+  echo "error: HEAD is detached; check out a feature branch first" >&2
+  exit 1
+fi
+
+# Refuse to run on the base branch. The push below is
+# `git push --set-upstream origin HEAD`, which writes to a remote branch of the
+# same name - so on the base branch it publishes straight to main, and only
+# `gh pr create` notices afterwards, once the commit is already up. Undoing that
+# needs a force-push to main, which rewrites published history.
+#
+# This matters more than it looks: the repository has no branch protection to
+# fall back on. The protection API returns 403 on the current plan, so nothing
+# on the remote refuses a direct push to main. This check is the only thing
+# between a local commit and an unreviewed merge, so it runs before the push.
+if [[ "$HEAD_BRANCH" == "$BASE_BRANCH" ]]; then
+  echo "error: refusing to ship from the base branch ($BASE_BRANCH)." >&2
+  echo "       this would push directly to origin/$BASE_BRANCH and bypass the PR." >&2
+  echo "       move the commit to a feature branch first:" >&2
+  echo "         git switch -c fix/short-description" >&2
+  exit 1
+fi
+
 if [[ "$COMMIT_COUNT" -eq 0 ]]; then
   echo "error: branch has no commits relative to origin/$BASE_BRANCH" >&2
   exit 1
