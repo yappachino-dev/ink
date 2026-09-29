@@ -139,7 +139,10 @@
         "errorTitle": "Could not load your notes",
         "errorBody": "Your notes are still on this device. Try again.",
         "retry": "Try again",
-        "offline": "Offline. Your notes are safe on this device and will sync when you reconnect."
+        "offline": "Offline. Your notes are safe on this device and will sync when you reconnect.",
+        "all": "All notes",
+        "today": "Today",
+        "completed": "Completed"
     },
     "trust": {
         "onDevice": "On device",
@@ -154,11 +157,6 @@
         "failedMessage": "Your notes are safe on this device. Syncing will retry.",
         "conflicted": "Conflict",
         "conflictedMessage": "A note changed on two devices. Nothing has been overwritten."
-    },
-    "home": {
-        "all": "All notes",
-        "today": "Today",
-        "completed": "Completed"
     },
     "calendar": {
         "title": "Calendar",

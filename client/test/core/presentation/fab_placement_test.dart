@@ -27,7 +27,7 @@ import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/screens/calendar_screen.dart';
-import 'package:ink/features/notes/presentation/screens/home_screen.dart';
+import 'package:ink/features/notes/presentation/screens/notes_screen.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -66,7 +66,7 @@ GoRouter _router(String initial) => GoRouter(
           routes: [
             GoRoute(
               path: AppDestinations.notes,
-              builder: (_, _) => const HomeScreen(),
+              builder: (_, _) => const NotesScreen(),
             ),
           ],
         ),

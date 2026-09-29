@@ -34,7 +34,7 @@ class CompletedSection extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    context.t.home.completed,
+                    context.t.notes.completed,
                     style: context.textTheme.titleMedium?.copyWith(
                       color: context.theme.hintColor,
                     ),

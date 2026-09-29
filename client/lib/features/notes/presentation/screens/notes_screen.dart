@@ -15,14 +15,24 @@ import 'package:ink/features/notes/presentation/widgets/notes/sync_trust_indicat
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+/// The notes list, and the app's landing view.
+///
+/// Named for what it is rather than what it replaced: this was `HomeScreen`
+/// with a `home.*` translation namespace, both left over from an MVP where the
+/// landing screen was a different thing. The tab is "Notes", the route is
+/// `/notes`, and the lens labels now live in the `notes.*` namespace beside the
+/// other notes-list strings.
+///
+/// Owns the notebooks drawer, the FAB, and the offline and sync banners, and
+/// renders whichever lens `selectedNotebookIdProvider` currently names.
+class NotesScreen extends ConsumerStatefulWidget {
+  const NotesScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<NotesScreen> createState() => _NotesScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen>
+class _NotesScreenState extends ConsumerState<NotesScreen>
     with SingleTickerProviderStateMixin {
   bool _isDrawerOpen = false;
 

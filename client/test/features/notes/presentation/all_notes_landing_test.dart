@@ -126,12 +126,12 @@ void main() {
       final container = await makeContainer([_note('a')]);
 
       // Previously both `allNotebooksId` and `todayNotebookId` mapped to
-      // `t.home.today`, so two different views were indistinguishable by
+      // `t.notes.today`, so two different views were indistinguishable by
       // title and the default view called itself the wrong thing.
-      expect(container.read(selectedNotebookTitleProvider), t.home.all);
+      expect(container.read(selectedNotebookTitleProvider), t.notes.all);
       expect(
         container.read(selectedNotebookTitleProvider),
-        isNot(t.home.today),
+        isNot(t.notes.today),
       );
     });
   });
@@ -215,7 +215,7 @@ void main() {
       // The task affordance is gone. A note may still contain a checklist; the
       // row just stops volunteering completion state it was not asked for.
       expect(find.byType(Checkbox), findsNothing);
-      expect(find.text(t.home.completed), findsNothing);
+      expect(find.text(t.notes.completed), findsNothing);
     });
   });
 
