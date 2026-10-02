@@ -11,10 +11,10 @@ import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -32,13 +32,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _Lens extends SelectedNotebookId {
-  _Lens(this.id);
+class _Lens extends NotesLensSelection {
+  _Lens(this.lens);
 
-  final String id;
+  final NotesLens lens;
 
   @override
-  String build() => id;
+  NotesLens build() => lens;
 }
 
 Note _note(String id, {SyncStatus status = SyncStatus.synced}) => Note(
@@ -75,7 +75,7 @@ void main() {
 
   Future<ProviderContainer> containerWith(
     List<Note> notes, {
-    String? lens,
+    NotesLens? lens,
     bool localOnly = true,
     SyncActivity activity = SyncActivity.idle,
     bool offline = false,
@@ -97,7 +97,7 @@ void main() {
         syncActivityProvider.overrideWithValue(activity),
         isOfflineProvider.overrideWithValue(offline),
         if (lens != null)
-          selectedNotebookIdProvider.overrideWith(() => _Lens(lens)),
+          notesLensSelectionProvider.overrideWith(() => _Lens(lens)),
       ],
     );
     addTearDown(container.dispose);
@@ -129,7 +129,9 @@ void main() {
     test('a lens matching nothing is empty-by-filter', () async {
       // "You have nothing" and "you filtered your way to nothing" are
       // different situations and need different words.
-      final c = await containerWith([_note('a')], lens: 'other-notebook');
+      final c = await containerWith([
+        _note('a'),
+      ], lens: const NotesLens.notebook('other-notebook'));
       await c.read(notesProvider.future);
 
       expect(c.read(notesViewStateProvider), isA<NotesViewEmptyByFilter>());
@@ -354,7 +356,7 @@ void main() {
   group('the gate itself', () {
     test('the All notes lens is still the default view', () async {
       final c = await containerWith([_note('a')]);
-      expect(c.read(selectedNotebookIdProvider), allNotebooksId);
+      expect(c.read(notesLensSelectionProvider), const NotesLens.all());
     });
   });
 }

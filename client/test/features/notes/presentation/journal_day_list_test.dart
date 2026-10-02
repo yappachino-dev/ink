@@ -5,10 +5,10 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -18,7 +18,6 @@ import 'package:ink/features/notes/presentation/widgets/calendar/journal_day_lis
 import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
-
 import 'package:mocktail/mocktail.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -70,10 +69,12 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    // `selectedNotebookIdProvider` defaults to `todayNotebookId`, which is a
+    // `notesLensSelectionProvider` defaults to All notes, which is a
     // notebook sentinel and would filter every fixture note out. The calendar
     // shows all notebooks unless the user narrows it.
-    container.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
+    container
+        .read(notesLensSelectionProvider.notifier)
+        .select(const NotesLens.all());
     await container.read(notesProvider.future);
 
     await tester.pumpWidget(

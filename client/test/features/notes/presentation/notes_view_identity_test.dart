@@ -15,10 +15,10 @@ import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/app_animations.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -34,9 +34,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedNotebookId {
+class _AllSelected extends NotesLensSelection {
   @override
-  String build() => allNotebooksId;
+  NotesLens build() => const NotesLens.all();
 }
 
 Note _note(String id, {int touch = 0}) => Note(
@@ -80,7 +80,7 @@ void main() {
         notesServiceProvider.overrideWithValue(svc),
         userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         currentDateProvider.overrideWithValue(DateTime(2026)),
-        selectedNotebookIdProvider.overrideWith(_AllSelected.new),
+        notesLensSelectionProvider.overrideWith(_AllSelected.new),
       ],
     );
     addTearDown(c.dispose);

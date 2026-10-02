@@ -48,4 +48,4 @@ final class NotebookNotesProvider
   }
 }
 
-String _$notebookNotesHash() => r'2713a12d693e6de59e7d32347b48f761cfaf28f1';
+String _$notebookNotesHash() => r'34c02a28342cd59d62d074d7638e26255f79f3d2';

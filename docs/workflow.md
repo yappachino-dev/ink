@@ -273,6 +273,10 @@ Keep it short. Two or three short paragraphs at most, or a handful of bullets.
 - Explain the what and the why. Do not recap the test output, and do not
   reference plan documents - the diff is the record, the description is the
   argument for it.
+- Write it for a human reader, not as a reply. No addressing the asker, no
+  "this corrects the earlier claim", no defending a choice the diff already
+  shows. Verification transcripts, mutation results and review-response notes
+  belong in the conversation with the owner, not here.
 - Use a plain hyphen `-`, not an em dash `—`. It is the key that is actually on
   the keyboard, and the text is easier to type and to search.
 

@@ -24,7 +24,7 @@ import 'package:material_ui/material_ui.dart';
 /// other notes-list strings.
 ///
 /// Owns the notebooks drawer, the FAB, and the offline and sync banners, and
-/// renders whichever lens `selectedNotebookIdProvider` currently names.
+/// renders whichever lens `notesLensSelectionProvider` currently names.
 class NotesScreen extends ConsumerStatefulWidget {
   const NotesScreen({super.key});
 

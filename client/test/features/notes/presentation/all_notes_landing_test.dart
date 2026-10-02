@@ -4,7 +4,7 @@
 // most:
 //
 //  1. The app opens on All notes, and that lens returns every note rather than
-//     nothing. Before this, `allNotebooksId` was only meaningful to the
+//     nothing. Before this, `const NotesLens.all()` was only meaningful to the
 //     calendar's notebook filter, so selecting it on Home fell through to
 //     `note.notebookId == '__all__'` and matched nothing.
 //  2. It is ordered reverse-chronologically and deterministically, because
@@ -19,10 +19,10 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -33,7 +33,6 @@ import 'package:ink/features/notes/presentation/widgets/notes/card/note_card.dar
 import 'package:ink/features/notes/presentation/widgets/notes/notes_list.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
-
 import 'package:mocktail/mocktail.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -43,13 +42,13 @@ class _Svc extends Mock implements NotesService {}
 /// A fixed clock, so the Today case never depends on the day the suite runs.
 final _today = DateTime(2026, 1, 14);
 
-class _LensSelected extends SelectedNotebookId {
-  _LensSelected(this.id);
+class _LensSelected extends NotesLensSelection {
+  _LensSelected(this.lens);
 
-  final String id;
+  final NotesLens lens;
 
   @override
-  String build() => id;
+  NotesLens build() => lens;
 }
 
 Note _note(
@@ -91,7 +90,7 @@ void main() {
 
   Future<ProviderContainer> makeContainer(
     List<Note> notes, {
-    String? lens,
+    NotesLens? lens,
   }) async {
     when(
       svc.getAllNotes,
@@ -103,7 +102,7 @@ void main() {
         userPreferencesProvider.overrideWithValue(await mockUserConfig()),
         currentDateProvider.overrideWithValue(_today),
         if (lens != null)
-          selectedNotebookIdProvider.overrideWith(() => _LensSelected(lens)),
+          notesLensSelectionProvider.overrideWith(() => _LensSelected(lens)),
       ],
     );
     addTearDown(container.dispose);
@@ -115,9 +114,9 @@ void main() {
     test('is All notes, not Today', () async {
       final container = await makeContainer([_note('a')]);
 
-      expect(container.read(selectedNotebookIdProvider), allNotebooksId);
+      expect(container.read(notesLensSelectionProvider), const NotesLens.all());
       expect(
-        isContentForwardLens(container.read(selectedNotebookIdProvider)),
+        container.read(notesLensSelectionProvider).isContentForward,
         isTrue,
       );
     });
@@ -125,7 +124,7 @@ void main() {
     test('is titled "All notes" rather than borrowing "Today"', () async {
       final container = await makeContainer([_note('a')]);
 
-      // Previously both `allNotebooksId` and `todayNotebookId` mapped to
+      // Previously both the All notes and Today lenses mapped to
       // `t.notes.today`, so two different views were indistinguishable by
       // title and the default view called itself the wrong thing.
       expect(container.read(selectedNotebookTitleProvider), t.notes.all);
@@ -225,7 +224,7 @@ void main() {
         _note('due', dueDate: DateTime(2026, 1, 14)),
         _note('not-due', dueDate: DateTime(2026, 6)),
         _note('undated'),
-      ], lens: todayNotebookId);
+      ], lens: const NotesLens.today());
 
       final notes = container.read(notebookNotesProvider);
       expect(notes.map((n) => n.id), ['due']);
@@ -236,7 +235,7 @@ void main() {
         _note('mine'),
         _note('theirs', notebookId: 'p2'),
         _note('unfiled', notebookId: null),
-      ], lens: 'p1');
+      ], lens: const NotesLens.notebook('p1'));
 
       expect(container.read(notebookNotesProvider).map((n) => n.id), ['mine']);
     });
@@ -248,7 +247,7 @@ void main() {
       // assertion would pass for the wrong reason.
       final container = await makeContainer([
         _note('open-note', dueDate: _today),
-      ], lens: todayNotebookId);
+      ], lens: const NotesLens.today());
 
       await tester.pumpWidget(
         UncontrolledProviderScope(

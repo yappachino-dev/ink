@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -40,11 +40,13 @@ class DrawerNotebookItem extends ConsumerWidget {
     if (confirmed) {
       await ref.read(notebooksProvider.notifier).deleteNotebook(notebook);
 
-      if (ref.read(selectedNotebookIdProvider) == notebook.id) {
+      if (ref.read(notesLensSelectionProvider).isNotebook(notebook.id)) {
         // All notes is the landing view, so it is the honest place to land
         // when the notebook you were reading no longer exists. It also avoids
         // the title lookup throwing on a deleted id.
-        ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
+        ref
+            .read(notesLensSelectionProvider.notifier)
+            .select(const NotesLens.all());
       }
     }
   }
@@ -127,10 +129,13 @@ class DrawerNotebookItem extends ConsumerWidget {
       title: notebook.title,
       icon: notebook.emoji,
       color: Color(notebook.colorValue),
-      onTap: () =>
-          ref.read(selectedNotebookIdProvider.notifier).id = notebook.id,
+      onTap: () => ref
+          .read(notesLensSelectionProvider.notifier)
+          .select(NotesLens.notebook(notebook.id)),
       onLongPress: () => _showContextMenu(context, ref),
-      isSelected: ref.watch(selectedNotebookIdProvider) == notebook.id,
+      isSelected:
+          ref.watch(notesLensSelectionProvider) ==
+          NotesLens.notebook(notebook.id),
       count: count,
     );
   }

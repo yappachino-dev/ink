@@ -9,52 +9,52 @@ part of 'ui_state.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(SelectedNotebookId)
-final selectedNotebookIdProvider = SelectedNotebookIdProvider._();
+@ProviderFor(NotesLensSelection)
+final notesLensSelectionProvider = NotesLensSelectionProvider._();
 
-final class SelectedNotebookIdProvider
-    extends $NotifierProvider<SelectedNotebookId, String> {
-  SelectedNotebookIdProvider._()
+final class NotesLensSelectionProvider
+    extends $NotifierProvider<NotesLensSelection, NotesLens> {
+  NotesLensSelectionProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'selectedNotebookIdProvider',
+        name: r'notesLensSelectionProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$selectedNotebookIdHash();
+  String debugGetCreateSourceHash() => _$notesLensSelectionHash();
 
   @$internal
   @override
-  SelectedNotebookId create() => SelectedNotebookId();
+  NotesLensSelection create() => NotesLensSelection();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(String value) {
+  Override overrideWithValue(NotesLens value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
+      providerOverride: $SyncValueProvider<NotesLens>(value),
     );
   }
 }
 
-String _$selectedNotebookIdHash() =>
-    r'5e768276bc7e88badede3140d42c9f390ecfc64f';
+String _$notesLensSelectionHash() =>
+    r'ea37276b4b499830ff40288e9991e465a2be30c9';
 
-abstract class _$SelectedNotebookId extends $Notifier<String> {
-  String build();
+abstract class _$NotesLensSelection extends $Notifier<NotesLens> {
+  NotesLens build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<String, String>;
+    final ref = this.ref as $Ref<NotesLens, NotesLens>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<String, String>,
-              String,
+              AnyNotifier<NotesLens, NotesLens>,
+              NotesLens,
               Object?,
               Object?
             >;
@@ -95,7 +95,7 @@ final class SelectedNotebookTitleProvider
 }
 
 String _$selectedNotebookTitleHash() =>
-    r'25694fdda3650cc183a0f5ee5c7ad5290cc466ea';
+    r'aa86f561cec4aa7dbb662f81d9b0fdad459618e6';
 
 abstract class _$SelectedNotebookTitle extends $Notifier<String> {
   String build();

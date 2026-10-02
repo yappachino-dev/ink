@@ -111,8 +111,13 @@ is the failure mode.
 
 - Conventional Commits with scope: `feat(se/core):`, `refactor(cl/notes):`.
   Subject only, empty body. `!` marks a breaking change.
-- PR descriptions stay short - what and why, no test transcripts. Use a plain
-  hyphen `-`, never an em dash.
+- PR descriptions stay short: a couple of short paragraphs, or a few bullets.
+  Explain what changed and why, not how it was verified. Use a plain hyphen
+  `-`, never an em dash.
+- Write the description for a human reader, not as a reply to a reviewer. No
+  addressing the asker, no "this corrects the earlier claim", no justifying a
+  decision that the diff already makes. Verification transcripts, mutation
+  results and review-response notes belong in the agent conversation.
 - Squash-merge; `ship-pr.sh` owns the merge. One-commit PRs take the commit
   subject verbatim; multi-commit PRs take the supplied title plus a bullet list
   of commit subjects.

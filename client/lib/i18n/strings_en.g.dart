@@ -253,9 +253,6 @@ class Translations$calendar$en {
 	/// en: 'Calendar'
 	String get title => 'Calendar';
 
-	/// en: 'Filter'
-	String get filter => 'Filter';
-
 	/// en: 'No notes for this day'
 	String get noNotes => 'No notes for this day';
 
@@ -334,9 +331,6 @@ class Translations$note$en {
 	String get dueDate => 'Due date';
 
 	late final Translations$note$unreadableContent$en unreadableContent = Translations$note$unreadableContent$en.internal(_root);
-
-	/// en: 'Clear notebook filter'
-	String get clearNotebookFilter => 'Clear notebook filter';
 }
 
 // Path: notebook
@@ -1143,7 +1137,6 @@ extension on Translations {
 			'trust.conflicted' => 'Conflict',
 			'trust.conflictedMessage' => 'A note changed on two devices. Nothing has been overwritten.',
 			'calendar.title' => 'Calendar',
-			'calendar.filter' => 'Filter',
 			'calendar.noNotes' => 'No notes for this day',
 			'calendar.view' => 'Calendar view',
 			'calendar.modes.month' => 'Month',
@@ -1194,7 +1187,6 @@ extension on Translations {
 			'note.unreadableContent.body' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.', one: 'This note has ${n} item that this app cannot read. It is still in the encrypted data, but saving will discard it permanently.', other: 'This note has ${n} items that this app cannot read. They are still in the encrypted data, but saving will discard them permanently.', ), 
 			'note.unreadableContent.discard' => 'Discard and save',
 			'note.unreadableContent.keep' => 'Keep editing',
-			'note.clearNotebookFilter' => 'Clear notebook filter',
 			'notebook.title' => 'My notebooks',
 			'notebook.select' => 'Select a notebook',
 			'notebook.none' => 'No notebook',

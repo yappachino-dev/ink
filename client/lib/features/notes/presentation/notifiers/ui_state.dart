@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/config/user_config.dart';
 import 'package:ink/features/notes/domain/calendar_view_mode.dart';
-import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,48 +11,69 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'ui_state.g.dart';
 
 @riverpod
-class SelectedNotebookId extends _$SelectedNotebookId {
-  /// All notes is the landing view (D-10). The app opens on a flat,
+class NotesLensSelection extends _$NotesLensSelection {
+  /// All notes is the landing view. The app opens on a flat,
   /// reverse-chronological list of everything, because it is note-first: the
   /// note is the thing, and due dates are a lens over it rather than the
   /// primary axis. Today stays reachable as a task-forward lens.
   @override
-  String build() {
+  NotesLens build() {
     // Seeded once, deliberately not watching the notebook list. Watching it
     // re-runs this whenever the list resolves, which silently overwrote the
     // selection the user had just made.
-    return ref.read(userPreferencesProvider).selectedNotebookId ??
-        allNotebooksId;
+    final stored = ref.read(userPreferencesProvider).selectedNotebookId;
+    if (stored == null || _allNotesKeys.contains(stored)) {
+      return const NotesLens.all();
+    }
+    if (_todayKeys.contains(stored)) return const NotesLens.today();
+
+    return NotesLens.notebook(stored);
   }
 
-  // Riverpod notifiers hold state in the base class; a paired getter is
-  // not meaningful here.
-  // ignore: avoid_setters_without_getters
-  set id(String id) {
-    state = id;
-    unawaited(ref.read(userPreferencesProvider).setSelectedNotebookId(id));
+  void select(NotesLens lens) {
+    state = lens;
+    unawaited(
+      ref
+          .read(userPreferencesProvider)
+          .setSelectedNotebookId(
+            // All notes is the absence of a filter, so there is nothing to
+            // persist. Storing it would leave a sentinel in the preference
+            // file, which is exactly what this type exists to remove.
+            lens is AllNotesLens ? null : lens.id,
+          ),
+    );
   }
 }
+
+/// Persistence keys for the Today lens. Notebook lenses store their own id, and
+/// All notes stores nothing, so Today is the one lens that needs a reserved
+/// word.
+///
+/// `__today__` is what the old string sentinel persisted before [NotesLens]
+/// replaced it, and it is still read so an install left on Today does not
+/// reopen as a notebook that does not exist.
+const _todayKeys = {'today', '__today__'};
+
+/// The same, for the All notes lens. Today is the only lens written under a
+/// reserved word now, but the old default persisted `__all__`, and an install
+/// left on the default must not reopen as a phantom notebook either.
+const _allNotesKeys = {'__all__'};
 
 @riverpod
 class SelectedNotebookTitle extends _$SelectedNotebookTitle {
   @override
   String build() {
-    final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
+    final lens = ref.watch(notesLensSelectionProvider);
     final notebooks = ref.watch(notebooksProvider).value ?? [];
 
-    return switch (selectedNotebookId) {
-      // Previously All notes was labelled "Today", because it was not a real
-      // Home lens and borrowing the label was the cheapest way to avoid a
-      // second string. Now that it is the default view, it needs its own.
-      _ when isContentForwardLens(selectedNotebookId) => t.notes.all,
-      _ when selectedNotebookId == todayNotebookId => t.notes.today,
-      // A restored id can name a notebook that no longer exists, and
-      // `firstWhere` used to throw on it and take the screen down with it.
-      // Falling back to the default view is the honest reading: the lens is
-      // gone, so show everything rather than claim an empty notebook.
-      _ =>
-        notebooks.where((p) => p.id == selectedNotebookId).firstOrNull?.title ??
+    return switch (lens) {
+      AllNotesLens() => t.notes.all,
+      TodayLens() => t.notes.today,
+      // A restored id can name a notebook that no longer exists. Falling back
+      // to the default view is the honest reading: the lens is gone, so show
+      // everything rather than claim an empty notebook.
+      NotebookLens(:final notebookId) =>
+        notebooks.where((n) => n.id == notebookId).firstOrNull?.title ??
             t.notes.all,
     };
   }

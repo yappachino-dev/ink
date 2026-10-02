@@ -16,10 +16,10 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/presentation/widgets/notebooks/create_notebook_sheet.dart';
@@ -160,7 +160,7 @@ void main() {
               theme: AppTheme.light(InkPalette.forest),
               home: const Scaffold(
                 body: DrawerVirtualNotebookItem(
-                  id: '__today__',
+                  lens: NotesLens.today(),
                   count: null,
                   title: 'Today',
                   icon: 'target',
@@ -196,7 +196,7 @@ void main() {
               theme: AppTheme.light(InkPalette.forest),
               home: const Scaffold(
                 body: DrawerVirtualNotebookItem(
-                  id: todayNotebookId,
+                  lens: NotesLens.today(),
                   count: null,
                   title: 'Today',
                   icon: 'target',
@@ -216,14 +216,18 @@ void main() {
     });
   });
 
-  group('no inbox sentinel remains', () {
-    test('the sentinel constant is gone from the domain', () {
-      // Guards against it being reintroduced: the only two sentinels are the
-      // "all" lens and "today".
-      expect(todayNotebookId, '__today__');
+  group('no pseudo-notebook sentinel remains', () {
+    test('the lens type carries no magic string', () {
+      // This used to assert that `__inbox__` was the only sentinel that had
+      // been removed. All of them are now gone: All notes and Today are
+      // types, not reserved ids, so a notebook may legitimately be named
+      // anything and the domain has no reserved word to collide with.
+      expect(const NotesLens.all().id, 'all');
+      expect(const NotesLens.today().id, 'today');
+      expect(const NotesLens.notebook('__inbox__').id, '__inbox__');
       expect(<String>[
-        allNotebooksId,
-        todayNotebookId,
+        const NotesLens.all().id,
+        const NotesLens.today().id,
       ], isNot(contains('__inbox__')));
     });
   });

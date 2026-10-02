@@ -10,10 +10,10 @@ import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -41,9 +41,9 @@ Future<Result<List<Notebook>, NotesFailure>> _allNotebooks(
   Invocation _,
 ) async => const Success<List<Notebook>, NotesFailure>([]);
 
-class _AllNotebooksSelected extends SelectedNotebookId {
+class _AllNotebooksSelected extends NotesLensSelection {
   @override
-  String build() => allNotebooksId;
+  NotesLens build() => const NotesLens.all();
 }
 
 List<Note> _manyNotes(int count) => List.generate(
@@ -65,7 +65,6 @@ List<Note> _manyNotes(int count) => List.generate(
     updatedAt: DateTime(2026, 1, 14),
     dueDate: DateTime(2026, 1, 14, 9 + (i % 8)),
     priority: TaskPriority.medium,
-    notebookId: allNotebooksId,
   ),
 );
 
@@ -92,7 +91,7 @@ void main() {
           notesServiceProvider.overrideWithValue(service),
           isOfflineProvider.overrideWithValue(false),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
+          notesLensSelectionProvider.overrideWith(_AllNotebooksSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(
@@ -148,7 +147,7 @@ void main() {
           notesServiceProvider.overrideWithValue(service),
           isOfflineProvider.overrideWithValue(false),
           sharedPreferencesProvider.overrideWithValue(prefs),
-          selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
+          notesLensSelectionProvider.overrideWith(_AllNotebooksSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp.router(

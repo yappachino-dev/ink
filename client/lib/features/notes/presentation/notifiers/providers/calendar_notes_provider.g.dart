@@ -10,45 +10,57 @@ part of 'calendar_notes_provider.dart';
 // ignore_for_file: type=lint, type=warning
 /// The notes written on the selected calendar day.
 ///
-/// The calendar is a journal: it answers "what did I write on this day", so it
-/// keys on `createdAt`. It deliberately does not key on `dueDate`: the due-date
-/// axis belongs to the Today and Overdue views, and marking a day for both
-/// would make one dot ambiguous between "written here" and "due here".
+/// The calendar is a date index: it answers "what did I write on this day",
+/// so it keys on `createdAt` and on nothing else. It deliberately does not key
+/// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+/// and marking a day for both would make one dot ambiguous between "written
+/// here" and "due here".
 ///
-/// Back-dating is not supported yet. A note written today lands on today.
-/// If that turns out to matter, the key becomes a user-assignable entry-date
-/// column rather than a change of approach, which is why the date should be
-/// readable as a column and not hardcoded to the entity.
+/// Notebook scope is not a second axis here. Filtering by notebook made the
+/// journal a filtered copy of Notes under different chrome, and forced the
+/// navigation shell to clear the selection on tab entry. Notebooks stay a Notes
+/// lens, reachable from its drawer.
+///
+/// Back-dating is not supported. A note written today lands on today; if that
+/// changes, the key becomes a user-assignable entry-date column.
 
 @ProviderFor(calendarNotes)
 final calendarNotesProvider = CalendarNotesProvider._();
 
 /// The notes written on the selected calendar day.
 ///
-/// The calendar is a journal: it answers "what did I write on this day", so it
-/// keys on `createdAt`. It deliberately does not key on `dueDate`: the due-date
-/// axis belongs to the Today and Overdue views, and marking a day for both
-/// would make one dot ambiguous between "written here" and "due here".
+/// The calendar is a date index: it answers "what did I write on this day",
+/// so it keys on `createdAt` and on nothing else. It deliberately does not key
+/// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+/// and marking a day for both would make one dot ambiguous between "written
+/// here" and "due here".
 ///
-/// Back-dating is not supported yet. A note written today lands on today.
-/// If that turns out to matter, the key becomes a user-assignable entry-date
-/// column rather than a change of approach, which is why the date should be
-/// readable as a column and not hardcoded to the entity.
+/// Notebook scope is not a second axis here. Filtering by notebook made the
+/// journal a filtered copy of Notes under different chrome, and forced the
+/// navigation shell to clear the selection on tab entry. Notebooks stay a Notes
+/// lens, reachable from its drawer.
+///
+/// Back-dating is not supported. A note written today lands on today; if that
+/// changes, the key becomes a user-assignable entry-date column.
 
 final class CalendarNotesProvider
     extends $FunctionalProvider<List<Note>, List<Note>, List<Note>>
     with $Provider<List<Note>> {
   /// The notes written on the selected calendar day.
   ///
-  /// The calendar is a journal: it answers "what did I write on this day", so it
-  /// keys on `createdAt`. It deliberately does not key on `dueDate`: the due-date
-  /// axis belongs to the Today and Overdue views, and marking a day for both
-  /// would make one dot ambiguous between "written here" and "due here".
+  /// The calendar is a date index: it answers "what did I write on this day",
+  /// so it keys on `createdAt` and on nothing else. It deliberately does not key
+  /// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+  /// and marking a day for both would make one dot ambiguous between "written
+  /// here" and "due here".
   ///
-  /// Back-dating is not supported yet. A note written today lands on today.
-  /// If that turns out to matter, the key becomes a user-assignable entry-date
-  /// column rather than a change of approach, which is why the date should be
-  /// readable as a column and not hardcoded to the entity.
+  /// Notebook scope is not a second axis here. Filtering by notebook made the
+  /// journal a filtered copy of Notes under different chrome, and forced the
+  /// navigation shell to clear the selection on tab entry. Notebooks stay a Notes
+  /// lens, reachable from its drawer.
+  ///
+  /// Back-dating is not supported. A note written today lands on today; if that
+  /// changes, the key becomes a user-assignable entry-date column.
   CalendarNotesProvider._()
     : super(
         from: null,
@@ -82,18 +94,17 @@ final class CalendarNotesProvider
   }
 }
 
-String _$calendarNotesHash() => r'990905cba3a7620352be8b07555bdb5719cac166';
+String _$calendarNotesHash() => r'f655b657f78c2d0097c2645190a32a0b033fffc3';
 
 /// Days in the visible range that hold at least one entry.
 ///
-/// Precomputed per range rather than filtering the whole note set for each
-/// cell the grid paints, which `TableCalendar` asks for on every visible day.
+/// Precomputed per range rather than filtering the whole note set for each cell
+/// the grid paints, which `TableCalendar` asks for on every visible day.
 ///
 /// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
-/// recorded year/month/day and returns local midnight. `DateTime.==` compares
-/// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
-/// two sides disagreed on either. Normalizing both sides to a local midnight
-/// makes the comparison exact.
+/// recorded year/month/day and returns local midnight. `DateTime.==` compares the
+/// instant *and* the `isUtc` flag, so a raw lookup would miss whenever the two
+/// sides disagreed on either.
 ///
 /// Deliberately **not** `.toLocal()`. Converting to the device zone first would
 /// re-date an entry whenever the stored time sits near midnight, so the same
@@ -105,14 +116,13 @@ final journalEntryCountsProvider = JournalEntryCountsProvider._();
 
 /// Days in the visible range that hold at least one entry.
 ///
-/// Precomputed per range rather than filtering the whole note set for each
-/// cell the grid paints, which `TableCalendar` asks for on every visible day.
+/// Precomputed per range rather than filtering the whole note set for each cell
+/// the grid paints, which `TableCalendar` asks for on every visible day.
 ///
 /// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
-/// recorded year/month/day and returns local midnight. `DateTime.==` compares
-/// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
-/// two sides disagreed on either. Normalizing both sides to a local midnight
-/// makes the comparison exact.
+/// recorded year/month/day and returns local midnight. `DateTime.==` compares the
+/// instant *and* the `isUtc` flag, so a raw lookup would miss whenever the two
+/// sides disagreed on either.
 ///
 /// Deliberately **not** `.toLocal()`. Converting to the device zone first would
 /// re-date an entry whenever the stored time sits near midnight, so the same
@@ -129,14 +139,13 @@ final class JournalEntryCountsProvider
     with $Provider<Map<DateTime, int>> {
   /// Days in the visible range that hold at least one entry.
   ///
-  /// Precomputed per range rather than filtering the whole note set for each
-  /// cell the grid paints, which `TableCalendar` asks for on every visible day.
+  /// Precomputed per range rather than filtering the whole note set for each cell
+  /// the grid paints, which `TableCalendar` asks for on every visible day.
   ///
   /// Keys are `DateUtils.dateOnly` of the stored timestamp, which reads the
-  /// recorded year/month/day and returns local midnight. `DateTime.==` compares
-  /// the instant *and* the `isUtc` flag, so a raw lookup would miss whenever the
-  /// two sides disagreed on either. Normalizing both sides to a local midnight
-  /// makes the comparison exact.
+  /// recorded year/month/day and returns local midnight. `DateTime.==` compares the
+  /// instant *and* the `isUtc` flag, so a raw lookup would miss whenever the two
+  /// sides disagreed on either.
   ///
   /// Deliberately **not** `.toLocal()`. Converting to the device zone first would
   /// re-date an entry whenever the stored time sits near midnight, so the same
@@ -177,4 +186,4 @@ final class JournalEntryCountsProvider
 }
 
 String _$journalEntryCountsHash() =>
-    r'ffea3d1f6928dcf3ab4e62ca4edbcfc6353d6977';
+    r'8ab086da999b67609b117f4a98e259a1d7e30271';

@@ -1,9 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
-import 'package:ink/features/notes/domain/constants.dart';
-import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Hosts the navigation branches and owns the single navigation bar (F-10).
@@ -12,34 +9,30 @@ import 'package:material_ui/material_ui.dart';
 /// tab and coming back restores its scroll position, its open sheets and its
 /// local state. Previously every tab switch was a `context.go()` against a flat
 /// route list, which rebuilt the screen from scratch each time.
-class AppShell extends ConsumerWidget {
+///
+/// Switching tabs no longer touches any branch's state. It used to clear the
+/// Notes lens when entering Calendar, because both screens read one shared
+/// notebook selection and only Notes understood the `Today` pseudo-notebook.
+/// Calendar is a date index now and reads no lens, so the reset has no
+/// reason to exist.
+class AppShell extends StatelessWidget {
   const AppShell({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.ink.surface,
       body: navigationShell,
       bottomNavigationBar: AppBottomNav(
         currentIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => _select(ref, index),
+        onDestinationSelected: _select,
       ),
     );
   }
 
-  void _select(WidgetRef ref, int index) {
-    // Notes and Calendar read the same lens. Today is a pseudo-notebook that
-    // the journal has no notion of, so entering Calendar clears it. A real
-    // notebook is a valid filter for both, so it is kept - otherwise the
-    // only way back to your notes was to leave the tab and return, which
-    // silently reset the selection as a side effect.
-    if (index == _calendarBranch &&
-        ref.read(selectedNotebookIdProvider) == todayNotebookId) {
-      ref.read(selectedNotebookIdProvider.notifier).id = allNotebooksId;
-    }
-
+  void _select(int index) {
     navigationShell.goBranch(
       index,
       // Tapping the active tab returns it to its root, which is what a tab is
@@ -47,7 +40,4 @@ class AppShell extends ConsumerWidget {
       initialLocation: index == navigationShell.currentIndex,
     );
   }
-
-  /// Index of the Calendar branch, kept next to the reset that depends on it.
-  static const _calendarBranch = 1;
 }

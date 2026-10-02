@@ -7,10 +7,10 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -30,9 +30,9 @@ import 'package:mocktail/mocktail.dart';
 /// toolbar now owns the inset and paints its background through it.
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedNotebookId {
+class _AllSelected extends NotesLensSelection {
   @override
-  String build() => allNotebooksId;
+  NotesLens build() => const NotesLens.all();
 }
 
 const _screenHeight = 800.0;
@@ -80,7 +80,7 @@ void main() {
       ProviderScope(
         overrides: [
           notesServiceProvider.overrideWithValue(svc),
-          selectedNotebookIdProvider.overrideWith(_AllSelected.new),
+          notesLensSelectionProvider.overrideWith(_AllSelected.new),
         ],
         child: TranslationProvider(
           child: MaterialApp(

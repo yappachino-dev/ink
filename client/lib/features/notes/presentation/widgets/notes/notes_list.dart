@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
@@ -22,9 +22,9 @@ class NotesList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedNotebookId = ref.watch(selectedNotebookIdProvider);
+    final lens = ref.watch(notesLensSelectionProvider);
 
-    if (isContentForwardLens(selectedNotebookId)) {
+    if (lens.isContentForward) {
       return _ContentForwardList(title: title);
     }
 
