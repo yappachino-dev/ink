@@ -69,7 +69,7 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(notesProvider.future);
-    container
+    await container
         .read(notesLensSelectionProvider.notifier)
         .select(
           notebookId == null

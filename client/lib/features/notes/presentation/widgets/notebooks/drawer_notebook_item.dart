@@ -41,12 +41,18 @@ class DrawerNotebookItem extends ConsumerWidget {
       await ref.read(notebooksProvider.notifier).deleteNotebook(notebook);
 
       if (ref.read(notesLensSelectionProvider).isNotebook(notebook.id)) {
-        // All notes is the landing view, so it is the honest place to land
-        // when the notebook you were reading no longer exists. It also avoids
-        // the title lookup throwing on a deleted id.
-        ref
-            .read(notesLensSelectionProvider.notifier)
-            .select(const NotesLens.all());
+        // A deleted notebook leaves the selection pointing at nothing. All
+        // notes is the honest landing spot, and it has to be written or the app
+        // reopens on the same dead id.
+        // A tap has no error surface, and the notifier already rolls the
+        // selection back when the write fails, so the list stays truthful
+        // without this caller doing anything. The logger lives in
+        // infrastructure, which this layer must not import.
+        unawaited(
+          ref
+              .read(notesLensSelectionProvider.notifier)
+              .select(const NotesLens.all()),
+        );
       }
     }
   }

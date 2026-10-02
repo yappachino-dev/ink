@@ -30,18 +30,53 @@ class NotesLensSelection extends _$NotesLensSelection {
     return NotesLens.notebook(stored);
   }
 
-  void select(NotesLens lens) {
+  /// Serializes the preference writes. Tapping two notebooks in quick
+  /// succession queues two writes, and without this the slower one can land
+  /// last and leave the file describing the lens the user moved away from.
+  Future<void> _writes = Future<void>.value();
+
+  /// Selects [lens] and persists it.
+  ///
+  /// The state is rolled back if the write fails. A selection the app cannot
+  /// restore on the next launch is not a selection, and leaving it applied
+  /// would mean the app silently disagreed with itself.
+  Future<void> select(NotesLens lens) {
+    final previous = state;
     state = lens;
-    unawaited(
-      ref
-          .read(userPreferencesProvider)
-          .setSelectedNotebookId(
-            // All notes is the absence of a filter, so there is nothing to
-            // persist. Storing it would leave a sentinel in the preference
-            // file, which is exactly what this type exists to remove.
-            lens is AllNotesLens ? null : lens.id,
-          ),
-    );
+
+    // Read before queueing, not inside the queued callback. The provider can
+    // be disposed while a write is waiting its turn, and a Ref is unusable
+    // after that, so the dependency is captured while it is still valid.
+    final preferences = ref.read(userPreferencesProvider);
+
+    final write = _writes.then((_) => _write(preferences, lens, previous));
+
+    // Swallow on the chain only. The caller still gets the failure, but a
+    // rejected write must not poison the queue for every tap after it.
+    _writes = write.then((_) {}, onError: (_, _) {});
+
+    return write;
+  }
+
+  Future<void> _write(
+    UserConfig preferences,
+    NotesLens lens,
+    NotesLens previous,
+  ) async {
+    try {
+      await preferences.setSelectedNotebookId(
+        // All notes is the absence of a filter, so there is nothing to
+        // persist. Storing it would leave a sentinel in the preference file,
+        // which is exactly what this type exists to remove.
+        lens is AllNotesLens ? null : lens.id,
+      );
+    } catch (_) {
+      // Only undo the selection if this write is still the current one. If a
+      // later tap already moved on, restoring would drag the list back to a
+      // lens the user has left.
+      if (ref.mounted && state == lens) state = previous;
+      rethrow;
+    }
   }
 }
 
