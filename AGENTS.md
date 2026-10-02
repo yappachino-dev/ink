@@ -1,84 +1,143 @@
 # AGENTS.md
 
-Instructions for AI coding agents working on this repository (Ink — an E2EE
-notes monorepo: Flutter client in `client/`, Go backend in `services/core`,
-protobuf contracts in `proto/`).
+Ink - an E2EE notes monorepo. Flutter client in `client/`, Go backend in
+`services/core`, protobuf contracts in `proto/`. The backend stores opaque
+encrypted blobs; encryption and decryption happen on-device.
 
-## Documentation maintenance (mandatory)
+`docs/` holds verified, persisted information and is committed alongside the
+code. Read `docs/README.md` for the map of which doc covers what. Scratch work
+belongs in `.agent/`, which is gitignored and deleted when the task ends. The
+line is simple: if it will still be useful to someone who was not in this
+conversation, it is documentation; otherwise it is scratch.
 
-All `*.md` files under `docs/` are agent-owned living documentation. Whenever
-your changes affect something a doc describes, **update the relevant doc in the
-same task** — do not leave docs stale.
+## Default mode is local
 
-| Area touched | Docs to update |
-| --- | --- |
-| `proto/**`, gRPC API, auth/vault/sync behavior | `docs/backend.md`, possibly `docs/security.md` |
-| `services/core/**` (packages, DB schema, config, queries) | `docs/backend.md`; schema/crypto-adjacent changes → `docs/security.md` |
-| Crypto, session, key slots, token handling | `docs/security.md` |
-| `client/lib/**` (features, sync engine, state, stack) | `docs/client.md` |
-| Repo structure, build files (`Makefile`, compose, `buf*`, `go.work`) | `docs/architecture.md`, `docs/development.md` |
-| CI/CD, k8s, deployment | `docs/development.md`, `docs/architecture.md` |
-| Any merged work worth narrating | append to the timeline/phases in `docs/history.md` |
+Implement, verify, commit locally. Then stop and report the branch, the commit,
+and the verification results. Do not push, open a PR, or merge unless the owner
+explicitly asks for it.
 
-Rules:
+## Never push to `main`
 
-1. **New PRs/commits get history entries.** When you land a change on `main`,
-   add a row to the table in `docs/history.md` and, if it represents a new
-   phase or convention, extend that document's prose.
-2. **Docs describe reality, not intentions.** Don't document planned features
-   as if implemented; note open items explicitly (e.g., "Known hardening items").
-3. **Keep cross-links valid.** If you rename/move documented files, fix references.
-4. **Don't commit docs.** `docs/` is gitignored by design; it serves the human
-   and agents working locally.
+This repository has no branch protection - the protection API returns 403 on the
+current plan - so nothing server-side refuses a direct push.
 
-## Project conventions
+- **Always be on a feature branch before committing.** `ship-pr.sh` finishes on
+  `main`; committing there is how a direct push happened this session.
+- Branch from `origin/main`, not stale local `main`.
+- `.githooks/pre-push` refuses the base branch. Enable once per clone:
+  `make install-hooks`.
+- When the owner asks for the lifecycle, run `./scripts/ship-pr.sh`. Never
+  reconstruct it with `git push` plus `gh` calls. It merges only after checks
+  pass, never with `--admin`; `--no-merge` stops after CI and leaves the PR open
+  for review.
 
-- Commit style: Conventional Commits with scope prefixes — `feat(se/core):`,
-  `refactor(cl/<feature>):`, `client:` / bare for cross-cutting; `!` for breaking
-  changes. Squash-merge PRs; keep one concern per PR.
-- API changes start in `proto/**`; run `buf generate` and update both sides.
-- Client codegen: `dart run build_runner build --delete-conflicting-outputs`
-  after editing annotated Dart; never hand-edit generated files
-  (`*.g.dart`, `*.freezed.dart`, `grpc/gen/**`, `strings*.g.dart`).
-- Backend SQL: edit `db/queries/*.sql` + regenerate with sqlc; migrations live
-  in `db/migrations/`.
-- Errors: sealed failure classes + `Result<T, Failure>` on the client; sentinel
-  errors in Go services.
+## Atomicity
 
-## GitHub PR lifecycle (explicit opt-in)
+One concern per branch and per commit. No drive-by formatting, dependency
+bumps, or unrelated edits. If implementation surfaces a second concern, finish
+the first and schedule the other separately.
 
-Do not push a branch, create a watch, or merge a pull request during ordinary
-implementation. Keep completed work local and report the branch, commit, and
-verification results. Push or run the full GitHub CLI lifecycle only when the
-owner explicitly asks. When the owner explicitly asks for the full GitHub CLI
-lifecycle, use
-`scripts/ship-pr.sh` rather than reconstructing `gh` commands manually:
+## Verification
 
 ```bash
-./scripts/ship-pr.sh 'chore(scope): summarize the complete change'
-# The PR description is independent of the commit count, so it may be added to
-# any PR — one commit or several — whenever the change deserves explanation:
-./scripts/ship-pr.sh --pr-body 'Short explanation of the core design.' \
-  'chore(scope): summarize the complete change'
+cd client && flutter analyze && flutter test
+cd ../services/core && go build ./... && go vet ./...
+cd .. && git diff --check
 ```
 
-The script derives the default branch from `origin/HEAD`, fetches it, and
-counts commits relative to that branch. Two bodies are involved and the commit
-count governs only one of them:
+- `make check-architecture` and `make check-spacing` run the import and token
+  verifiers. `check-spacing` is a **diff-based migration guard**, not a
+  codebase-wide linter.
+- Go integration tests need Docker. A missing socket is environmental, not a
+  regression.
+- Re-record only the goldens your change affects, then look at them. A
+  goldens-only pass is not verification.
+- A guardrail is untested until you break it deliberately and watch the check
+  fail. Do that before claiming it catches anything.
+- Never `git reset --hard` while uncommitted work exists. Back up files instead
+  of restoring from git.
 
-- **PR description** — empty unless `--pr-body` is passed. Independent of the
-  commit count: add it to a one-commit PR whenever the change warrants it, and
-  omit it from a multi-commit PR whose title list already says everything.
-- **Squash-commit body**, i.e. the message left in `main` history — this is
-  where the count applies. A one-commit PR takes the exact commit subject with an
-  empty body; a multi-commit PR takes the supplied title with a single-spaced
-  bullet list of commit titles, oldest to newest.
+## Generated code
 
-Multi-commit PRs must be given a high-level title argument. On a one-commit PR
-that argument is ignored: the commit subject is used verbatim, so the commit
-message and PR title cannot diverge by accident.
+Never hand-edit: `*.g.dart`, `*.freezed.dart`, `grpc/gen/**`,
+`strings*.g.dart`, Drift output, or sqlc output.
 
-The script pushes the branch, creates the PR, watches CI with
-`--fail-fast`, and squash merges only after checks pass. It never bypasses
-branch protection or uses `--admin`. The agent must not run this script unless
-the owner explicitly requests the lifecycle.
+| Change | Command |
+| --- | --- |
+| protobuf | `buf generate` - the only path - then update both sides |
+| annotated Dart | `dart run build_runner build --delete-conflicting-outputs` |
+| SQL | edit `db/queries/*.sql` (migrations in `db/migrations/`), then `go tool sqlc` - not a global binary |
+| Drift schema | `make schema-dump` then `make schema-generate` |
+
+## Client conventions
+
+- Spacing, radii, sizes, and durations come from `tokens.dart`
+  (`AppSpacing`, `AppRadius`, `AppSize`, `AppDurations`). No raw numbers.
+- Errors are sealed failure classes carrying `Result<T, Failure>`.
+- Anchor tokens used as negative-match filters exactly: `^project$`, never
+  `^project`. The loose form silently swallows `projection` and corrupts the
+  sweep.
+
+Before UI work, read `docs/workflow.md` under "Code quality gates" and
+`docs/theming.md`. That is where the specific traps live and they are not
+restated here: decoration versus clipping, semantics merging and
+`excludeSemantics`, padding around versus for a scroll view, why a one-item
+golden cannot catch an overflow, and theme contrast.
+
+## Commenting
+
+Comment the *why* when the code cannot state it: a constraint, a trade-off, a
+trap, a deliberate absence. Not the signature, not a narration of the next line,
+not PR history - that belongs in `docs/`.
+
+If deleting a comment cannot make someone misunderstand the code, delete it. A
+comment longer than the code it describes usually means the code wants
+restructuring. `notes/domain/constants.dart` once ran 82% comment lines; that
+is the failure mode.
+
+## Reviews
+
+- **Verify the claim before acting.** Reported bugs are sometimes false
+  positives. Prove it and say so rather than "fixing" it.
+- A `difference` between two `DateTime`s can itself be the bug; calendar-day
+  arithmetic is not 24-hour arithmetic.
+- Confirm semantics by rendering the tree, not by reasoning about node merging.
+- Padding *around* a scroll view shrinks its viewport; padding *for* one goes
+  on the content. A golden with a single item cannot see the difference.
+- A new test that passes against the old code is not a regression test. Say so
+  instead of claiming the coverage.
+
+## Commits and PRs
+
+- Conventional Commits with scope: `feat(se/core):`, `refactor(cl/notes):`.
+  Subject only, empty body. `!` marks a breaking change.
+- PR descriptions stay short - what and why, no test transcripts. Use a plain
+  hyphen `-`, never an em dash.
+- Squash-merge; `ship-pr.sh` owns the merge. One-commit PRs take the commit
+  subject verbatim; multi-commit PRs take the supplied title plus a bullet list
+  of commit subjects.
+
+## Documentation
+
+`docs/` holds verified, persisted information and nothing else. Update it in the
+same task and commit it with the change, describe reality rather than intention,
+and keep cross-links valid when renaming documented files. If a document
+describes shipped work or a completed plan, it has outlived its use - fold
+anything still true into a live document and delete the rest.
+
+| Touched | Update |
+| --- | --- |
+| `proto/**`, gRPC API, auth/vault/sync behavior | `docs/backend.md`, maybe `docs/security.md` |
+| `services/core/**` (packages, schema, config, queries) | `docs/backend.md` |
+| Crypto, sessions, key slots, token handling | `docs/security.md` |
+| `client/lib/**` (features, sync, state, stack) | `docs/client.md` |
+| Client UI or theme work | `docs/theming.md`, and `docs/workflow.md` "Code quality gates" |
+| Build files, `Makefile`, compose, `buf*`, `go.work`, CI | `docs/development.md`, `docs/architecture.md` |
+| Merged work worth narrating | a row in `docs/history.md` |
+
+## Known blockers
+
+- `http2 3.1.0` unavailable: `grpc 5.1.0` requires `http2 ^2.3.1`.
+- `pointycastle 4.0.0` unavailable: `bip39 1.0.6` requires PointyCastle 3.x.
+
+Recheck both before planning around them.

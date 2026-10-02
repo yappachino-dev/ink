@@ -22,5 +22,5 @@ services/**/.env
 go.work
 go.work.sum
 
-# AI agent documentation
-docs/
+# AI agent scratch space: ephemeral by design, never commit
+.agent/
