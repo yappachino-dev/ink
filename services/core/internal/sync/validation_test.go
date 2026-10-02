@@ -46,7 +46,7 @@ func TestSync_RejectsDuplicateNoteIDs(t *testing.T) {
 func TestSync_RejectsNotebookIDOwnedByAnotherUser(t *testing.T) {
 	foreign := uuid.MustParse("00000000-0000-7000-8000-00000000000c")
 	repo := &fakeSyncRepo{
-		currentCursor:     4,
+		currentCursor:      4,
 		foreignNotebookIDs: []uuid.UUID{foreign},
 	}
 	svc := newTestService(repo)
@@ -96,7 +96,7 @@ func TestSync_RejectsNoteReferencingAnotherUsersNotebook(t *testing.T) {
 
 	_, err := svc.Sync(context.Background(), 1, SyncPayload{
 		Changes: SyncChanges{Notes: []Note{{
-			ID:        uuid.MustParse("00000000-0000-7000-8000-00000000000f"),
+			ID:         uuid.MustParse("00000000-0000-7000-8000-00000000000f"),
 			NotebookID: &foreignNotebook,
 		}}},
 	})
@@ -167,7 +167,7 @@ func TestSync_AcceptsNoteReferencingNotebookCreatedInSameBatch(t *testing.T) {
 	res, err := svc.Sync(context.Background(), 1, SyncPayload{
 		Changes: SyncChanges{
 			Notebooks: []Notebook{{ID: notebookID}},
-			Notes:    []Note{{ID: uuid.New(), NotebookID: &notebookID}},
+			Notes:     []Note{{ID: uuid.New(), NotebookID: &notebookID}},
 		},
 	})
 	if err != nil {
@@ -195,7 +195,7 @@ func TestSync_ValidatesOnlyExternalReferences(t *testing.T) {
 	if _, err := svc.Sync(context.Background(), 1, SyncPayload{
 		Changes: SyncChanges{
 			Notebooks: []Notebook{{ID: inBatch}},
-			Notes:    []Note{{ID: uuid.New(), NotebookID: &external}},
+			Notes:     []Note{{ID: uuid.New(), NotebookID: &external}},
 		},
 	}); err != nil {
 		t.Fatalf("Sync: %v", err)
@@ -212,7 +212,7 @@ func TestSync_RejectsExternalReferenceEvenWithInBatchNotebook(t *testing.T) {
 	_, err := svc.Sync(context.Background(), 1, SyncPayload{
 		Changes: SyncChanges{
 			Notebooks: []Notebook{{ID: inBatch}},
-			Notes:    []Note{{ID: uuid.New(), NotebookID: &bad}},
+			Notes:     []Note{{ID: uuid.New(), NotebookID: &bad}},
 		},
 	})
 

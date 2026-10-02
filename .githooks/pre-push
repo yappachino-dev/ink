@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Refuses to push the base branch. This repo has no branch protection (the
+# protection API returns 403 on this plan), so nothing server-side stops a
+# direct push. Enable once per clone with: make install-hooks
+set -euo pipefail
+
+base_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true)
+base_branch="${base_ref#refs/remotes/origin/}"
+[ -n "$base_branch" ] || base_branch="main"
+
+# Check what is being pushed, not what is checked out. `git push origin
+# HEAD:main` from a feature branch is the case that has to fail.
+while read -r _local_ref _local_oid remote_ref _remote_oid; do
+  if [ "$remote_ref" = "refs/heads/$base_branch" ]; then
+    {
+      echo "error: refusing to push to '$base_branch' directly."
+      echo "       Nothing server-side refuses it, so it lands unreviewed and"
+      echo "       undoing it later rewrites published history."
+      echo "       Push a branch and open a PR instead."
+    } >&2
+    exit 1
+  fi
+done
+
+exit 0

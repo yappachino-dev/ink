@@ -92,6 +92,21 @@ jobs:
         working-directory: services/core
         run: go vet ./...
 
+      - name: Format
+        working-directory: services/core
+        # go vet accepts any valid formatting, so unformatted code passes CI
+        # forever. gofmt fixes alignment silently, so there is no compiler
+        # signal either - the Project -> Notebook rename left six files in
+        # internal/sync misaligned and nothing noticed.
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "error: these files are not gofmt-clean:" >&2
+            echo "$unformatted" >&2
+            echo "fix with: cd services/core && gofmt -w ." >&2
+            exit 1
+          fi
+
       - name: Test
         working-directory: services/core
         run: go test ./...
