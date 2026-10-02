@@ -85,7 +85,7 @@ func noteChange(id uuid.UUID, notebookID *uuid.UUID) Note {
 
 	return Note{
 		ID:               id,
-		NotebookID:        notebookID,
+		NotebookID:       notebookID,
 		EncryptedTitle:   []byte("t"),
 		EncryptedContent: []byte("c"),
 		Version:          1,
@@ -274,7 +274,7 @@ func TestSyncIntegration_AcceptsNewNotebookAndReferencingNoteInSameBatch(t *test
 	if _, err := svc.Sync(ctx, alice, SyncPayload{
 		Changes: SyncChanges{
 			Notebooks: []Notebook{notebookChange(notebookID)},
-			Notes:    []Note{noteChange(noteID, &notebookID)},
+			Notes:     []Note{noteChange(noteID, &notebookID)},
 		},
 	}); err != nil {
 		t.Fatalf("creating a notebook and a referencing note in one push must succeed: %v", err)
@@ -391,7 +391,7 @@ func TestSyncIntegration_RejectsNoteReferencingNotebookInSameBatchOwnedElsewhere
 	_, err := svc.Sync(ctx, alice, SyncPayload{
 		Changes: SyncChanges{
 			Notebooks: []Notebook{notebookChange(bobsNotebook)},
-			Notes:    []Note{noteChange(uuid.New(), &bobsNotebook)},
+			Notes:     []Note{noteChange(uuid.New(), &bobsNotebook)},
 		},
 	})
 

@@ -98,7 +98,7 @@ func (r *PostgresSyncRepository) GetNoteChanges(ctx context.Context, userID int,
 		notes = append(notes, Note{
 			ID:               row.ID,
 			UserID:           userID,
-			NotebookID:        row.NotebookID,
+			NotebookID:       row.NotebookID,
 			EncryptedTitle:   row.EncryptedTitle,
 			EncryptedContent: row.EncryptedContent,
 			Version:          int(row.Version),
@@ -122,7 +122,7 @@ func (r *PostgresSyncRepository) UpsertNotes(ctx context.Context, userID int, sy
 		params = append(params, store.UpsertNotesParams{
 			ID:               n.ID,
 			UserID:           int32(userID),
-			NotebookID:        n.NotebookID,
+			NotebookID:       n.NotebookID,
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),

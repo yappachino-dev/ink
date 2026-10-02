@@ -18,12 +18,12 @@ type SyncResult struct {
 
 type SyncChanges struct {
 	Notebooks []Notebook
-	Notes    []Note
+	Notes     []Note
 }
 
 type Note struct {
-	ID        uuid.UUID
-	UserID    int
+	ID         uuid.UUID
+	UserID     int
 	NotebookID *uuid.UUID
 
 	EncryptedTitle   []byte

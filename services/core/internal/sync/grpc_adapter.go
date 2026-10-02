@@ -59,7 +59,7 @@ func toDomain(pbReq *syncv1.SyncRequest) (SyncPayload, error) {
 
 			changes.Notes = append(changes.Notes, Note{
 				ID:               id,
-				NotebookID:        pID,
+				NotebookID:       pID,
 				EncryptedTitle:   n.EncryptedTitle,
 				EncryptedContent: n.EncryptedContent,
 				Version:          int(n.Version),
@@ -108,7 +108,7 @@ func toProto(result SyncResult) *syncv1.SyncResponse {
 
 		pbNotes = append(pbNotes, &syncv1.Note{
 			Id:               n.ID.String(),
-			NotebookId:        notebookIDStr,
+			NotebookId:       notebookIDStr,
 			EncryptedTitle:   n.EncryptedTitle,
 			EncryptedContent: n.EncryptedContent,
 			Version:          int32(n.Version),
@@ -122,7 +122,7 @@ func toProto(result SyncResult) *syncv1.SyncResponse {
 		NextCursor: int32(result.NextCursor),
 		Changes: &syncv1.SyncChanges{
 			Notebooks: pbNotebooks,
-			Notes:    pbNotes,
+			Notes:     pbNotes,
 		},
 	}
 }
