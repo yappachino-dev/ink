@@ -12,17 +12,12 @@ import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../helpers/test_helpers.dart';
-
-class _NoNotebookSelected extends SelectedNotebookId {
-  @override
-  String build() => allNotebooksId;
-}
 
 GoRouter _shellRouter() {
   return GoRouter(
@@ -65,9 +60,6 @@ void main() {
   Future<void> pump(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          selectedNotebookIdProvider.overrideWith(_NoNotebookSelected.new),
-        ],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.light(InkPalette.forest),
@@ -136,10 +128,15 @@ void main() {
     expect(find.text('half-written thought'), findsOneWidget);
   });
 
-  testWidgets('entering the journal clears a task lens (F-10)', (tester) async {
+  testWidgets('switching to Calendar leaves the Notes lens untouched', (
+    tester,
+  ) async {
+    // The shell used to clear a Today lens on entering Calendar, because both
+    // screens read one shared selection and only Notes understood Today.
+    // Calendar is a date index and reads no lens, so a tab switch has no reason
+    // to mutate another branch's state.
     final container = ProviderContainer(
       overrides: [
-        selectedNotebookIdProvider.overrideWith(_NoNotebookSelected.new),
         userPreferencesProvider.overrideWithValue(await mockUserConfig()),
       ],
     );
@@ -158,15 +155,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Home and Calendar read one lens. A task lens is a pseudo-notebook that
-    // the journal has no notion of.
-    container.read(selectedNotebookIdProvider.notifier).id = todayNotebookId;
+    container
+        .read(notesLensSelectionProvider.notifier)
+        .select(const NotesLens.today());
+
+    // Assert the premise before the action. This test previously passed while
+    // asserting `all == all`: the selection had never taken effect, so it
+    // verified nothing.
+    expect(container.read(notesLensSelectionProvider), const NotesLens.today());
+    expect(find.byType(TextField), findsNothing);
+
+    await tester.tap(find.text(t.calendar.title).last);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(t.calendar.title));
-    await tester.pumpAndSettle();
-
-    expect(container.read(selectedNotebookIdProvider), allNotebooksId);
+    // The Calendar branch really is showing, so the switch happened.
+    expect(find.byType(TextField), findsOneWidget);
+    expect(container.read(notesLensSelectionProvider), const NotesLens.today());
   });
 }
 

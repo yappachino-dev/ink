@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/constants.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
 import 'package:ink/features/notes/presentation/widgets/notebooks/create_notebook_sheet.dart';
 import 'package:ink/features/notes/presentation/widgets/notebooks/drawer_notebook_item.dart';
@@ -53,7 +53,7 @@ class NotebooksDrawer extends ConsumerWidget {
             // All notes first, because it is the default view and, until this
             // row existed, the only way out of a notebook was to switch tabs.
             DrawerVirtualNotebookItem(
-              id: allNotebooksId,
+              lens: const NotesLens.all(),
               count: null,
               title: context.t.notes.all,
               icon: 'book',
@@ -61,7 +61,7 @@ class NotebooksDrawer extends ConsumerWidget {
             ),
 
             DrawerVirtualNotebookItem(
-              id: todayNotebookId,
+              lens: const NotesLens.today(),
               count: null,
               title: context.t.notes.today,
               icon: 'target',

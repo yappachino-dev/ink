@@ -9,10 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -23,9 +23,9 @@ import 'package:mocktail/mocktail.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _TodaySelected extends SelectedNotebookId {
+class _TodaySelected extends NotesLensSelection {
   @override
-  String build() => todayNotebookId;
+  NotesLens build() => const NotesLens.today();
 }
 
 /// A date no test should collide with by accident: it is in the past and is
@@ -75,12 +75,12 @@ void main() {
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
         currentDateProvider.overrideWithValue(clock),
-        selectedNotebookIdProvider.overrideWith(_TodaySelected.new),
+        notesLensSelectionProvider.overrideWith(_TodaySelected.new),
       ],
     );
     addTearDown(container.dispose);
 
-    expect(container.read(selectedNotebookIdProvider), todayNotebookId);
+    expect(container.read(notesLensSelectionProvider), const NotesLens.today());
 
     // `notesProvider` is async and `notebookNotesProvider` derives from it, so
     // settle the load first rather than reading a provider off a cold graph.

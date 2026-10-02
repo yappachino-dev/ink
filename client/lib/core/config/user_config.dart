@@ -37,11 +37,21 @@ class UserConfig {
 
   /// The notebook last opened, so returning to the app resumes where the user
   /// left off rather than dumping them back on the default list.
+  ///
+  /// Null means All notes. The default view is the absence of a selection, so
+  /// storing a value for it would mean storing a sentinel, and the preference
+  /// file is exactly the place a sentinel would outlive the type that forbids
+  /// it.
   String? get selectedNotebookId =>
       _sharedPrefs.getString(_selectedNotebookKey);
 
-  Future<void> setSelectedNotebookId(String id) async =>
-      _sharedPrefs.setString(_selectedNotebookKey, id);
+  Future<void> setSelectedNotebookId(String? id) async {
+    if (id == null) {
+      await _sharedPrefs.remove(_selectedNotebookKey);
+      return;
+    }
+    await _sharedPrefs.setString(_selectedNotebookKey, id);
+  }
 }
 
 @Riverpod(keepAlive: true)

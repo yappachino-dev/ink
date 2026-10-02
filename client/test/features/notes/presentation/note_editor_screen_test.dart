@@ -11,11 +11,11 @@ import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/quill_delta.dart';
@@ -29,9 +29,9 @@ import 'package:mocktail/mocktail.dart';
 
 class _Svc extends Mock implements NotesService {}
 
-class _AllSelected extends SelectedNotebookId {
+class _AllSelected extends NotesLensSelection {
   @override
-  String build() => allNotebooksId;
+  NotesLens build() => const NotesLens.all();
 }
 
 Note _note(String id, {String? firstLine = 'Review architecture'}) => Note(
@@ -84,7 +84,7 @@ void main() {
     final c = ProviderContainer(
       overrides: [
         notesServiceProvider.overrideWithValue(svc),
-        selectedNotebookIdProvider.overrideWith(_AllSelected.new),
+        notesLensSelectionProvider.overrideWith(_AllSelected.new),
       ],
     );
     addTearDown(c.dispose);

@@ -13,10 +13,10 @@ import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
@@ -226,7 +226,7 @@ Widget _notesApp({
       // trust indicator reads the free/sync gate out of it.
       sharedPreferencesProvider.overrideWithValue(_prefs),
       if (selectAllNotebooks)
-        selectedNotebookIdProvider.overrideWith(_AllNotebooksSelected.new),
+        notesLensSelectionProvider.overrideWith(_AllNotebooksSelected.new),
     ],
     child: MaterialApp.router(
       theme: _themeFor(brightness),
@@ -323,11 +323,11 @@ class _NotesService extends Mock implements NotesService {
 Future<Result<List<Note>, NotesFailure>> _allNotes(List<Note> notes) async =>
     Success<List<Note>, NotesFailure>(notes);
 
-/// Selects every notebook. The real provider defaults to `todayNotebookId`,
-/// which is a sentinel and would filter every fixture note out of the journal.
-class _AllNotebooksSelected extends SelectedNotebookId {
+/// Selects every notebook, because the real provider defaults to All notes
+/// and a Today lens would filter every fixture note out of the journal.
+class _AllNotebooksSelected extends NotesLensSelection {
   @override
-  String build() => allNotebooksId;
+  NotesLens build() => const NotesLens.all();
 }
 
 /// Journal fixtures are written on [goldenCalendarDate], the day the golden

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/notes_list.dart';
@@ -34,7 +35,7 @@ class NotesView extends ConsumerWidget {
         onRetry: onRetry ?? () => ref.invalidate(notesProvider),
       ),
       NotesViewContent() => NotesList(
-        key: ValueKey('list-${ref.watch(selectedNotebookIdProvider)}'),
+        key: ValueKey('list-${ref.watch(notesLensSelectionProvider).id}'),
         title: ref.watch(selectedNotebookTitleProvider),
       ),
     };

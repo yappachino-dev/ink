@@ -9,10 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/domain/result.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/failures/notes_failure.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/notes/domain/notes_service.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
@@ -54,7 +54,9 @@ void main() {
   group('the selection is remembered', () {
     test('a chosen notebook is restored on the next start', () async {
       final first = await container();
-      first.read(selectedNotebookIdProvider.notifier).id = 'notebook-1';
+      first
+          .read(notesLensSelectionProvider.notifier)
+          .select(const NotesLens.notebook('notebook-1'));
       first.dispose();
 
       // A fresh container is a fresh app start: only storage carries over.
@@ -62,13 +64,37 @@ void main() {
         stored: const {'selectedNotebook': 'notebook-1'},
       );
 
-      expect(second.read(selectedNotebookIdProvider), 'notebook-1');
+      expect(
+        second.read(notesLensSelectionProvider),
+        const NotesLens.notebook('notebook-1'),
+      );
+    });
+
+    test('a lens stored under an old sentinel still restores', () async {
+      // Before NotesLens, both built-in lenses persisted as reserved strings.
+      // Reading only the new key would decode either as a notebook id no note
+      // carries: the title would fall back to All notes while the list came
+      // back empty, which reads as every note having disappeared.
+      final legacy = {
+        '__today__': const NotesLens.today(),
+        '__all__': const NotesLens.all(),
+      };
+
+      for (final entry in legacy.entries) {
+        final c = await container(stored: {'selectedNotebook': entry.key});
+
+        expect(
+          c.read(notesLensSelectionProvider),
+          entry.value,
+          reason: 'stored as ${entry.key}',
+        );
+      }
     });
 
     test('nothing stored means the default view', () async {
       final c = await container();
 
-      expect(c.read(selectedNotebookIdProvider), allNotebooksId);
+      expect(c.read(notesLensSelectionProvider), const NotesLens.all());
     });
 
     test(
@@ -91,12 +117,30 @@ void main() {
   });
 
   group('today and all notes remain usable lenses', () {
-    test('each id survives a round trip through storage', () async {
-      for (final id in [allNotebooksId, todayNotebookId, 'notebook-1']) {
+    test('each lens survives a round trip through storage', () async {
+      for (final lens in [
+        const NotesLens.all(),
+        const NotesLens.today(),
+        const NotesLens.notebook('notebook-1'),
+      ]) {
         final c = await container();
-        c.read(selectedNotebookIdProvider.notifier).id = id;
+        c.read(notesLensSelectionProvider.notifier).select(lens);
+        expect(c.read(notesLensSelectionProvider), lens);
 
-        expect(c.read(selectedNotebookIdProvider), id);
+        // `select` persists without being awaited, so let the write settle
+        // before reading it back.
+        await pumpEventQueue();
+        final stored = c.read(userPreferencesProvider).selectedNotebookId;
+
+        // All notes is the absence of a filter, so it stores nothing rather
+        // than a reserved word that the type exists to eliminate.
+        expect(stored, lens is AllNotesLens ? null : lens.id);
+
+        // A container seeded with exactly what select() wrote restores the same
+        // lens. `mockUserConfig` resets the store on every call, so the second
+        // container has to be seeded explicitly rather than inherit it.
+        final restored = await container(stored: {'selectedNotebook': ?stored});
+        expect(restored.read(notesLensSelectionProvider), lens);
         c.dispose();
       }
     });

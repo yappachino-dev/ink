@@ -9,10 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
-import 'package:ink/features/notes/domain/constants.dart';
 import 'package:ink/features/notes/domain/entities/note.dart';
 import 'package:ink/features/notes/domain/entities/notebook.dart';
 import 'package:ink/features/notes/domain/models/note_creation_payload.dart';
+import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/domain/quill_delta.dart';
 import 'package:ink/features/notes/domain/task_priority.dart';
 import 'package:ink/features/notes/presentation/extensions/note_time_ui_extension.dart';
@@ -74,16 +74,18 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     _quillController = QuillController.basic();
 
     if (widget.noteId == null) {
-      final selectedNotebookId = ref.read(selectedNotebookIdProvider);
-      final notebookId = switch (selectedNotebookId) {
-        _ when isContentForwardLens(selectedNotebookId) => null,
-        _ when selectedNotebookId == todayNotebookId => null,
-        _ => selectedNotebookId,
-      };
+      // A note inherits the notebook lens, but All notes and Today name no
+      // notebook, so a new note starts unfiled rather than carrying a fake id.
+      final lens = ref.read(notesLensSelectionProvider);
       _seedForm(
         () => ref
             .read(noteFormProvider.notifier)
-            .initWith(notebookId: notebookId),
+            .initWith(
+              notebookId: switch (lens) {
+                NotebookLens(:final notebookId) => notebookId,
+                AllNotesLens() || TodayLens() => null,
+              },
+            ),
       );
     }
   }

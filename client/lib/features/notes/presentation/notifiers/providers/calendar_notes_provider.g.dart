@@ -10,11 +10,11 @@ part of 'calendar_notes_provider.dart';
 // ignore_for_file: type=lint, type=warning
 /// The notes written on the selected calendar day.
 ///
-/// The calendar is a date index: it answers "what did I write on this day", so it
-/// keys on `createdAt` and on nothing else. It deliberately does not key on
-/// `dueDate`: the due-date axis belongs to the Today and Overdue views, and
-/// marking a day for both would make one dot ambiguous between "written here"
-/// and "due here".
+/// The calendar is a date index: it answers "what did I write on this day",
+/// so it keys on `createdAt` and on nothing else. It deliberately does not key
+/// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+/// and marking a day for both would make one dot ambiguous between "written
+/// here" and "due here".
 ///
 /// Notebook scope is not a second axis here. Filtering by notebook made the
 /// journal a filtered copy of Notes under different chrome, and forced the
@@ -29,11 +29,11 @@ final calendarNotesProvider = CalendarNotesProvider._();
 
 /// The notes written on the selected calendar day.
 ///
-/// The calendar is a date index: it answers "what did I write on this day", so it
-/// keys on `createdAt` and on nothing else. It deliberately does not key on
-/// `dueDate`: the due-date axis belongs to the Today and Overdue views, and
-/// marking a day for both would make one dot ambiguous between "written here"
-/// and "due here".
+/// The calendar is a date index: it answers "what did I write on this day",
+/// so it keys on `createdAt` and on nothing else. It deliberately does not key
+/// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+/// and marking a day for both would make one dot ambiguous between "written
+/// here" and "due here".
 ///
 /// Notebook scope is not a second axis here. Filtering by notebook made the
 /// journal a filtered copy of Notes under different chrome, and forced the
@@ -48,11 +48,11 @@ final class CalendarNotesProvider
     with $Provider<List<Note>> {
   /// The notes written on the selected calendar day.
   ///
-  /// The calendar is a date index: it answers "what did I write on this day", so it
-  /// keys on `createdAt` and on nothing else. It deliberately does not key on
-  /// `dueDate`: the due-date axis belongs to the Today and Overdue views, and
-  /// marking a day for both would make one dot ambiguous between "written here"
-  /// and "due here".
+  /// The calendar is a date index: it answers "what did I write on this day",
+  /// so it keys on `createdAt` and on nothing else. It deliberately does not key
+  /// on `dueDate`: the due-date axis belongs to the Today and Overdue views,
+  /// and marking a day for both would make one dot ambiguous between "written
+  /// here" and "due here".
   ///
   /// Notebook scope is not a second axis here. Filtering by notebook made the
   /// journal a filtered copy of Notes under different chrome, and forced the
