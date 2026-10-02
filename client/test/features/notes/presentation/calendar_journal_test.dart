@@ -123,13 +123,42 @@ void main() {
       expect(container.read(calendarNotesProvider).single.id, 'late');
     });
 
-    test('still respects the selected notebook', () async {
+    test(
+      'ignores the notebook lens, so the grid and the list cannot disagree',
+      () async {
+        // The date index is not a second Notes view. It used to filter by the
+        // shared notebook selection, which meant a day dot could appear on the
+        // grid while its entries were filtered out of the list below it, and
+        // which forced the navigation shell to reset that selection on tab
+        // entry. This fails against the old filtering implementation.
+        final container = await containerWith([
+          _note(id: 'in-a', createdAt: _selectedDay, notebookId: 'a'),
+          _note(id: 'in-b', createdAt: _selectedDay, notebookId: 'b'),
+          _note(id: 'unfiled', createdAt: _selectedDay),
+        ], selectedNotebookId: 'a');
+
+        expect(container.read(calendarNotesProvider).map((n) => n.id).toSet(), {
+          'in-a',
+          'in-b',
+          'unfiled',
+        });
+      },
+    );
+  });
+
+  group('journalEntryCounts agrees with calendarNotes', () {
+    test('counts an entry the notebook lens would have excluded', () async {
+      // The grid dots and the list below it are rendered from two providers. If
+      // only one of them honoured the lens, a day would show a dot with no
+      // entries under it.
       final container = await containerWith([
         _note(id: 'in-a', createdAt: _selectedDay, notebookId: 'a'),
         _note(id: 'in-b', createdAt: _selectedDay, notebookId: 'b'),
       ], selectedNotebookId: 'a');
 
-      expect(container.read(calendarNotesProvider).single.id, 'in-a');
+      final counts = container.read(journalEntryCountsProvider);
+
+      expect(counts[DateTime(2026, 3, 14)], 2);
     });
   });
 

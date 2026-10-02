@@ -160,7 +160,6 @@
     },
     "calendar": {
         "title": "Calendar",
-        "filter": "Filter",
         "noNotes": "No notes for this day",
         "view": "Calendar view",
         "modes": {
@@ -237,8 +236,7 @@
             },
             "discard": "Discard and save",
             "keep": "Keep editing"
-        },
-        "clearNotebookFilter": "Clear notebook filter"
+        }
     },
     "notebook": {
         "title": "My notebooks",
