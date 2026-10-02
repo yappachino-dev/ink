@@ -6,6 +6,7 @@ This is the small actionable queue for the next implementation tasks. Completed 
 
 1. **Repair client error contracts**
    - Make session persistence awaitable and define rollback/error behavior.
+     _Lens selection persistence is done; token persistence is not._
 
 2. **Harden sync data integrity**
    - Reject duplicate IDs and cross-user notebook references.
@@ -33,12 +34,8 @@ This is the small actionable queue for the next implementation tasks. Completed 
 | Client schema migration tooling | A released client schema requires an upgrade path. |
 | Calendar clock/provider seam | Re-evaluate during a deliberate Riverpod upgrade or when introducing a shared clock abstraction. |
 | PointyCastle 4 / `bip39` constraint | Revisit when `bip39` publishes a PointyCastle 4-compatible release. |
-| `__all__` / `__today__` as pseudo-notebook ids (pending) | See the refactor row; still open. |
-| Calendar as a peer tab vs a Notes view mode | Decide whether the month grid is worth a second top-level destination. Its journal list and notebook filter are both duplicated by Notes; only the date index is not. |
-| Shared vs per-screen notebook filter | Only meaningful while Calendar is a separate tab. It disappears if the journal moves into Notes. |
-| `__all__` / `__today__` as pseudo-notebook ids (refactor) | Refactor that makes the two pseudo-ids first-class. `__all__` should be `null`; `__today__` is a lens, not a notebook. Unblocks the two rows above. |
-| Leftover "task" language on a journal screen | Calendar's FAB is still `_openAddTaskSheet`. Same family as the removed `hasUncompletedTasks`. |
-| Unused `CalendarViewMode` granularity | `month`/`twoWeeks`/`week` select calendar chrome; only `day` is meaningful for a journal. |
+| Calendar as a peer tab vs a Notes view mode | Decide whether the month grid is worth a second top-level destination. Its journal list is duplicated by Notes; only the date index is not. |
+| Unused `CalendarViewMode` granularity | `month`/`twoWeeks`/`week` set the grid format; `day` swaps the grid for `DayHeader`, which has its own previous/next steppers. All four are reachable and distinct. Reconsider only if a mode is ever hidden from the picker. |
 | Very Good Analysis 11 async-style migration | Remove the scoped `async_return_with_no_await` suppression after the Future adapters are migrated. |
 | SMTP library/template polish | Production deliverability or localization requirements justify it. |
 | Kubernetes hardening | Ink adopts Kubernetes as a supported deployment target. |
