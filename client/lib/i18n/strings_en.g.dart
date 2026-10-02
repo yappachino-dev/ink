@@ -102,8 +102,8 @@ class Translations$welcome$en {
 	/// en: 'Your notes are encrypted on this device. Ink's servers can't read them.'
 	String get thesis => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.';
 
-	/// en: 'Create local storage'
-	String get createLocalStorage => 'Create local storage';
+	/// en: 'Create your vault'
+	String get createVault => 'Create your vault';
 
 	/// en: 'Already have an account?'
 	String get haveAccount => 'Already have an account?';
@@ -1050,7 +1050,7 @@ extension on Translations {
 			'common.errors.unknown' => 'Something went wrong. Please try again.',
 			'common.remove' => 'Remove',
 			'welcome.thesis' => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.',
-			'welcome.createLocalStorage' => 'Create local storage',
+			'welcome.createVault' => 'Create your vault',
 			'welcome.haveAccount' => 'Already have an account?',
 			'auth.tagline' => 'Your plans under reliable protection',
 			'auth.chooseMethod' => 'Choose how to use',

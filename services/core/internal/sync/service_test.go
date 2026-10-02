@@ -12,18 +12,18 @@ type fakeSyncRepo struct {
 	currentCursor int
 
 	upsertNotebooks    [][]Notebook
-	upsertNotes       [][]Note
-	upsertSequences   []int
-	upsertUserIDs     []int
+	upsertNotes        [][]Note
+	upsertSequences    []int
+	upsertUserIDs      []int
 	notebooksFetchedAt []int
-	notesFetchedAt    []int
-	cursorUpdates     []int
-	lockedCursorReads int
+	notesFetchedAt     []int
+	cursorUpdates      []int
+	lockedCursorReads  int
 
 	// Ownership fixtures: IDs the database reports as belonging to someone
 	// else, and IDs this account can actually use.
 	foreignNotebookIDs []uuid.UUID
-	foreignNoteIDs    []uuid.UUID
+	foreignNoteIDs     []uuid.UUID
 	availableNotebooks []uuid.UUID
 
 	lookupCalls int
@@ -104,7 +104,7 @@ func TestSync_PushIncrementsCursorOnce(t *testing.T) {
 	res, err := svc.Sync(context.Background(), 1, SyncPayload{
 		ClientCursor: 3,
 		Changes: SyncChanges{
-			Notes:    []Note{note("00000000-0000-7000-8000-000000000001")},
+			Notes:     []Note{note("00000000-0000-7000-8000-000000000001")},
 			Notebooks: []Notebook{{ID: uuid.New()}},
 		},
 	})

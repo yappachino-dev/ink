@@ -51,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
 
               WideFilledButton(
                 onPressed: () => const SetupVaultRoute().push<void>(context),
-                child: Text(context.t.welcome.createLocalStorage),
+                child: Text(context.t.welcome.createVault),
               ),
 
               const SizedBox(height: AppSpacing.lg),
