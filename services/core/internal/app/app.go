@@ -39,6 +39,12 @@ type App struct {
 	db         *sql.DB
 	httpServer *http.Server
 	grpcServer *grpc.Server
+
+	// App owns the readiness probe rather than inheriting whatever context
+	// New was called with. Shutdown cancels and waits on it before closing
+	// the database, so no exit path leaves a goroutine pinging a closed pool.
+	cancelReadiness context.CancelFunc
+	readinessDone   <-chan struct{}
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -99,8 +105,6 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 
-	watchReadiness(ctx, db, healthServer)
-
 	// Put gin in release mode outside development to silence debug routing
 	// logs and disable debug-only behavior.
 	if cfg.Env != config.EnvDevelopment {
@@ -120,7 +124,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		c.JSON(http.StatusOK, gin.H{"status": "healthy", "database": "up"})
 	})
 
-	return &App{
+	app := &App{
 		cfg:  cfg,
 		pool: pool,
 		db:   db,
@@ -133,7 +137,11 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 			IdleTimeout:       60 * time.Second,
 		},
 		grpcServer: grpcServer,
-	}, nil
+	}
+
+	app.cancelReadiness, app.readinessDone = watchReadiness(ctx, db, healthServer)
+
+	return app, nil
 }
 
 // Run binds the production ports and hands off to serve.
@@ -186,6 +194,14 @@ func (a *App) serve(ctx context.Context, httpListener, grpcListener net.Listener
 // as the tests construct one. Contexts derive from Background on purpose:
 // shutdown has to run even though the signal already cancelled ctx.
 func (a *App) shutdown() {
+	// Stop the probe before the database it pings goes away, and wait for it.
+	// This is the only thing covering a crash exit, where no signal cancelled
+	// anything and the probe would otherwise outlive the pool.
+	if a.cancelReadiness != nil {
+		a.cancelReadiness()
+		<-a.readinessDone
+	}
+
 	if a.httpServer != nil {
 		ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 		defer cancel()
@@ -223,12 +239,29 @@ const (
 	readinessTimeout  = 2 * time.Second
 )
 
-// watchReadiness mirrors database reachability into the gRPC health status
-// until ctx is cancelled, returning a channel closed once it exits. The cancel
-// arm is the point: without it the probe keeps pinging a closed database for
-// the rest of the process lifetime, and shutdown never really finishes.
-func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server) <-chan struct{} {
+// watchReadiness mirrors database reachability into the gRPC health status,
+// returning a cancel func and a channel closed once it exits. Shutdown uses
+// both, so the probe cannot outlive the process even when no signal arrives: on
+// a crash path nothing cancels New's context, and the probe would otherwise keep
+// pinging a pool that is already closed.
+func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server) (context.CancelFunc, <-chan struct{}) {
+	ctx, cancel := context.WithCancel(ctx)
 	done := make(chan struct{})
+
+	check := func() {
+		pingCtx, pingCancel := context.WithTimeout(ctx, readinessTimeout)
+		defer pingCancel()
+
+		status := healthpb.HealthCheckResponse_SERVING
+		if db.PingContext(pingCtx) != nil {
+			status = healthpb.HealthCheckResponse_NOT_SERVING
+		}
+		healthServer.SetServingStatus(readinessService, status)
+	}
+
+	// Set the status before returning rather than on the first tick, so a
+	// probe landing in that window cannot read the service as unknown.
+	check()
 
 	go func() {
 		defer close(done)
@@ -241,20 +274,12 @@ func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				pingCtx, cancel := context.WithTimeout(ctx, readinessTimeout)
-				err := db.PingContext(pingCtx)
-				cancel()
-
-				status := healthpb.HealthCheckResponse_SERVING
-				if err != nil {
-					status = healthpb.HealthCheckResponse_NOT_SERVING
-				}
-				healthServer.SetServingStatus(readinessService, status)
+				check()
 			}
 		}
 	}()
 
-	return done
+	return cancel, done
 }
 
 // shutdownTimeout bounds each stage of teardown so one stuck listener cannot
