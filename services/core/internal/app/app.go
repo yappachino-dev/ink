@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -100,25 +99,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 
-	var isReady int32 = 0
-
-	go func() {
-		ticker := time.NewTicker(5 * time.Second)
-		for range ticker.C {
-			func() {
-				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-				defer cancel()
-
-				if err := db.PingContext(ctx); err != nil {
-					atomic.StoreInt32(&isReady, 0)
-					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_NOT_SERVING)
-				} else {
-					atomic.StoreInt32(&isReady, 1)
-					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_SERVING)
-				}
-			}()
-		}
-	}()
+	watchReadiness(ctx, db, healthServer)
 
 	// Put gin in release mode outside development to silence debug routing
 	// logs and disable debug-only behavior.
@@ -234,6 +215,46 @@ func (a *App) shutdown() {
 	if a.pool != nil {
 		a.pool.Close()
 	}
+}
+
+const (
+	readinessService  = "readiness"
+	readinessInterval = 5 * time.Second
+	readinessTimeout  = 2 * time.Second
+)
+
+// watchReadiness mirrors database reachability into the gRPC health status
+// until ctx is cancelled, returning a channel closed once it exits. The cancel
+// arm is the point: without it the probe keeps pinging a closed database for
+// the rest of the process lifetime, and shutdown never really finishes.
+func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server) <-chan struct{} {
+	done := make(chan struct{})
+
+	go func() {
+		defer close(done)
+
+		ticker := time.NewTicker(readinessInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				pingCtx, cancel := context.WithTimeout(ctx, readinessTimeout)
+				err := db.PingContext(pingCtx)
+				cancel()
+
+				status := healthpb.HealthCheckResponse_SERVING
+				if err != nil {
+					status = healthpb.HealthCheckResponse_NOT_SERVING
+				}
+				healthServer.SetServingStatus(readinessService, status)
+			}
+		}
+	}()
+
+	return done
 }
 
 // shutdownTimeout bounds each stage of teardown so one stuck listener cannot

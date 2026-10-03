@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
 )
 
 // unreachablePool builds a pool pointed at a port nothing listens on. pgx
@@ -132,5 +133,21 @@ func TestServeTearsDownOnSignal(t *testing.T) {
 	defer pingCancel()
 	if perr := pool.Ping(pingCtx); perr == nil || !strings.Contains(perr.Error(), "closed pool") {
 		t.Fatalf("pool survived the signal path: %v", perr)
+	}
+}
+
+func TestReadinessProbeStopsOnCancel(t *testing.T) {
+	pool := unreachablePool(t)
+	healthServer := health.NewServer()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	done := watchReadiness(ctx, stdlib.OpenDBFromPool(pool), healthServer)
+
+	cancel()
+
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("readiness probe outlived its context")
 	}
 }
