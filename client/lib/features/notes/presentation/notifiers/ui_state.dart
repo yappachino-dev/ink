@@ -21,6 +21,16 @@ class NotesLensSelection extends _$NotesLensSelection {
   /// cannot restore.
   NotesLens _confirmed = const NotesLens.all();
 
+  /// Identifies the most recent [select] call. Only the newest selection may
+  /// roll the state back when its write fails.
+  ///
+  /// Comparing `state == lens` is not a substitute. Tapping A, then B, then A
+  /// again leaves two writes for A, and the first one sees state == A and
+  /// cannot tell itself apart from the newest. It would roll back a selection
+  /// the user had just re-made, discarding B and the second A as well, while
+  /// storage went on to record the second A.
+  int _latestSelection = 0;
+
   /// All notes is the landing view. The app opens on a flat,
   /// reverse-chronological list of everything, because it is note-first: the
   /// note is the thing, and due dates are a lens over it rather than the
@@ -49,10 +59,11 @@ class NotesLensSelection extends _$NotesLensSelection {
   /// would mean the app silently disagreed with itself.
   Future<void> select(NotesLens lens) {
     state = lens;
-    return _write(lens);
+    _latestSelection++;
+    return _write(lens, _latestSelection);
   }
 
-  Future<void> _write(NotesLens lens) async {
+  Future<void> _write(NotesLens lens, int selection) async {
     try {
       await ref
           .read(userPreferencesProvider)
@@ -64,10 +75,8 @@ class NotesLensSelection extends _$NotesLensSelection {
           );
       _confirmed = lens;
     } catch (_) {
-      // Only undo the selection if this write is still the current one. If the
-      // user has already tapped again, restoring would drag the list back to a
-      // lens they have left.
-      if (ref.mounted && state == lens) state = _confirmed;
+      // Only undo the selection if this write is still the newest one.
+      if (ref.mounted && _latestSelection == selection) state = _confirmed;
       rethrow;
     }
   }

@@ -264,6 +264,75 @@ void main() {
       );
     });
 
+    test('re-selecting a lens supersedes its own failed write', () async {
+      // Tap A, then B, then A again, and let the first A fail. The state is A
+      // when that failure lands, so a guard comparing state to the written lens
+      // cannot tell the stale A apart from the newest one and rolls back a
+      // selection the user has just re-made. B and the second A are still
+      // queued, so the rollback also discards the taps that came after it.
+      var doomedWrites = 0;
+      final prefs = _ControllablePrefs(
+        fail: (id) => id == 'doomed' && doomedWrites++ == 0,
+        delay: (id) =>
+            id == 'doomed' ? const Duration(milliseconds: 40) : Duration.zero,
+      );
+      final c = ProviderContainer(
+        overrides: [
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
+        ],
+      );
+      addTearDown(c.dispose);
+      final sub = c.listen(notesLensSelectionProvider, (_, _) {});
+      addTearDown(sub.close);
+      final notifier = c.read(notesLensSelectionProvider.notifier);
+
+      unawaited(
+        notifier
+            .select(const NotesLens.notebook('doomed'))
+            .catchError((Object _) {}),
+      );
+      unawaited(notifier.select(const NotesLens.notebook('middle')));
+      unawaited(notifier.select(const NotesLens.notebook('doomed')));
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+
+      // Storage ends on 'doomed' from the third tap, so the list must too.
+      expect(prefs.selectedNotebookId, 'doomed');
+      expect(
+        c.read(notesLensSelectionProvider),
+        const NotesLens.notebook('doomed'),
+      );
+    });
+
+    test('a failed All notes write rolls back too', () async {
+      // All notes clears the key instead of writing it, so this goes through
+      // remove() rather than setString(). The test double has to stall and fail
+      // there as well, or this case would quietly pass against a broken
+      // implementation.
+      var shouldFail = false;
+      final prefs = _ControllablePrefs(fail: (id) => id == null && shouldFail);
+      final c = ProviderContainer(
+        overrides: [
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
+        ],
+      );
+      addTearDown(c.dispose);
+      final notifier = c.read(notesLensSelectionProvider.notifier);
+
+      await notifier.select(const NotesLens.notebook('kept'));
+      shouldFail = true;
+
+      await expectLater(
+        notifier.select(const NotesLens.all()),
+        throwsA(isA<Exception>()),
+      );
+
+      expect(
+        c.read(notesLensSelectionProvider),
+        const NotesLens.notebook('kept'),
+      );
+      expect(prefs.selectedNotebookId, 'kept');
+    });
+
     test('a failed write does not undo a later selection', () async {
       // The failing write is the one queued first, but the user has already
       // moved on by the time it lands. Undoing it would drag the list back to
@@ -370,15 +439,15 @@ void main() {
 /// that reimplements them.
 class _ControllablePrefs extends Mock implements SharedPreferences {
   _ControllablePrefs({
-    bool Function(String value)? fail,
-    Duration Function(String value)? delay,
+    bool Function(String? value)? fail,
+    Duration Function(String? value)? delay,
   }) : failWhen = fail,
        delayWhen = delay;
 
   final _store = <String, Object?>{};
 
-  final bool Function(String value)? failWhen;
-  final Duration Function(String value)? delayWhen;
+  final bool Function(String? value)? failWhen;
+  final Duration Function(String? value)? delayWhen;
 
   String? get selectedNotebookId => getString('selectedNotebook');
 
@@ -387,16 +456,24 @@ class _ControllablePrefs extends Mock implements SharedPreferences {
 
   @override
   Future<bool> setString(String key, String value) async {
-    final delay = delayWhen?.call(value);
-    if (delay != null) await Future<void>.delayed(delay);
-    if (failWhen?.call(value) ?? false) throw Exception('disk full');
+    await _stall(value);
     _store[key] = value;
     return true;
   }
 
   @override
   Future<bool> remove(String key) async {
+    // All notes clears the key rather than writing it, so the hooks have to
+    // run here too. Otherwise a test that fails or stalls the All notes write
+    // would silently succeed and pass against a broken implementation.
+    await _stall(null);
     _store.remove(key);
     return true;
+  }
+
+  Future<void> _stall(String? value) async {
+    final delay = delayWhen?.call(value);
+    if (delay != null) await Future<void>.delayed(delay);
+    if (failWhen?.call(value) ?? false) throw Exception('disk full');
   }
 }
