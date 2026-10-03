@@ -3,16 +3,17 @@ package app
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
-	"sync/atomic"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lmittmann/tint"
 	authv1 "github.com/yappachino-dev/ink/gen/go/pb/auth/v1"
@@ -31,10 +32,19 @@ import (
 )
 
 type App struct {
-	cfg        *config.Config
+	cfg *config.Config
+	// db borrows pool rather than owning it. Closing db does not close the
+	// pool, so shutdown releases them in that order.
+	pool       *pgxpool.Pool
 	db         *sql.DB
 	httpServer *http.Server
 	grpcServer *grpc.Server
+
+	// App owns the readiness probe rather than inheriting whatever context
+	// New was called with. Shutdown cancels and waits on it before closing
+	// the database, so no exit path leaves a goroutine pinging a closed pool.
+	cancelReadiness context.CancelFunc
+	readinessDone   <-chan struct{}
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -95,26 +105,6 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 
-	var isReady int32 = 0
-
-	go func() {
-		ticker := time.NewTicker(5 * time.Second)
-		for range ticker.C {
-			func() {
-				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-				defer cancel()
-
-				if err := db.PingContext(ctx); err != nil {
-					atomic.StoreInt32(&isReady, 0)
-					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_NOT_SERVING)
-				} else {
-					atomic.StoreInt32(&isReady, 1)
-					healthServer.SetServingStatus("readiness", healthpb.HealthCheckResponse_SERVING)
-				}
-			}()
-		}
-	}()
-
 	// Put gin in release mode outside development to silence debug routing
 	// logs and disable debug-only behavior.
 	if cfg.Env != config.EnvDevelopment {
@@ -134,9 +124,10 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		c.JSON(http.StatusOK, gin.H{"status": "healthy", "database": "up"})
 	})
 
-	return &App{
-		cfg: cfg,
-		db:  db,
+	app := &App{
+		cfg:  cfg,
+		pool: pool,
+		db:   db,
 		httpServer: &http.Server{
 			Addr:              ":8080",
 			Handler:           r,
@@ -146,21 +137,40 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 			IdleTimeout:       60 * time.Second,
 		},
 		grpcServer: grpcServer,
-	}, nil
+	}
+
+	app.cancelReadiness, app.readinessDone = watchReadiness(db, healthServer)
+
+	return app, nil
 }
 
+// Run binds the production ports and hands off to serve.
 func (a *App) Run(ctx context.Context) error {
 	grpcListener, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		slog.Error("gRPC failed to listen", "error", err)
-		os.Exit(1)
+		return fmt.Errorf("gRPC failed to listen: %w", err)
 	}
+
+	httpListener, err := net.Listen("tcp", a.httpServer.Addr)
+	if err != nil {
+		_ = grpcListener.Close()
+		return fmt.Errorf("HTTP failed to listen: %w", err)
+	}
+
+	return a.serve(ctx, httpListener, grpcListener)
+}
+
+// serve runs both listeners and releases what App owns on return, whichever
+// way it returns. The crash arm is the reason teardown is a defer: a server
+// failing is when cleanup matters most, and it used to skip it entirely.
+func (a *App) serve(ctx context.Context, httpListener, grpcListener net.Listener) error {
+	defer a.shutdown()
 
 	errChan := make(chan error, 2)
 
 	go func() {
-		slog.Info("HTTP server starting", "addr", a.httpServer.Addr)
-		if err := a.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		slog.Info("HTTP server starting", "addr", httpListener.Addr().String())
+		if err := a.httpServer.Serve(httpListener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("HTTP server crash: %w", err)
 		}
 	}()
@@ -176,19 +186,114 @@ func (a *App) Run(ctx context.Context) error {
 	case err := <-errChan:
 		return err
 	case <-ctx.Done():
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		_ = a.httpServer.Shutdown(shutdownCtx)
-		a.grpcServer.GracefulStop()
-
-		if a.db != nil {
-			_ = a.db.Close()
-		}
-
 		return nil
 	}
 }
+
+// shutdown releases every resource App owns, including a partially built App
+// as the tests construct one. Contexts derive from Background on purpose:
+// shutdown has to run even though the signal already cancelled ctx.
+func (a *App) shutdown() {
+	// Stop the probe before the database it pings goes away, and wait for it.
+	// This is the only thing covering a crash exit, where no signal cancelled
+	// anything and the probe would otherwise outlive the pool.
+	if a.cancelReadiness != nil {
+		a.cancelReadiness()
+		<-a.readinessDone
+	}
+
+	if a.httpServer != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+		defer cancel()
+		_ = a.httpServer.Shutdown(ctx)
+	}
+
+	// GracefulStop blocks until in-flight RPCs drain, so bound it and escalate.
+	stopped := make(chan struct{})
+	go func() {
+		if a.grpcServer != nil {
+			a.grpcServer.GracefulStop()
+		}
+		close(stopped)
+	}()
+
+	select {
+	case <-stopped:
+	case <-time.After(shutdownTimeout):
+		if a.grpcServer != nil {
+			a.grpcServer.Stop()
+		}
+	}
+
+	if a.db != nil {
+		_ = a.db.Close()
+	}
+	if a.pool != nil {
+		a.pool.Close()
+	}
+}
+
+const (
+	readinessService  = "readiness"
+	readinessInterval = 5 * time.Second
+	readinessTimeout  = 2 * time.Second
+)
+
+// watchReadiness mirrors database reachability into the gRPC health status,
+// returning a cancel func and a channel closed once it exits. Shutdown uses
+// both, so the probe cannot outlive the process even when no signal arrives: on
+// a crash path nothing cancels New's context, and the probe would otherwise keep
+// pinging a pool that is already closed.
+func watchReadiness(db *sql.DB, healthServer *health.Server) (context.CancelFunc, <-chan struct{}) {
+	// Derived from Background, not from New's context: that one belongs to
+	// construction, and a bootstrap context with a deadline would otherwise
+	// kill health reporting once it expired. App owns this lifetime through
+	// cancelReadiness, and shutdown is the only thing that ends it.
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan struct{})
+
+	check := func() {
+		pingCtx, pingCancel := context.WithTimeout(ctx, readinessTimeout)
+		defer pingCancel()
+
+		status := healthpb.HealthCheckResponse_SERVING
+		if db.PingContext(pingCtx) != nil {
+			status = healthpb.HealthCheckResponse_NOT_SERVING
+		}
+		healthServer.SetServingStatus(readinessService, status)
+	}
+
+	// Registered synchronously so the service is never SERVICE_UNKNOWN, and
+	// without a ping here because New must not block on database I/O. The
+	// first real check follows immediately in the goroutine, so this is
+	// fail-closed for microseconds rather than five seconds.
+	healthServer.SetServingStatus(readinessService, healthpb.HealthCheckResponse_NOT_SERVING)
+
+	go func() {
+		defer close(done)
+
+		check()
+
+		ticker := time.NewTicker(readinessInterval)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				check()
+			}
+		}
+	}()
+
+	return cancel, done
+}
+
+// shutdownTimeout bounds each stage of teardown so one stuck listener cannot
+// hold the process open past the grace period. A var so tests can shrink the
+// escalation wait; production leaves it at the value above.
+var shutdownTimeout = 5 * time.Second
 
 func interceptorLogger(l *slog.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {

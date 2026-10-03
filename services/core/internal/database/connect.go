@@ -9,6 +9,18 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// connectPingTimeout bounds a single attempt. The DSN's connect_timeout only
+// bounds the dial, not the postgres startup handshake, so a server that
+// accepts and then goes quiet would otherwise hang the first attempt forever
+// and make the retry budget below a fiction.
+const connectPingTimeout = 3 * time.Second
+
+func pingWithTimeout(ctx context.Context, pool *pgxpool.Pool) error {
+	pingCtx, cancel := context.WithTimeout(ctx, connectPingTimeout)
+	defer cancel()
+	return pool.Ping(pingCtx)
+}
+
 func Connect(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
 	config, err := pgxpool.ParseConfig(databaseURL)
 	if err != nil {
@@ -28,7 +40,7 @@ func Connect(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
 	backoffDelay := 1 * time.Second
 
 	for attempt := 1; attempt <= maxRetries; attempt++ {
-		if err = pool.Ping(ctx); err == nil {
+		if err = pingWithTimeout(ctx, pool); err == nil {
 			return pool, nil
 		}
 
