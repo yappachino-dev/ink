@@ -145,7 +145,7 @@ func TestShutdownStopsTheReadinessProbe(t *testing.T) {
 	healthServer := health.NewServer()
 
 	app := &App{pool: pool, db: stdlib.OpenDBFromPool(pool)}
-	app.cancelReadiness, app.readinessDone = watchReadiness(context.Background(), app.db, healthServer)
+	app.cancelReadiness, app.readinessDone = watchReadiness(app.db, healthServer)
 
 	stopped := make(chan struct{})
 	go func() { app.shutdown(); close(stopped) }()
@@ -169,7 +169,7 @@ func TestReadinessStatusIsSetImmediately(t *testing.T) {
 	pool := unreachablePool(t)
 	healthServer := health.NewServer()
 
-	cancel, done := watchReadiness(context.Background(), stdlib.OpenDBFromPool(pool), healthServer)
+	cancel, done := watchReadiness(stdlib.OpenDBFromPool(pool), healthServer)
 	defer func() { cancel(); <-done }()
 
 	resp, err := healthServer.Check(context.Background(), &healthpb.HealthCheckRequest{
@@ -183,31 +183,32 @@ func TestReadinessStatusIsSetImmediately(t *testing.T) {
 	}
 }
 
-// blockingDesc serves a handler that ignores the graceful-stop signal by
-// waiting on its stream context, which only closes when Stop is forced.
-var blockingDesc = grpc.ServiceDesc{
-	ServiceName: "test.Blocking",
-	HandlerType: (*any)(nil),
-	Methods: []grpc.MethodDesc{{
-		MethodName: "Hang",
-		Handler: func(_ any, ctx context.Context, _ func(any) error, _ grpc.UnaryServerInterceptor) (any, error) {
-			close(entered)
-			<-ctx.Done()
-			return nil, ctx.Err()
-		},
-	}},
-}
-
-// entered is closed by the handler, so the test cannot race ahead of the RPC
-// and assert against an idle server.
-var entered = make(chan struct{})
-
 // GracefulStop waits for in-flight RPCs. Without escalating after the bound,
 // a handler that ignores the graceful signal pins the process open forever.
 func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
-	pool := unreachablePool(t)
+	prev := shutdownTimeout
+	shutdownTimeout = 200 * time.Millisecond
+	t.Cleanup(func() { shutdownTimeout = prev })
+
+	// entered is per-run: a package-level channel stays closed after the first
+	// -count=2 iteration, so the wait below returns before the handler of this
+	// run ever starts.
+	entered := make(chan struct{})
 	server := grpc.NewServer()
-	server.RegisterService(&blockingDesc, struct{}{})
+	server.RegisterService(&grpc.ServiceDesc{
+		ServiceName: "test.Blocking",
+		HandlerType: (*any)(nil),
+		Methods: []grpc.MethodDesc{{
+			MethodName: "Hang",
+			Handler: func(_ any, ctx context.Context, _ func(any) error, _ grpc.UnaryServerInterceptor) (any, error) {
+				close(entered)
+				<-ctx.Done()
+				return nil, ctx.Err()
+			},
+		}},
+	}, struct{}{})
+
+	pool := unreachablePool(t)
 	app := &App{pool: pool, db: stdlib.OpenDBFromPool(pool), grpcServer: server}
 
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
@@ -246,7 +247,7 @@ func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
 	// GracefulStop saw no in-flight RPC, which is the race that made this test
 	// able to pass without ever escalating.
 	elapsed := time.Since(start)
-	if elapsed < shutdownTimeout-time.Second {
+	if elapsed < shutdownTimeout/2 {
 		t.Fatalf("shutdown returned in %v, before the %v bound: nothing was escalated", elapsed, shutdownTimeout)
 	}
 	if elapsed > 2*shutdownTimeout {

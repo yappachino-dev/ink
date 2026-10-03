@@ -139,7 +139,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		grpcServer: grpcServer,
 	}
 
-	app.cancelReadiness, app.readinessDone = watchReadiness(ctx, db, healthServer)
+	app.cancelReadiness, app.readinessDone = watchReadiness(db, healthServer)
 
 	return app, nil
 }
@@ -244,8 +244,12 @@ const (
 // both, so the probe cannot outlive the process even when no signal arrives: on
 // a crash path nothing cancels New's context, and the probe would otherwise keep
 // pinging a pool that is already closed.
-func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server) (context.CancelFunc, <-chan struct{}) {
-	ctx, cancel := context.WithCancel(ctx)
+func watchReadiness(db *sql.DB, healthServer *health.Server) (context.CancelFunc, <-chan struct{}) {
+	// Derived from Background, not from New's context: that one belongs to
+	// construction, and a bootstrap context with a deadline would otherwise
+	// kill health reporting once it expired. App owns this lifetime through
+	// cancelReadiness, and shutdown is the only thing that ends it.
+	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan struct{})
 
 	check := func() {
@@ -259,12 +263,16 @@ func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server
 		healthServer.SetServingStatus(readinessService, status)
 	}
 
-	// Set the status before returning rather than on the first tick, so a
-	// probe landing in that window cannot read the service as unknown.
-	check()
+	// Registered synchronously so the service is never SERVICE_UNKNOWN, and
+	// without a ping here because New must not block on database I/O. The
+	// first real check follows immediately in the goroutine, so this is
+	// fail-closed for microseconds rather than five seconds.
+	healthServer.SetServingStatus(readinessService, healthpb.HealthCheckResponse_NOT_SERVING)
 
 	go func() {
 		defer close(done)
+
+		check()
 
 		ticker := time.NewTicker(readinessInterval)
 		defer ticker.Stop()
@@ -283,8 +291,9 @@ func watchReadiness(ctx context.Context, db *sql.DB, healthServer *health.Server
 }
 
 // shutdownTimeout bounds each stage of teardown so one stuck listener cannot
-// hold the process open past the grace period.
-const shutdownTimeout = 5 * time.Second
+// hold the process open past the grace period. A var so tests can shrink the
+// escalation wait; production leaves it at the value above.
+var shutdownTimeout = 5 * time.Second
 
 func interceptorLogger(l *slog.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
