@@ -147,7 +147,16 @@ no user data is silently destroyed.
 ## Implemented hardening guarantees
 
 Implemented and verified:
-- JWT signing algorithm is pinned to HMAC in `grpc_middleware.go`.
+- JWT signing algorithm is pinned to HS256 in `grpc_middleware.go`, not to the
+  HMAC family: HS384 and HS512 verify against the same secret, so accepting the
+  family makes algorithm downgrade a one-flag change.
+- `Login` spends the bcrypt cost even when the account does not exist, by
+  verifying against a dummy hash, so response time does not enumerate
+  registered addresses.
+- `Register` rejects malformed addresses before anything downstream, including
+  the verification-code path. `net/mail` alone is not enough: it accepts
+  `a@b` and `Bob <a@b.com>`, so the bare-address and dotted-domain checks are
+  load-bearing.
 - Refresh-token reuse now revokes all of the user's sessions (`AuthService.Refresh`).
 - Refresh rotation atomically revokes the presented active token and inserts its replacement, so a failed replacement cannot strand the current session.
 - `SaveKeySlots` persists all slots atomically via the transactor.
