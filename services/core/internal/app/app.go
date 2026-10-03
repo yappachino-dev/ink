@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -154,18 +155,33 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	}, nil
 }
 
+// Run binds the production ports and hands off to serve.
 func (a *App) Run(ctx context.Context) error {
 	grpcListener, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		slog.Error("gRPC failed to listen", "error", err)
-		os.Exit(1)
+		return fmt.Errorf("gRPC failed to listen: %w", err)
 	}
+
+	httpListener, err := net.Listen("tcp", a.httpServer.Addr)
+	if err != nil {
+		_ = grpcListener.Close()
+		return fmt.Errorf("HTTP failed to listen: %w", err)
+	}
+
+	return a.serve(ctx, httpListener, grpcListener)
+}
+
+// serve runs both listeners and releases what App owns on return, whichever
+// way it returns. The crash arm is the reason teardown is a defer: a server
+// failing is when cleanup matters most, and it used to skip it entirely.
+func (a *App) serve(ctx context.Context, httpListener, grpcListener net.Listener) error {
+	defer a.shutdown()
 
 	errChan := make(chan error, 2)
 
 	go func() {
-		slog.Info("HTTP server starting", "addr", a.httpServer.Addr)
-		if err := a.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		slog.Info("HTTP server starting", "addr", httpListener.Addr().String())
+		if err := a.httpServer.Serve(httpListener); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errChan <- fmt.Errorf("HTTP server crash: %w", err)
 		}
 	}()
@@ -181,21 +197,37 @@ func (a *App) Run(ctx context.Context) error {
 	case err := <-errChan:
 		return err
 	case <-ctx.Done():
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		_ = a.httpServer.Shutdown(shutdownCtx)
-		a.grpcServer.GracefulStop()
-
-		a.shutdown()
-
 		return nil
 	}
 }
 
-// shutdown releases the resources App owns. The *sql.DB borrows the pgx pool,
-// so it must be closed before the pool it wraps.
+// shutdown releases every resource App owns, including a partially built App
+// as the tests construct one. Contexts derive from Background on purpose:
+// shutdown has to run even though the signal already cancelled ctx.
 func (a *App) shutdown() {
+	if a.httpServer != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+		defer cancel()
+		_ = a.httpServer.Shutdown(ctx)
+	}
+
+	// GracefulStop blocks until in-flight RPCs drain, so bound it and escalate.
+	stopped := make(chan struct{})
+	go func() {
+		if a.grpcServer != nil {
+			a.grpcServer.GracefulStop()
+		}
+		close(stopped)
+	}()
+
+	select {
+	case <-stopped:
+	case <-time.After(shutdownTimeout):
+		if a.grpcServer != nil {
+			a.grpcServer.Stop()
+		}
+	}
+
 	if a.db != nil {
 		_ = a.db.Close()
 	}
@@ -203,6 +235,10 @@ func (a *App) shutdown() {
 		a.pool.Close()
 	}
 }
+
+// shutdownTimeout bounds each stage of teardown so one stuck listener cannot
+// hold the process open past the grace period.
+const shutdownTimeout = 5 * time.Second
 
 func interceptorLogger(l *slog.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
