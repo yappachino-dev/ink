@@ -171,6 +171,12 @@ expects, so both modes are exercised end-to-end in tests.
 - Structured logging via `slog` + tint handler; gRPC calls logged through the
   `grpc-ecosystem` logging interceptor (start/finish events).
 - Background goroutine pings the DB every 5s and flips the gRPC `readiness`
-  health status accordingly; k8s probes consume it.
-- Graceful shutdown on context cancellation: HTTP `Shutdown`, gRPC `GracefulStop`,
-  DB close.
+  health status accordingly; k8s probes consume it. It is bound to the signal
+  context, so it exits with shutdown instead of outliving it.
+- Teardown runs on every exit path, not only on a signal: `App.serve` defers
+  `shutdown`, so a failing server releases resources too. Shutdown closes HTTP
+  (bounded `Shutdown`), then gRPC `GracefulStop` escalating to `Stop` after
+  5s, then the `*sql.DB`, then the pgx pool. That order matters: the
+  `*sql.DB` borrows the pool, so closing it does not close the pool.
+- Each connect attempt is bounded by a 3s timeout. The DSN's `connect_timeout`
+  covers the dial only, not the postgres startup handshake.

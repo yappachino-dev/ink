@@ -18,9 +18,10 @@ This is the small actionable queue for the next implementation tasks. Completed 
    - Inject dates into the calendar golden test instead of using the wall clock.
    - Expand presentation tests around the resulting user-visible error behavior.
 
-4. **Close backend lifecycle and security gaps**
-   - Own and close the pgx pool, stop readiness polling, and unify shutdown paths.
-   - Enforce exact HS256, SMTP timeouts/input validation, and timing-equivalent login.
+4. **Close backend security gaps**
+   - Enforce exact HS256, timing-equivalent login, and email input validation.
+   - SMTP is slated for removal in favour of an HTTP provider; its timeout and
+     header-injection items go with it.
 
 5. **Improve repository onboarding**
    - Add a tracked root README with prerequisites, architecture, setup, and verification commands.
