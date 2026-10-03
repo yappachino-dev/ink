@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,6 +14,10 @@ import (
 
 // blackhole accepts TCP and never speaks the postgres protocol, which is the
 // case connect_timeout in the DSN does not cover: it bounds the dial only.
+//
+// Accepted connections are collected under a mutex and closed from the test's
+// own cleanup. Registering cleanup from the accept loop would race test
+// completion and panic once the test function has already returned.
 func blackhole(t *testing.T) string {
 	t.Helper()
 
@@ -20,7 +25,20 @@ func blackhole(t *testing.T) string {
 	if err != nil {
 		t.Fatalf("listen: %v", err)
 	}
-	t.Cleanup(func() { _ = ln.Close() })
+
+	var (
+		mu    sync.Mutex
+		conns []net.Conn
+	)
+
+	t.Cleanup(func() {
+		_ = ln.Close()
+		mu.Lock()
+		defer mu.Unlock()
+		for _, c := range conns {
+			_ = c.Close()
+		}
+	})
 
 	go func() {
 		for {
@@ -28,7 +46,9 @@ func blackhole(t *testing.T) string {
 			if err != nil {
 				return
 			}
-			t.Cleanup(func() { _ = conn.Close() })
+			mu.Lock()
+			conns = append(conns, conn)
+			mu.Unlock()
 		}
 	}()
 
