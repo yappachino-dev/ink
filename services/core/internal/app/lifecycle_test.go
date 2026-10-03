@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
 )
 
@@ -150,4 +151,84 @@ func TestReadinessProbeStopsOnCancel(t *testing.T) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("readiness probe outlived its context")
 	}
+}
+
+// blockingDesc serves a handler that ignores the graceful-stop signal by
+// waiting on its stream context, which only closes when Stop is forced.
+var blockingDesc = grpc.ServiceDesc{
+	ServiceName: "test.Blocking",
+	HandlerType: (*any)(nil),
+	Methods: []grpc.MethodDesc{{
+		MethodName: "Hang",
+		Handler: func(_ any, ctx context.Context, _ func(any) error, _ grpc.UnaryServerInterceptor) (any, error) {
+			<-ctx.Done()
+			return nil, ctx.Err()
+		},
+	}},
+}
+
+// GracefulStop waits for in-flight RPCs. Without escalating after the bound,
+// a handler that ignores the graceful signal pins the process open forever.
+func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
+	pool := unreachablePool(t)
+	server := grpc.NewServer()
+	server.RegisterService(&blockingDesc, struct{}{})
+	app := &App{pool: pool, db: stdlib.OpenDBFromPool(pool), grpcServer: server}
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("listen: %v", err)
+	}
+	go func() { _ = server.Serve(listener) }()
+	t.Cleanup(func() { _ = listener.Close() })
+
+	conn, err := grpc.NewClient(listener.Addr().String(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("dial: %v", err)
+	}
+	t.Cleanup(func() { _ = conn.Close() })
+
+	go func() { _ = conn.Invoke(context.Background(), "/test.Blocking/Hang", nil, nil) }()
+
+	// Let the call reach the handler, so GracefulStop has something to wait on.
+	waitForServer(t, listener)
+
+	done := make(chan struct{})
+	start := time.Now()
+	go func() { app.shutdown(); close(done) }()
+
+	select {
+	case <-done:
+	case <-time.After(4 * shutdownTimeout):
+		t.Fatal("shutdown never returned: GracefulStop did not escalate")
+	}
+
+	if elapsed := time.Since(start); elapsed > 2*shutdownTimeout {
+		t.Fatalf("shutdown took %v, past the %v escalation bound", elapsed, shutdownTimeout)
+	}
+
+	pingCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	if perr := pool.Ping(pingCtx); perr == nil || !strings.Contains(perr.Error(), "closed pool") {
+		t.Fatalf("pool not released after escalating: %v", perr)
+	}
+}
+
+// waitForServer blocks until the listener accepts, so GracefulStop has a
+// handler to wait on rather than an idle server.
+func waitForServer(t *testing.T, listener net.Listener) {
+	t.Helper()
+
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		conn, err := net.Dial("tcp", listener.Addr().String())
+		if err == nil {
+			_ = conn.Close()
+			time.Sleep(50 * time.Millisecond)
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatal("listener never accepted a connection")
 }
