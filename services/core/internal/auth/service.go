@@ -4,8 +4,36 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"net/mail"
+	"strings"
 	"time"
 )
+
+// dummyPasswordHash is a bcrypt hash of a value nobody knows, at the same cost
+// the service hashes with. Login verifies against it when the account does not
+// exist so both branches pay the same price.
+const dummyPasswordHash = "$2a$10$4vJmD6iqZGPgLCKBfksr3uu7Vu4t361zpV2GcoP0o4XNLmUed5Qq2"
+
+// validEmail keeps malformed addresses out of the verification-code path.
+// net/mail alone is too permissive: it accepts "a@b" and "Bob <a@b.com>", so
+// the bare-address and dotted-domain checks are load-bearing, not decoration.
+func validEmail(email string) bool {
+	if len(email) > 254 {
+		return false
+	}
+
+	addr, err := mail.ParseAddress(email)
+	if err != nil || addr.Address != email {
+		return false
+	}
+
+	// The dot has to be in the domain. Testing the whole string would let
+	// "user.name@b" and "first.last@localhost" pass on the strength of the
+	// local part's dot, which is the opposite of what the check is for.
+	_, domain, found := strings.Cut(email, "@")
+
+	return found && strings.Contains(domain, ".")
+}
 
 // How long the reuse-detection revocation may run once it is detached from the
 // request. It is a single indexed UPDATE that revokes one user's sessions, so
@@ -62,6 +90,7 @@ var (
 	ErrRevokedRefreshToken = errors.New("revoked refresh token")
 
 	ErrInvalidLogoutToken = errors.New("invalid token")
+	ErrInvalidEmail       = errors.New("invalid email address")
 )
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, error) {
@@ -69,12 +98,15 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 	if err != nil {
 		return "", "", err
 	}
-	if user == nil {
-		return "", "", ErrInvalidCredentials
+	// Verify against the real hash when there is one and the dummy otherwise,
+	// so an unknown email costs the same as a wrong password. Returning early
+	// on a missing user would make response time an enumeration oracle.
+	hash := dummyPasswordHash
+	if user != nil {
+		hash = user.PasswordHash
 	}
 
-	err = checkPasswordHash(password, user.PasswordHash)
-	if err != nil {
+	if err := checkPasswordHash(password, hash); err != nil || user == nil {
 		return "", "", ErrInvalidCredentials
 	}
 
@@ -82,6 +114,10 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 }
 
 func (s *AuthService) Register(ctx context.Context, email, password string) (string, string, error) {
+	if !validEmail(email) {
+		return "", "", ErrInvalidEmail
+	}
+
 	// bcrypt silently truncates input beyond 72 bytes; reject instead.
 	if len(password) < 6 || len(password) > 72 {
 		return "", "", ErrInvalidPassword

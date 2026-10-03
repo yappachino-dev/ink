@@ -39,8 +39,7 @@ func authenticate(ctx context.Context, secret string) (context.Context, error) {
 
 	var claims AccessTokenClaims
 	token, err := jwt.ParseWithClaims(rawToken, &claims, func(token *jwt.Token) (any, error) {
-		// Pin the expected signing algorithm to prevent algorithm-confusion attacks.
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		if token.Method != jwt.SigningMethodHS256 {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(secret), nil
