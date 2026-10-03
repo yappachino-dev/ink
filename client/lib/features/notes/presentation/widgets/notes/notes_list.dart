@@ -5,8 +5,6 @@ import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/notes/domain/notes_lens.dart';
 import 'package:ink/features/notes/presentation/helpers.dart';
 import 'package:ink/features/notes/presentation/notifiers/notebooks_notifier.dart';
-import 'package:ink/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
-import 'package:ink/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:ink/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:ink/features/notes/presentation/widgets/notes/card/active_note_card.dart';
@@ -102,8 +100,10 @@ class _TaskForwardList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeNotes = ref.watch(activeNotesProvider);
-    final completedNotes = ref.watch(completedNotesProvider);
+    // Named records destructure by field name, so the names carry the meaning.
+    final (:active, :completed) = partitionNotes(
+      ref.watch(notebookNotesProvider),
+    );
 
     return CustomScrollView(
       slivers: [
@@ -116,9 +116,9 @@ class _TaskForwardList extends ConsumerWidget {
           ),
 
         SliverList.builder(
-          itemCount: activeNotes.length,
+          itemCount: active.length,
           itemBuilder: (ctx, index) {
-            final note = activeNotes[index];
+            final note = active[index];
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: ActiveNoteCard(
@@ -132,13 +132,13 @@ class _TaskForwardList extends ConsumerWidget {
           },
         ),
 
-        if (completedNotes.isNotEmpty)
+        if (completed.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: CompletedSection(
                 children: [
-                  ...completedNotes.map(
+                  ...completed.map(
                     (note) => CompletedNoteCard(
                       key: ValueKey(note.id),
                       note: note,

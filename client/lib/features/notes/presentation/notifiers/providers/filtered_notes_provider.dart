@@ -29,6 +29,22 @@ List<Note> notebookNotes(Ref ref) {
   };
 }
 
+/// The two lists the note list renders, split in one pass.
+///
+/// A plain function, not a provider: the single consumer needs both halves at
+/// once, so a provider would only memoize a pair of lists nothing else reads.
+/// It also keeps the riverpod generator away from record types.
+({List<Note> active, List<Note> completed}) partitionNotes(List<Note> notes) {
+  final active = <Note>[];
+  final completed = <Note>[];
+
+  for (final note in notes) {
+    (note.isCompleted ? completed : active).add(note);
+  }
+
+  return (active: active, completed: completed);
+}
+
 List<Note> _dueToday(Ref ref, Iterable<Note> notes) {
   final now = ref.watch(currentDateProvider);
 

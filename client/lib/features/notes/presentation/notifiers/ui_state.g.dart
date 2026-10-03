@@ -42,7 +42,7 @@ final class NotesLensSelectionProvider
 }
 
 String _$notesLensSelectionHash() =>
-    r'ea37276b4b499830ff40288e9991e465a2be30c9';
+    r'2cf6eb09ff82c14dcf3dd09245956130ef1575ef';
 
 abstract class _$NotesLensSelection extends $Notifier<NotesLens> {
   NotesLens build();

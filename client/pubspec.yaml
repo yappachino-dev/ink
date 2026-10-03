@@ -40,11 +40,9 @@ dependencies:
 
   # UI
   flutter_quill: ^11.6.0
-  flutter_quill_extensions: ^11.0.0
   material_ui: ^1.4.0
   cupertino_ui: ^1.1.1
   slang_flutter: ^4.19.0
-  cupertino_icons: ^1.0.9
   google_fonts: ^8.2.1
   flex_color_scheme: ^9.0.0
   table_calendar: ^3.2.1
@@ -61,7 +59,6 @@ dependencies:
   path_provider: ^2.1.6
   uuid: ^4.6.0
   unorm_dart: ^0.3.2
-  fpdart: ^1.2.0
   logger: ^2.8.0
 
 
