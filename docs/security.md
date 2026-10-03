@@ -156,7 +156,8 @@ Implemented and verified:
 - `Register` rejects malformed addresses before anything downstream, including
   the verification-code path. `net/mail` alone is not enough: it accepts
   `a@b` and `Bob <a@b.com>`, so the bare-address and dotted-domain checks are
-  load-bearing.
+  load-bearing. The dot must be in the domain - checking the whole string lets
+  `user.name@b` pass on the strength of the local part.
 - Refresh-token reuse now revokes all of the user's sessions (`AuthService.Refresh`).
 - Refresh rotation atomically revokes the presented active token and inserts its replacement, so a failed replacement cannot strand the current session.
 - `SaveKeySlots` persists all slots atomically via the transactor.
