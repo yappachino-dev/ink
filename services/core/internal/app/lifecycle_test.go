@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // unreachablePool builds a pool pointed at a port nothing listens on. pgx
@@ -137,19 +138,48 @@ func TestServeTearsDownOnSignal(t *testing.T) {
 	}
 }
 
-func TestReadinessProbeStopsOnCancel(t *testing.T) {
+// Background context, not a signal one: nothing cancels it, which is exactly
+// the crash path. Only shutdown can end the probe.
+func TestShutdownStopsTheReadinessProbe(t *testing.T) {
 	pool := unreachablePool(t)
 	healthServer := health.NewServer()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	done := watchReadiness(ctx, stdlib.OpenDBFromPool(pool), healthServer)
+	app := &App{pool: pool, db: stdlib.OpenDBFromPool(pool)}
+	app.cancelReadiness, app.readinessDone = watchReadiness(context.Background(), app.db, healthServer)
 
-	cancel()
+	stopped := make(chan struct{})
+	go func() { app.shutdown(); close(stopped) }()
 
 	select {
-	case <-done:
+	case <-app.readinessDone:
 	case <-time.After(5 * time.Second):
-		t.Fatal("readiness probe outlived its context")
+		t.Fatal("shutdown did not stop the readiness probe")
+	}
+
+	select {
+	case <-stopped:
+	case <-time.After(5 * time.Second):
+		t.Fatal("shutdown blocked after stopping the probe")
+	}
+}
+
+// The status has to exist before the first tick, otherwise a probe in that
+// window reads the readiness service as unknown.
+func TestReadinessStatusIsSetImmediately(t *testing.T) {
+	pool := unreachablePool(t)
+	healthServer := health.NewServer()
+
+	cancel, done := watchReadiness(context.Background(), stdlib.OpenDBFromPool(pool), healthServer)
+	defer func() { cancel(); <-done }()
+
+	resp, err := healthServer.Check(context.Background(), &healthpb.HealthCheckRequest{
+		Service: readinessService,
+	})
+	if err != nil {
+		t.Fatalf("health check: %v", err)
+	}
+	if resp.Status == healthpb.HealthCheckResponse_SERVICE_UNKNOWN {
+		t.Fatal("readiness status unknown before the first tick")
 	}
 }
 
@@ -161,11 +191,16 @@ var blockingDesc = grpc.ServiceDesc{
 	Methods: []grpc.MethodDesc{{
 		MethodName: "Hang",
 		Handler: func(_ any, ctx context.Context, _ func(any) error, _ grpc.UnaryServerInterceptor) (any, error) {
+			close(entered)
 			<-ctx.Done()
 			return nil, ctx.Err()
 		},
 	}},
 }
+
+// entered is closed by the handler, so the test cannot race ahead of the RPC
+// and assert against an idle server.
+var entered = make(chan struct{})
 
 // GracefulStop waits for in-flight RPCs. Without escalating after the bound,
 // a handler that ignores the graceful signal pins the process open forever.
@@ -191,8 +226,11 @@ func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
 
 	go func() { _ = conn.Invoke(context.Background(), "/test.Blocking/Hang", nil, nil) }()
 
-	// Let the call reach the handler, so GracefulStop has something to wait on.
-	waitForServer(t, listener)
+	select {
+	case <-entered:
+	case <-time.After(10 * time.Second):
+		t.Fatal("handler never started, so nothing would block GracefulStop")
+	}
 
 	done := make(chan struct{})
 	start := time.Now()
@@ -204,7 +242,14 @@ func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
 		t.Fatal("shutdown never returned: GracefulStop did not escalate")
 	}
 
-	if elapsed := time.Since(start); elapsed > 2*shutdownTimeout {
+	// Bounded from below as well as above: an instant return would mean
+	// GracefulStop saw no in-flight RPC, which is the race that made this test
+	// able to pass without ever escalating.
+	elapsed := time.Since(start)
+	if elapsed < shutdownTimeout-time.Second {
+		t.Fatalf("shutdown returned in %v, before the %v bound: nothing was escalated", elapsed, shutdownTimeout)
+	}
+	if elapsed > 2*shutdownTimeout {
 		t.Fatalf("shutdown took %v, past the %v escalation bound", elapsed, shutdownTimeout)
 	}
 
@@ -213,22 +258,4 @@ func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
 	if perr := pool.Ping(pingCtx); perr == nil || !strings.Contains(perr.Error(), "closed pool") {
 		t.Fatalf("pool not released after escalating: %v", perr)
 	}
-}
-
-// waitForServer blocks until the listener accepts, so GracefulStop has a
-// handler to wait on rather than an idle server.
-func waitForServer(t *testing.T, listener net.Listener) {
-	t.Helper()
-
-	deadline := time.Now().Add(5 * time.Second)
-	for time.Now().Before(deadline) {
-		conn, err := net.Dial("tcp", listener.Addr().String())
-		if err == nil {
-			_ = conn.Close()
-			time.Sleep(50 * time.Millisecond)
-			return
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	t.Fatal("listener never accepted a connection")
 }
