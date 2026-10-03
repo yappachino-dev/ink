@@ -12,7 +12,7 @@ import (
 // dummyPasswordHash is a bcrypt hash of a value nobody knows, at the same cost
 // the service hashes with. Login verifies against it when the account does not
 // exist so both branches pay the same price.
-var dummyPasswordHash = "$2a$10$4vJmD6iqZGPgLCKBfksr3uu7Vu4t361zpV2GcoP0o4XNLmUed5Qq2"
+const dummyPasswordHash = "$2a$10$4vJmD6iqZGPgLCKBfksr3uu7Vu4t361zpV2GcoP0o4XNLmUed5Qq2"
 
 // validEmail keeps malformed addresses out of the verification-code path.
 // net/mail alone is too permissive: it accepts "a@b" and "Bob <a@b.com>", so
@@ -23,11 +23,16 @@ func validEmail(email string) bool {
 	}
 
 	addr, err := mail.ParseAddress(email)
+	if err != nil || addr.Address != email {
+		return false
+	}
 
-	return err == nil &&
-		addr.Address == email &&
-		strings.Count(email, "@") == 1 &&
-		strings.Contains(email, ".")
+	// The dot has to be in the domain. Testing the whole string would let
+	// "user.name@b" and "first.last@localhost" pass on the strength of the
+	// local part's dot, which is the opposite of what the check is for.
+	_, domain, found := strings.Cut(email, "@")
+
+	return found && strings.Contains(domain, ".")
 }
 
 // How long the reuse-detection revocation may run once it is detached from the
