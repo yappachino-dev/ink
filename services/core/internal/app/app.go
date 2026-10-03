@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/lmittmann/tint"
 	authv1 "github.com/yappachino-dev/ink/gen/go/pb/auth/v1"
@@ -31,7 +32,10 @@ import (
 )
 
 type App struct {
-	cfg        *config.Config
+	cfg *config.Config
+	// db borrows pool rather than owning it. Closing db does not close the
+	// pool, so shutdown releases them in that order.
+	pool       *pgxpool.Pool
 	db         *sql.DB
 	httpServer *http.Server
 	grpcServer *grpc.Server
@@ -135,8 +139,9 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	})
 
 	return &App{
-		cfg: cfg,
-		db:  db,
+		cfg:  cfg,
+		pool: pool,
+		db:   db,
 		httpServer: &http.Server{
 			Addr:              ":8080",
 			Handler:           r,
@@ -182,11 +187,20 @@ func (a *App) Run(ctx context.Context) error {
 		_ = a.httpServer.Shutdown(shutdownCtx)
 		a.grpcServer.GracefulStop()
 
-		if a.db != nil {
-			_ = a.db.Close()
-		}
+		a.shutdown()
 
 		return nil
+	}
+}
+
+// shutdown releases the resources App owns. The *sql.DB borrows the pgx pool,
+// so it must be closed before the pool it wraps.
+func (a *App) shutdown() {
+	if a.db != nil {
+		_ = a.db.Close()
+	}
+	if a.pool != nil {
+		a.pool.Close()
 	}
 }
 
