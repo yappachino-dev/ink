@@ -155,7 +155,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    container
+    await container
         .read(notesLensSelectionProvider.notifier)
         .select(const NotesLens.today());
 

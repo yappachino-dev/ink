@@ -12,6 +12,25 @@ part 'ui_state.g.dart';
 
 @riverpod
 class NotesLensSelection extends _$NotesLensSelection {
+  /// The last lens known to be in storage.
+  ///
+  /// A failed write rolls back to this rather than to whatever the state was
+  /// when the write was queued. That queued value goes stale as soon as the
+  /// user taps again, and across two consecutive failures it names a lens that
+  /// never reached storage, which would leave the app claiming a selection it
+  /// cannot restore.
+  NotesLens _confirmed = const NotesLens.all();
+
+  /// Identifies the most recent [select] call. Only the newest selection may
+  /// roll the state back when its write fails.
+  ///
+  /// Comparing `state == lens` is not a substitute. Tapping A, then B, then A
+  /// again leaves two writes for A, and the first one sees state == A and
+  /// cannot tell itself apart from the newest. It would roll back a selection
+  /// the user had just re-made, discarding B and the second A as well, while
+  /// storage went on to record the second A.
+  int _latestSelection = 0;
+
   /// All notes is the landing view. The app opens on a flat,
   /// reverse-chronological list of everything, because it is note-first: the
   /// note is the thing, and due dates are a lens over it rather than the
@@ -22,26 +41,44 @@ class NotesLensSelection extends _$NotesLensSelection {
     // re-runs this whenever the list resolves, which silently overwrote the
     // selection the user had just made.
     final stored = ref.read(userPreferencesProvider).selectedNotebookId;
-    if (stored == null || _allNotesKeys.contains(stored)) {
-      return const NotesLens.all();
-    }
-    if (_todayKeys.contains(stored)) return const NotesLens.today();
+    final restored = switch (stored) {
+      null => const NotesLens.all(),
+      final value when _allNotesKeys.contains(value) => const NotesLens.all(),
+      final value when _todayKeys.contains(value) => const NotesLens.today(),
+      final value => NotesLens.notebook(value),
+    };
 
-    return NotesLens.notebook(stored);
+    _confirmed = restored;
+    return restored;
   }
 
-  void select(NotesLens lens) {
+  /// Selects [lens] and persists it.
+  ///
+  /// The state is rolled back if the write fails. A selection the app cannot
+  /// restore on the next launch is not a selection, and leaving it applied
+  /// would mean the app silently disagreed with itself.
+  Future<void> select(NotesLens lens) {
     state = lens;
-    unawaited(
-      ref
+    _latestSelection++;
+    return _write(lens, _latestSelection);
+  }
+
+  Future<void> _write(NotesLens lens, int selection) async {
+    try {
+      await ref
           .read(userPreferencesProvider)
           .setSelectedNotebookId(
             // All notes is the absence of a filter, so there is nothing to
             // persist. Storing it would leave a sentinel in the preference
             // file, which is exactly what this type exists to remove.
             lens is AllNotesLens ? null : lens.id,
-          ),
-    );
+          );
+      _confirmed = lens;
+    } catch (_) {
+      // Only undo the selection if this write is still the newest one.
+      if (ref.mounted && _latestSelection == selection) state = _confirmed;
+      rethrow;
+    }
   }
 }
 

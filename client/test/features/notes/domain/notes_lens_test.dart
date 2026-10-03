@@ -48,10 +48,7 @@ void main() {
       // "what is left to do" and keep task-shaped rows.
       expect(const NotesLens.all().isContentForward, isTrue);
       expect(const NotesLens.today().isContentForward, isFalse);
-      expect(
-        const NotesLens.notebook('notebook-1').isContentForward,
-        isFalse,
-      );
+      expect(const NotesLens.notebook('notebook-1').isContentForward, isFalse);
     });
   });
 }

@@ -47,10 +47,10 @@ void main() {
     _prefs = await SharedPreferences.getInstance();
   });
 
-  testWidgets('home screen light and dark', (tester) async {
+  testWidgets('notes screen light and dark', (tester) async {
     await _pumpScreenPair(
       tester,
-      filename: 'home.png',
+      filename: 'notes.png',
       light: (service) => _notesApp(
         brightness: Brightness.light,
         service: service,

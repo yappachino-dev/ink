@@ -72,7 +72,7 @@ void main() {
     // `notesLensSelectionProvider` defaults to All notes, which is a
     // notebook sentinel and would filter every fixture note out. The calendar
     // shows all notebooks unless the user narrows it.
-    container
+    await container
         .read(notesLensSelectionProvider.notifier)
         .select(const NotesLens.all());
     await container.read(notesProvider.future);
