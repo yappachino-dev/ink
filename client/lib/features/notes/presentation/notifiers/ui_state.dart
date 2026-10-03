@@ -12,6 +12,15 @@ part 'ui_state.g.dart';
 
 @riverpod
 class NotesLensSelection extends _$NotesLensSelection {
+  /// The last lens known to be in storage.
+  ///
+  /// A failed write rolls back to this rather than to whatever the state was
+  /// when the write was queued. That queued value goes stale as soon as the
+  /// user taps again, and across two consecutive failures it names a lens that
+  /// never reached storage, which would leave the app claiming a selection it
+  /// cannot restore.
+  NotesLens _confirmed = const NotesLens.all();
+
   /// All notes is the landing view. The app opens on a flat,
   /// reverse-chronological list of everything, because it is note-first: the
   /// note is the thing, and due dates are a lens over it rather than the
@@ -22,18 +31,16 @@ class NotesLensSelection extends _$NotesLensSelection {
     // re-runs this whenever the list resolves, which silently overwrote the
     // selection the user had just made.
     final stored = ref.read(userPreferencesProvider).selectedNotebookId;
-    if (stored == null || _allNotesKeys.contains(stored)) {
-      return const NotesLens.all();
-    }
-    if (_todayKeys.contains(stored)) return const NotesLens.today();
+    final restored = switch (stored) {
+      null => const NotesLens.all(),
+      final value when _allNotesKeys.contains(value) => const NotesLens.all(),
+      final value when _todayKeys.contains(value) => const NotesLens.today(),
+      final value => NotesLens.notebook(value),
+    };
 
-    return NotesLens.notebook(stored);
+    _confirmed = restored;
+    return restored;
   }
-
-  /// Serializes the preference writes. Tapping two notebooks in quick
-  /// succession queues two writes, and without this the slower one can land
-  /// last and leave the file describing the lens the user moved away from.
-  Future<void> _writes = Future<void>.value();
 
   /// Selects [lens] and persists it.
   ///
@@ -41,40 +48,26 @@ class NotesLensSelection extends _$NotesLensSelection {
   /// restore on the next launch is not a selection, and leaving it applied
   /// would mean the app silently disagreed with itself.
   Future<void> select(NotesLens lens) {
-    final previous = state;
     state = lens;
-
-    // Read before queueing, not inside the queued callback. The provider can
-    // be disposed while a write is waiting its turn, and a Ref is unusable
-    // after that, so the dependency is captured while it is still valid.
-    final preferences = ref.read(userPreferencesProvider);
-
-    final write = _writes.then((_) => _write(preferences, lens, previous));
-
-    // Swallow on the chain only. The caller still gets the failure, but a
-    // rejected write must not poison the queue for every tap after it.
-    _writes = write.then((_) {}, onError: (_, _) {});
-
-    return write;
+    return _write(lens);
   }
 
-  Future<void> _write(
-    UserConfig preferences,
-    NotesLens lens,
-    NotesLens previous,
-  ) async {
+  Future<void> _write(NotesLens lens) async {
     try {
-      await preferences.setSelectedNotebookId(
-        // All notes is the absence of a filter, so there is nothing to
-        // persist. Storing it would leave a sentinel in the preference file,
-        // which is exactly what this type exists to remove.
-        lens is AllNotesLens ? null : lens.id,
-      );
+      await ref
+          .read(userPreferencesProvider)
+          .setSelectedNotebookId(
+            // All notes is the absence of a filter, so there is nothing to
+            // persist. Storing it would leave a sentinel in the preference
+            // file, which is exactly what this type exists to remove.
+            lens is AllNotesLens ? null : lens.id,
+          );
+      _confirmed = lens;
     } catch (_) {
-      // Only undo the selection if this write is still the current one. If a
-      // later tap already moved on, restoring would drag the list back to a
-      // lens the user has left.
-      if (ref.mounted && state == lens) state = previous;
+      // Only undo the selection if this write is still the current one. If the
+      // user has already tapped again, restoring would drag the list back to a
+      // lens they have left.
+      if (ref.mounted && state == lens) state = _confirmed;
       rethrow;
     }
   }

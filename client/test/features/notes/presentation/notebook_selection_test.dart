@@ -169,17 +169,13 @@ void main() {
       // The first write is made slow on purpose. SharedPreferences resolves
       // fast enough that without a queue the writes land in order by luck,
       // so the test would pass against an implementation that still races.
-      final prefs = await _failingPreferencesBase();
+      final prefs = _ControllablePrefs(
+        delay: (id) =>
+            id == 'first' ? const Duration(milliseconds: 60) : Duration.zero,
+      );
       final c = ProviderContainer(
         overrides: [
-          userPreferencesProvider.overrideWithValue(
-            _FailingPreferences(
-              prefs,
-              delayFor: (id) => id == 'first'
-                  ? const Duration(milliseconds: 60)
-                  : Duration.zero,
-            ),
-          ),
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         ],
       );
       addTearDown(c.dispose);
@@ -197,21 +193,54 @@ void main() {
       // every write has settled, or the race stays invisible.
       await Future<void>.delayed(const Duration(milliseconds: 200));
 
-      expect(c.read(userPreferencesProvider).selectedNotebookId, 'third');
+      expect(prefs.selectedNotebookId, 'third');
       expect(
         c.read(notesLensSelectionProvider),
         const NotesLens.notebook('third'),
       );
     });
 
+    test('an in-flight write survives the provider being disposed', () async {
+      // The queue used to live on the notifier, which is auto-disposed. Once
+      // the last listener went away the queue reset, so a write still in
+      // flight from the dead instance could land after a write from its
+      // replacement and win. The queue belongs to UserConfig, which is
+      // keep-alive, so the ordering holds across the lifecycle.
+      final prefs = _ControllablePrefs(
+        delay: (id) =>
+            id == 'first' ? const Duration(milliseconds: 60) : Duration.zero,
+      );
+      final config = UserConfig(prefs);
+      final c = ProviderContainer(
+        overrides: [userPreferencesProvider.overrideWithValue(config)],
+      );
+      addTearDown(c.dispose);
+
+      // Nothing listens, so this instance is disposed as soon as the write is
+      // queued rather than when it finishes.
+      unawaited(
+        c
+            .read(notesLensSelectionProvider.notifier)
+            .select(const NotesLens.notebook('first')),
+      );
+      c.invalidate(notesLensSelectionProvider);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      // A fresh instance, as a screen transition would produce.
+      await c
+          .read(notesLensSelectionProvider.notifier)
+          .select(const NotesLens.notebook('second'));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+
+      expect(prefs.selectedNotebookId, 'second');
+    });
+
     test('a failed write rolls back and reports the failure', () async {
-      final prefs = await _failingPreferencesBase();
       var shouldFail = false;
+      final prefs = _ControllablePrefs(fail: (_) => shouldFail);
       final c = ProviderContainer(
         overrides: [
-          userPreferencesProvider.overrideWithValue(
-            _FailingPreferences(prefs, shouldFail: (_) => shouldFail),
-          ),
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         ],
       );
       addTearDown(c.dispose);
@@ -235,25 +264,21 @@ void main() {
       );
     });
 
-    test('a failed write does not undo a selection made after it', () async {
+    test('a failed write does not undo a later selection', () async {
       // The failing write is the one queued first, but the user has already
       // moved on by the time it lands. Undoing it would drag the list back to
       // a lens the user has left, which is worse than the failed write.
-      final prefs = await _failingPreferencesBase();
+      // Keyed on the id, not a shared flag: the queue defers the write, so a
+      // flag flipped straight after the call would already be false by the time
+      // the failing write actually runs.
+      final prefs = _ControllablePrefs(
+        fail: (id) => id == 'doomed',
+        delay: (id) =>
+            id == 'doomed' ? const Duration(milliseconds: 40) : Duration.zero,
+      );
       final c = ProviderContainer(
         overrides: [
-          userPreferencesProvider.overrideWithValue(
-            _FailingPreferences(
-              prefs,
-              // Keyed on the id, not a shared flag: the queue defers the write,
-              // so a flag flipped straight after the call would already be
-              // false by the time the failing write actually runs.
-              shouldFail: (id) => id == 'doomed',
-              delayFor: (id) => id == 'doomed'
-                  ? const Duration(milliseconds: 40)
-                  : Duration.zero,
-            ),
-          ),
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         ],
       );
       addTearDown(c.dispose);
@@ -264,25 +289,61 @@ void main() {
       addTearDown(sub.close);
       final notifier = c.read(notesLensSelectionProvider.notifier);
 
-      unawaited(notifier.select(const NotesLens.notebook('doomed')));
+      // The failure is expected and deliberately not awaited, so its rejection
+      // needs a handler or it surfaces as an unhandled async error.
+      unawaited(
+        notifier
+            .select(const NotesLens.notebook('doomed'))
+            .catchError((Object _) {}),
+      );
       await notifier.select(const NotesLens.notebook('kept'));
-      await Future<void>.delayed(const Duration(milliseconds: 150));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
 
       expect(
         c.read(notesLensSelectionProvider),
         const NotesLens.notebook('kept'),
       );
-      expect(c.read(userPreferencesProvider).selectedNotebookId, 'kept');
+      expect(prefs.selectedNotebookId, 'kept');
+    });
+
+    test('two failures roll back to the last persisted lens', () async {
+      // The case a per-tap `previous` gets wrong. Both writes fail, so neither
+      // 'first' nor 'second' reaches storage. Rolling back to the state that
+      // was current when 'second' was queued would restore 'first', which is
+      // exactly the value that failed to write.
+      final prefs = _ControllablePrefs(fail: (_) => true);
+      final c = ProviderContainer(
+        overrides: [
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
+        ],
+      );
+      addTearDown(c.dispose);
+      // The rollback is guarded on `ref.mounted`; keep the provider alive.
+      final sub = c.listen(notesLensSelectionProvider, (_, _) {});
+      addTearDown(sub.close);
+      final notifier = c.read(notesLensSelectionProvider.notifier);
+
+      await expectLater(
+        notifier.select(const NotesLens.notebook('first')),
+        throwsA(isA<Exception>()),
+      );
+      await expectLater(
+        notifier.select(const NotesLens.notebook('second')),
+        throwsA(isA<Exception>()),
+      );
+
+      // Nothing was ever persisted, so the only honest state is the one the
+      // app opened with.
+      expect(c.read(notesLensSelectionProvider), const NotesLens.all());
+      expect(prefs.selectedNotebookId, isNull);
     });
 
     test('a failed write does not poison later selections', () async {
-      final prefs = await _failingPreferencesBase();
       var shouldFail = false;
+      final prefs = _ControllablePrefs(fail: (_) => shouldFail);
       final c = ProviderContainer(
         overrides: [
-          userPreferencesProvider.overrideWithValue(
-            _FailingPreferences(prefs, shouldFail: (_) => shouldFail),
-          ),
+          userPreferencesProvider.overrideWithValue(UserConfig(prefs)),
         ],
       );
       addTearDown(c.dispose);
@@ -297,40 +358,45 @@ void main() {
       shouldFail = false;
       await notifier.select(const NotesLens.notebook('accepted'));
 
-      expect(c.read(userPreferencesProvider).selectedNotebookId, 'accepted');
+      expect(prefs.selectedNotebookId, 'accepted');
     });
   });
 }
 
-/// Fails or delays writes on demand so the rollback and queueing paths are
-/// reachable from a test.
-class _FailingPreferences extends UserConfig {
-  // The super parameter is private to UserConfig, so a super parameter is not
-  // available here and the lint's suggestion cannot compile.
-  // ignore: use_super_parameters
-  _FailingPreferences(
-    SharedPreferences prefs, {
-    bool Function(String? id)? shouldFail,
-    Duration Function(String? id)? delayFor,
-  }) : _shouldFail = shouldFail ?? _never,
-       _delayFor = delayFor ?? _noDelay,
-       super(prefs);
+/// In-memory SharedPreferences that can fail or stall a single key on demand.
+///
+/// The real `UserConfig` runs on top of this, so the serialization queue and
+/// the rollback logic under test are the production ones rather than a fake
+/// that reimplements them.
+class _ControllablePrefs extends Mock implements SharedPreferences {
+  _ControllablePrefs({
+    bool Function(String value)? fail,
+    Duration Function(String value)? delay,
+  }) : failWhen = fail,
+       delayWhen = delay;
 
-  final bool Function(String? id) _shouldFail;
-  final Duration Function(String? id) _delayFor;
+  final _store = <String, Object?>{};
+
+  final bool Function(String value)? failWhen;
+  final Duration Function(String value)? delayWhen;
+
+  String? get selectedNotebookId => getString('selectedNotebook');
 
   @override
-  Future<void> setSelectedNotebookId(String? id) async {
-    if (_shouldFail(id)) throw Exception('disk full');
-    await Future<void>.delayed(_delayFor(id));
-    return super.setSelectedNotebookId(id);
+  String? getString(String key) => _store[key] as String?;
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    final delay = delayWhen?.call(value);
+    if (delay != null) await Future<void>.delayed(delay);
+    if (failWhen?.call(value) ?? false) throw Exception('disk full');
+    _store[key] = value;
+    return true;
   }
-}
 
-bool _never(String? _) => false;
-Duration _noDelay(String? _) => Duration.zero;
-
-Future<SharedPreferences> _failingPreferencesBase() async {
-  SharedPreferences.setMockInitialValues({});
-  return SharedPreferences.getInstance();
+  @override
+  Future<bool> remove(String key) async {
+    _store.remove(key);
+    return true;
+  }
 }
