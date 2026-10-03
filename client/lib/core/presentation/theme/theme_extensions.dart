@@ -11,7 +11,6 @@ extension ThemeBuildContextExtension on BuildContext {
   /// Semantic Ink design tokens. Prefer these over raw scheme colors.
   InkColors get ink => theme.extension<InkColors>()!;
 
-  bool get isLight => theme.brightness == Brightness.light;
   bool get isDark => theme.brightness == Brightness.dark;
 }
 
