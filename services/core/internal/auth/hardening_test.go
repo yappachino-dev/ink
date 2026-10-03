@@ -73,16 +73,19 @@ func TestLoginSpendsTheHashCostForUnknownAccounts(t *testing.T) {
 		return time.Since(start)
 	}
 
-	measure("user@example.com") // warm both branches before comparing
+	measure("user@example.com")
+	measure("nobody@example.com")
 
-	known := measure("user@example.com")
-	unknown := measure("nobody@example.com")
+	// bcrypt at cost 10 costs tens of milliseconds; returning without it costs
+	// microseconds. An absolute floor separates those without comparing two
+	// samples to each other, which flakes whenever one of them happens to spike
+	// on a noisy worker.
+	const hashFloor = 5 * time.Millisecond
 
-	// bcrypt dominates both paths, so a skipped hash shows as a large ratio.
-	// The bound is loose because CI is noisy; it only has to catch a path that
-	// returned before the hash ran.
-	if unknown < known/2 {
-		t.Fatalf("unknown account took %v against %v for a known one, which leaks existence", unknown, known)
+	for _, email := range []string{"user@example.com", "nobody@example.com"} {
+		if got := measure(email); got < hashFloor {
+			t.Fatalf("Login(%q) returned in %v, under the %v bcrypt floor, so it skipped the hash", email, got, hashFloor)
+		}
 	}
 }
 
@@ -100,6 +103,9 @@ func TestRegisterRejectsMalformedEmails(t *testing.T) {
 		"a@b..com",
 		"a@.com",
 		"a@b.com\nX-Injected: 1",
+		// A dot in the local part must not stand in for a dotted domain.
+		"user.name@b",
+		"first.last@localhost",
 	} {
 		t.Run(email, func(t *testing.T) {
 			if _, _, err := svc.Register(context.Background(), email, testPassword); !errors.Is(err, ErrInvalidEmail) {
