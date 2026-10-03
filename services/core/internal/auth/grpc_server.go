@@ -59,7 +59,7 @@ func (s *Server) Register(ctx context.Context, req *authv1.RegisterRequest) (*au
 		switch {
 		case errors.Is(err, ErrUserAlreadyExists):
 			return nil, status.Error(codes.AlreadyExists, err.Error())
-		case errors.Is(err, ErrInvalidPassword):
+		case errors.Is(err, ErrInvalidPassword), errors.Is(err, ErrInvalidEmail):
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
 		return nil, status.Error(codes.Internal, "internal registration failure")
