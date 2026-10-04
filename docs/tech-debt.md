@@ -8,20 +8,20 @@ This is the small actionable queue for the next implementation tasks. Completed 
    - Make session persistence awaitable and define rollback/error behavior.
      _Lens selection persistence is done; token persistence is not._
 
-2. **Harden sync data integrity**
-   - Reject duplicate IDs and cross-user notebook references.
-   - Surface ownership conflicts instead of silently accepting a no-op upsert.
-   - Return vault local-persistence failures and define vault conflict behavior.
+2. **Define vault key-slot conflict behavior**
+   - `UpsertKeySlots` resolves collisions with `ON CONFLICT (user_id, key_type)
+     DO UPDATE`, so a push silently overwrites the other device's slot.
+     Notebook and note pushes already reject these cases; vault does not.
 
-3. **Make client architecture and visual tests deterministic**
-   - Remove feature-to-app navigation imports and enforce the rule in the architecture checker.
-   - Inject dates into the calendar golden test instead of using the wall clock.
-   - Expand presentation tests around the resulting user-visible error behavior.
+3. **Enforce the client architecture rule**
+   - No `package:ink/app/` import exists under `client/lib/features/`, but
+     `check_architecture.dart` only forbids `app/database/`, so the rest of the
+     layer can creep back in without failing the check.
 
-4. **Close backend security gaps**
-   - No production `CodeSender` exists: an HTTP provider such as Resend must be
-     wired behind `auth.CodeSender`. Until then `APP_ENV=production` refuses
-     to start rather than logging live verification codes.
+4. **Ship a production verification-code sender**
+   - No `CodeSender` implementation ships. `APP_ENV=production` refuses to
+     start, so this blocks deployment rather than degrading it.
+   - Needs request-context propagation, explicit timeouts, and structured errors.
 
 5. **Improve repository onboarding**
    - Add a tracked root README with prerequisites, architecture, setup, and verification commands.
@@ -35,7 +35,6 @@ This is the small actionable queue for the next implementation tasks. Completed 
 | Client schema migration tooling | A released client schema requires an upgrade path. |
 | Calendar clock/provider seam | Re-evaluate during a deliberate Riverpod upgrade or when introducing a shared clock abstraction. |
 | PointyCastle 4 / `bip39` constraint | Revisit when `bip39` publishes a PointyCastle 4-compatible release. |
-| Calendar as a peer tab vs a Notes view mode | Decide whether the month grid is worth a second top-level destination. Its journal list is duplicated by Notes; only the date index is not. |
 | Unused `CalendarViewMode` granularity | `month`/`twoWeeks`/`week` set the grid format; `day` swaps the grid for `DayHeader`, which has its own previous/next steppers. All four are reachable and distinct. Reconsider only if a mode is ever hidden from the picker. |
 | Very Good Analysis 11 async-style migration | Remove the scoped `async_return_with_no_await` suppression after the Future adapters are migrated. |
 | Kubernetes hardening | Ink adopts Kubernetes as a supported deployment target. |
