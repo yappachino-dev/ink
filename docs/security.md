@@ -165,7 +165,7 @@ Implemented and verified:
 - `JWT_SECRET_KEY` is required non-empty at config load.
 
 Verification-code delivery uses a pluggable `auth.CodeSender`:
-`APP_ENV=production` sends real SMTP email, while development logs the code for
+`APP_ENV=production` refuses to start, and development logs the code for
 manual testing (**codes are bearer secrets — never run production with the log
 sender**). Authentication RPCs are protected by per-peer-IP fixed-window limits,
 and verification also has a per-email cap and attempt lockout.

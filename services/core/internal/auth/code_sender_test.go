@@ -56,7 +56,7 @@ func TestVerifyEmailDeliversValidatingCode(t *testing.T) {
 func TestVerifyEmailMapsSenderFailureToInternal(t *testing.T) {
 	repo := &fakeVerificationRepo{}
 	svc := NewVerificationService(repo)
-	sender := &fakeCodeSender{failWith: errors.New("smtp down")}
+	sender := &fakeCodeSender{failWith: errors.New("delivery unavailable")}
 	server := NewServer(nil, svc, sender)
 
 	_, err := server.VerifyEmail(context.Background(), &authv1.VerifyEmailRequest{Email: "a@b.c"})

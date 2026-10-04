@@ -21,7 +21,6 @@ internal/
 ├── store/        # sqlc-generated code from db/queries/*.sql
 ├── sync/         # Cursor-based delta sync: service, repo, grpc server/adapter
 ├── vault/        # Key slot persistence: service, repo, grpc server/adapter
-└── email/        # SMTP sender for verification codes
 ```
 
 Each domain keeps the same shape: `models.go`, `service.go` (logic),
@@ -41,7 +40,7 @@ single-use verification code, and the users.email UNIQUE constraint maps to
 `AlreadyExists` as a race backstop.
 | RPC | Notes |
 | --- | --- |
-| `VerifyEmail` | Generates and delivers a verification code through the configured `CodeSender`: SMTP in production, structured logs in non-production development |
+| `VerifyEmail` | Generates a verification code and hands it to the configured `CodeSender`. Only `LogCodeSender` ships, so production refuses to start |
 | `Register` | Email + password + code → creates user (bcrypt hash), returns token pair |
 | `Login` | Credential check → token pair |
 | `RefreshToken` | Atomically rotates the active refresh token (replacement insert and old-token revoke), new access token |
@@ -158,13 +157,14 @@ Loaded from environment (optionally `.env`):
 | --- | --- | --- |
 | `DATABASE_URL` | yes | Postgres connection string |
 | `JWT_SECRET_KEY` | yes (in practice) | HS256 signing secret |
-| `APP_ENV` | no (default `development`) | `development` logs verification codes instead of emailing; `production` sends real SMTP email via the configured sender |
-| `SMTP_HOST/PORT/USER/PASSWORD/FROM` | for verification emails (`APP_ENV=production`) | SMTP settings |
+| `APP_ENV` | no (default `development`) | `development` logs verification codes; `production` refuses to start, because no `CodeSender` ships |
 
-Verification-code delivery is chosen at boot: `APP_ENV=production` wires the
-SMTP sender into `auth.Server`; anything else uses `auth.LogCodeSender`, which
-writes the code to the log. The delivered code is exactly what `Register`
-expects, so both modes are exercised end-to-end in tests.
+Verification-code delivery is chosen at boot. Only `auth.LogCodeSender` ships,
+so `APP_ENV=production` returns an error instead of starting; any other
+environment logs the code. The interface is the delivery seam: a provider such
+as Resend slots in behind `auth.CodeSender` without touching the auth services.
+Verification codes are bearer secrets, which is why production fails closed
+rather than writing them to the log.
 
 ## Observability & lifecycle
 
@@ -184,3 +184,6 @@ expects, so both modes are exercised end-to-end in tests.
   does not close the pool.
 - Each connect attempt is bounded by a 3s timeout. The DSN's `connect_timeout`
   covers the dial only, not the postgres startup handshake.
+- The pool's own `ConnectTimeout` is pinned to 10s. pgx substitutes two minutes
+  when it is unset, and `MinConns` background dials outlive the retry loop, so
+  `pool.Close()` would block behind them and turn a 30s failure into a 2min one.

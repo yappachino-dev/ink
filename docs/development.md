@@ -19,10 +19,9 @@ DB_USER=<user>
 DB_PASSWORD=<pass>
 DB_NAME=<db>
 JWT_SECRET_KEY=<secret>
-# development (default) logs verification codes; production sends real SMTP mail:
+# development (default) logs verification codes; production refuses to
+# start, because no CodeSender ships yet:
 APP_ENV=development
-# optional, for verification emails in production:
-SMTP_HOST= SMTP_PORT= SMTP_USER= SMTP_PASSWORD= SMTP_FROM=
 ```
 
 ## Backend workflow
@@ -97,8 +96,7 @@ cd services/core
 go test ./...
 ```
 
-Integration tests (`*_integration_test.go` in `auth`/`sync`/`vault`, plus the
-`email` SMTP fake) boot a **throwaway Postgres via testcontainers-go** — Docker
+Integration tests (`*_integration_test.go` in `auth`/`sync`/`vault`) boot a **throwaway Postgres via testcontainers-go** — Docker
 must be running or they fail. Each test gets an isolated `postgres:18-alpine`
 container with all embedded migrations applied through the same `database.Migrate`
 path used on boot, then is torn down automatically.

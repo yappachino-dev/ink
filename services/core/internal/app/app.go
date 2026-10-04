@@ -22,7 +22,6 @@ import (
 	"github.com/yappachino-dev/ink/services/core/internal/auth"
 	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"github.com/yappachino-dev/ink/services/core/internal/database"
-	"github.com/yappachino-dev/ink/services/core/internal/email"
 	"github.com/yappachino-dev/ink/services/core/internal/store"
 	"github.com/yappachino-dev/ink/services/core/internal/sync"
 	"github.com/yappachino-dev/ink/services/core/internal/vault"
@@ -48,6 +47,13 @@ type App struct {
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
+	// Checked before the database work on purpose: this is pure configuration,
+	// and making it fail after a full connect-and-retry budget turns a
+	// misconfigured environment into a slow startup.
+	if cfg.Env == config.EnvProduction {
+		return nil, errors.New("no verification code sender configured for production")
+	}
+
 	pool, err := database.Connect(ctx, cfg.DatabaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect database: %w", err)
@@ -74,13 +80,8 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		Level: slog.LevelDebug,
 	}))
 
-	// Verification-code delivery: real SMTP in production, log output in dev.
-	var codeSender auth.CodeSender
-	if cfg.Env == config.EnvProduction {
-		codeSender = emailCodeSender{sender: email.NewSender(cfg.SMTP)}
-	} else {
-		codeSender = auth.NewLogCodeSender(logger)
-	}
+	// Verification-code delivery is always the log sender; see the guard above.
+	var codeSender auth.CodeSender = auth.NewLogCodeSender(logger)
 
 	authSvc := auth.NewAuthService(userRepo, tokenRepo, cfg.JwtSecretKey, 15*time.Minute, 7*24*time.Hour)
 	vaultSvc := vault.NewVaultService(transactor, vaultRepo)
@@ -299,13 +300,4 @@ func interceptorLogger(l *slog.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
 		l.Log(ctx, slog.Level(lvl), msg, fields...)
 	})
-}
-
-// emailCodeSender adapts the SMTP sender to the auth.CodeSender interface.
-type emailCodeSender struct {
-	sender *email.Sender
-}
-
-func (a emailCodeSender) SendCode(_ context.Context, email, code string) error {
-	return a.sender.SendVerificationCode(email, code)
 }

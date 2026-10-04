@@ -10,6 +10,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/yappachino-dev/ink/services/core/internal/config"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health"
@@ -258,5 +259,22 @@ func TestShutdownEscalatesWhenAnRPCNeverReturns(t *testing.T) {
 	defer cancel()
 	if perr := pool.Ping(pingCtx); perr == nil || !strings.Contains(perr.Error(), "closed pool") {
 		t.Fatalf("pool not released after escalating: %v", perr)
+	}
+}
+
+// Verification codes are bearer secrets. Production must refuse to start rather
+// than fall back to the log sender, which would write live credentials to
+// stdout.
+func TestNewRefusesToStartInProductionWithoutACodeSender(t *testing.T) {
+	_, err := New(context.Background(), &config.Config{
+		Env:          config.EnvProduction,
+		DatabaseURL:  "postgres://u:p@127.0.0.1:1/db",
+		JwtSecretKey: "test-secret",
+	})
+	if err == nil {
+		t.Fatal("New started in production with no code sender")
+	}
+	if !strings.Contains(err.Error(), "code sender") {
+		t.Fatalf("error should name the missing sender, got %v", err)
 	}
 }
