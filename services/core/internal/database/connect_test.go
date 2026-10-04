@@ -78,3 +78,26 @@ func TestPingWithTimeoutGivesUpOnASilentServer(t *testing.T) {
 		t.Fatalf("ping took %v, past the %v bound", elapsed, connectPingTimeout)
 	}
 }
+
+// A blackhole accepts the TCP connection and then goes quiet, which is exactly
+// what pgx's two-minute ConnectTimeout default is spent on. Unbounded, the
+// pool's background dials outlive the retry loop and Close blocks behind them.
+func TestConnectGivesUpInsideItsBudget(t *testing.T) {
+	if testing.Short() {
+		t.Skip("spends the full retry budget")
+	}
+
+	start := time.Now()
+	_, err := Connect(context.Background(), blackhole(t))
+	if err == nil {
+		t.Fatal("expected the blackhole to fail the connection")
+	}
+
+	elapsed := time.Since(start)
+	// Generous, because CI is noisy. It only has to separate the ~15s budget
+	// from the two minutes pgx would otherwise spend here.
+	if max := 60 * time.Second; elapsed > max {
+		t.Fatalf("Connect took %v, past the %v budget: a background dial outlived it", elapsed, max)
+	}
+	t.Logf("Connect gave up after %v", elapsed.Round(time.Millisecond))
+}

@@ -184,3 +184,6 @@ rather than writing them to the log.
   does not close the pool.
 - Each connect attempt is bounded by a 3s timeout. The DSN's `connect_timeout`
   covers the dial only, not the postgres startup handshake.
+- The pool's own `ConnectTimeout` is pinned to 10s. pgx substitutes two minutes
+  when it is unset, and `MinConns` background dials outlive the retry loop, so
+  `pool.Close()` would block behind them and turn a 30s failure into a 2min one.

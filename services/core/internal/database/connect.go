@@ -15,6 +15,14 @@ import (
 // and make the retry budget below a fiction.
 const connectPingTimeout = 3 * time.Second
 
+// connectDialTimeout bounds a single connection attempt made by the pool's own
+// background goroutines. pgx substitutes two minutes when ConnectTimeout is
+// unset, and those goroutines keep running after the loop below has given up,
+// so Close would block for that long on the failure path. This is the libpq
+// default, which is slow enough for a real database and short enough to stay
+// inside the retry budget.
+const connectDialTimeout = 10 * time.Second
+
 func pingWithTimeout(ctx context.Context, pool *pgxpool.Pool) error {
 	pingCtx, cancel := context.WithTimeout(ctx, connectPingTimeout)
 	defer cancel()
@@ -30,6 +38,7 @@ func Connect(ctx context.Context, databaseURL string) (*pgxpool.Pool, error) {
 	config.MaxConns = 10
 	config.MinConns = 5
 	config.MaxConnLifetime = 30 * time.Minute
+	config.ConnConfig.ConnectTimeout = connectDialTimeout
 
 	pool, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
