@@ -19,9 +19,9 @@ This is the small actionable queue for the next implementation tasks. Completed 
    - Expand presentation tests around the resulting user-visible error behavior.
 
 4. **Close backend security gaps**
-   - Enforce exact HS256, timing-equivalent login, and email input validation.
-   - SMTP is slated for removal in favour of an HTTP provider; its timeout and
-     header-injection items go with it.
+   - No production `CodeSender` exists: an HTTP provider such as Resend must be
+     wired behind `auth.CodeSender`. Until then `APP_ENV=production` refuses
+     to start rather than logging live verification codes.
 
 5. **Improve repository onboarding**
    - Add a tracked root README with prerequisites, architecture, setup, and verification commands.
@@ -38,7 +38,6 @@ This is the small actionable queue for the next implementation tasks. Completed 
 | Calendar as a peer tab vs a Notes view mode | Decide whether the month grid is worth a second top-level destination. Its journal list is duplicated by Notes; only the date index is not. |
 | Unused `CalendarViewMode` granularity | `month`/`twoWeeks`/`week` set the grid format; `day` swaps the grid for `DayHeader`, which has its own previous/next steppers. All four are reachable and distinct. Reconsider only if a mode is ever hidden from the picker. |
 | Very Good Analysis 11 async-style migration | Remove the scoped `async_return_with_no_await` suppression after the Future adapters are migrated. |
-| SMTP library/template polish | Production deliverability or localization requirements justify it. |
 | Kubernetes hardening | Ink adopts Kubernetes as a supported deployment target. |
 
 ## Verification baseline

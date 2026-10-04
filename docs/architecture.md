@@ -88,7 +88,6 @@ cmd/api/main.go → internal/app/app.go (wiring)
                     ├── auth         users, tokens, verification + gRPC server/middleware
                     ├── vault        key slot CRUD + gRPC server
                     ├── sync         delta sync + gRPC server
-                    ├── email        SMTP verification-code sender
                     └── appctx       request context helpers
 ```
 
