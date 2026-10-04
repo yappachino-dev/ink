@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
-import 'package:ink/core/presentation/extensions/navigation_helper.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/validators.dart';
@@ -128,7 +127,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: AppSpacing.xs),
 
                 GestureDetector(
-                  onTap: () => context.safePop(),
+                  // Pushes the sign-in route rather than popping. Register is
+                  // reached from Profile's "Create account", so popping returns
+                  // to Profile - which only offers "Create account" - so a user
+                  // arriving here with an existing account would be stuck.
+                  onTap: () =>
+                      AuthRoute(source: widget.source).push<void>(context),
                   child: Text(
                     context.t.auth.login.action,
                     style: context.textTheme.bodyMedium?.copyWith(

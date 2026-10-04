@@ -6,5 +6,5 @@ abstract final class AppDestinations {
   static const notes = '/notes';
   static const calendar = '/calendar';
   static const profile = '/profile';
-  static const authInApp = '/auth?source=inApp';
+  static const registerInApp = '/auth/register?source=inApp';
 }

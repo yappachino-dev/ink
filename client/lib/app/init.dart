@@ -68,7 +68,7 @@ List<Override> buildOverrides(SharedPreferences sharedPrefs) {
       (ref) => ref.watch(authServiceImplProvider),
     ),
     authPreferencesProvider.overrideWith(
-      (ref) => _AuthPreferencesAdapter(ref.watch(userPreferencesProvider)),
+      (ref) => _AuthPreferencesAdapter(ref, ref.watch(userPreferencesProvider)),
     ),
     notesServiceProvider.overrideWith(
       (ref) => ref.watch(secureNotesServiceProvider),
@@ -148,16 +148,24 @@ class _VaultRandomService implements VaultRandomService {
 }
 
 class _AuthPreferencesAdapter implements AuthPreferences {
-  const _AuthPreferencesAdapter(this._config);
+  const _AuthPreferencesAdapter(this._ref, this._config);
 
+  final Ref _ref;
   final UserConfig _config;
 
   @override
   bool get localOnly => _config.localOnly;
 
   @override
-  Future<void> setLocalOnly({required bool local}) =>
-      _config.setLocalOnly(local: local);
+  Future<void> setLocalOnly({required bool local}) async {
+    await _config.setLocalOnly(local: local);
+    // UserConfig is a synchronous wrapper over SharedPreferences, so writing a
+    // value notifies nobody. Anything already watching `localOnly` - the sync
+    // trust row, the profile registration entry - kept rendering the value from
+    // before the write. AppShell holds its branches in an IndexedStack, so
+    // Profile was not rebuilt on the tab switch either and the row stayed live.
+    _ref.invalidate(userPreferencesProvider);
+  }
 }
 
 class _VaultSessionStatusAdapter implements VaultSessionStatus {

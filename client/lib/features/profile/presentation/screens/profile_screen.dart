@@ -91,7 +91,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     icon: Icons.cloud_off_outlined,
                     title: t.profile.account.create,
                     subtitle: t.profile.account.createSubtitle,
-                    onTap: () => context.push<void>(AppDestinations.authInApp),
+                    onTap: () =>
+                        context.push<void>(AppDestinations.registerInApp),
                   ),
                 ],
               ),
