@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/features/auth/domain/auth_providers.dart';
@@ -20,6 +23,9 @@ import 'package:material_ui/material_ui.dart';
 /// `onTap` did nothing, with a second copy of the same screen behind a
 /// `_hasAccount` flag that was hardcoded false. Cutting the unwired parts reads
 /// as more finished than leaving broken stubs behind (D-4, D-5, §7.4).
+///
+/// The "Create account" row is back, wired this time. It is gated on
+/// `localOnly` so it appears for exactly the users who lack an account.
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
@@ -34,6 +40,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final t = context.t;
+    // Registration lives here, not on Welcome. Welcome's sign-in exists for a
+    // returning user on a new device, which is the only case where they have
+    // an account before they have ever opened the app. A local-only user
+    // starts the app, uses it, and only then decides they want sync - so the
+    // entry point has to sit next to the sync status it would change.
+    final localOnly = ref.watch(userPreferencesProvider).localOnly;
 
     return Scaffold(
       backgroundColor: context.ink.surface,
@@ -71,6 +83,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
 
             const SizedBox(height: AppSpacing.md),
+
+            if (localOnly) ...[
+              SettingsCard(
+                children: [
+                  SettingsTile(
+                    icon: Icons.cloud_off_outlined,
+                    title: t.profile.account.create,
+                    subtitle: t.profile.account.createSubtitle,
+                    onTap: () => context.push<void>(AppDestinations.authInApp),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AppSpacing.md),
+            ],
 
             SettingsCard(
               children: [
