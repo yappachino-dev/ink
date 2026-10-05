@@ -50,10 +50,11 @@ func (s *Server) SaveKeySlots(ctx context.Context, req *vaultv1.SaveKeySlotsRequ
 
 	if err := s.keyService.SaveKeySlots(ctx, userID, model); err != nil {
 		// A conflict is the client's problem and the message is safe to return
-		// verbatim; anything else stays opaque.
+		// verbatim; anything else stays opaque. The message comes from the
+		// unwrapped error so a wrapper on the way out cannot leak internals.
 		var conflictErr *KeySlotConflictError
 		if errors.As(err, &conflictErr) {
-			return nil, status.Error(codes.AlreadyExists, err.Error())
+			return nil, status.Error(codes.AlreadyExists, conflictErr.Error())
 		}
 
 		return nil, status.Error(codes.Internal, "failed to save key slots")

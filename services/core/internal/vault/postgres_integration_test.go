@@ -150,8 +150,12 @@ func TestSaveKeySlotsRejectsWholeBatchOnPostgres(t *testing.T) {
 		{Type: KeyTypePIN, Salt: []byte("salt-b"), WrappedMasterKey: []byte("wmk-b"), UpdatedAt: now},
 		{Type: KeyTypePattern, Salt: []byte("salt-p"), WrappedMasterKey: []byte("wmk-p"), UpdatedAt: now},
 	})
-	if err == nil {
-		t.Fatal("expected the batch to be rejected")
+	var conflict *KeySlotConflictError
+	if !errors.As(err, &conflict) {
+		t.Fatalf("expected KeySlotConflictError, got %v", err)
+	}
+	if conflict.KeyType != KeyTypePIN {
+		t.Fatalf("expected the conflicting PIN type, got %d", conflict.KeyType)
 	}
 
 	out, err := q.GetKeySlotsByUserID(ctx, int32(userID))

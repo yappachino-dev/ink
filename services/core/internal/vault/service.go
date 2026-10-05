@@ -40,6 +40,8 @@ func (e *KeySlotConflictError) Error() string {
 // still produces a message an operator can act on.
 func keyTypeName(keyType int) string {
 	switch keyType {
+	case KeyTypeUnspecified:
+		return "UNSPECIFIED"
 	case KeyTypePIN:
 		return "PIN"
 	case KeyTypePattern:
@@ -62,6 +64,10 @@ const (
 type VaultRepository interface {
 	GetKeySlotsByUserID(ctx context.Context, userID int) ([]KeySlot, error)
 	UpsertKeySlots(ctx context.Context, userID int, keySlots []KeySlot) error
+	// LockKeySlotsForUpdate must be called inside the same transaction as the
+	// divergence check and the upsert. Without it the check is not sound: see
+	// the comment in db/queries/vault.sql.
+	LockKeySlotsForUpdate(ctx context.Context, userID int) error
 }
 
 type VaultService struct {
@@ -81,9 +87,14 @@ func (s *VaultService) GetKeys(ctx context.Context, userID int) ([]KeySlot, erro
 // leave the user with an inconsistent set of unlock methods.
 func (s *VaultService) SaveKeySlots(ctx context.Context, userID int, keySlots []KeySlot) error {
 	return s.transactor.WithinTransaction(ctx, func(txCtx context.Context) error {
-		// Read inside the transaction so the comparison and the write see the
-		// same snapshot. Two concurrent pushes would otherwise both pass the
-		// check and the second would still overwrite the first.
+		// The transaction alone does not make the check sound. READ COMMITTED
+		// gives each statement a fresh snapshot, so two concurrent pushes can
+		// both read an empty vault, both pass, and the second upsert silently
+		// overwrites the first. This lock serializes them per account.
+		if err := s.repo.LockKeySlotsForUpdate(txCtx, userID); err != nil {
+			return err
+		}
+
 		existing, err := s.repo.GetKeySlotsByUserID(txCtx, userID)
 		if err != nil {
 			return err

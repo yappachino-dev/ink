@@ -13,20 +13,35 @@ type stubRepo struct {
 	getCalls    int
 	getWasInTx  bool
 	saveWasInTx bool
+	lockWasInTx bool
+	lockCalls   int
+	order       []string
 	getErr      error
+	lockErr     error
 }
 
 func (r *stubRepo) GetKeySlotsByUserID(ctx context.Context, _ int) ([]KeySlot, error) {
 	r.getCalls++
 	r.getWasInTx = inTransaction(ctx)
+	r.order = append(r.order, "read")
 	return r.stored, r.getErr
 }
 
 func (r *stubRepo) UpsertKeySlots(ctx context.Context, _ int, keySlots []KeySlot) error {
 	r.saveCalls++
 	r.saveWasInTx = inTransaction(ctx)
+	r.order = append(r.order, "write")
 	r.saved = keySlots
 	return nil
+}
+
+// Records ordering, so a test can assert the lock precedes the read rather than
+// merely happening somewhere in the transaction.
+func (r *stubRepo) LockKeySlotsForUpdate(ctx context.Context, _ int) error {
+	r.lockCalls++
+	r.lockWasInTx = inTransaction(ctx)
+	r.order = append(r.order, "lock")
+	return r.lockErr
 }
 
 type stubTransactor struct {
@@ -177,9 +192,6 @@ func TestSaveKeySlotsReadsInsideTransaction(t *testing.T) {
 	if repo.getCalls == 0 {
 		t.Fatal("existing slots must be read before writing")
 	}
-	// The comparison has to see the same snapshot the write will land in.
-	// Reading outside the transaction lets two concurrent pushes both pass the
-	// check and the second still overwrites the first.
 	if !repo.getWasInTx {
 		t.Fatal("existing slots must be read inside the transaction")
 	}
@@ -214,5 +226,49 @@ func TestKeyTypeNameCoversUnknownValues(t *testing.T) {
 	}
 	if got := keyTypeName(99); got != "99" {
 		t.Fatalf("expected the numeric form for an unknown type, got %q", got)
+	}
+}
+
+func TestSaveKeySlotsPropagatesLockFailure(t *testing.T) {
+	// Proceeding without the lock would make the divergence check unsound, so
+	// a failure to take it has to abort the save rather than fall through.
+	repo := &stubRepo{lockErr: errors.New("advisory lock unavailable")}
+	svc := NewVaultService(&stubTransactor{}, repo)
+
+	err := svc.SaveKeySlots(context.Background(), 1, []KeySlot{slot(KeyTypePIN, "salt-a", "wmk-a")})
+
+	if err == nil || err.Error() != "advisory lock unavailable" {
+		t.Fatalf("expected the lock failure to propagate, got %v", err)
+	}
+	if repo.getCalls != 0 {
+		t.Fatal("must not read before the lock is held")
+	}
+	if repo.saveCalls != 0 {
+		t.Fatalf("must not write without the lock, got %d save calls", repo.saveCalls)
+	}
+}
+
+func TestSaveKeySlotsLocksBeforeReading(t *testing.T) {
+	// Locking after the read reintroduces the race: a concurrent push can
+	// commit between the two, and this transaction then compares against a
+	// snapshot it no longer holds.
+	repo := &stubRepo{}
+	svc := NewVaultService(&stubTransactor{}, repo)
+
+	if err := svc.SaveKeySlots(context.Background(), 1, []KeySlot{slot(KeyTypePIN, "salt-a", "wmk-a")}); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+
+	want := []string{"lock", "read", "write"}
+	if len(repo.order) != len(want) {
+		t.Fatalf("expected %v, got %v", want, repo.order)
+	}
+	for i, step := range want {
+		if repo.order[i] != step {
+			t.Fatalf("expected %v, got %v", want, repo.order)
+		}
+	}
+	if !repo.lockWasInTx {
+		t.Fatal("the lock must be taken inside the transaction, it is released on commit")
 	}
 }
