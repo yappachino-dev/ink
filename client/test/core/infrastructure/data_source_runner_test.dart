@@ -33,6 +33,17 @@ void main() {
     expect(failure.error, isA<TimeoutFailure>());
   });
 
+  test('maps already-exists responses to their own failure', () async {
+    final result = await runner.remoteRunner<void, CoreFailure>(
+      call: () async => throw const GrpcError.alreadyExists('slot differs'),
+      mapCore: (failure) => failure,
+    );
+
+    final failure = result as Failure<void, CoreFailure>;
+    expect(failure.error, isA<AlreadyExistsFailure>());
+    expect(failure.error, isNot(isA<ApiFailure>()));
+  });
+
   test('preserves other gRPC status codes and messages', () async {
     final result = await runner.remoteRunner<void, CoreFailure>(
       call: () async => throw const GrpcError.unauthenticated('token expired'),

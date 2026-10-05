@@ -130,7 +130,10 @@
     "progressStep": "Step ${current} of ${total}",
     "progressRemaining": "${count} left",
     "progressLast": "Last step",
-    "progressSemantic": "Step ${current} of ${total}, ${remaining}"
+    "progressSemantic": "Step ${current} of ${total}, ${remaining}",
+    "errors": {
+      "keyConflict": "This account already has a vault on another device. The unlock key from this device was not uploaded, so it will not restore on a new device."
+    }
   },
   "notes": {
     "emptyTitle": "No notes yet",

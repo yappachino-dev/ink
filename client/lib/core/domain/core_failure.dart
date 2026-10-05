@@ -10,6 +10,13 @@ class TimeoutFailure extends CoreFailure {
   const TimeoutFailure();
 }
 
+/// The server rejected the request because the resource already exists.
+/// Carries no message: callers translate it into domain-specific wording,
+/// since what "already exists" means depends on the call.
+class AlreadyExistsFailure extends CoreFailure {
+  const AlreadyExistsFailure();
+}
+
 class ApiFailure extends CoreFailure {
   const ApiFailure(this.statusCode, this.message);
 

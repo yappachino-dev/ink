@@ -1,3 +1,4 @@
+import 'package:ink/core/domain/core_failure.dart';
 import 'package:ink/core/domain/result.dart';
 import 'package:ink/core/domain/sync_status.dart';
 import 'package:ink/core/infrastructure/data_source_runner.dart';
@@ -26,6 +27,16 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   final VaultLocalStore _local;
   final VaultRemoteDataSource _remote;
   final bool Function() _canSync;
+
+  /// A push the server refuses as a conflict is a distinct, non-retryable
+  /// outcome: this account already holds different key material for that
+  /// unlock type, so this device was set up after the fact. Treating it as a
+  /// generic API failure leaves the user with a vault that silently never
+  /// syncs, and no way to tell that apart from a network blip.
+  static VaultFailure _mapPushFailure(CoreFailure core) => switch (core) {
+    AlreadyExistsFailure() => const VaultKeyConflict(),
+    _ => VaultCoreFailure(core),
+  };
 
   @override
   Future<Result<void, VaultFailure>> saveKeySlot(KeySlot slot) {
@@ -73,7 +84,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
       call: () => _remote.saveKeySlots(
         result.unwrap.map((slot) => slot.toProto()).toList(),
       ),
-      mapCore: VaultCoreFailure.new,
+      mapCore: _mapPushFailure,
     );
   }
 
@@ -116,7 +127,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
       call: () => _remote.saveKeySlots(
         pendingResult.unwrap.map((slot) => slot.toProto()).toList(),
       ),
-      mapCore: VaultCoreFailure.new,
+      mapCore: _mapPushFailure,
     );
     if (saveResult case Failure(error: final e)) {
       return Failure(e);
