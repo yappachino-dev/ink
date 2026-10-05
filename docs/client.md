@@ -410,7 +410,8 @@ rotated server-side on every use and persisted in secure storage.
 ## Generated code
 
 `.g.dart`, `.freezed.dart`, and grpc `gen/` files are produced by build_runner /
-buf — never edit by hand (see [development.md](development.md)).
+buf and `strings*.g.dart` by `dart run slang` — never edit by hand (see
+[development.md](development.md)).
 
 ## Known quality items
 

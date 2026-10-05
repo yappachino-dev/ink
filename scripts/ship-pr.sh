@@ -11,7 +11,7 @@ wait_for_ci_checks() {
   # GitHub can accept the PR before the workflow run is registered. Retry that
   # narrow startup state instead of treating it as a failed CI check.
   for _ in {1..60}; do
-    if output=$(gh pr checks "$pr_num" 2>&1); then
+    if output=$(gh pr checks "$pr_num" --repo "$REPO" 2>&1); then
       printf '%s\n' "$output"
     elif [[ "$output" == *"no checks reported"* ]]; then
       sleep 2
@@ -20,7 +20,7 @@ wait_for_ci_checks() {
       printf '%s\n' "$output"
     fi
 
-    gh pr checks "$pr_num" --watch --fail-fast
+    gh pr checks "$pr_num" --repo "$REPO" --watch --fail-fast
     return
   done
 
@@ -45,6 +45,20 @@ fi
 git fetch origin "$BASE_BRANCH"
 COMMIT_COUNT=$(git rev-list --count "origin/$BASE_BRANCH..HEAD")
 HEAD_BRANCH=$(git branch --show-current)
+
+# Every gh call is pinned to origin. Without it gh picks the base repository,
+# which prefers an `upstream` remote over origin, so a fork setup would read
+# and edit pull requests in the wrong repository. Note --repo takes
+# OWNER/REPO, not a remote name.
+REPO=$(
+  git remote get-url origin |
+    sed -E 's#^(git@|ssh://git@)github\.com[:/]#github.com/#; s#^https?://github\.com/#github.com/#; s#\.git$##'
+)
+if [[ -z "$REPO" || "$REPO" == origin* ]]; then
+  echo "error: could not derive a GitHub repo from the origin remote" >&2
+  exit 1
+fi
+
 TITLE=""
 PR_BODY=""
 
@@ -123,21 +137,51 @@ else
   MERGE_BODY=""
 fi
 
-printf 'Creating PR for %s against origin/%s (%s commit(s))...\n' \
+printf 'Pushing %s to origin/%s (%s commit(s))...\n' \
   "$HEAD_BRANCH" "$BASE_BRANCH" "$COMMIT_COUNT"
 git push --set-upstream origin HEAD
-gh pr create \
-  --base "$BASE_BRANCH" \
-  --head "$HEAD_BRANCH" \
-  --title "$TITLE" \
-  --body "$PR_BODY"
 
-PR_NUM=$(gh pr view "$HEAD_BRANCH" --json number --jq '.number')
+# A retry after a CI failure reuses the open PR instead of failing on
+# "a pull request ... already exists", which would strand the push.
+# Only an open PR counts: gh also resolves a branch's merged PR, and editing
+# one would send the merge step at a PR that is already closed.
+PR_NUM=$(
+  gh pr view "$HEAD_BRANCH" --repo "$REPO" --json number,state --jq \
+    'select(.state == "OPEN") | .number' 2>/dev/null || true
+)
+if [[ -n "$PR_NUM" ]]; then
+  printf 'Updating existing PR #%s...\n' "$PR_NUM"
+  gh pr edit "$PR_NUM" --repo "$REPO" --title "$TITLE" --body "$PR_BODY"
+else
+  # A branch carries one PR at a time, so a previous one that was closed
+  # unmerged blocks gh pr create. Say so instead of surfacing a bare GraphQL
+  # error. A MERGED previous PR does not block, so it is not caught here.
+  PREVIOUS=$(gh pr view "$HEAD_BRANCH" --repo "$REPO" --json number,state \
+    --jq 'select(.state == "CLOSED") | .number' 2>/dev/null || true)
+  if [[ -n "$PREVIOUS" ]]; then
+    printf 'PR #%s on %s was closed without merging and blocks a new one.\n' \
+      "$PREVIOUS" "$HEAD_BRANCH" >&2
+    printf '  gh pr reopen %s --repo %s\n' "$PREVIOUS" "$REPO" >&2
+    exit 1
+  fi
+
+  printf 'Creating PR for %s against origin/%s...\n' "$HEAD_BRANCH" "$BASE_BRANCH"
+  gh pr create \
+    --repo "$REPO" \
+    --base "$BASE_BRANCH" \
+    --head "$HEAD_BRANCH" \
+    --title "$TITLE" \
+    --body "$PR_BODY"
+
+  PR_NUM=$(gh pr view "$HEAD_BRANCH" --repo "$REPO" --json number --jq '.number')
+fi
+
 printf 'Waiting for CI checks on PR #%s...\n' "$PR_NUM"
 wait_for_ci_checks "$PR_NUM"
 
 printf 'Squash-merging PR #%s...\n' "$PR_NUM"
 gh pr merge "$PR_NUM" \
+  --repo "$REPO" \
   --squash \
   --delete-branch \
   --subject "$TITLE (#$PR_NUM)" \
