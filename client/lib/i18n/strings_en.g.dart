@@ -156,6 +156,8 @@ class Translations$vault$en {
 
 	/// en: 'Step ${current} of ${total}, ${remaining}'
 	String progressSemantic({required Object current, required Object total, required Object remaining}) => 'Step ${current} of ${total}, ${remaining}';
+
+	late final Translations$vault$errors$en errors = Translations$vault$errors$en.internal(_root);
 }
 
 // Path: notes
@@ -581,6 +583,18 @@ class Translations$vault$unlock$en {
 
 	/// en: 'Too many attempts. Try again in ${seconds}s.'
 	String throttled({required Object seconds}) => 'Too many attempts. Try again in ${seconds}s.';
+}
+
+// Path: vault.errors
+class Translations$vault$errors$en {
+	Translations$vault$errors$en.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'This account already has a vault on another device. The unlock key from this device was not uploaded, so it will not restore on a new device.'
+	String get keyConflict => 'This account already has a vault on another device. The unlock key from this device was not uploaded, so it will not restore on a new device.';
 }
 
 // Path: calendar.modes
@@ -1126,6 +1140,7 @@ extension on Translations {
 			'vault.progressRemaining' => ({required Object count}) => '${count} left',
 			'vault.progressLast' => 'Last step',
 			'vault.progressSemantic' => ({required Object current, required Object total, required Object remaining}) => 'Step ${current} of ${total}, ${remaining}',
+			'vault.errors.keyConflict' => 'This account already has a vault on another device. The unlock key from this device was not uploaded, so it will not restore on a new device.',
 			'notes.emptyTitle' => 'No notes yet',
 			'notes.emptyBody' => 'Everything you write is encrypted on this device first.',
 			'notes.emptyByFilterTitle' => 'Nothing here',

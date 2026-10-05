@@ -17,6 +17,7 @@ mixin DataSourceRunner {
       final failure = switch (e.code) {
         StatusCode.unavailable => const NetworkFailure(),
         StatusCode.deadlineExceeded => const TimeoutFailure(),
+        StatusCode.alreadyExists => const AlreadyExistsFailure(),
         _ => ApiFailure(e.code, e.message ?? e.codeName),
       };
       return Failure(mapCore(failure));

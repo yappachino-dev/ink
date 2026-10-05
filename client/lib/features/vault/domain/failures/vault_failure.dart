@@ -21,3 +21,10 @@ class VaultCoreFailure extends VaultFailure {
 
   final CoreFailure core;
 }
+
+/// The account already holds a different slot for this unlock type, so this
+/// device's key material was refused. Not retryable: it means the account was
+/// set up somewhere else first.
+class VaultKeyConflict extends VaultFailure {
+  const VaultKeyConflict();
+}

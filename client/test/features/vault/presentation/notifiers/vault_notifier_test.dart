@@ -1,8 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ink/core/domain/core_failure.dart';
+import 'package:ink/core/domain/result.dart';
+import 'package:ink/features/vault/domain/failures/vault_failure.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 import 'package:ink/features/vault/domain/vault_state.dart';
+import 'package:ink/features/vault/presentation/notifiers/vault_conflict_notifier.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -39,6 +43,53 @@ void main() {
     addTearDown(container.dispose);
     return container;
   }
+
+  group('VaultNotifier.forcePushKeys', () {
+    ProviderContainer containerFor(Result<void, VaultFailure> result) {
+      final service = _MockVaultService();
+      when(service.pushKeys).thenAnswer((_) async => result);
+      final container = ProviderContainer(
+        overrides: [
+          vaultSessionStatusProvider.overrideWithValue(
+            const _FakeSessionStatus(isLoaded: true, hasMasterKey: true),
+          ),
+          vaultServiceProvider.overrideWithValue(service),
+        ],
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
+
+    test('a refused push is reported on the conflict channel', () async {
+      final container = containerFor(const Failure(VaultKeyConflict()));
+
+      await container.read(vaultProvider.notifier).forcePushKeys();
+
+      expect(container.read(vaultConflictProvider), isA<VaultKeyConflict>());
+    });
+
+    test('a refused push leaves the vault unlocked', () async {
+      // The push runs while the vault works locally. Folding a sync warning
+      // into the lifecycle state took the device out of VaultUnlocked and left
+      // it there, since nothing rebuilds that state afterwards.
+      final container = containerFor(const Failure(VaultKeyConflict()));
+
+      await container.read(vaultProvider.notifier).forcePushKeys();
+
+      expect(container.read(vaultProvider), isA<VaultUnlocked>());
+    });
+
+    test('a transient failure is not reported', () async {
+      final container = containerFor(
+        const Failure(VaultCoreFailure(NetworkFailure())),
+      );
+
+      await container.read(vaultProvider.notifier).forcePushKeys();
+
+      expect(container.read(vaultConflictProvider), isNull);
+      expect(container.read(vaultProvider), isA<VaultUnlocked>());
+    });
+  });
 
   group('VaultNotifier session gating', () {
     test('stays initializing until the session finishes loading', () {
