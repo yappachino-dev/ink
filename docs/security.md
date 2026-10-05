@@ -44,6 +44,12 @@ Implemented by `SecureVaultService` (`features/vault/data/secure_vault_service.d
    sent to the server directly; it is used only as a local secret for deriving
    and unwrapping the vault key.
 
+   A second device running setup generates a fresh master key, which would
+   produce different key material for a `key_type` the account already holds.
+   `SaveKeySlots` rejects that with `codes.AlreadyExists` rather than taking the
+   row, because overwriting it would leave the first device unable to unwrap the
+   vault key at all. See [backend.md](backend.md) for the exact rule.
+
 ### Parameters
 
 | Parameter | Value |

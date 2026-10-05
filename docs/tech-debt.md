@@ -8,28 +8,23 @@ This is the small actionable queue for the next implementation tasks. Completed 
    - Make session persistence awaitable and define rollback/error behavior.
      _Lens selection persistence is done; token persistence is not._
 
-2. **Define vault key-slot conflict behavior**
-   - `UpsertKeySlots` resolves collisions with `ON CONFLICT (user_id, key_type)
-     DO UPDATE`, so a push silently overwrites the other device's slot.
-     Notebook and note pushes already reject these cases; vault does not.
-
-3. **Enforce the client architecture rule**
+2. **Enforce the client architecture rule**
    - No `package:ink/app/` import exists under `client/lib/features/`, but
      `check_architecture.dart` only forbids `app/database/`, so the rest of the
      layer can creep back in without failing the check.
 
-4. **Ship a production verification-code sender**
+3. **Ship a production verification-code sender**
    - No `CodeSender` implementation ships. `APP_ENV=production` refuses to
      start, so this blocks deployment rather than degrading it.
    - Needs request-context propagation, explicit timeouts, and structured errors.
 
-5. **Back the profile actions with real endpoints**
+4. **Back the profile actions with real endpoints**
    - Change name, change password and change encryption now refuse explicitly
      instead of swallowing the tap, but there is no endpoint for any of them.
    - "Delete all data" is device-scoped. There is no delete-account RPC, so a
      synced copy survives it. The wording says so; the endpoint does not exist.
 
-6. **Unify the onboarding chrome**
+5. **Unify the onboarding chrome**
    - `SetupProgress` renders as body content below `BackAppBar`; it belongs in
      the app bar so the top of the flow reads as one unit. `BackAppBar` is
      already a `PreferredSizeWidget` but hardcodes `kToolbarHeight`.
@@ -40,13 +35,13 @@ This is the small actionable queue for the next implementation tasks. Completed 
    - Relocating the bar alone moves inert chrome. Advancing it needs one
      `SetupProgress` kept alive across steps, or a shared step value.
 
-7. **Close the raw spacing default**
+6. **Close the raw spacing default**
    - `SpacedScaffold.spacing` defaults to `24.0` rather than `AppSpacing`.
      `verify_spacing_tokens.dart` is diff-based and does not catch defaults.
      `SpacedScaffold` also cannot host a scrolling child: its
      `SliverFillRemaining` cannot measure a viewport.
 
-8. **Improve repository onboarding**
+7. **Improve repository onboarding**
    - Add a tracked root README with prerequisites, architecture, setup, and verification commands.
    - Replace template package metadata and define dependency/security update checks.
 

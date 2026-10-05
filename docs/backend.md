@@ -63,6 +63,16 @@ keyed limiter until the service needs shared multi-replica enforcement.
 - `GetKeySlots` / `SaveKeySlots` — plain storage of `(key_type, salt,
   wrapped_master_key, updated_at)` per user. The server cannot interpret these
   blobs; semantics live entirely client-side.
+- `SaveKeySlots` rejects a push whose `salt` or `wrapped_master_key` differs
+  from the slot already stored for that `key_type`, returning
+  `codes.AlreadyExists`. Vault setup generates a fresh master key on every run,
+  so a second device produces different key material for a type the account
+  already holds. `user_keys` is keyed `(user_id, key_type)`, so `ON CONFLICT DO
+  UPDATE` would take that row silently and lock the first device out of its own
+  vault. A byte-identical retry is still accepted: the client re-pushes pending
+  slots after a lost response. The comparison runs inside the transaction, and
+  the whole batch is rejected rather than the offending slot alone, so a
+  partial write cannot leave the account holding a mix of master keys.
 
 ### sync.v1 — SyncService
 - Single `Sync(SyncRequest) → SyncResponse` RPC carrying both push and pull in
