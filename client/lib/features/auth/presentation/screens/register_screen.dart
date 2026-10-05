@@ -127,12 +127,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: AppSpacing.xs),
 
                 GestureDetector(
-                  // Pushes the sign-in route rather than popping. Register is
-                  // reached from Profile's "Create account", so popping returns
-                  // to Profile - which only offers "Create account" - so a user
-                  // arriving here with an existing account would be stuck.
+                  // Replaces rather than pushes, and does not pop back to
+                  // Profile: that only offers "Create account", so a user
+                  // arriving here with an existing account would loop.
+                  // Replacing also stops the stack growing on each bounce
+                  // between the two screens.
                   onTap: () =>
-                      AuthRoute(source: widget.source).push<void>(context),
+                      AuthRoute(source: widget.source).pushReplacement(context),
                   child: Text(
                     context.t.auth.login.action,
                     style: context.textTheme.bodyMedium?.copyWith(

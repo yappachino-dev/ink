@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ink/app/init.dart';
-import 'package:ink/core/config/user_config.dart';
 import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/providers/status_providers.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
@@ -23,14 +22,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   SharedPreferences.setMockInitialValues({});
 
-  late UserConfig prefs;
   late SharedPreferences shared;
   late ProviderContainer container;
 
   setUp(() async {
     shared = await SharedPreferences.getInstance();
     await shared.clear();
-    prefs = UserConfig(shared);
 
     container = ProviderContainer(
       // The real composition root, so this exercises the production adapter
@@ -44,13 +41,11 @@ void main() {
     addTearDown(container.dispose);
   });
 
-  /// Mirrors `_AuthPreferencesAdapter.setLocalOnly`: write, then
-  /// invalidate so watchers re-read.
-  /// watchers re-read.
-  Future<void> setLocalOnly({required bool local}) async {
-    await prefs.setLocalOnly(local: local);
-    container.invalidate(userPreferencesProvider);
-  }
+  /// The production adapter, not a reimplementation of it. A local stand-in
+  /// would keep passing if the invalidation inside `_AuthPreferencesAdapter`
+  /// were deleted.
+  Future<void> setLocalOnly({required bool local}) =>
+      container.read(authPreferencesProvider).setLocalOnly(local: local);
 
   Future<void> pumpProfile(WidgetTester tester) async {
     final router = GoRouter(

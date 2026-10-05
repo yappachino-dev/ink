@@ -4,6 +4,7 @@
 // and the rows that are still unwired say so out loud.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ink/core/presentation/theme/app_theme.dart';
 import 'package:ink/core/presentation/theme/palettes.dart';
 import 'package:ink/features/profile/presentation/screens/personalization_screen.dart';
@@ -16,6 +17,7 @@ class _VaultRecovery extends Mock implements VaultRecovery {}
 
 void main() {
   late _VaultRecovery recovery;
+  late GoRouter router;
   late int resets;
 
   setUp(() {
@@ -27,13 +29,22 @@ void main() {
   });
 
   Future<void> pump(WidgetTester tester) async {
+    router = GoRouter(
+      initialLocation: '/',
+      routes: [
+        GoRoute(path: '/', builder: (_, _) => const PersonalizationScreen()),
+        GoRoute(path: '/welcome', builder: (_, _) => const Text('WELCOME')),
+      ],
+    );
+    addTearDown(router.dispose);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [vaultRecoveryProvider.overrideWithValue(recovery)],
         child: TranslationProvider(
-          child: MaterialApp(
+          child: MaterialApp.router(
             theme: AppTheme.light(InkPalette.forest),
-            home: const PersonalizationScreen(),
+            routerConfig: router,
           ),
         ),
       ),
@@ -56,6 +67,11 @@ void main() {
     // makes key material unreadable, so a row-level delete would have left
     // recoverable ciphertext on disk.
     expect(resets, 1);
+
+    // Leaving the user on a screen whose data no longer exists is the other
+    // half of the bug: the router only re-evaluates its redirect on a
+    // navigation, so without this the app keeps believing it has a vault.
+    expect(find.text('WELCOME'), findsOneWidget);
   });
 
   testWidgets('cancelling the wipe changes nothing', (tester) async {
@@ -69,8 +85,9 @@ void main() {
     expect(resets, 0);
   });
 
-  testWidgets('the unwired rows answer instead of swallowing the tap',
-      (tester) async {
+  testWidgets('the unwired rows answer instead of swallowing the tap', (
+    tester,
+  ) async {
     await pump(tester);
 
     // An empty `onTap` renders identically to a working row. Each of these now

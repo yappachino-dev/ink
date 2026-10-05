@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
+import 'package:ink/core/presentation/navigation/app_destinations.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
 import 'package:ink/core/presentation/theme/tokens.dart';
 import 'package:ink/core/presentation/widgets/back_app_bar.dart';
@@ -115,6 +117,10 @@ class PersonalizationScreen extends ConsumerWidget {
     // disk.
     if (confirmed == true && context.mounted) {
       await ref.read(vaultRecoveryProvider).reset();
+      // Back to onboarding. The router redirects on `VaultNotInitialized`, but
+      // a redirect only runs on navigation, and staying put would leave the
+      // user on a screen whose data no longer exists.
+      if (context.mounted) context.go(AppDestinations.welcome);
     }
   }
 
@@ -176,8 +182,6 @@ class PersonalizationScreen extends ConsumerWidget {
                       //
                       // "Change encryption method" is not a preference either:
                       // the key encrypts notes that already exist, so it is a
-                      // re-encryption operation.
-                      // key encrypts notes that already exist, so it is a
                       // re-encryption operation.
                       SettingsTile(
                         title: context.t.profile.personal.changeName,

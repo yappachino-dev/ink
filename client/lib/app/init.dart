@@ -35,6 +35,7 @@ import 'package:ink/features/notes/domain/notes_providers.dart';
 import 'package:ink/features/vault/data/secure_vault_service.dart';
 import 'package:ink/features/vault/data/sources/vault_local_store_provider.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
+import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -97,6 +98,7 @@ List<Override> buildOverrides(SharedPreferences sharedPrefs) {
     ),
     vaultRecoveryProvider.overrideWith(
       (ref) => _VaultRecoveryAdapter(
+        ref,
         database: ref.watch(appDatabaseProvider),
         session: ref.watch(sessionControllerProvider),
         syncStorage: ref.watch(syncStorageProvider),
@@ -187,7 +189,8 @@ class _VaultSessionStatusAdapter implements VaultSessionStatus {
 }
 
 class _VaultRecoveryAdapter implements VaultRecovery {
-  const _VaultRecoveryAdapter({
+  const _VaultRecoveryAdapter(
+    this._ref, {
     required AppDatabase database,
     required SessionController session,
     required SyncStorage syncStorage,
@@ -195,6 +198,7 @@ class _VaultRecoveryAdapter implements VaultRecovery {
        _session = session,
        _syncStorage = syncStorage;
 
+  final Ref _ref;
   final AppDatabase _database;
   final SessionController _session;
   final SyncStorage _syncStorage;
@@ -207,6 +211,11 @@ class _VaultRecoveryAdapter implements VaultRecovery {
     // readable by a restarted process, making the app look still signed in.
     await _session.clearAccessToken();
     await _session.clearRefreshToken();
+    // Dropping the key slots does not by itself move the vault out of its
+    // unlocked state, and AppShell holds its branches in an IndexedStack, so
+    // nothing rebuilds on its own. Without this the app keeps believing it
+    // has a vault, and the next read hits a dropped table.
+    _ref.invalidate(vaultProvider);
   }
 }
 

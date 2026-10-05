@@ -46,7 +46,7 @@ lib/
 │   ├── auth/                 # login/register/email verification; unified repo over gRPC
 │   ├── vault/                # key slots, setup & unlock flows (PIN/pattern/recovery)
 │   ├── notes/                # notes & projects: encrypted CRUD, sync engines, calendar/home UI
-  │   └── profile/              # settings + account actions (appearance, registration, data reset)
+│   └── profile/              # settings + account actions (appearance, registration, data reset)
 └── i18n/                     # slang-generated strings
 ```
 
