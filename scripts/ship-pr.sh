@@ -156,7 +156,7 @@ else
   # A branch carries one PR at a time, so a previous one that was closed
   # unmerged blocks gh pr create. Say so instead of surfacing a bare GraphQL
   # error. A MERGED previous PR does not block, so it is not caught here.
-  PREVIOUS=$(gh pr view "$HEAD_BRANCH" --repo "$REPO" --json number \
+  PREVIOUS=$(gh pr view "$HEAD_BRANCH" --repo "$REPO" --json number,state \
     --jq 'select(.state == "CLOSED") | .number' 2>/dev/null || true)
   if [[ -n "$PREVIOUS" ]]; then
     printf 'PR #%s on %s was closed without merging and blocks a new one.\n' \
