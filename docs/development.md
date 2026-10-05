@@ -8,6 +8,7 @@
 - Docker + Docker Compose
 - sqlc CLI (only when changing `services/core/db/queries/*.sql`)
 - build_runner via the client's dev_dependencies
+- slang via the client's dev_dependencies (`dart run slang`)
 
 ## Repository setup
 
@@ -182,11 +183,20 @@ flutter build appbundle --release
 Never commit the keystore or populated `key.properties`. Debug builds continue
 to work without release credentials.
 
-Regenerate Riverpod/Freezed/Drift/retrofit/slang code after changing annotated sources:
+Regenerate Riverpod/Freezed/Drift/retrofit code after changing annotated
+sources:
 
 ```bash
 cd client
 dart run build_runner build --delete-conflicting-outputs
+```
+
+Translations are generated separately. `build_runner` does not run slang, and
+reports success while leaving `strings*.g.dart` untouched:
+
+```bash
+cd client
+dart run slang
 ```
 
 Never hand-edit `*.g.dart`, `*.freezed.dart`, `strings*.g.dart`, or files under
