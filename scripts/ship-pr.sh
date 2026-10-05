@@ -123,16 +123,32 @@ else
   MERGE_BODY=""
 fi
 
-printf 'Creating PR for %s against origin/%s (%s commit(s))...\n' \
+printf 'Pushing %s to origin/%s (%s commit(s))...\n' \
   "$HEAD_BRANCH" "$BASE_BRANCH" "$COMMIT_COUNT"
 git push --set-upstream origin HEAD
-gh pr create \
-  --base "$BASE_BRANCH" \
-  --head "$HEAD_BRANCH" \
-  --title "$TITLE" \
-  --body "$PR_BODY"
 
-PR_NUM=$(gh pr view "$HEAD_BRANCH" --json number --jq '.number')
+# A retry after a CI failure reuses the open PR instead of failing on
+# "a pull request ... already exists", which would strand the push.
+# Only an open PR counts: gh also resolves a branch's merged PR, and editing
+# one would send the merge step at a PR that is already closed.
+PR_NUM=$(
+  gh pr view "$HEAD_BRANCH" --json number,state --jq \
+    'select(.state == "OPEN") | .number' 2>/dev/null || true
+)
+if [[ -n "$PR_NUM" ]]; then
+  printf 'Updating existing PR #%s...\n' "$PR_NUM"
+  gh pr edit "$PR_NUM" --title "$TITLE" --body "$PR_BODY"
+else
+  printf 'Creating PR for %s against origin/%s...\n' "$HEAD_BRANCH" "$BASE_BRANCH"
+  gh pr create \
+    --base "$BASE_BRANCH" \
+    --head "$HEAD_BRANCH" \
+    --title "$TITLE" \
+    --body "$PR_BODY"
+
+  PR_NUM=$(gh pr view "$HEAD_BRANCH" --json number --jq '.number')
+fi
+
 printf 'Waiting for CI checks on PR #%s...\n' "$PR_NUM"
 wait_for_ci_checks "$PR_NUM"
 
