@@ -2,6 +2,7 @@ package vault
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -88,5 +89,98 @@ func TestSaveKeySlotsAtomic(t *testing.T) {
 	out, err := svc.GetKeys(ctx, userID)
 	if err != nil || len(out) != len(slots) {
 		t.Fatalf("saved slots not readable via service: %v, %v", out, err)
+	}
+}
+
+// The regression this guards: setup generates a fresh master key on every run,
+// so a second device pushes different key material for a key_type the account
+// already holds. `ON CONFLICT (user_id, key_type) DO UPDATE` took that row
+// silently and the first device could never unlock again.
+func TestSaveKeySlotsRejectsDivergentSlotAgainstPostgres(t *testing.T) {
+	svc, _, q := fixtures(t)
+	ctx := context.Background()
+	userID := seedVaultUser(t, q)
+
+	first := []KeySlot{
+		{Type: KeyTypePIN, Salt: []byte("salt-a"), WrappedMasterKey: []byte("wmk-a"), UpdatedAt: time.Now().UTC()},
+	}
+	if err := svc.SaveKeySlots(ctx, userID, first); err != nil {
+		t.Fatalf("first device setup: %v", err)
+	}
+
+	second := []KeySlot{
+		{Type: KeyTypePIN, Salt: []byte("salt-b"), WrappedMasterKey: []byte("wmk-b"), UpdatedAt: time.Now().UTC()},
+	}
+	err := svc.SaveKeySlots(ctx, userID, second)
+
+	var conflict *KeySlotConflictError
+	if !errors.As(err, &conflict) {
+		t.Fatalf("expected a conflict from real postgres, got %v", err)
+	}
+
+	// The stored slot must still be the first device's.
+	out, err := q.GetKeySlotsByUserID(ctx, int32(userID))
+	if err != nil {
+		t.Fatalf("read back: %v", err)
+	}
+	if len(out) != 1 {
+		t.Fatalf("expected 1 slot, got %d", len(out))
+	}
+	if string(out[0].Salt) != "salt-a" || string(out[0].WrappedMasterKey) != "wmk-a" {
+		t.Fatalf("divergent slot overwrote the stored one: %+v", out[0])
+	}
+}
+
+// A rejected batch must not partially apply, or the account ends up holding a
+// mix of master keys.
+func TestSaveKeySlotsRejectsWholeBatchOnPostgres(t *testing.T) {
+	svc, _, q := fixtures(t)
+	ctx := context.Background()
+	userID := seedVaultUser(t, q)
+
+	now := time.Now().UTC()
+	if err := svc.SaveKeySlots(ctx, userID, []KeySlot{
+		{Type: KeyTypePIN, Salt: []byte("salt-a"), WrappedMasterKey: []byte("wmk-a"), UpdatedAt: now},
+	}); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+
+	// Type 1 diverges from what is stored, type 2 is new and harmless.
+	err := svc.SaveKeySlots(ctx, userID, []KeySlot{
+		{Type: KeyTypePIN, Salt: []byte("salt-b"), WrappedMasterKey: []byte("wmk-b"), UpdatedAt: now},
+		{Type: KeyTypePattern, Salt: []byte("salt-p"), WrappedMasterKey: []byte("wmk-p"), UpdatedAt: now},
+	})
+	var conflict *KeySlotConflictError
+	if !errors.As(err, &conflict) {
+		t.Fatalf("expected KeySlotConflictError, got %v", err)
+	}
+	if conflict.KeyType != KeyTypePIN {
+		t.Fatalf("expected the conflicting PIN type, got %d", conflict.KeyType)
+	}
+
+	out, err := q.GetKeySlotsByUserID(ctx, int32(userID))
+	if err != nil {
+		t.Fatalf("read back: %v", err)
+	}
+	if len(out) != 1 {
+		t.Fatalf("the harmless slot must not land when the batch is rejected, got %d slots", len(out))
+	}
+}
+
+// The client re-pushes pending slots after a lost response, so an identical
+// push must still succeed against a real database.
+func TestSaveKeySlotsIdempotentRetryAgainstPostgres(t *testing.T) {
+	svc, _, q := fixtures(t)
+	ctx := context.Background()
+	userID := seedVaultUser(t, q)
+
+	slots := []KeySlot{
+		{Type: KeyTypePIN, Salt: []byte("salt-a"), WrappedMasterKey: []byte("wmk-a"), UpdatedAt: time.Now().UTC()},
+	}
+	if err := svc.SaveKeySlots(ctx, userID, slots); err != nil {
+		t.Fatalf("first push: %v", err)
+	}
+	if err := svc.SaveKeySlots(ctx, userID, slots); err != nil {
+		t.Fatalf("identical retry must be accepted against postgres: %v", err)
 	}
 }

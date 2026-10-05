@@ -46,3 +46,29 @@ func (q *Queries) GetKeySlotsByUserID(ctx context.Context, userID int32) ([]GetK
 	}
 	return items, nil
 }
+
+const lockKeySlotsForUpdate = `-- name: LockKeySlotsForUpdate :exec
+SELECT pg_advisory_xact_lock(78511::int, $1::int)
+`
+
+// Serializes SaveKeySlots for one account.
+//
+// The divergence check reads the existing slots and then upserts. Under the
+// default READ COMMITTED isolation level each statement takes a fresh snapshot,
+// so two concurrent pushes can both read an empty vault, both pass the check,
+// and the second ON CONFLICT DO UPDATE overwrites the first. Only device A's
+// slots would be lost, with no error on either side.
+//
+// An advisory transaction lock is used rather than locking the users row: this
+// would otherwise contend with the sync path, which holds
+// `SELECT sync_cursor FROM users ... FOR UPDATE` for its whole transaction.
+// The lock releases automatically on commit or rollback, including on panic.
+//
+// The first argument namespaces the lock so it cannot collide with another
+// advisory lock taken elsewhere in the system.
+// 78511 is an arbitrary namespace tag; it only has to be stable and unlikely
+// to collide with another advisory lock in this database.
+func (q *Queries) LockKeySlotsForUpdate(ctx context.Context, userID int32) error {
+	_, err := q.db.Exec(ctx, lockKeySlotsForUpdate, userID)
+	return err
+}

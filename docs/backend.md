@@ -63,6 +63,26 @@ keyed limiter until the service needs shared multi-replica enforcement.
 - `GetKeySlots` / `SaveKeySlots` — plain storage of `(key_type, salt,
   wrapped_master_key, updated_at)` per user. The server cannot interpret these
   blobs; semantics live entirely client-side.
+- `SaveKeySlots` rejects a push whose `salt` or `wrapped_master_key` differs
+  from the slot already stored for that `key_type`, returning
+  `codes.AlreadyExists`. Vault setup generates a fresh master key on every run,
+  so a second device produces different key material for a type the account
+  already holds. `user_keys` is keyed `(user_id, key_type)`, so `ON CONFLICT DO
+  UPDATE` would take that row silently and lock the first device out of its own
+  vault. A byte-identical retry is still accepted: the client re-pushes pending
+  slots after a lost response. The whole batch is rejected rather than the
+  offending slot alone, so a partial write cannot leave the account holding a
+  mix of master keys.
+- The check is serialized per account with `pg_advisory_xact_lock`, taken as
+  the first statement inside the transaction. **The transaction alone is not
+  sufficient.** PostgreSQL defaults to READ COMMITTED, where every statement
+  takes a fresh snapshot: two concurrent pushes can both read an empty vault,
+  both pass the comparison, and the second upsert silently overwrites the
+  first. An advisory transaction lock is used rather than
+  `SELECT ... FROM users FOR UPDATE` so vault pushes do not contend with the
+  sync path, which holds the user row for its whole transaction. The lock
+  releases on commit or rollback, so a rejected batch does not block the
+  account.
 
 ### sync.v1 — SyncService
 - Single `Sync(SyncRequest) → SyncResponse` RPC carrying both push and pull in

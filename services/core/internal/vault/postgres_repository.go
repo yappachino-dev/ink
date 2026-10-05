@@ -56,6 +56,13 @@ func (r *PostgresVaultRepository) UpsertKeySlots(ctx context.Context, userID int
 	return database.ExecBatch(r.db(ctx).UpsertKeySlots(ctx, params))
 }
 
+// LockKeySlotsForUpdate takes a per-account advisory transaction lock. It must
+// be called inside the transaction that will also perform the write, since the
+// lock is released when that transaction ends.
+func (r *PostgresVaultRepository) LockKeySlotsForUpdate(ctx context.Context, userID int) error {
+	return r.db(ctx).LockKeySlotsForUpdate(ctx, int32(userID))
+}
+
 func (r *PostgresVaultRepository) db(ctx context.Context) *store.Queries {
 	if tx, ok := appctx.TxFromContext[pgx.Tx](ctx); ok {
 		return r.q.WithTx(tx)
