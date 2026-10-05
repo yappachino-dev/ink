@@ -6,6 +6,7 @@ import 'package:ink/features/vault/domain/failures/vault_failure.dart';
 import 'package:ink/features/vault/domain/vault_providers.dart';
 import 'package:ink/features/vault/domain/vault_service.dart';
 import 'package:ink/features/vault/domain/vault_state.dart';
+import 'package:ink/features/vault/presentation/notifiers/vault_conflict_notifier.dart';
 import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -59,28 +60,33 @@ void main() {
       return container;
     }
 
-    test('a refused push becomes a vault error the shell can render', () async {
+    test('a refused push is reported on the conflict channel', () async {
       final container = containerFor(const Failure(VaultKeyConflict()));
 
       await container.read(vaultProvider.notifier).forcePushKeys();
 
-      expect(
-        container.read(vaultProvider),
-        isA<VaultError>().having(
-          (e) => e.failure,
-          'failure',
-          isA<VaultKeyConflict>(),
-        ),
-      );
+      expect(container.read(vaultConflictProvider), isA<VaultKeyConflict>());
     });
 
-    test('a transient failure does not become a vault error', () async {
+    test('a refused push leaves the vault unlocked', () async {
+      // The push runs while the vault works locally. Folding a sync warning
+      // into the lifecycle state took the device out of VaultUnlocked and left
+      // it there, since nothing rebuilds that state afterwards.
+      final container = containerFor(const Failure(VaultKeyConflict()));
+
+      await container.read(vaultProvider.notifier).forcePushKeys();
+
+      expect(container.read(vaultProvider), isA<VaultUnlocked>());
+    });
+
+    test('a transient failure is not reported', () async {
       final container = containerFor(
         const Failure(VaultCoreFailure(NetworkFailure())),
       );
 
       await container.read(vaultProvider.notifier).forcePushKeys();
 
+      expect(container.read(vaultConflictProvider), isNull);
       expect(container.read(vaultProvider), isA<VaultUnlocked>());
     });
   });

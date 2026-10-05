@@ -3,10 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:ink/app/navigation/widgets/app_bottom_nav.dart';
 import 'package:ink/core/presentation/extensions/app_snack_bar_extension.dart';
 import 'package:ink/core/presentation/theme/theme_extensions.dart';
-import 'package:ink/features/vault/domain/failures/vault_failure.dart';
-import 'package:ink/features/vault/domain/vault_state.dart';
 import 'package:ink/features/vault/presentation/extensions/vault_failure_ui_extension.dart';
-import 'package:ink/features/vault/presentation/notifiers/vault_notifier.dart';
+import 'package:ink/features/vault/presentation/notifiers/vault_conflict_notifier.dart';
 import 'package:ink/i18n/strings.g.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -29,16 +27,22 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // A rejected vault push leaves this device's unlock key unsynced for good.
+    // A refused vault push leaves this device's unlock key unsynced for good.
     // There is no screen that owns that failure - the push runs from the auth
     // navigator and from unlock, both without a BuildContext - so it is
     // reported here, the one persistent frame in the app.
-    ref.listen(vaultProvider, (previous, next) {
-      if (next case VaultError(:final failure)
-          when failure is VaultKeyConflict) {
-        context.showSnackbarError(failure.message(context.t));
-      }
-    });
+    //
+    // Watched rather than listened to: the push starts before the shell mounts,
+    // so a conflict resolved first would otherwise never be reported.
+    final conflict = ref.watch(vaultConflictProvider);
+    if (conflict != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) return;
+        context.showSnackbarError(conflict.message(context.t));
+        // Cleared once shown so a rebuild does not re-report it.
+        ref.read(vaultConflictProvider.notifier).conflict = null;
+      });
+    }
 
     return Scaffold(
       backgroundColor: context.ink.surface,

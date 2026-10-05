@@ -13,6 +13,10 @@ AuthFailure mapLoginFailure(CoreFailure failure) {
 }
 
 AuthFailure mapRegisterFailure(CoreFailure failure) {
+  // DataSourceRunner turns already-exists into its own type, so match that
+  // first and keep the ApiFailure arm for anything else.
+  if (failure is AlreadyExistsFailure) return const EmailAlreadyInUse();
+
   if (failure case ApiFailure(:final statusCode, :final message)) {
     if (statusCode == StatusCode.alreadyExists) {
       return const EmailAlreadyInUse();
@@ -36,6 +40,8 @@ AuthFailure mapRegisterFailure(CoreFailure failure) {
 }
 
 AuthFailure mapRequestVerificationFailure(CoreFailure failure) {
+  if (failure is AlreadyExistsFailure) return const EmailAlreadyInUse();
+
   if (failure case ApiFailure(:final statusCode)) {
     if (statusCode == StatusCode.alreadyExists) {
       return const EmailAlreadyInUse();

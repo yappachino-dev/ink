@@ -62,4 +62,30 @@ void main() {
       expect((mapped as AuthCoreFailure).core, same(failure));
     },
   );
+
+  // DataSourceRunner maps gRPC already-exists to AlreadyExistsFailure, so
+  // these mappers must recognize that type and not only the raw ApiFailure.
+  // While the runner still produced an ApiFailure, register() and
+  // requestVerification() fell through to a generic error and the user lost
+  // "email already in use".
+  test('register maps already-exists to EmailAlreadyInUse', () {
+    expect(
+      mapRegisterFailure(const AlreadyExistsFailure()),
+      isA<EmailAlreadyInUse>(),
+    );
+  });
+
+  test('request verification maps already-exists to EmailAlreadyInUse', () {
+    expect(
+      mapRequestVerificationFailure(const AlreadyExistsFailure()),
+      isA<EmailAlreadyInUse>(),
+    );
+  });
+
+  test('a generic auth mapper does not claim the already-exists meaning', () {
+    expect(
+      mapAuthFailure(const AlreadyExistsFailure()),
+      isA<AuthCoreFailure>(),
+    );
+  });
 }
