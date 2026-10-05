@@ -30,6 +30,10 @@ void main() {
 
   setUp(() async {
     prefs = await SharedPreferences.getInstance();
+    // SharedPreferences is a cached singleton, so a value one test writes
+    // outlives it. The security-card cases read `localOnly` and would inherit
+    // whichever state the previous case left behind.
+    await prefs.clear();
     auth = _Auth();
     when(auth.logout).thenAnswer((_) async {});
   });
@@ -67,17 +71,25 @@ void main() {
     expect(find.byIcon(Icons.person_outline), findsNothing);
   });
 
-  testWidgets('the dead controls are gone', (tester) async {
+  testWidgets('registration is offered to a user without an account',
+      (tester) async {
     await pump(tester);
 
-    // The strings are gone from the catalogue too, so this pins the copy as
-    // well as the widget.
-    expect(find.textContaining('Create account'), findsNothing);
-    expect(find.textContaining('Change name'), findsNothing);
-    expect(find.textContaining('Change encryption'), findsNothing);
-    expect(find.text(t.profile.personal.changeName), findsNothing);
-    expect(find.text(t.profile.personal.changeEncryption), findsNothing);
+    // The row was cut once because its `onTap` did nothing. It is back, wired
+    // to the in-app auth route, and gated on `localOnly` so it appears for
+    // exactly the users who have no account to sign in to.
+    expect(find.text(t.profile.account.create), findsOneWidget);
   });
+
+  testWidgets('registration is hidden once an account exists', (tester) async {
+    await prefs.setBool('localOnly', false);
+    await pump(tester);
+
+    // Offering account creation to someone who already has one is noise, and
+    // the register link inside the auth screen would be a second dead end.
+    expect(find.text(t.profile.account.create), findsNothing);
+  });
+
 
   testWidgets('every remaining row does something', (tester) async {
     await pump(tester);

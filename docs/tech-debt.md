@@ -23,7 +23,30 @@ This is the small actionable queue for the next implementation tasks. Completed 
      start, so this blocks deployment rather than degrading it.
    - Needs request-context propagation, explicit timeouts, and structured errors.
 
-5. **Improve repository onboarding**
+5. **Back the profile actions with real endpoints**
+   - Change name, change password and change encryption now refuse explicitly
+     instead of swallowing the tap, but there is no endpoint for any of them.
+   - "Delete all data" is device-scoped. There is no delete-account RPC, so a
+     synced copy survives it. The wording says so; the endpoint does not exist.
+
+6. **Unify the onboarding chrome**
+   - `SetupProgress` renders as body content below `BackAppBar`; it belongs in
+     the app bar so the top of the flow reads as one unit. `BackAppBar` is
+     already a `PreferredSizeWidget` but hardcodes `kToolbarHeight`.
+   - Its segment `AnimatedContainer` never interpolates. Each step is a separate
+     route, so a fresh widget is built at its final value and there is no prior
+     state to animate from. `AppDurations.slow` is documented as "progress
+     reveals" and currently serves nothing.
+   - Relocating the bar alone moves inert chrome. Advancing it needs one
+     `SetupProgress` kept alive across steps, or a shared step value.
+
+7. **Close the raw spacing default**
+   - `SpacedScaffold.spacing` defaults to `24.0` rather than `AppSpacing`.
+     `verify_spacing_tokens.dart` is diff-based and does not catch defaults.
+     `SpacedScaffold` also cannot host a scrolling child: its
+     `SliverFillRemaining` cannot measure a viewport.
+
+8. **Improve repository onboarding**
    - Add a tracked root README with prerequisites, architecture, setup, and verification commands.
    - Replace template package metadata and define dependency/security update checks.
 

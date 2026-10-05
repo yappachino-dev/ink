@@ -89,6 +89,9 @@ class Translations$common$en {
 
 	/// en: 'Remove'
 	String get remove => 'Remove';
+
+	/// en: 'Not available yet'
+	String get notImplemented => 'Not available yet';
 }
 
 // Path: welcome
@@ -784,14 +787,23 @@ class Translations$profile$account$en {
 
 	// Translations
 
-	/// en: 'Delete account'
-	String get delete => 'Delete account';
+	/// en: 'Delete all data'
+	String get delete => 'Delete all data';
 
-	/// en: 'Data will be lost'
-	String get deleteSubtitle => 'Data will be lost';
+	/// en: 'Erases notes and keys on this device'
+	String get deleteSubtitle => 'Erases notes and keys on this device';
 
-	/// en: 'Are you sure you want to delete your account?'
-	String get deleteConfirm => 'Are you sure you want to delete your account?';
+	/// en: 'Delete everything on this device?'
+	String get deleteConfirm => 'Delete everything on this device?';
+
+	/// en: 'Create account'
+	String get create => 'Create account';
+
+	/// en: 'Add sync to this device'
+	String get createSubtitle => 'Add sync to this device';
+
+	/// en: 'Your notes and encryption keys are erased from this device and this cannot be undone. Anything already synced to your account stays on the server.'
+	String get deleteBody => 'Your notes and encryption keys are erased from this device and this cannot be undone. Anything already synced to your account stays on the server.';
 }
 
 // Path: profile.settings
@@ -1043,6 +1055,7 @@ extension on Translations {
 			'common.errors.timeout' => 'The server took too long to respond. Try again.',
 			'common.errors.unknown' => 'Something went wrong. Please try again.',
 			'common.remove' => 'Remove',
+			'common.notImplemented' => 'Not available yet',
 			'welcome.thesis' => 'Your notes are encrypted on this device. Ink\'s servers can\'t read them.',
 			'welcome.createVault' => 'Create your vault',
 			'welcome.haveAccount' => 'Already have an account?',
@@ -1205,9 +1218,12 @@ extension on Translations {
 			'profile.personal.logout' => 'Log Out',
 			'profile.security.encryption' => 'Encryption',
 			'profile.security.sync' => 'Sync',
-			'profile.account.delete' => 'Delete account',
-			'profile.account.deleteSubtitle' => 'Data will be lost',
-			'profile.account.deleteConfirm' => 'Are you sure you want to delete your account?',
+			'profile.account.delete' => 'Delete all data',
+			'profile.account.deleteSubtitle' => 'Erases notes and keys on this device',
+			'profile.account.deleteConfirm' => 'Delete everything on this device?',
+			'profile.account.create' => 'Create account',
+			'profile.account.createSubtitle' => 'Add sync to this device',
+			'profile.account.deleteBody' => 'Your notes and encryption keys are erased from this device and this cannot be undone. Anything already synced to your account stays on the server.',
 			'profile.settings.personalization' => 'Personalization',
 			'profile.settings.language' => 'Language',
 			'profile.settings.appearance.title' => 'Appearance',
