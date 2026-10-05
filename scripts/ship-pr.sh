@@ -42,6 +42,17 @@ if [[ -z "$BASE_BRANCH" ]]; then
   exit 1
 fi
 
+# Checked before any network call: uncommitted work must not survive a ship,
+# and the post-merge step moves the working tree onto the base branch.
+# Only tracked files count. Untracked files do not block `git checkout`, and
+# insisting they be committed makes the check fail on scratch output rather
+# than on real work at risk.
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+  echo "error: tracked changes are uncommitted; commit or stash before shipping" >&2
+  git status --short --untracked-files=no >&2
+  exit 1
+fi
+
 git fetch origin "$BASE_BRANCH"
 COMMIT_COUNT=$(git rev-list --count "origin/$BASE_BRANCH..HEAD")
 HEAD_BRANCH=$(git branch --show-current)
@@ -116,14 +127,6 @@ fi
 
 if [[ "$COMMIT_COUNT" -eq 0 ]]; then
   echo "error: branch has no commits relative to origin/$BASE_BRANCH" >&2
-  exit 1
-fi
-
-# Checked here rather than after the merge: uncommitted work must not survive a
-# ship, and the post-merge step moves the working tree onto the base branch.
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "error: working tree is dirty; commit or stash before shipping" >&2
-  git status --short >&2
   exit 1
 fi
 
@@ -202,11 +205,20 @@ gh pr merge "$PR_NUM" \
 printf 'Syncing local state...\n'
 git fetch origin --prune
 
-if git checkout -q "$BASE_BRANCH" &&
-  git merge --ff-only "origin/$BASE_BRANCH"; then
+# The two failures need different advice. A checkout blocked by an untracked
+# file is recoverable by moving it; a diverged base branch is not fixed by any
+# variant of pull, because every one of them fast-forwards and cannot.
+if ! git checkout -q "$BASE_BRANCH"; then
+  echo "warning: PR #$PR_NUM is merged, but could not switch to $BASE_BRANCH." >&2
+  echo "         an untracked file may be in the way. Finish with:" >&2
+  echo "           git checkout $BASE_BRANCH && git merge --ff-only origin/$BASE_BRANCH" >&2
+elif ! git merge --ff-only "origin/$BASE_BRANCH"; then
+  echo "warning: PR #$PR_NUM is merged, but local $BASE_BRANCH has diverged" >&2
+  echo "         from origin/$BASE_BRANCH. These local commits are not on the remote:" >&2
+  git log --oneline "origin/$BASE_BRANCH..$BASE_BRANCH" | sed 's/^/           /' >&2
+  echo "         rebase them onto origin/$BASE_BRANCH, or drop them if they are" >&2
+  echo "         disposable. No pull will fix this." >&2
+else
   git branch -D "$HEAD_BRANCH" >/dev/null 2>&1 || true
   printf 'On %s at %s.\n' "$BASE_BRANCH" "$(git rev-parse --short HEAD)"
-else
-  echo "warning: PR #$PR_NUM is merged but the local sync did not complete." >&2
-  echo "         finish with: git checkout $BASE_BRANCH && git pull --ff-only" >&2
 fi
