@@ -42,6 +42,17 @@ if [[ -z "$BASE_BRANCH" ]]; then
   exit 1
 fi
 
+# Checked before any network call: uncommitted work must not survive a ship,
+# and the post-merge step moves the working tree onto the base branch.
+# Only tracked files count. Untracked files do not block `git checkout`, and
+# insisting they be committed makes the check fail on scratch output rather
+# than on real work at risk.
+if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+  echo "error: tracked changes are uncommitted; commit or stash before shipping" >&2
+  git status --short --untracked-files=no >&2
+  exit 1
+fi
+
 git fetch origin "$BASE_BRANCH"
 COMMIT_COUNT=$(git rev-list --count "origin/$BASE_BRANCH..HEAD")
 HEAD_BRANCH=$(git branch --show-current)
@@ -186,3 +197,28 @@ gh pr merge "$PR_NUM" \
   --delete-branch \
   --subject "$TITLE (#$PR_NUM)" \
   --body "$MERGE_BODY"
+
+# The merge is already done at this point, so nothing below may abort the run.
+# `gh pr merge --delete-branch` removes the remote branch but can leave the
+# local one checked out, and leaves the base branch where it was. A stale base
+# is how the next ship starts from the wrong place, so sync it here.
+printf 'Syncing local state...\n'
+git fetch origin --prune
+
+# The two failures need different advice. A checkout blocked by an untracked
+# file is recoverable by moving it; a diverged base branch is not fixed by any
+# variant of pull, because every one of them fast-forwards and cannot.
+if ! git checkout -q "$BASE_BRANCH"; then
+  echo "warning: PR #$PR_NUM is merged, but could not switch to $BASE_BRANCH." >&2
+  echo "         an untracked file may be in the way. Finish with:" >&2
+  echo "           git checkout $BASE_BRANCH && git merge --ff-only origin/$BASE_BRANCH" >&2
+elif ! git merge --ff-only "origin/$BASE_BRANCH"; then
+  echo "warning: PR #$PR_NUM is merged, but local $BASE_BRANCH has diverged" >&2
+  echo "         from origin/$BASE_BRANCH. These local commits are not on the remote:" >&2
+  git log --oneline "origin/$BASE_BRANCH..$BASE_BRANCH" | sed 's/^/           /' >&2
+  echo "         rebase them onto origin/$BASE_BRANCH, or drop them if they are" >&2
+  echo "         disposable. No pull will fix this." >&2
+else
+  git branch -D "$HEAD_BRANCH" >/dev/null 2>&1 || true
+  printf 'On %s at %s.\n' "$BASE_BRANCH" "$(git rev-parse --short HEAD)"
+fi
