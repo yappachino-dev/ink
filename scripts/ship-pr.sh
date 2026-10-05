@@ -119,6 +119,14 @@ if [[ "$COMMIT_COUNT" -eq 0 ]]; then
   exit 1
 fi
 
+# Checked here rather than after the merge: uncommitted work must not survive a
+# ship, and the post-merge step moves the working tree onto the base branch.
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "error: working tree is dirty; commit or stash before shipping" >&2
+  git status --short >&2
+  exit 1
+fi
+
 if [[ "$COMMIT_COUNT" -eq 1 ]]; then
   TITLE=$(git log -1 --format="%s")
 else
@@ -186,3 +194,19 @@ gh pr merge "$PR_NUM" \
   --delete-branch \
   --subject "$TITLE (#$PR_NUM)" \
   --body "$MERGE_BODY"
+
+# The merge is already done at this point, so nothing below may abort the run.
+# `gh pr merge --delete-branch` removes the remote branch but can leave the
+# local one checked out, and leaves the base branch where it was. A stale base
+# is how the next ship starts from the wrong place, so sync it here.
+printf 'Syncing local state...\n'
+git fetch origin --prune
+
+if git checkout -q "$BASE_BRANCH" &&
+  git merge --ff-only "origin/$BASE_BRANCH"; then
+  git branch -D "$HEAD_BRANCH" >/dev/null 2>&1 || true
+  printf 'On %s at %s.\n' "$BASE_BRANCH" "$(git rev-parse --short HEAD)"
+else
+  echo "warning: PR #$PR_NUM is merged but the local sync did not complete." >&2
+  echo "         finish with: git checkout $BASE_BRANCH && git pull --ff-only" >&2
+fi
