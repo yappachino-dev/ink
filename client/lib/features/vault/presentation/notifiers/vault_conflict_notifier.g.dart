@@ -8,7 +8,8 @@ part of 'vault_conflict_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Carries a vault conflict as a one-shot report rather than as [VaultState].
+/// Carries a vault conflict as a one-shot report, separate from the vault
+/// lifecycle state.
 ///
 /// A refused key-slot push happens while the vault is unlocked and working, so
 /// folding it into the lifecycle state would drop an unlocked device into
@@ -18,7 +19,8 @@ part of 'vault_conflict_notifier.dart';
 @ProviderFor(VaultConflictNotifier)
 final vaultConflictProvider = VaultConflictNotifierProvider._();
 
-/// Carries a vault conflict as a one-shot report rather than as [VaultState].
+/// Carries a vault conflict as a one-shot report, separate from the vault
+/// lifecycle state.
 ///
 /// A refused key-slot push happens while the vault is unlocked and working, so
 /// folding it into the lifecycle state would drop an unlocked device into
@@ -26,7 +28,8 @@ final vaultConflictProvider = VaultConflictNotifierProvider._();
 /// the shell reads and clears.
 final class VaultConflictNotifierProvider
     extends $NotifierProvider<VaultConflictNotifier, VaultFailure?> {
-  /// Carries a vault conflict as a one-shot report rather than as [VaultState].
+  /// Carries a vault conflict as a one-shot report, separate from the vault
+  /// lifecycle state.
   ///
   /// A refused key-slot push happens while the vault is unlocked and working, so
   /// folding it into the lifecycle state would drop an unlocked device into
@@ -60,9 +63,10 @@ final class VaultConflictNotifierProvider
 }
 
 String _$vaultConflictNotifierHash() =>
-    r'3424d157bd1cba327ceb1c568312263600e16a7e';
+    r'dc864a4757b0009bb06e3a03a6611d4396823602';
 
-/// Carries a vault conflict as a one-shot report rather than as [VaultState].
+/// Carries a vault conflict as a one-shot report, separate from the vault
+/// lifecycle state.
 ///
 /// A refused key-slot push happens while the vault is unlocked and working, so
 /// folding it into the lifecycle state would drop an unlocked device into
