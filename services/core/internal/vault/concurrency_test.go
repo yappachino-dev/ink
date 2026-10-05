@@ -6,39 +6,196 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"github.com/yappachino-dev/ink/services/core/internal/database"
+	"github.com/yappachino-dev/ink/services/core/internal/store"
 )
 
-// Two devices pushing a slot for the same key_type at the same time must not
-// both succeed. Without a per-account lock the divergence check is unsound:
-// READ COMMITTED gives each statement a fresh snapshot, so both transactions
-// read an empty vault, both pass the check, and the second ON CONFLICT DO
-// UPDATE overwrites the first. Only device A's slots would be lost, with no
-// error reported on either side.
-func TestConcurrentPushesSerializePerAccount(t *testing.T) {
-	svc, _, q := fixtures(t)
-	ctx := context.Background()
-	userID := seedVaultUser(t, q)
+const (
+	concurrentAttempts = 12
+	concurrentPoolSize = 24
+)
 
-	mk := func(salt, wmk string) []KeySlot {
-		return []KeySlot{{
-			Type:             KeyTypePIN,
-			Salt:             []byte(salt),
-			WrappedMasterKey: []byte(wmk),
-			UpdatedAt:        time.Now().UTC(),
-		}}
+// sizedPool boots a Postgres whose pool is sized explicitly.
+//
+// dbtest.StartPostgres uses pgxpool.New, whose MaxConns defaults to
+// max(4, NumCPU). These tests hold a connection for a whole transaction, so
+// running more concurrent transactions than the pool allows starves it: the
+// surplus goroutines wait for a connection that is only freed once the
+// transaction holding it commits, and those transactions are themselves
+// waiting on the advisory lock. On a 2-core CI runner that is a deadlock, and
+// it hung until the 10-minute package timeout. An explicit size makes these
+// tests independent of the machine they run on.
+func sizedPool(t *testing.T, maxConns int32) *pgxpool.Pool {
+	t.Helper()
+
+	ctx := context.Background()
+	ctr, err := postgres.Run(ctx,
+		"postgres:18-alpine",
+		postgres.WithDatabase("data"),
+		postgres.WithUsername("postgres"),
+		postgres.WithPassword("postgres"),
+		postgres.BasicWaitStrategies(),
+	)
+	if err != nil {
+		t.Fatalf("start postgres: %v", err)
+	}
+	t.Cleanup(func() { _ = ctr.Terminate(ctx) })
+
+	dsn, err := ctr.ConnectionString(ctx)
+	if err != nil {
+		t.Fatalf("connection string: %v", err)
 	}
 
-	const attempts = 12
+	config, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		t.Fatalf("parse pool config: %v", err)
+	}
+	config.MaxConns = maxConns
+
+	pool, err := pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		t.Fatalf("connect pool: %v", err)
+	}
+	t.Cleanup(pool.Close)
+
+	connCfg, err := pgx.ParseConfig(dsn)
+	if err != nil {
+		t.Fatalf("parse conn config: %v", err)
+	}
+	sqlDB := stdlib.OpenDB(*connCfg)
+	defer sqlDB.Close()
+	if err := database.Migrate(ctx, sqlDB); err != nil {
+		t.Fatalf("apply migrations: %v", err)
+	}
+
+	return pool
+}
+
+func concurrencyFixtures(t *testing.T) (*VaultService, *store.Queries, *pgxpool.Pool) {
+	t.Helper()
+	pool := sizedPool(t, concurrentPoolSize)
+	q := store.New(pool)
+	return NewVaultService(database.NewPgTransactor(pool), NewPostgresVaultRepository(q)), q, pool
+}
+
+// testContext bounds every save in this file. Without it a regression that
+// reintroduces a deadlock burns the whole 10-minute package timeout before
+// reporting anything useful.
+func testContext(t *testing.T) context.Context {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	t.Cleanup(cancel)
+	return ctx
+}
+
+func pinSlot(salt, wmk string) []KeySlot {
+	return []KeySlot{{
+		Type:             KeyTypePIN,
+		Salt:             []byte(salt),
+		WrappedMasterKey: []byte(wmk),
+		UpdatedAt:        time.Now().UTC(),
+	}}
+}
+
+// TestLockSerializesSavesForOneAccount is the deterministic guard.
+//
+// The many-goroutine test below cannot serve as the guard: the window between
+// the read and the upsert is microseconds wide, so with the lock removed it
+// passes often enough to be useless. Here the lock is taken explicitly in one
+// transaction and a real save is asserted to block behind it, which is exact
+// and independent of scheduling.
+func TestLockSerializesSavesForOneAccount(t *testing.T) {
+	svc, q, pool := concurrencyFixtures(t)
+	ctx := testContext(t)
+	userID := seedVaultUser(t, q)
+
+	// Same advisory lock a save takes, held by a transaction that stays open.
+	holder, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin holder: %v", err)
+	}
+	defer func() { _ = holder.Rollback(ctx) }()
+
+	if _, err := holder.Exec(ctx, "SELECT pg_advisory_xact_lock(78511, $1)", userID); err != nil {
+		t.Fatalf("take advisory lock: %v", err)
+	}
+
+	done := make(chan error, 1)
+	go func() { done <- svc.SaveKeySlots(ctx, userID, pinSlot("salt-a", "wmk-a")) }()
+
+	select {
+	case err := <-done:
+		t.Fatalf("save returned while the account lock was held elsewhere: %v", err)
+	case <-time.After(750 * time.Millisecond):
+		// Still blocked, which is the point.
+	}
+
+	if err := holder.Rollback(ctx); err != nil {
+		t.Fatalf("release lock: %v", err)
+	}
+
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("save after the lock was released: %v", err)
+		}
+	case <-time.After(10 * time.Second):
+		t.Fatal("save did not proceed after the lock was released")
+	}
+}
+
+// A different account must not be blocked by another's lock.
+func TestLockDoesNotCrossAccounts(t *testing.T) {
+	svc, q, pool := concurrencyFixtures(t)
+	ctx := testContext(t)
+	first := seedVaultUser(t, q)
+	second := seedVaultUser(t, q)
+
+	holder, err := pool.Begin(ctx)
+	if err != nil {
+		t.Fatalf("begin holder: %v", err)
+	}
+	defer func() { _ = holder.Rollback(ctx) }()
+	if _, err := holder.Exec(ctx, "SELECT pg_advisory_xact_lock(78511, $1)", first); err != nil {
+		t.Fatalf("take advisory lock: %v", err)
+	}
+
+	done := make(chan error, 1)
+	go func() { done <- svc.SaveKeySlots(ctx, second, pinSlot("salt", "wmk")) }()
+
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("the second account must not be blocked: %v", err)
+		}
+	case <-time.After(10 * time.Second):
+		t.Fatal("the lock leaked across accounts")
+	}
+}
+
+// Many simultaneous pushes for one account must leave exactly one slot and
+// report every loser as a conflict, never as a silent overwrite.
+func TestConcurrentPushesSerializePerAccount(t *testing.T) {
+	svc, q, _ := concurrencyFixtures(t)
+	ctx := testContext(t)
+	userID := seedVaultUser(t, q)
+
 	var wg sync.WaitGroup
 	start := make(chan struct{})
-	errs := make([]error, attempts)
+	errs := make([]error, concurrentAttempts)
 
-	for i := range attempts {
+	for i := range concurrentAttempts {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
 			<-start
-			errs[i] = svc.SaveKeySlots(ctx, userID, mk("salt-"+string(rune('a'+i)), "wmk-"+string(rune('a'+i))))
+			errs[i] = svc.SaveKeySlots(ctx, userID,
+				pinSlot("salt-"+string(rune('a'+i)), "wmk-"+string(rune('a'+i))))
 		}(i)
 	}
 	close(start)
@@ -68,96 +225,43 @@ func TestConcurrentPushesSerializePerAccount(t *testing.T) {
 	}
 }
 
-// The lock is per account, so one account's push must not block another's.
-func TestLockDoesNotCrossAccounts(t *testing.T) {
-	svc, _, q := fixtures(t)
-	ctx := context.Background()
-	first := seedVaultUser(t, q)
-	second := seedVaultUser(t, q)
-
-	slot := []KeySlot{{
-		Type:             KeyTypePIN,
-		Salt:             []byte("salt"),
-		WrappedMasterKey: []byte("wmk"),
-		UpdatedAt:        time.Now().UTC(),
-	}}
-
-	var wg sync.WaitGroup
-	errs := make([]error, 2)
-	start := make(chan struct{})
-	for i, id := range []int{first, second} {
-		wg.Add(1)
-		go func(i, id int) {
-			defer wg.Done()
-			<-start
-			errs[i] = svc.SaveKeySlots(ctx, id, slot)
-		}(i, id)
-	}
-	close(start)
-	wg.Wait()
-
-	for i, err := range errs {
-		if err != nil {
-			t.Fatalf("account %d must not be blocked by the other: %v", i, err)
-		}
-	}
-}
-
+// The lock is transaction-scoped. If a failed save held it, every later push
+// for that account would block until the connection died.
 func TestLockReleasedOnRollback(t *testing.T) {
-	// The lock is transaction-scoped. If a failed save held it, every later
-	// push for that account would block forever.
-	svc, _, q := fixtures(t)
-	ctx := context.Background()
+	svc, q, _ := concurrencyFixtures(t)
+	ctx := testContext(t)
 	userID := seedVaultUser(t, q)
 
-	slot := []KeySlot{{
-		Type:             KeyTypePIN,
-		Salt:             []byte("salt-a"),
-		WrappedMasterKey: []byte("wmk-a"),
-		UpdatedAt:        time.Now().UTC(),
-	}}
-	if err := svc.SaveKeySlots(ctx, userID, slot); err != nil {
+	first := pinSlot("salt-a", "wmk-a")
+	if err := svc.SaveKeySlots(ctx, userID, first); err != nil {
 		t.Fatalf("first save: %v", err)
 	}
 
 	// Divergent, so this rolls back.
-	divergent := []KeySlot{{
-		Type:             KeyTypePIN,
-		Salt:             []byte("salt-b"),
-		WrappedMasterKey: []byte("wmk-b"),
-		UpdatedAt:        time.Now().UTC(),
-	}}
-	err := svc.SaveKeySlots(ctx, userID, divergent)
+	err := svc.SaveKeySlots(ctx, userID, pinSlot("salt-b", "wmk-b"))
 	var conflict *KeySlotConflictError
 	if !errors.As(err, &conflict) {
 		t.Fatalf("expected a conflict, got %v", err)
 	}
 
-	done := make(chan error, 1)
-	go func() { done <- svc.SaveKeySlots(ctx, userID, slot) }()
-	select {
-	case err := <-done:
-		if err != nil {
-			t.Fatalf("save after rollback must not deadlock or fail: %v", err)
-		}
-	case <-time.After(10 * time.Second):
-		t.Fatal("save after rollback deadlocked, the lock was not released")
+	if err := svc.SaveKeySlots(ctx, userID, first); err != nil {
+		t.Fatalf("save after rollback must not deadlock or fail: %v", err)
 	}
 }
 
-// Uniqueness still holds after a rollback leaves no row behind.
-func TestConcurrentPushesAfterRollback(t *testing.T) {
-	svc, _, q := fixtures(t)
-	ctx := context.Background()
+// The lock is taken before validation runs, so a rejected batch releases it and
+// leaves no row behind.
+func TestRejectedBatchReleasesLockAndWritesNothing(t *testing.T) {
+	svc, q, _ := concurrencyFixtures(t)
+	ctx := testContext(t)
 	userID := seedVaultUser(t, q)
-	// The lock is taken before validation runs, so this also proves a rejected
-	// batch releases it.
-	bad := []KeySlot{
+
+	duplicateType := []KeySlot{
 		{Type: KeyTypePIN, Salt: []byte("a"), WrappedMasterKey: []byte("a"), UpdatedAt: time.Now().UTC()},
 		{Type: KeyTypePIN, Salt: []byte("b"), WrappedMasterKey: []byte("b"), UpdatedAt: time.Now().UTC()},
 	}
 	var conflict *KeySlotConflictError
-	if err := svc.SaveKeySlots(ctx, userID, bad); !errors.As(err, &conflict) {
+	if err := svc.SaveKeySlots(ctx, userID, duplicateType); !errors.As(err, &conflict) {
 		t.Fatalf("expected a conflict, got %v", err)
 	}
 
@@ -167,5 +271,9 @@ func TestConcurrentPushesAfterRollback(t *testing.T) {
 	}
 	if len(out) != 0 {
 		t.Fatalf("a rejected batch must leave no rows, got %d", len(out))
+	}
+
+	if err := svc.SaveKeySlots(ctx, userID, pinSlot("salt-a", "wmk-a")); err != nil {
+		t.Fatalf("the account must still be usable: %v", err)
 	}
 }
